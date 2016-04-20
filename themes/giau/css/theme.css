@@ -1,0 +1,55 @@
+/*
+ theme.css
+*/
+
+body {
+	background: #FFF;
+	padding: 0px;
+	margin: 0px;
+}
+* {
+	color: #00F;
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
+}
+img {
+	padding: 0px;
+	margin: 0px;
+}
+ul {
+	display: inline-block;
+}
+
+.navigationMenuContainer {
+	background: #000;
+}
+.navigationMenuItem {
+	display: inline-block;
+	color: #FFF;
+	padding: 10px;
+}
+.navigationMenuLogoContainer {
+	display: inline-block;
+
+}
+.navigationMenuLogo {
+	display: inline;
+}
+
+
+
+.imageTitleHeading {
+
+}
+.imageTitleInfo {
+
+}
+.imageTitleButton {
+
+}
+
+
+.bla {
+	border-radius: 50%;
+}
