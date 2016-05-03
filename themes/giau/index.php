@@ -6,9 +6,12 @@
  * @subpackage giau
  */
 
+
+
 include (TEMPLATEPATH . '/php/functions.php');
 
 create_page();
+//echo "hai";
 
 //echo $_SERVER['REQUEST_URI'];
 

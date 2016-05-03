@@ -6,7 +6,7 @@ function KEY_GET_PARAM_PAGE(){
 }
 
 function getTemplateURIPath(){
-	return get_template_directory_uri()."/";
+	return wp_make_link_relative( get_template_directory_uri()."/" );
 }
 
 function relativePathCSS(){
@@ -39,7 +39,10 @@ function getParameterOrDefault($param, $def){
 
 
 function create_page(){
+	$relativePathJSFF = relativePathJS()."code/";
+	$fileJavaScriptFF = relativePathJS()."code/FF.js";
 	$fileCSSMain = relativePathCSS()."theme.css";
+	$fileJavaScriptMain = relativePathJS()."theme.js";
 	$pageRequest = getParameterOrDefault( KEY_GET_PARAM_PAGE(), "" );
 	$pageList = ["Home", "Departments", "Staff", "Forms", "Directions", "Contact Us"];
 
@@ -48,15 +51,57 @@ function create_page(){
 	<head>
 		<title>Follow The Leader</title>
 		<link rel="stylesheet" href="<?php echo $fileCSSMain; ?>">
+		<script rel="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+		<script rel="text/javascript" src="<?php echo $fileJavaScriptFF; ?>"></script>
+		<script rel="text/javascript" src="<?php echo $fileJavaScriptMain; ?>"></script>
+		<script type="text/javascript">
+			// START
+				$(document).ready( function(){
+					console.log(FF)
+					var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
+						var g = new giau();
+					});
+					//function ffLoadedFxn(){
+						//(new ScriptLoader("./",["Filter.js"],this,funLoadedFxn)).load();
+					//}
+					//function funLoadedFxn(){
+						//var filter = new Filter();
+					//}
+					//var g = new giau();
+				});
+		</script>
 	</head>
 	<body style="bgColor:#F00;">
-	<?php create_navigation($pageList); ?>
-	<div class="imageTitleHeading">JOIN US FOR WORSHIP</div>
+
+	<!-- HEADER NAVIGATION -->
+	<!-- <?php create_navigation($pageList); ?> -->
+
+	<!-- FEATURE IMAGE -->
+	<div class="featurePresentationContainer giauImageGallery"></div>
+
+
+	<!-- <div class="imageTitleHeading">JOIN US FOR WORSHIP</div>
 	<div class="imageTitleInfo">Every Sunday at 11:00 a.m.</div>
-	<div class="imageTitleButton">Directions</div>
-	<footer>
-		<?php echo $pageRequest; ?>
-	</footer>
+	<div class="imageTitleButton">Directions</div> -->
+
+	<!-- DEPARTMENTS -->
+	<!-- <div class="">departments</div> -->
+
+	<!-- INFO STATEMENT GROUP -->
+
+	<!-- PHOTO GALLERY -->
+
+	<!-- QUOTE GALLERY -->
+
+	<!-- CALENDAR SCHEDULE -->
+
+
+	<!-- DEBUGGING -->
+	<?php echo $pageRequest; ?>
+
+	<!-- FOOTER -->
+	<!-- <?php create_footer(); ?> -->
+	
 	</body>
 </html>
 <?php
@@ -75,6 +120,22 @@ function create_navigation($pageList){
 			<?php
 		}
 	?></ul></div>
+	<?php
+}
+
+function create_footer(){
+	?>
+	<footer>
+	<div class="footerContainer">
+		<div class="footerLogo"></div>
+		<div class="footerSocialMedia"></div>
+		<div class="footerContact">
+			Los Angeles Presbyterian Church
+			2241 N. Eastern Ave.
+			Los Angeles, CA 90032
+		</div>
+	</div>
+	</footer>
 	<?php
 }
 

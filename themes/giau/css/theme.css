@@ -50,6 +50,31 @@ ul {
 }
 
 
+
+/* FEATURE IMAGES */
+.featurePresentationContainer {
+	position: relative;
+	width: 100%;
+	display: inline-block;
+	height: 400px;
+	max-height: 400px;
+	overflow: hidden;
+	/*background-repeat: no-repeat;*/
+	/*height: 400px;*/
+}
+.featureImageBackground {
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 0;
+	bottom: 0;
+	/*width: 50%;
+	height: 100%;*/
+	/*background-image: url('/wordpress/wp-content/themes/giau/img/feature_image_01.jpg');*/
+	display: inline-block;
+}
+
+
 .bla {
 	border-radius: 50%;
 }
