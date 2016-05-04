@@ -57,7 +57,6 @@ function create_page(){
 		<script type="text/javascript">
 			// START
 				$(document).ready( function(){
-					console.log(FF)
 					var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
 						var g = new giau();
 					});
@@ -77,7 +76,7 @@ function create_page(){
 	<!-- <?php create_navigation($pageList); ?> -->
 
 	<!-- FEATURE IMAGE -->
-	<div class="featurePresentationContainer giauImageGallery"></div>
+	<div class="featurePresentationContainer giauImageGallery" style="position:relative; width:100%;"></div>
 
 
 	<!-- <div class="imageTitleHeading">JOIN US FOR WORSHIP</div>
