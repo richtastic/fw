@@ -18,8 +18,36 @@ giau.prototype.initialize = function(){
 		var gallery = new giau.ImageGallery(element);
 	});
 	
+	// INFO FLOATERS
+	var imageGalleries = $(".giau?");
+	imageGalleries.each(function(index, element){
+		var gallery = new giau.ImageGallery(element);
+	});
 }
 
+giau.ImageFloater = function(element){ //
+}
+
+giau.Navigation = function(element){ //
+}
+
+giau.ButtonToggle = function(element){ //
+}
+
+
+
+giau.Calendar = function(element){ //
+}
+
+giau.Bio = function(element){ //
+}
+
+giau.InfoOverlay = function(element){ // Overlay Float Alert
+	giau.ImageGallery._.constructor.call(this);
+
+	// SET ROOT ELEMENT
+	this._container = element;
+}
 
 giau.ImageGallery = function(element){
 	giau.ImageGallery._.constructor.call(this);
