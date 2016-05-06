@@ -3,6 +3,7 @@
 
 function giau(){
 	Code.inheritClass(giau.ImageGallery, JSDispatchable);
+	Code.inheritClass(giau.InfoOverlay, JSDispatchable);
 	this.initialize();
 	
 }
@@ -18,14 +19,20 @@ giau.prototype.initialize = function(){
 		var gallery = new giau.ImageGallery(element);
 	});
 	
-	// INFO FLOATERS
-	var imageGalleries = $(".giau?");
+	// OVERLAYS
+	var imageGalleries = $(".giauInfoOverlay");
 	imageGalleries.each(function(index, element){
-		var gallery = new giau.ImageGallery(element);
+		var gallery = new giau.InfoOverlay(element);
 	});
+
+	// // INFO FLOATERS
+	// var imageGalleries = $(".giauElementFloater");
+	// imageGalleries.each(function(index, element){
+	// 	var gallery = new giau.ImageGallery(element);
+	// });
 }
 
-giau.ImageFloater = function(element){ //
+giau.ElementFloater = function(element){ //
 }
 
 giau.Navigation = function(element){ //
@@ -43,10 +50,38 @@ giau.Bio = function(element){ //
 }
 
 giau.InfoOverlay = function(element){ // Overlay Float Alert
-	giau.ImageGallery._.constructor.call(this);
+	console.log("BLA");
+	giau.InfoOverlay._.constructor.call(this);
 
 	// SET ROOT ELEMENT
-	this._container = element;
+	this._container = Code.getParent(element);
+	this._element = element;
+	Code.setStyleZIndex(element,"100");
+	Code.setStylePosition(element,"absolute");
+	Code.setStyleDisplay(element,"inline-block");
+
+	// LISTENERS
+	this.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
+	//this.addJSEventListener(this._container, Code.JS_EVENT_CLICK, this._handleContainerClickedFxn, this);
+
+	// SET INITIAL LAYOUT
+	this.updateLayout();
+}
+giau.InfoOverlay.prototype._handleWindowResizedFxn = function(){
+	this.updateLayout();
+}
+giau.InfoOverlay.prototype.updateLayout = function(){
+	var widthContainer = $(this._container).width();
+	var heightContainer = $(this._container).height();
+	var widthElement = $(this._element).width();
+	var heightElement = $(this._element).height();
+	
+	// SET CENTER:
+	var centerX = (widthContainer - widthElement)*0.5;
+	var centerY = (heightContainer - heightElement)*0.5;
+	Code.setStyleLeft(this._element,centerX+"px");
+	Code.setStyleTop(this._element,centerY+"px");
+	//Code.setStylePosition(this._primaryImageContainer, "relative");
 }
 
 giau.ImageGallery = function(element){
@@ -54,6 +89,9 @@ giau.ImageGallery = function(element){
 
 	// SET ROOT ELEMENT
 	this._container = element;
+	// OVERLAY
+	// LEFT
+	// RIGHT
 	
 	// CREATE HIERARCHY
 	this._primaryImageContainer = Code.newDiv();
@@ -62,7 +100,7 @@ giau.ImageGallery = function(element){
 		Code.setStylePosition(this._primaryImageContainer, "relative");
 	this._primaryImageElement = Code.newImage();
 	this._secondaryImageElement = Code.newImage();
-	Code.addChild(this._container,this._secondaryImageElement);
+//Code.addChild(this._container,this._secondaryImageElement);
 	Code.addChild(this._container,this._primaryImageContainer);
 	Code.addChild(this._primaryImageContainer,this._primaryImageElement);
 	
@@ -80,8 +118,8 @@ giau.ImageGallery = function(element){
 	// }
 	
 	// LISTENERS
-	this.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleContainerResizedFxn);
-	this.addJSEventListener(this._container, Code.JS_EVENT_CLICK, this._handleContainerClickedFxn);
+	this.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
+	this.addJSEventListener(this._container, Code.JS_EVENT_CLICK, this._handleContainerClickedFxn, this);
 
 	// INITIALIZE WITH FIRST IMAGE
 	this.nextImage();
@@ -92,7 +130,7 @@ giau.ImageGallery.prototype._handleContainerClickedFxn = function(e){
 		this.nextImage();
 	}
 }
-giau.ImageGallery.prototype._handleContainerResizedFxn = function(){
+giau.ImageGallery.prototype._handleWindowResizedFxn = function(){
 	if(this._animating){
 		// STOP IT OR UPDATE IT
 	}
@@ -111,7 +149,6 @@ giau.ImageGallery.prototype.nextImage = function(){
 		index = 0;
 	}
 	if(index>=this._loadedImages.length){
-		console.log("A");
 		var imageSource = this._images[index];
 		var self = this;
 		imageLoader = new ImageLoader("",[imageSource], null,function(info){
@@ -120,7 +157,6 @@ giau.ImageGallery.prototype.nextImage = function(){
 		},null);
 		imageLoader.load();
 	}else{
-		console.log("B");
 		this._currentIndex = index;
 		this._updateImage(this._currentIndex);
 		this._animateNext();
@@ -145,7 +181,7 @@ giau.ImageGallery.prototype._handleTickerFxn = function(){
 	percent = 1.0 - (Math.cos(percent*Math.PI) + 1.0)*0.5; // sin-ease-in-out
 	//percent = Math.pow(percent,2); // ease-in
 	var distance = percent * widthContainer;
-	console.log(percent)
+	//console.log(percent)
 
 	Code.setStyleLeft(this._primaryImageContainer,distance+"px");
 	if(this._time>=countMax){
@@ -173,21 +209,26 @@ giau.ImageGallery.prototype._updateImage = function(index){
 	if(info){
 		var widthContainer = $(this._container).width();
 		var heightContainer = $(this._container).height();
-			Code.setStyleWidth(this._primaryImageContainer,widthContainer+"px");
-			Code.setStyleHeight(this._primaryImageContainer,heightContainer+"px");
+			Code.setStyleWidth(this._primaryImageContainer,Math.floor(widthContainer)+"px");
+			Code.setStyleHeight(this._primaryImageContainer,Math.floor(heightContainer)+"px");
 		var img = this._primaryImageElement;
 		var size = Code.sizeToFitRectInRect(info.width,info.height, widthContainer,heightContainer);
 		var diffX = widthContainer - size.width;
 		var diffY = heightContainer - size.height;
 		Code.setSrc(img,info.url);
-		Code.setStyleWidth(img,size.width+"px");
-		Code.setStyleHeight(img,size.height+"px");
+		// Code.setStylePadding(img, "0px");
+		// Code.setStyleMargin(img, "0px");
+		// Code.setStyleDisplay(img,"inline-block");
+		Code.setStylePosition(img, "absolute");
+		Code.setStyleWidth(img,Math.round(size.width)+"px");
+		Code.setStyleHeight(img,Math.round(size.height)+"px");
 		Code.setStyleLeft(img,Math.round(diffX*0.5)+"px");
 		Code.setStyleTop(img,Math.round(diffY*0.5)+"px");
-		Code.setStylePosition(img, "relative");
-}
+	}
 }
 
+// var err = $(".featureInfoOverlayTitle")[0];
+// Code.setContent(err,""+heightContainer+" / "+info.height+" | "+size.height+" = "+Math.round(diffY)+" = "+upY);
 
 
 

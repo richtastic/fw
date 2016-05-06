@@ -69,6 +69,7 @@ function create_page(){
 					//var g = new giau();
 				});
 		</script>
+		<meta name="viewport" content="width=device-width, initial-scale=1" maximum-scale=1>
 	</head>
 	<body style="bgColor:#F00;">
 
@@ -76,29 +77,62 @@ function create_page(){
 	<!-- <?php create_navigation($pageList); ?> -->
 
 	<!-- FEATURE IMAGE -->
-	<div class="featurePresentationContainer giauImageGallery" style="position:relative; width:100%;"></div>
+	<div class="featurePresentationContainer giauImageGallery" style="">
+		<!-- FEATURE INFO OVERLAY -->
+		<div class="featureInfoOverlay giauInfoOverlay" style="">
+			<div class="featureInfoOverlayTitle" style="margin: 0 auto; ">JOIN US FOR WORSHIP</div>
+			<div></div>
+			<div class="featureInfoOverlaySubtitle">Every Sunday at 11:00 a.m.</div>
+			<div></div>
+			<a href="http://www.google.com">
+			<div class="featureInfoOverlayButton" style="" >Directions</div>
+			</a>
+		</div>
+		<!-- HEADER -->
+		<div class="headerNavigationContainer" style="">
+			<!-- LOGO -->
+			<div class="organizationLogoContainer" style="">LOGO</div>
+			<!-- NAVIGATION -->
+			<div class="navigationContainer" style="">Home, Departments, Staff, Forms, Directions, Contact Us</div>
+			<!-- LANGUAGE SWITCH -->
+			<div class="languageSwitchContainer" style="">EN | KO</div>
+		</div>
+	</div>
 
-
-	<!-- <div class="imageTitleHeading">JOIN US FOR WORSHIP</div>
-	<div class="imageTitleInfo">Every Sunday at 11:00 a.m.</div>
-	<div class="imageTitleButton">Directions</div> -->
 
 	<!-- DEPARTMENTS -->
-	<!-- <div class="">departments</div> -->
+	<div class="" style="height:400px; background-color: rgba(0,0,255,0.5);">
+		<div class="">DEPARTMENTS</div>
+		<div class=""></div>
+	</div>
 
 	<!-- INFO STATEMENT GROUP -->
+	<div class=""  style="height:400px; background-color: rgba(0,250,5,0.5);">
+		<div class="">info</div>
+	</div>
 
 	<!-- PHOTO GALLERY -->
+	<div class=""  style="height:400px; background-color: rgba(255,0,0,0.5);">
+		<div class="">photos</div>
+	</div>
 
 	<!-- QUOTE GALLERY -->
+	<div class=""  style="height:400px; background-color: rgba(0,255,255,0.5);">
+		<div class="">quotes</div>
+	</div>
 
 	<!-- CALENDAR SCHEDULE -->
-
+	<div class=""  style="height:400px; background-color: rgba(255,0,5,0.5);">
+		<div class="">info</div>
+	</div>
 
 	<!-- DEBUGGING -->
 	<?php echo $pageRequest; ?>
 
 	<!-- FOOTER -->
+	<div class=""  style="height:400px; background-color: #303030;">
+		<div class="">info</div>
+	</div>
 	<!-- <?php create_footer(); ?> -->
 	
 	</body>
