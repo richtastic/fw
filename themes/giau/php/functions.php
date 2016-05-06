@@ -95,7 +95,7 @@ function create_page(){
 			<!-- NAVIGATION -->
 			<div class="navigationContainer" style="">Home, Departments, Staff, Forms, Directions, Contact Us</div>
 			<!-- LANGUAGE SWITCH -->
-			<div class="languageSwitchContainer" style="">EN | KO</div>
+			<div class="languageSwitchContainer" style="">EN | 한국어</div>
 		</div>
 	</div>
 

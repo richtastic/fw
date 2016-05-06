@@ -53,7 +53,7 @@ giau.InfoOverlay = function(element){ // Overlay Float Alert
 	console.log("BLA");
 	giau.InfoOverlay._.constructor.call(this);
 
-	// SET ROOT ELEMENT
+	// SET ROOT ELEMENTimage
 	this._container = Code.getParent(element);
 	this._element = element;
 	Code.setStyleZIndex(element,"100");
@@ -89,20 +89,28 @@ giau.ImageGallery = function(element){
 
 	// SET ROOT ELEMENT
 	this._container = element;
-	// OVERLAY
-	// LEFT
-	// RIGHT
 	
 	// CREATE HIERARCHY
+	this._functionalityContainer = Code.newDiv();
+	this._interactionContainer = Code.newDiv();
+	this._leftButton = Code.newDiv();
+	this._rightButton = Code.newDiv();
 	this._primaryImageContainer = Code.newDiv();
 		Code.setStyleLeft(this._primaryImageContainer,0+"px");
 		Code.setStyleTop(this._primaryImageContainer,0+"px");
 		Code.setStylePosition(this._primaryImageContainer, "relative");
+	this._secondaryImageContainer = Code.newDiv();
 	this._primaryImageElement = Code.newImage();
 	this._secondaryImageElement = Code.newImage();
-//Code.addChild(this._container,this._secondaryImageElement);
-	Code.addChild(this._container,this._primaryImageContainer);
-	Code.addChild(this._primaryImageContainer,this._primaryImageElement);
+	Code.addChild(this._container,this._functionalityContainer);
+		Code.addChild(this._functionalityContainer,this._secondaryImageContainer);
+			Code.addChild(this._secondaryImageContainer,this._secondaryImageElement);
+		Code.addChild(this._functionalityContainer,this._primaryImageContainer);
+			Code.addChild(this._primaryImageContainer,this._primaryImageElement);
+		Code.addChild(this._functionalityContainer,this._interactionContainer);
+			Code.addChild(this._interactionContainer,this._leftButton);
+			Code.addChild(this._interactionContainer,this._rightButton);
+			
 	
 	this._animating = false;
 	this._ticker = null;
@@ -113,19 +121,25 @@ giau.ImageGallery = function(element){
 	this._images = ["/wordpress/wp-content/themes/giau/img/feature_image_02.jpg","/wordpress/wp-content/themes/giau/img/feature_image_01.jpg"];
 	this._loadedImages = [];
 	var i;
-	// for(i=0; i<this._images.length; ++i){
-	// 	this._loadedImages[i] = {"width":0, "height":0, "url":null};
-	// }
+	for(i=0; i<this._images.length; ++i){
+		this._loadedImages[i] = null;
+	}
 	
 	// LISTENERS
 	this.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
-	this.addJSEventListener(this._container, Code.JS_EVENT_CLICK, this._handleContainerClickedFxn, this);
+	this.addJSEventListener(this._leftButton, Code.JS_EVENT_CLICK, this._handleLeftButtonClickedFxn, this);
+	this.addJSEventListener(this._rightButton, Code.JS_EVENT_CLICK, this._handleRightButtonClickedFxn, this);
 
 	// INITIALIZE WITH FIRST IMAGE
 	this.nextImage();
 }
 
-giau.ImageGallery.prototype._handleContainerClickedFxn = function(e){
+giau.ImageGallery.prototype._handleLeftButtonClickedFxn = function(e){
+	if(!this._animating){
+		this.prevImage();
+	}
+}
+giau.ImageGallery.prototype._handleRightButtonClickedFxn = function(e){
 	if(!this._animating){
 		this.nextImage();
 	}
@@ -137,7 +151,18 @@ giau.ImageGallery.prototype._handleWindowResizedFxn = function(){
 	this._updateImage(this._currentIndex);
 }
 
-
+giau.ImageGallery.prototype.prevImage = function(){
+	var index = this._currentIndex;
+	if(index==null){
+		index = 0;
+	}else{
+		--index;
+	}
+	if(index<0){ // loop around
+		index = this._images.length - 1;
+	}
+	return this._loadOrShowImageAtIndex(index);
+}
 giau.ImageGallery.prototype.nextImage = function(){
 	var index = this._currentIndex;
 	if(index==null){
@@ -148,7 +173,14 @@ giau.ImageGallery.prototype.nextImage = function(){
 	if(index>=this._images.length){ // loop around
 		index = 0;
 	}
-	if(index>=this._loadedImages.length){
+	return this._loadOrShowImageAtIndex(index);
+}
+giau.ImageGallery.prototype._loadOrShowImageAtIndex = function(index){
+	if(index<0 || index>=this._images.length){
+		return;
+	}
+	if(this._loadedImages[index]==null){
+		// TODO: wait for old requests
 		var imageSource = this._images[index];
 		var self = this;
 		imageLoader = new ImageLoader("",[imageSource], null,function(info){
