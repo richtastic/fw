@@ -44,9 +44,29 @@ giau.ButtonToggle = function(element){ //
 
 
 giau.Calendar = function(element){ //
+	var calendarItemList = [];
+	calendarItemList.push({
+		"start_time": Code.getTimeMilliseconds(),
+		"duration": (8*60*60*1000),
+		"title": "Super Fun Event",
+		"description": "a super fun event that lasts 8 hours",
+		"image_url": "",
+		"type": "", // work, fun, movie, game, sport, ... => icon
+		"uri": "http://www.google.com",
+	});
 }
 
 giau.Bio = function(element){ //
+	var personnelList = [];
+	personnelList.push({
+		"first_name": "Joseph Kim",
+		"last_name": "",
+		"display_name": "",
+		"title": "Director of Christian Education, Interim Junior High Pastor", // position
+		"description": "",
+		"image_url": "",
+		"uri": "http://www.google.com",
+	});
 }
 
 giau.InfoOverlay = function(element){ // Overlay Float Alert
