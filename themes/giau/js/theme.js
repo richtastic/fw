@@ -44,16 +44,36 @@ giau.ButtonToggle = function(element){ //
 
 
 giau.Calendar = function(element){ //
+	var calendarItemList = [];
+	calendarItemList.push({
+		"start_time": Code.getTimeMilliseconds(),
+		"duration": (8*60*60*1000),
+		"title": "Super Fun Event",
+		"description": "a super fun event that lasts 8 hours",
+		"image_url": "",
+		"type": "", // work, fun, movie, game, sport, ... => icon
+		"uri": "http://www.google.com",
+	});
 }
 
 giau.Bio = function(element){ //
+	var personnelList = [];
+	personnelList.push({
+		"first_name": "Joseph Kim",
+		"last_name": "",
+		"display_name": "",
+		"title": "Director of Christian Education, Interim Junior High Pastor", // position
+		"description": "",
+		"image_url": "",
+		"uri": "http://www.google.com",
+	});
 }
 
 giau.InfoOverlay = function(element){ // Overlay Float Alert
 	console.log("BLA");
 	giau.InfoOverlay._.constructor.call(this);
 
-	// SET ROOT ELEMENT
+	// SET ROOT ELEMENTimage
 	this._container = Code.getParent(element);
 	this._element = element;
 	Code.setStyleZIndex(element,"100");
@@ -89,20 +109,28 @@ giau.ImageGallery = function(element){
 
 	// SET ROOT ELEMENT
 	this._container = element;
-	// OVERLAY
-	// LEFT
-	// RIGHT
 	
 	// CREATE HIERARCHY
+	this._functionalityContainer = Code.newDiv();
+	this._interactionContainer = Code.newDiv();
+	this._leftButton = Code.newDiv();
+	this._rightButton = Code.newDiv();
 	this._primaryImageContainer = Code.newDiv();
 		Code.setStyleLeft(this._primaryImageContainer,0+"px");
 		Code.setStyleTop(this._primaryImageContainer,0+"px");
 		Code.setStylePosition(this._primaryImageContainer, "relative");
+	this._secondaryImageContainer = Code.newDiv();
 	this._primaryImageElement = Code.newImage();
 	this._secondaryImageElement = Code.newImage();
-//Code.addChild(this._container,this._secondaryImageElement);
-	Code.addChild(this._container,this._primaryImageContainer);
-	Code.addChild(this._primaryImageContainer,this._primaryImageElement);
+	Code.addChild(this._container,this._functionalityContainer);
+		Code.addChild(this._functionalityContainer,this._secondaryImageContainer);
+			Code.addChild(this._secondaryImageContainer,this._secondaryImageElement);
+		Code.addChild(this._functionalityContainer,this._primaryImageContainer);
+			Code.addChild(this._primaryImageContainer,this._primaryImageElement);
+		Code.addChild(this._functionalityContainer,this._interactionContainer);
+			Code.addChild(this._interactionContainer,this._leftButton);
+			Code.addChild(this._interactionContainer,this._rightButton);
+			
 	
 	this._animating = false;
 	this._ticker = null;
@@ -113,19 +141,25 @@ giau.ImageGallery = function(element){
 	this._images = ["/wordpress/wp-content/themes/giau/img/feature_image_02.jpg","/wordpress/wp-content/themes/giau/img/feature_image_01.jpg"];
 	this._loadedImages = [];
 	var i;
-	// for(i=0; i<this._images.length; ++i){
-	// 	this._loadedImages[i] = {"width":0, "height":0, "url":null};
-	// }
+	for(i=0; i<this._images.length; ++i){
+		this._loadedImages[i] = null;
+	}
 	
 	// LISTENERS
 	this.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
-	this.addJSEventListener(this._container, Code.JS_EVENT_CLICK, this._handleContainerClickedFxn, this);
+	this.addJSEventListener(this._leftButton, Code.JS_EVENT_CLICK, this._handleLeftButtonClickedFxn, this);
+	this.addJSEventListener(this._rightButton, Code.JS_EVENT_CLICK, this._handleRightButtonClickedFxn, this);
 
 	// INITIALIZE WITH FIRST IMAGE
 	this.nextImage();
 }
 
-giau.ImageGallery.prototype._handleContainerClickedFxn = function(e){
+giau.ImageGallery.prototype._handleLeftButtonClickedFxn = function(e,f){
+	if(!this._animating){
+		this.prevImage();
+	}
+}
+giau.ImageGallery.prototype._handleRightButtonClickedFxn = function(e){
 	if(!this._animating){
 		this.nextImage();
 	}
@@ -134,10 +168,21 @@ giau.ImageGallery.prototype._handleWindowResizedFxn = function(){
 	if(this._animating){
 		// STOP IT OR UPDATE IT
 	}
-	this._updateImage(this._currentIndex);
+	this._updateLayout(this._currentIndex);
 }
 
-
+giau.ImageGallery.prototype.prevImage = function(){
+	var index = this._currentIndex;
+	if(index==null){
+		index = 0;
+	}else{
+		--index;
+	}
+	if(index<0){ // loop around
+		index = this._images.length - 1;
+	}
+	return this._loadOrShowImageAtIndex(index,true);
+}
 giau.ImageGallery.prototype.nextImage = function(){
 	var index = this._currentIndex;
 	if(index==null){
@@ -148,7 +193,15 @@ giau.ImageGallery.prototype.nextImage = function(){
 	if(index>=this._images.length){ // loop around
 		index = 0;
 	}
-	if(index>=this._loadedImages.length){
+	return this._loadOrShowImageAtIndex(index,false);
+}
+giau.ImageGallery.prototype._loadOrShowImageAtIndex = function(index, isNext){
+	isNext = isNext!==undefined ? isNext : true;
+	if(index<0 || index>=this._images.length){
+		return;
+	}
+	if(this._loadedImages[index]==null){
+		// TODO: wait for old requests
 		var imageSource = this._images[index];
 		var self = this;
 		imageLoader = new ImageLoader("",[imageSource], null,function(info){
@@ -158,12 +211,19 @@ giau.ImageGallery.prototype.nextImage = function(){
 		imageLoader.load();
 	}else{
 		this._currentIndex = index;
-		this._updateImage(this._currentIndex);
-		this._animateNext();
+		this._updateLayout(this._currentIndex);
+		this._animateToNewImage(isNext);
 	}
 }
-giau.ImageGallery.prototype._animateNext = function(){
+giau.ImageGallery.ANIMATION_DIRECTION_UNKNOWN = 0;
+giau.ImageGallery.ANIMATION_DIRECTION_TO_LEFT = 1;
+giau.ImageGallery.ANIMATION_DIRECTION_TO_RIGHT = 2;
+giau.ImageGallery.ANIMATION_DIRECTION_FADE_IN = 3;
+giau.ImageGallery.ANIMATION_DIRECTION_FADE_OUT = 4;
+
+giau.ImageGallery.prototype._animateToNewImage = function(isRight){
 	this._animating = true;
+	this._animationDirection = isRight ? giau.ImageGallery.ANIMATION_DIRECTION_TO_RIGHT : giau.ImageGallery.ANIMATION_DIRECTION_TO_LEFT;
 	this._time = 0;
 	this._ticker = new Ticker(20);
 	this._ticker.addFunction(Ticker.EVENT_TICK, this._handleTickerFxn, this);
@@ -181,8 +241,11 @@ giau.ImageGallery.prototype._handleTickerFxn = function(){
 	percent = 1.0 - (Math.cos(percent*Math.PI) + 1.0)*0.5; // sin-ease-in-out
 	//percent = Math.pow(percent,2); // ease-in
 	var distance = percent * widthContainer;
-	//console.log(percent)
-
+	if(this._animationDirection == giau.ImageGallery.ANIMATION_DIRECTION_TO_RIGHT){
+		distance *= 1.0;
+	}else{
+		distance *= -1.0;
+	}
 	Code.setStyleLeft(this._primaryImageContainer,distance+"px");
 	if(this._time>=countMax){
 		Code.setStyleLeft(this._primaryImageContainer,0+"px");
@@ -202,9 +265,9 @@ giau.ImageGallery.prototype._handleImageLoaded = function(info, index){
 	info.url = source;
 	this._loadedImages[index] = info;
 	// update display
-	this._updateImage(index);
+	this._updateLayout(index);
 }
-giau.ImageGallery.prototype._updateImage = function(index){
+giau.ImageGallery.prototype._updateLayout = function(index){
 	var info = this._loadedImages[index];
 	if(info){
 		var widthContainer = $(this._container).width();
@@ -216,14 +279,40 @@ giau.ImageGallery.prototype._updateImage = function(index){
 		var diffX = widthContainer - size.width;
 		var diffY = heightContainer - size.height;
 		Code.setSrc(img,info.url);
-		// Code.setStylePadding(img, "0px");
-		// Code.setStyleMargin(img, "0px");
-		// Code.setStyleDisplay(img,"inline-block");
+
+		// FUNCTIONALITY CONTAINER
+			// ...
+		// INTERACTION CONTAINER
+			Code.setStylePosition(this._interactionContainer, "absolute");
+			Code.setStyleLeft(this._interactionContainer, 0+"px");
+			Code.setStyleTop(this._interactionContainer, 0+"px");
+			Code.setStyleWidth(this._interactionContainer, "100%");
+			Code.setStyleHeight(this._interactionContainer, "100%");
+			// ... 
+		// LEFT
+			Code.setStylePosition(this._leftButton, "absolute");
+			Code.setStyleLeft(this._leftButton, 0+"px");
+			Code.setStyleTop(this._leftButton, 0+"px");
+			Code.setStyleWidth(this._leftButton, "50%");
+			Code.setStyleHeight(this._leftButton, "100%");
+			Code.setStyleBackground(this._leftButton, "rgba(0,255,0,0.5)");
+		// RIGHT
+			Code.setStylePosition(this._rightButton, "absolute");
+			Code.setStyleRight(this._rightButton, 0+"px");
+			Code.setStyleTop(this._rightButton, 0+"px");
+			Code.setStyleWidth(this._rightButton, "50%");
+			Code.setStyleHeight(this._rightButton, "100%");
+			Code.setStyleBackground(this._rightButton, "rgba(255,0,0,0.5)");
+		// IMAGE CONTAINER
+			// PRIMARY _primaryImageContainer
+			// SECONDARY _secondaryImageContainer
+		// IMAGE
 		Code.setStylePosition(img, "absolute");
 		Code.setStyleWidth(img,Math.round(size.width)+"px");
 		Code.setStyleHeight(img,Math.round(size.height)+"px");
 		Code.setStyleLeft(img,Math.round(diffX*0.5)+"px");
 		Code.setStyleTop(img,Math.round(diffY*0.5)+"px");
+		//
 	}
 }
 

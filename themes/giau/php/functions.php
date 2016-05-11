@@ -89,13 +89,13 @@ function create_page(){
 			</a>
 		</div>
 		<!-- HEADER -->
-		<div class="headerNavigationContainer" style="">
+		<div class="headerNavigationContainer" style="position:relative;">
 			<!-- LOGO -->
-			<div class="organizationLogoContainer" style="">LOGO</div>
+			<div class="organizationLogoContainer" style="display:inline-block; position:absolute; left:0; top:0; "><img class="navigationMenuLogo" src="<?php echo relativePathIMG()."navLogo.png" ?>" /></div>
 			<!-- NAVIGATION -->
-			<div class="navigationContainer" style="">Home, Departments, Staff, Forms, Directions, Contact Us</div>
+			<div class="navigationContainer" style="display:inline-block; margin: 0 auto; text-align: center;  position:absolute; top:0; ">Home, Departments, Staff, Forms, Directions, Contact Us</div>
 			<!-- LANGUAGE SWITCH -->
-			<div class="languageSwitchContainer" style="">EN | KO</div>
+			<div class="languageSwitchContainer" style="display:inline-block; position:absolute; right:0; top:0;  ">EN | 한국어</div>
 		</div>
 	</div>
 
@@ -145,7 +145,9 @@ function create_page(){
 function create_navigation($pageList){
 	?>
 	<div class="navigationMenuContainer">
-	<div class="navigationMenuLogoContainer"><img class="navigationMenuLogo" src="<?php echo relativePathIMG()."navLogo.png" ?>"></div>
+	<div class="navigationMenuLogoContainer">
+		<img class="navigationMenuLogo" src="<?php echo relativePathIMG()."navLogo.png" ?>" />
+	</div>
 	<ul><?php
 		foreach($pageList as $pageName){
 			?>
