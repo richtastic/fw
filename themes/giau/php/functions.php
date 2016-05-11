@@ -49,7 +49,7 @@ function create_page(){
 ?>
 <html>
 	<head>
-		<title>Follow The Leader</title>
+		<title>The Father's House</title>
 		<link rel="stylesheet" href="<?php echo $fileCSSMain; ?>">
 		<script rel="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
 		<script rel="text/javascript" src="<?php echo $fileJavaScriptFF; ?>"></script>
@@ -101,9 +101,12 @@ function create_page(){
 
 
 	<!-- DEPARTMENTS -->
-	<div class="" style="height:400px; background-color: rgba(0,0,255,0.5);">
-		<div class="">DEPARTMENTS</div>
-		<div class=""></div>
+	<div class="sectionContainerDepartments" style="background-color: rgba(255,255,255,1.0);">
+		<div class="headerSectionMain">DEPARTMENTS</div>
+		<div class="departmentInternalContainer">
+			<div class="giauCategoryListing"></div>
+		</div>
+		<div class="footerSectionMain"></div>
 	</div>
 
 	<!-- INFO STATEMENT GROUP -->
@@ -113,7 +116,7 @@ function create_page(){
 
 	<!-- PHOTO GALLERY -->
 	<div class=""  style="height:400px; background-color: rgba(255,0,0,0.5);">
-		<div class="">photos</div>
+		<div class="headerSectionMain">PHOTOS</div>
 	</div>
 
 	<!-- QUOTE GALLERY -->

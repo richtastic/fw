@@ -50,6 +50,18 @@ ul {
 }
 
 
+.headerSectionMain {
+	padding: 10px;
+	font-family: 'Arial Black', 'Arial Bold', sans-serif;
+	font-weight: bold;
+	font-size: 16px;
+	color: #222;
+}
+.footerSectionMain {
+	padding: 10px;
+}
+
+
 /* HEADER */
 .headerNavigationContainer {
 	display: inline-block;
@@ -136,8 +148,16 @@ ul {
 	padding-bottom: 12px;
 	padding-left: 24px;
 	padding-right: 24px;
-	background-color: rgba(0,0,0, 0.5);
+	backgdround-color: rgba(0,0,0, 0.5);
 	border-radius: 4px;
+}
+
+/* DEPARTMENTS */
+.sectionContainerDepartments {
+	padding: 10px;
+}
+.departmentInternalContainer {
+	padding: 4px;
 }
 
 

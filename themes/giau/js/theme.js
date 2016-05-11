@@ -2,8 +2,8 @@
 
 
 function giau(){
-	Code.inheritClass(giau.ImageGallery, JSDispatchable);
-	Code.inheritClass(giau.InfoOverlay, JSDispatchable);
+	// Code.inheritClass(giau.ImageGallery, JSDispatchable);
+	// Code.inheritClass(giau.InfoOverlay, JSDispatchable);
 	this.initialize();
 	
 }
@@ -23,6 +23,12 @@ giau.prototype.initialize = function(){
 	var imageGalleries = $(".giauInfoOverlay");
 	imageGalleries.each(function(index, element){
 		var gallery = new giau.InfoOverlay(element);
+	});
+
+	// CATEGORIES
+	var categoryListings = $(".giauCategoryListing");
+	categoryListings.each(function(index, element){
+		var listing = new giau.GalleryListing(element);
 	});
 
 	// // INFO FLOATERS
@@ -69,9 +75,150 @@ giau.Bio = function(element){ //
 	});
 }
 
+giau.GalleryListing = function(element){
+	this._container = element;
+
+	// LAYOUT
+	Code.setStylePosition(this._container, "relative");
+	Code.setStyleDisplay(this._container, "inline-block");
+	Code.setStyleWidth(this._container, "100%");
+
+	var listings = [];
+	var departmentImagePrefix = "./wp-content/themes/giau/img/departments/";
+	listings.push({
+		"title":"Nursery",
+		"image_url":(departmentImagePrefix+"nursery.png"),
+	});
+	listings.push({
+		"title":"Kindergarten",
+		"image_url":(departmentImagePrefix+"kindergarten.png"),
+	});
+	listings.push({
+		"title":"Elementary",
+		"image_url":(departmentImagePrefix+"elementary.png"),
+	});
+	listings.push({
+		"title":"Junior High",
+		"image_url":(departmentImagePrefix+"junior_high.png"),
+	});
+	listings.push({
+		"title":"High School",
+		"image_url":(departmentImagePrefix+"high_school.png"),
+	});
+	listings.push({
+		"title":"Korean School",
+		"image_url":(departmentImagePrefix+"korean_school.png"),
+	});
+
+	this._galleryList = listings;
+
+	var i, len = listings.length;
+	for(i=0; i<len; ++i){
+		var listing = listings[i];
+		var container = Code.newDiv();
+		var title = Code.newDiv();
+		Code.setContent(title,listing["title"]);
+		Code.addClass(title,"");
+		var img = Code.newImage();
+		img.src = listing["image_url"];
+			Code.addChild(this._container,container);
+			Code.addChild(container,img);
+			Code.addChild(container,title);
+		listing["image"] = img;
+		listing["text"] = title;
+		listing["element"] = container;
+	}
+	this.updateLayout();
+
+	// LISTENERS
+	this._jsDispatch = new JSDispatch();
+	this._jsDispatch.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
+}
+
+giau.GalleryListing.prototype._handleWindowResizedFxn = function(){
+	this.updateLayout();
+}
+
+giau.GalleryListing.prototype.updateLayout = function(){
+	console.log("updateLayout");
+	var listings = this._galleryList;
+
+	var elementMinWidth = 292;
+	var elementMaxWidth = 196;
+	var widthContainer = $(this._container).width();
+	var heightContainer = $(this._container).height();
+
+	var elementCount = listings.length;
+	var elementWidth = 200;//elementMinWidth;
+	var elementHeight = 150;//elementMinWidth;
+	var elementWidthToHeight = elementWidth/elementHeight;
+	var colCount = Math.floor(widthContainer/elementWidth);
+	if(colCount<=1){
+		colCount = 1;
+		elementWidth = widthContainer;
+		elementHeight = elementWidth/elementWidthToHeight;
+	}
+	var rowCount = Math.ceil(colCount/elementCount);
+
+	console.log(widthContainer+"x"+heightContainer+" = colCount "+colCount)
+	var i, j, len = listings.length;
+	var lm1 = len-1;
+	var spacingX = colCount<=1 ? 0.0 : (widthContainer - (elementWidth*colCount))/(colCount-1);
+	var spacingY = 60;//spacingX;
+	var currentX = 0;
+	var currentY = 0;
+	var row = 0;
+	var rowHeight = elementHeight + spacingY;
+	var colWidth = elementWidth + spacingX;
+	j = 0;
+	for(i=0; i<len; ++i){
+		var listing = listings[i];
+		var container = listing["element"];
+		var img = listing["image"];
+			Code.setStylePosition(img, "absolute");
+			Code.setStyleLeft(img, currentX+"px");
+			Code.setStyleTop(img, currentY+"px");
+			Code.setStyleWidth(img, elementWidth+"px");
+			Code.setStyleHeight(img, elementHeight+"px");
+			//Code.setStyleBackground(img, "#F00");
+		//
+		var title = listing["text"];
+		//title.style.font.size = 32+"px";
+		//title.style.fontsize = 32+"px";
+		Code.setStyleFontWeight(title, "lighter");
+		if(colCount==1){
+			Code.setStyleFontSize(title, 24+"px");
+		}else{
+			Code.setStyleFontSize(title, 16+"px");
+		}
+		Code.setStyleFontFamily(title, "Arial, sans-serif");
+			Code.setStylePadding(title, "4px 0px 0px 0px");
+			Code.setStyleColor(title, "#666");
+			Code.setStyleDisplay(title, "inline-block");
+			Code.setStyleTextAlign(title, "left");
+			Code.setStylePosition(title, "absolute");
+			Code.setStyleLeft(title, currentX+"px");
+			Code.setStyleWidth(title, elementWidth+"px");
+			Code.setStyleTop(title, (currentY+elementHeight)+"px");
+		++j
+		currentX += colWidth;
+		if(j==colCount){
+
+			j = 0;
+			currentX = 0;
+			if(i<lm1){
+				currentY += rowHeight;
+			}
+		}
+	}
+	currentY += rowHeight;
+	// container
+	Code.setStyleHeight(this._container, currentY+"px");
+}
+
 giau.InfoOverlay = function(element){ // Overlay Float Alert
-	console.log("BLA");
-	giau.InfoOverlay._.constructor.call(this);
+	this._jsDispatch = new JSDispatch();
+	//giau.InfoOverlay._.constructor.call(this);
 
 	// SET ROOT ELEMENTimage
 	this._container = Code.getParent(element);
@@ -81,8 +228,8 @@ giau.InfoOverlay = function(element){ // Overlay Float Alert
 	Code.setStyleDisplay(element,"inline-block");
 
 	// LISTENERS
-	this.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
-	//this.addJSEventListener(this._container, Code.JS_EVENT_CLICK, this._handleContainerClickedFxn, this);
+	this._jsDispatch.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
+	//this._jsDispatch.addJSEventListener(this._container, Code.JS_EVENT_CLICK, this._handleContainerClickedFxn, this);
 
 	// SET INITIAL LAYOUT
 	this.updateLayout();
@@ -105,7 +252,8 @@ giau.InfoOverlay.prototype.updateLayout = function(){
 }
 
 giau.ImageGallery = function(element){
-	giau.ImageGallery._.constructor.call(this);
+	//giau.ImageGallery._.constructor.call(this);
+	this._jsDispatch = new JSDispatch();
 
 	// SET ROOT ELEMENT
 	this._container = element;
@@ -146,9 +294,9 @@ giau.ImageGallery = function(element){
 	}
 	
 	// LISTENERS
-	this.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
-	this.addJSEventListener(this._leftButton, Code.JS_EVENT_CLICK, this._handleLeftButtonClickedFxn, this);
-	this.addJSEventListener(this._rightButton, Code.JS_EVENT_CLICK, this._handleRightButtonClickedFxn, this);
+	this._jsDispatch.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
+	this._jsDispatch.addJSEventListener(this._leftButton, Code.JS_EVENT_CLICK, this._handleLeftButtonClickedFxn, this);
+	this._jsDispatch.addJSEventListener(this._rightButton, Code.JS_EVENT_CLICK, this._handleRightButtonClickedFxn, this);
 
 	// INITIALIZE WITH FIRST IMAGE
 	this.nextImage();
@@ -295,14 +443,14 @@ giau.ImageGallery.prototype._updateLayout = function(index){
 			Code.setStyleTop(this._leftButton, 0+"px");
 			Code.setStyleWidth(this._leftButton, "50%");
 			Code.setStyleHeight(this._leftButton, "100%");
-			Code.setStyleBackground(this._leftButton, "rgba(0,255,0,0.5)");
+			//Code.setStyleBackground(this._leftButton, "rgba(0,255,0,0.5)");
 		// RIGHT
 			Code.setStylePosition(this._rightButton, "absolute");
 			Code.setStyleRight(this._rightButton, 0+"px");
 			Code.setStyleTop(this._rightButton, 0+"px");
 			Code.setStyleWidth(this._rightButton, "50%");
 			Code.setStyleHeight(this._rightButton, "100%");
-			Code.setStyleBackground(this._rightButton, "rgba(255,0,0,0.5)");
+			//Code.setStyleBackground(this._rightButton, "rgba(255,0,0,0.5)");
 		// IMAGE CONTAINER
 			// PRIMARY _primaryImageContainer
 			// SECONDARY _secondaryImageContainer
