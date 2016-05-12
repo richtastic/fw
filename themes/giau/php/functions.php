@@ -110,12 +110,16 @@ function create_page(){
 	</div>
 
 	<!-- INFO STATEMENT GROUP -->
-	<div class=""  style="height:400px; background-color: rgba(0,250,5,0.5);">
-		<div class="">info</div>
+	<div class="sectionContainerMissionStatement"  style="background-color: rgba(230,228,222,1.0);">
+		<div class="centeredText ultraImportantText">THROUGH WORSHIP,</div>
+		<div class="centeredText importantText">Bible Study & accountability</div>
+		<div class="centeredText standardText">we strive to provide an environment for our <b>children and youth</b> to experience the grace of God.</div>
+		<div class="centeredText standardText">In addition, we aim to serve <b>parents and entire families</b> as well.</div>
+		<div class="centeredText standardText">More than just a children and youth ministry, our Christian Education department is a <b>family ministry</b></div>
 	</div>
 
 	<!-- PHOTO GALLERY -->
-	<div class=""  style="height:400px; background-color: rgba(255,0,0,0.5);">
+	<div class=""  style="height:400px; background-color: rgba(255,255,255,1.0);">
 		<div class="headerSectionMain">PHOTOS</div>
 	</div>
 

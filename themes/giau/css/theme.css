@@ -12,6 +12,7 @@ body {
 	padding: 0px;
 	margin: 0px;
 	border: 0px;
+	font-family: 'Arial', sans-serif;
 }
 img {
 	padding: 0px;
@@ -160,6 +161,34 @@ ul {
 	padding: 4px;
 }
 
+
+/* MISSION STATEMENT */
+.sectionContainerMissionStatement {
+	padding: 24px;
+}
+.centeredText {
+	text-align: center;
+}
+.ultraImportantText {
+	font-family: 'Arial Black', 'Arial Bold', sans-serif;
+	font-weight: bold;
+	font-size: 36px;
+	color: #333;
+}
+.importantText {
+	font-family: 'Arial Black', 'Arial Bold', sans-serif;
+	font-size: 28px;
+	color: #333;
+}
+.standardText {
+	font-size: 16px;
+	color: #333;
+	padding: 10px;
+}
+.standardText b , .standardText i, .standardText u {
+	font-size: 16px;
+	color: #333;
+}
 
 .bla {
 	border-radius: 50%;
