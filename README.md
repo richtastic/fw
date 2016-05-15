@@ -51,3 +51,9 @@
 ```
 
 
+
+image gallery sizes:
+1) low - loading: 480x270
+2) med - old-phone: 960x540
+3) high - desktop : 1920x1080
+

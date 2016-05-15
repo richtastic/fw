@@ -254,6 +254,7 @@ giau.InfoOverlay.prototype.updateLayout = function(){
 giau.ImageGallery = function(element){
 	//giau.ImageGallery._.constructor.call(this);
 	this._jsDispatch = new JSDispatch();
+	this.optimalImageWidthToHeight = 1920.0/1080.0;
 
 	// SET ROOT ELEMENT
 	this._container = element;
@@ -286,10 +287,12 @@ giau.ImageGallery = function(element){
 	this._currentIndex = null;
 	this._coverElement = null;
 	this._underElement = null;
-	this._images = ["/wordpress/wp-content/themes/giau/img/feature_image_02.jpg","/wordpress/wp-content/themes/giau/img/feature_image_01.jpg"];
+	var imagePrefix = "/wordpress/wp-content/themes/giau/img/gallery_featured";
+	this._images = ["featured_01_opt.png","featured_02_opt.png","featured_03_opt.png","featured_04_opt.png","featured_05_opt.png","featured_06_opt.png"];
 	this._loadedImages = [];
 	var i;
 	for(i=0; i<this._images.length; ++i){
+		this._images[i] = imagePrefix + "/" + this._images[i];
 		this._loadedImages[i] = null;
 	}
 	
@@ -303,11 +306,13 @@ giau.ImageGallery = function(element){
 }
 
 giau.ImageGallery.prototype._handleLeftButtonClickedFxn = function(e,f){
+	if(this._images.length<=1){ return; }
 	if(!this._animating){
 		this.prevImage();
 	}
 }
 giau.ImageGallery.prototype._handleRightButtonClickedFxn = function(e){
+	if(this._images.length<=1){ return; }
 	if(!this._animating){
 		this.nextImage();
 	}

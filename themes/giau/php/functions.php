@@ -89,9 +89,9 @@ function create_page(){
 			</a>
 		</div>
 		<!-- HEADER -->
-		<div class="headerNavigationContainer" style="position:relative;">
+		<div class="headerNavigationContainer" style="position:absolute;">
 			<!-- LOGO -->
-			<div class="organizationLogoContainer" style="display:inline-block; position:absolute; left:0; top:0; "><img class="navigationMenuLogo" src="<?php echo relativePathIMG()."navLogo.png" ?>" /></div>
+			<div class="organizationLogoContainer" style="display:inline-block; position:absolute; left:0; top:0; "><img class="navigationMenuLogo" src="<?php echo relativePathIMG()."logo_fathers_house.png" ?>" /></div>
 			<!-- NAVIGATION -->
 			<div class="navigationContainer" style="display:inline-block; margin: 0 auto; text-align: center;  position:absolute; top:0; ">Home, Departments, Staff, Forms, Directions, Contact Us</div>
 			<!-- LANGUAGE SWITCH -->
@@ -129,16 +129,42 @@ function create_page(){
 	</div>
 
 	<!-- CALENDAR SCHEDULE -->
-	<div class=""  style="height:400px; background-color: rgba(255,0,5,0.5);">
+	<div class=""  style="height:400px; background-color: rgba(0,0,0,0.5);">
 		<div class="">info</div>
 	</div>
+
+	<!-- GOOGLE MAP -->
+	<div class=""  style="background-color: rgba(255,0,5,0.5); text-align:center; width:100%;">
+	<script src='https://maps.googleapis.com/maps/api/js?v=3.exp'></script>
+	<div style='overflow:hidden;height:400px;width:100%; display:inline-block; margin: 0 auto;'>
+		<div id='gmap_canvas' style='height:400px;width:100%;'></div>
+<!-- 		<div><small><a href="http://embedgooglemaps.com">embed google maps</a></small></div>
+		<div><small><a href="http://www.proxysitereviews.com/lime-proxies">lime proxies</a></small></div> -->
+		<style>#gmap_canvas img{max-width:none!important;background:none!important}</style></div>
+		<script type='text/javascript'>
+		function init_map(){var myOptions = {zoom:10,center:new google.maps.LatLng(34.0709617,-118.18122349999999),mapTypeId: google.maps.MapTypeId.ROADMAP};map = new google.maps.Map(document.getElementById('gmap_canvas'), myOptions);marker = new google.maps.Marker({map: map,position: new google.maps.LatLng(34.0709617,-118.18122349999999)});infowindow = new google.maps.InfoWindow({content:'<strong>The Father\'s House</strong><br>2241 N Eastern Ave<br/>Los Angeles, CA 90032<br/>'});google.maps.event.addListener(marker, 'click', function(){infowindow.open(map,marker);});infowindow.open(map,marker);}google.maps.event.addDomListener(window, 'load', init_map);
+		</script>
+	</div>
+
 
 	<!-- DEBUGGING -->
 	<?php echo $pageRequest; ?>
 
 	<!-- FOOTER -->
-	<div class=""  style="height:400px; background-color: #303030;">
-		<div class="">info</div>
+	<div class="sectionContainerFooter" style="background-color: #303030;">
+		<div class="footerElementLogo">
+			<img style="width:150px;" src="<?php echo relativePathIMG()."logo_fathers_house.png" ?>" />
+		</div>
+		<div class="footerElementSocialGrouping">
+			<div class="footerElementSocialItem">f</div>
+			<div class="footerElementSocialItem">t</div>
+			<div class="footerElementSocialItem">i</div>
+			<div class="footerElementSocialItem">e</div>
+		</div>
+		<div class="footerElementTextLine">Los Angeles Presbyterian Church</div>
+		<div class="footerElementTextLine">2241 N. Eastern Ave.</div>
+		<div class="footerElementTextLine">Los Angeles, CA 90032</div>
+		<div class="footerElementBottom"></div>
 	</div>
 	<!-- <?php create_footer(); ?> -->
 	
@@ -153,7 +179,7 @@ function create_navigation($pageList){
 	?>
 	<div class="navigationMenuContainer">
 	<div class="navigationMenuLogoContainer">
-		<img class="navigationMenuLogo" src="<?php echo relativePathIMG()."navLogo.png" ?>" />
+		<img class="navigationMenuLogo" src="<?php echo relativePathIMG()."logo_fathers_house.png" ?>" />
 	</div>
 	<ul><?php
 		foreach($pageList as $pageName){
