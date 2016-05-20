@@ -158,10 +158,14 @@ giau.GalleryListing.prototype.updateLayout = function(){
 		elementWidth = widthContainer;
 		elementHeight = elementWidth/elementWidthToHeight;
 	}
+	var i, j, len = listings.length;
+	if(colCount>len){
+		colCount = len;
+	}
 	var rowCount = Math.ceil(colCount/elementCount);
 
 	console.log(widthContainer+"x"+heightContainer+" = colCount "+colCount)
-	var i, j, len = listings.length;
+	
 	var lm1 = len-1;
 	var spacingX = colCount<=1 ? 0.0 : (widthContainer - (elementWidth*colCount))/(colCount-1);
 	var spacingY = 60;//spacingX;
@@ -258,17 +262,29 @@ giau.ImageGallery = function(element){
 
 	// SET ROOT ELEMENT
 	this._container = element;
+	Code.setStyleOverflow(this._container,"hidden"); // overflow: hidden;
 	
 	// CREATE HIERARCHY
 	this._functionalityContainer = Code.newDiv();
 	this._interactionContainer = Code.newDiv();
 	this._leftButton = Code.newDiv();
 	this._rightButton = Code.newDiv();
+	this._coverContainer = Code.newDiv();
+		this._coverIconLeft = Code.newImage();
+		this._coverIconRight = Code.newImage();
+		this._coverBorderLeft = Code.newImage();
+		this._coverBorderRight = Code.newImage();
+		// A
 	this._primaryImageContainer = Code.newDiv();
 		Code.setStyleLeft(this._primaryImageContainer,0+"px");
 		Code.setStyleTop(this._primaryImageContainer,0+"px");
-		Code.setStylePosition(this._primaryImageContainer, "relative");
+		Code.setStylePosition(this._primaryImageContainer, "absolute");
+		// B
 	this._secondaryImageContainer = Code.newDiv();
+		Code.setStyleLeft(this._secondaryImageContainer,0+"px");
+		Code.setStyleTop(this._secondaryImageContainer,0+"px");
+		Code.setStylePosition(this._secondaryImageContainer, "absolute");
+	
 	this._primaryImageElement = Code.newImage();
 	this._secondaryImageElement = Code.newImage();
 	Code.addChild(this._container,this._functionalityContainer);
@@ -276,6 +292,23 @@ giau.ImageGallery = function(element){
 			Code.addChild(this._secondaryImageContainer,this._secondaryImageElement);
 		Code.addChild(this._functionalityContainer,this._primaryImageContainer);
 			Code.addChild(this._primaryImageContainer,this._primaryImageElement);
+		Code.addChild(this._functionalityContainer,this._coverContainer);
+			Code.addChild(this._coverContainer, this._coverBorderLeft);
+			Code.addChild(this._coverContainer, this._coverBorderRight);
+			Code.addChild(this._coverContainer, this._coverIconLeft);
+			Code.addChild(this._coverContainer, this._coverIconRight);
+			//this._coverBorderLeft
+			if(Code.hasClass(this._container,"giauImageGalleryShowNavigation")){
+				//giauImageGalleryShowNavigation
+				this._coverIconLeft.src = "/wordpress/wp-content/themes/giau/img/gallery_button_left.png";
+				this._coverIconRight.src = "/wordpress/wp-content/themes/giau/img/gallery_button_right.png";
+			}else{
+
+			}
+			this._coverBorderLeft.src = "/wordpress/wp-content/themes/giau/img/gallery_fade_left.png";
+			this._coverBorderRight.src = "/wordpress/wp-content/themes/giau/img/gallery_fade_right.png";
+			//Code.addChild(this._coverContainer, img);
+			//gallery_fade_left
 		Code.addChild(this._functionalityContainer,this._interactionContainer);
 			Code.addChild(this._interactionContainer,this._leftButton);
 			Code.addChild(this._interactionContainer,this._rightButton);
@@ -349,23 +382,39 @@ giau.ImageGallery.prototype.nextImage = function(){
 	return this._loadOrShowImageAtIndex(index,false);
 }
 giau.ImageGallery.prototype._loadOrShowImageAtIndex = function(index, isNext){
-	isNext = isNext!==undefined ? isNext : true;
-	if(index<0 || index>=this._images.length){
+	if(this._isLoadingImage===true){
 		return;
 	}
+	this._isLoadingImage = true;
+	isNext = isNext!==undefined ? isNext : true;
+	if(index<0 || index>=this._images.length){
+		this._isLoadingImage = false;
+		return;
+	}
+	var prev = this._currentIndex;
+	var next = index;
+	console.log("goto: "+prev+" > "+next);
 	if(this._loadedImages[index]==null){
 		// TODO: wait for old requests
 		var imageSource = this._images[index];
 		var self = this;
 		imageLoader = new ImageLoader("",[imageSource], null,function(info){
 			self._handleImageLoaded(info, index);
-			self._currentIndex = index;
+			if(prev!==null){
+				self._updateLayout(prev);
+				self._animateToNewImage(prev,next,isNext);
+			}else{ // 1st time
+				self._currentIndex = index;
+				self._updateLayout(self._currentIndex);
+			}
+			self._isLoadingImage = false;
 		},null);
 		imageLoader.load();
 	}else{
+		this._isLoadingImage = false;
 		this._currentIndex = index;
 		this._updateLayout(this._currentIndex);
-		this._animateToNewImage(isNext);
+		this._animateToNewImage(prev,next,isNext);
 	}
 }
 giau.ImageGallery.ANIMATION_DIRECTION_UNKNOWN = 0;
@@ -374,9 +423,20 @@ giau.ImageGallery.ANIMATION_DIRECTION_TO_RIGHT = 2;
 giau.ImageGallery.ANIMATION_DIRECTION_FADE_IN = 3;
 giau.ImageGallery.ANIMATION_DIRECTION_FADE_OUT = 4;
 
-giau.ImageGallery.prototype._animateToNewImage = function(isRight){
+giau.ImageGallery.prototype._animateToNewImage = function(prevIndex,nextIndex,isRight){
+	this._transitionIndexPrevious = prevIndex;
+	this._transitionIndexNext = nextIndex;
+	this._currentIndex = this._transitionIndexNext;
 	this._animating = true;
 	this._animationDirection = isRight ? giau.ImageGallery.ANIMATION_DIRECTION_TO_RIGHT : giau.ImageGallery.ANIMATION_DIRECTION_TO_LEFT;
+	// SETUP DISPLAY
+	var info;
+	info = this._loadedImages[this._transitionIndexPrevious];
+	Code.setSrc(this._primaryImageElement,info.url);
+	info = this._loadedImages[this._transitionIndexNext];
+	Code.setSrc(this._secondaryImageElement,info.url);
+		
+	// START ANIMATING
 	this._time = 0;
 	this._ticker = new Ticker(20);
 	this._ticker.addFunction(Ticker.EVENT_TICK, this._handleTickerFxn, this);
@@ -400,13 +460,21 @@ giau.ImageGallery.prototype._handleTickerFxn = function(){
 		distance *= -1.0;
 	}
 	Code.setStyleLeft(this._primaryImageContainer,distance+"px");
+	//Code.setStyleLeft(this._primaryImageContainer,Math.round(percent*100.0)+"%");
 	if(this._time>=countMax){
+		// STOP ANIMATION
 		Code.setStyleLeft(this._primaryImageContainer,0+"px");
 		this._animating = false;
 		this._ticker.stop();
 		this._ticker.kill();
 		this._ticker = null;
-		console.log("DONE");
+		// SETUP DISPLAY
+		var info;
+		info = this._loadedImages[this._transitionIndexNext];
+		Code.setSrc(this._primaryImageElement,info.url);
+		Code.setSrc(this._secondaryImageElement,"");
+		this._transitionIndexNext = null;
+		this._transitionIndexPrevious = null;
 	}
 }
 giau.ImageGallery.prototype._handleImageLoaded = function(info, index){
@@ -418,7 +486,7 @@ giau.ImageGallery.prototype._handleImageLoaded = function(info, index){
 	info.url = source;
 	this._loadedImages[index] = info;
 	// update display
-	this._updateLayout(index);
+	//this._updateLayout(index);
 }
 giau.ImageGallery.prototype._updateLayout = function(index){
 	var info = this._loadedImages[index];
@@ -427,13 +495,48 @@ giau.ImageGallery.prototype._updateLayout = function(index){
 		var heightContainer = $(this._container).height();
 			Code.setStyleWidth(this._primaryImageContainer,Math.floor(widthContainer)+"px");
 			Code.setStyleHeight(this._primaryImageContainer,Math.floor(heightContainer)+"px");
-		var img = this._primaryImageElement;
+			Code.setStyleWidth(this._secondaryImageContainer,Math.floor(widthContainer)+"px");
+			Code.setStyleHeight(this._secondaryImageContainer,Math.floor(heightContainer)+"px");
+		//var img = this._primaryImageElement;
 		var size = Code.sizeToFitRectInRect(info.width,info.height, widthContainer,heightContainer);
 		var diffX = widthContainer - size.width;
 		var diffY = heightContainer - size.height;
-		Code.setSrc(img,info.url);
+		var iconButtonWidth = 80;
+		var iconButtonHeight = 80;
+		Code.setSrc(this._primaryImageElement,info.url);
 
 		// FUNCTIONALITY CONTAINER
+			Code.setStylePosition(this._coverContainer, "absolute");
+			Code.setStyleLeft(this._coverContainer, 0+"px");
+			Code.setStyleTop(this._coverContainer, 0+"px");
+			Code.setStyleWidth(this._coverContainer, "100%");
+			Code.setStyleHeight(this._coverContainer, "100%");
+				// LEFT
+				Code.setStylePosition(this._coverBorderLeft, "absolute");
+				Code.setStyleLeft(this._coverBorderLeft, 0+"px");
+				Code.setStyleTop(this._coverBorderLeft, 0+"px");
+				Code.setStyleHeight(this._coverBorderLeft, "100%");
+				Code.setStyleWidth(this._coverBorderLeft, "100px");
+				// RIGHT
+				Code.setStylePosition(this._coverBorderRight, "absolute");
+				Code.setStyleRight(this._coverBorderRight, 0+"px"); // widthContainer
+				Code.setStyleTop(this._coverBorderRight, 0+"px");
+				Code.setStyleHeight(this._coverBorderRight, "100%");
+				Code.setStyleWidth(this._coverBorderRight, "100px");
+				// LEFT - BUTTON
+				if(this._coverIconLeft.src){
+					Code.setStylePosition(this._coverIconLeft, "absolute");
+					Code.setStyleLeft(this._coverIconLeft, "5%");
+					Code.setStyleTop(this._coverIconLeft, ((heightContainer-iconButtonHeight)*0.5)+"px");
+					Code.setStyleHeight(this._coverIconLeft, iconButtonHeight+"px");
+					Code.setStyleWidth(this._coverIconLeft, iconButtonWidth+"px");
+					// RIGHT - BUTTON
+					Code.setStylePosition(this._coverIconRight, "absolute");
+					Code.setStyleRight(this._coverIconRight, "5%");
+					Code.setStyleTop(this._coverIconRight, ((heightContainer-iconButtonHeight)*0.5)+"px");
+					Code.setStyleHeight(this._coverIconRight, iconButtonHeight+"px");
+					Code.setStyleWidth(this._coverIconRight, iconButtonWidth+"px");
+				}
 			// ...
 		// INTERACTION CONTAINER
 			Code.setStylePosition(this._interactionContainer, "absolute");
@@ -460,11 +563,13 @@ giau.ImageGallery.prototype._updateLayout = function(index){
 			// PRIMARY _primaryImageContainer
 			// SECONDARY _secondaryImageContainer
 		// IMAGE
-		Code.setStylePosition(img, "absolute");
-		Code.setStyleWidth(img,Math.round(size.width)+"px");
-		Code.setStyleHeight(img,Math.round(size.height)+"px");
-		Code.setStyleLeft(img,Math.round(diffX*0.5)+"px");
-		Code.setStyleTop(img,Math.round(diffY*0.5)+"px");
+		Code.setStylePosition(this._primaryImageElement, "absolute");
+		Code.setStyleWidth(this._primaryImageElement,Math.round(size.width)+"px");
+		Code.setStyleHeight(this._primaryImageElement,Math.round(size.height)+"px");
+		Code.setStyleLeft(this._primaryImageElement,Math.round(diffX*0.5)+"px");
+		Code.setStyleTop(this._primaryImageElement,Math.round(diffY*0.5)+"px");
+		var primary = Code.getProperty(this._primaryImageElement,"style");
+		Code.setProperty(this._secondaryImageElement, "style", primary);
 		//
 	}
 }

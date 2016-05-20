@@ -121,6 +121,7 @@ function create_page(){
 	<!-- PHOTO GALLERY -->
 	<div class=""  style="height:400px; background-color: rgba(255,255,255,1.0);">
 		<div class="headerSectionMain">PHOTOS</div>
+		<div class="giauImageGallery giauImageGalleryShowNavigation" style="position:relative; width:100%; height:400px;">
 	</div>
 
 	<!-- QUOTE GALLERY -->
@@ -156,10 +157,10 @@ function create_page(){
 			<img style="width:150px;" src="<?php echo relativePathIMG()."logo_fathers_house.png" ?>" />
 		</div>
 		<div class="footerElementSocialGrouping">
-			<div class="footerElementSocialItem">f</div>
-			<div class="footerElementSocialItem">t</div>
-			<div class="footerElementSocialItem">i</div>
-			<div class="footerElementSocialItem">e</div>
+			<img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_facebook.png" ?>" />
+			<img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_twitter.png" ?>" />
+			<img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_instagram.png" ?>" />
+			<img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_email.png" ?>" />
 		</div>
 		<div class="footerElementTextLine">Los Angeles Presbyterian Church</div>
 		<div class="footerElementTextLine">2241 N. Eastern Ave.</div>
