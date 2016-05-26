@@ -143,6 +143,7 @@ giau.GalleryListing.prototype.updateLayout = function(){
 	console.log("updateLayout");
 	var listings = this._galleryList;
 
+	var maximumColumnCount = 3;
 	var elementMinWidth = 292;
 	var elementMaxWidth = 196;
 	var widthContainer = $(this._container).width();
@@ -161,6 +162,9 @@ giau.GalleryListing.prototype.updateLayout = function(){
 	var i, j, len = listings.length;
 	if(colCount>len){
 		colCount = len;
+	}
+	if(colCount>maximumColumnCount){
+		colCount = maximumColumnCount;
 	}
 	var rowCount = Math.ceil(colCount/elementCount);
 
@@ -313,10 +317,19 @@ giau.ImageGallery = function(element){
 			Code.addChild(this._interactionContainer,this._leftButton);
 			Code.addChild(this._interactionContainer,this._rightButton);
 			
-	
+	this._isLoadingImage = false;
 	this._animating = false;
-	this._ticker = null;
+	this._animatonTicker = null;
+	this._automatedTicker = null;
+	this._isAutomated = false;
+	if(Code.hasClass(this._container,"giauImageGalleryAutomated")){
+		this._isAutomated = true;
+		this._automatedTicker = new Ticker(6000);
+		this._automatedTicker.addFunction(Ticker.EVENT_TICK, this._handleAutomatedTickerFxn, this);
+		this._automatedTicker.start();
+	}
 	
+
 	this._currentIndex = null;
 	this._coverElement = null;
 	this._underElement = null;
@@ -336,6 +349,12 @@ giau.ImageGallery = function(element){
 
 	// INITIALIZE WITH FIRST IMAGE
 	this.nextImage();
+}
+
+giau.ImageGallery.prototype._handleAutomatedTickerFxn = function(){
+	this._automatedTicker.stop();
+	this._handleRightButtonClickedFxn();
+	this._automatedTicker.start();
 }
 
 giau.ImageGallery.prototype._handleLeftButtonClickedFxn = function(e,f){
@@ -393,7 +412,6 @@ giau.ImageGallery.prototype._loadOrShowImageAtIndex = function(index, isNext){
 	}
 	var prev = this._currentIndex;
 	var next = index;
-	console.log("goto: "+prev+" > "+next);
 	if(this._loadedImages[index]==null){
 		// TODO: wait for old requests
 		var imageSource = this._images[index];
@@ -438,9 +456,9 @@ giau.ImageGallery.prototype._animateToNewImage = function(prevIndex,nextIndex,is
 		
 	// START ANIMATING
 	this._time = 0;
-	this._ticker = new Ticker(20);
-	this._ticker.addFunction(Ticker.EVENT_TICK, this._handleTickerFxn, this);
-	this._ticker.start();
+	this._animatonTicker = new Ticker(20);
+	this._animatonTicker.addFunction(Ticker.EVENT_TICK, this._handleTickerFxn, this);
+	this._animatonTicker.start();
 }
 giau.ImageGallery.prototype._handleTickerFxn = function(){
 	this._time = this._time!==undefined ? this._time : 0;
@@ -465,9 +483,9 @@ giau.ImageGallery.prototype._handleTickerFxn = function(){
 		// STOP ANIMATION
 		Code.setStyleLeft(this._primaryImageContainer,0+"px");
 		this._animating = false;
-		this._ticker.stop();
-		this._ticker.kill();
-		this._ticker = null;
+		this._animatonTicker.stop();
+		this._animatonTicker.kill();
+		this._animatonTicker = null;
 		// SETUP DISPLAY
 		var info;
 		info = this._loadedImages[this._transitionIndexNext];

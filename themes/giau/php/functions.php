@@ -71,13 +71,13 @@ function create_page(){
 		</script>
 		<meta name="viewport" content="width=device-width, initial-scale=1" maximum-scale=1>
 	</head>
-	<body style="bgColor:#F00;">
+	<body style="bgColor:#F00; max-width:1000px; margin: 0 auto;">
 
 	<!-- HEADER NAVIGATION -->
 	<!-- <?php create_navigation($pageList); ?> -->
 
 	<!-- FEATURE IMAGE -->
-	<div class="featurePresentationContainer giauImageGallery" style="">
+	<div class="featurePresentationContainer giauImageGallery giauImageGalleryAutomated" style="">
 		<!-- FEATURE INFO OVERLAY -->
 		<div class="featureInfoOverlay giauInfoOverlay" style="">
 			<div class="featureInfoOverlayTitle" style="margin: 0 auto; ">JOIN US FOR WORSHIP</div>
@@ -93,9 +93,9 @@ function create_page(){
 			<!-- LOGO -->
 			<div class="organizationLogoContainer" style="display:inline-block; position:absolute; left:0; top:0; "><img class="navigationMenuLogo" src="<?php echo relativePathIMG()."logo_fathers_house.png" ?>" /></div>
 			<!-- NAVIGATION -->
-			<div class="navigationContainer" style="display:inline-block; margin: 0 auto; text-align: center;  position:absolute; top:0; ">Home, Departments, Staff, Forms, Directions, Contact Us</div>
+			<!-- <div class="navigationContainer" style="display:inline-block; margin: 0 auto; text-align: center;  position:absolute; top:0; ">Home, Departments, Staff, Forms, Directions, Contact Us</div> -->
 			<!-- LANGUAGE SWITCH -->
-			<div class="languageSwitchContainer" style="display:inline-block; position:absolute; right:0; top:0;  ">EN | 한국어</div>
+			<!-- <div class="languageSwitchContainer" style="display:inline-block; position:absolute; right:0; top:0;  ">EN | 한국어</div> -->
 		</div>
 	</div>
 
@@ -125,14 +125,27 @@ function create_page(){
 	</div>
 
 	<!-- QUOTE GALLERY -->
+<!--
 	<div class=""  style="height:400px; background-color: rgba(0,255,255,0.5);">
 		<div class="">quotes</div>
 	</div>
-
+-->
 	<!-- CALENDAR SCHEDULE -->
+<!--
 	<div class=""  style="height:400px; background-color: rgba(0,0,0,0.5);">
 		<div class="">info</div>
 	</div>
+May 1: Children's Day Joint Worship 11:00 AM
+May 7: Love Festival for people with developmental disabilities
+May 8: Mothers' Day Celebration
+May 15: Annual Teachers' Day Luncheon 12:30 PM @ Patio
+June 10: Bi-Monthly Parents/Teachers' Prayer Meeting
+June 17~19: Vacation Bible School: Cave Quest
+June 26: CE Graduation
+July 1~8: Short-Term Summer Mission: Navajo Reservation in Arizona
+July 31~August 3: Junior High Summer Retreat @ Tahquitz Pines
+July 31~August 3: High School Summer Retreat @ Lake Arrowhead
+	-->
 
 	<!-- GOOGLE MAP -->
 	<div class=""  style="background-color: rgba(255,0,5,0.5); text-align:center; width:100%;">
@@ -157,10 +170,10 @@ function create_page(){
 			<img style="width:150px;" src="<?php echo relativePathIMG()."logo_fathers_house.png" ?>" />
 		</div>
 		<div class="footerElementSocialGrouping">
-			<img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_facebook.png" ?>" />
-			<img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_twitter.png" ?>" />
-			<img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_instagram.png" ?>" />
-			<img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_email.png" ?>" />
+		<a href="https://www.facebook.com/thefathershouse.lacpc"><img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_facebook.png" ?>" /></a>
+		<a href="https://twitter.com/thefathersh0use?lang=en"><img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_twitter.png" ?>" /></a>
+			<img class="footerElementSocialItem" style="opacity: 0.25;" src="<?php echo relativePathIMG()."social/icon_footer_instagram.png" ?>" />
+			<a href="mailto:ce@lacpc.org"><img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_email.png" ?>" /></a>
 		</div>
 		<div class="footerElementTextLine">Los Angeles Presbyterian Church</div>
 		<div class="footerElementTextLine">2241 N. Eastern Ave.</div>
