@@ -304,13 +304,13 @@ giau.ImageGallery = function(element){
 			//this._coverBorderLeft
 			if(Code.hasClass(this._container,"giauImageGalleryShowNavigation")){
 				//giauImageGalleryShowNavigation
-				this._coverIconLeft.src = "/wordpress/wp-content/themes/giau/img/gallery_button_left.png";
-				this._coverIconRight.src = "/wordpress/wp-content/themes/giau/img/gallery_button_right.png";
+				this._coverIconLeft.src = GLOBAL_SERVER_IMAGE_PATH+"/gallery_button_left.png";
+				this._coverIconRight.src = GLOBAL_SERVER_IMAGE_PATH+"gallery_button_right.png";
 			}else{
 
 			}
-			this._coverBorderLeft.src = "/wordpress/wp-content/themes/giau/img/gallery_fade_left.png";
-			this._coverBorderRight.src = "/wordpress/wp-content/themes/giau/img/gallery_fade_right.png";
+			this._coverBorderLeft.src = GLOBAL_SERVER_IMAGE_PATH+"/gallery_fade_left.png";
+			this._coverBorderRight.src = GLOBAL_SERVER_IMAGE_PATH+"/gallery_fade_right.png";
 			//Code.addChild(this._coverContainer, img);
 			//gallery_fade_left
 		Code.addChild(this._functionalityContainer,this._interactionContainer);
@@ -333,7 +333,7 @@ giau.ImageGallery = function(element){
 	this._currentIndex = null;
 	this._coverElement = null;
 	this._underElement = null;
-	var imagePrefix = "/wordpress/wp-content/themes/giau/img/gallery_featured";
+	var imagePrefix = GLOBAL_SERVER_IMAGE_PATH+"/gallery_featured";
 	this._images = ["featured_01_opt.png","featured_02_opt.png","featured_03_opt.png","featured_04_opt.png","featured_05_opt.png","featured_06_opt.png"];
 	this._loadedImages = [];
 	var i;
@@ -624,7 +624,7 @@ giau.ImageGallery2 = function (element){
 
 	//var img = $(element).prepend('<img style="width:100px; height:100px" src="/wordpress/wp-content/themes/giau/img/feature_image_01.jpg" />');
 
-	var img = $('<img>', {"src":"/wordpress/wp-content/themes/giau/img/feature_image_01.jpg"});
+	var img = $('<img>', {"src":(GLOBAL_SERVER_IMAGE_PATH+"/feature_image_01.jpg")});
 	$(img).bind('load', function(){console.log("image loaded"); console.log(img[0].src);} );
 	img.appendTo(element)
 

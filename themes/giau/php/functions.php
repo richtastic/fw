@@ -56,6 +56,7 @@ function create_page(){
 		<script rel="text/javascript" src="<?php echo $fileJavaScriptMain; ?>"></script>
 		<script type="text/javascript">
 			// START
+				GLOBAL_SERVER_IMAGE_PATH = "<?php echo relativePathIMG(); ?>";
 				$(document).ready( function(){
 					var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
 						var g = new giau();
@@ -84,9 +85,9 @@ function create_page(){
 			<div></div>
 			<div class="featureInfoOverlaySubtitle">Every Sunday at 11:00 a.m.</div>
 			<div></div>
-			<a href="http://www.google.com">
+			<!-- <a href="http://www.google.com"> -->
 			<div class="featureInfoOverlayButton" style="" >Directions</div>
-			</a>
+			<!-- </a> -->
 		</div>
 		<!-- HEADER -->
 		<div class="headerNavigationContainer" style="position:absolute;">
