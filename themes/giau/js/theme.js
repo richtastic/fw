@@ -31,6 +31,13 @@ giau.prototype.initialize = function(){
 		var listing = new giau.GalleryListing(element);
 	});
 
+	// CALENDARS
+	var calendarListings = $(".giauCalendarList");
+	calendarListings.each(function(index, element){
+		var listing = new giau.CalendarView(element);
+	});
+	
+
 	// // INFO FLOATERS
 	// var imageGalleries = $(".giauElementFloater");
 	// imageGalleries.each(function(index, element){
@@ -598,8 +605,128 @@ giau.ImageGallery.prototype._updateLayout = function(index){
 
 
 
-
-
+giau.CalendarView = function(element){
+	var eventList = [];
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 5, 1, 11, 0, 0, 0),
+		"duration": 0,
+		"title": "Children's Day",
+		"description": "Joint Worship 11:00 AM",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 5, 7, 0, 0, 0, 0),
+		"duration": 0,
+		"title": "Love Festival",
+		"description": "Love Festival for people with developmental disabilities",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 5, 8, 0, 0, 0, 0),
+		"duration": 0,
+		"title": "Mothers' Day",
+		"description": "Mothers' Day Celebration",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 5, 15, 12, 30, 0, 0),
+		"duration": 0,
+		"title": "Teachers' Day",
+		"description": "Annual Teachers' Day Luncheon 12:30 PM @ Patio",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 6, 10, 0, 0, 0, 0),
+		"duration": 0,
+		"title": "Prayer Meeting",
+		"description": "Bi-Monthly Parents/Teachers' Prayer Meeting",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 6, 17, 0, 0, 0, 0),
+		"duration": 2*24*60*60*1000,
+		"title": "Vacation Bible School",
+		"description": "Vacation Bible School: Cave Quest",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 6, 26, 0, 0, 0, 0),
+		"duration": 0,
+		"title": "CE Graduation",
+		"description": "CE Graduation",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 7, 1, 0, 0, 0, 0),
+		"duration": 7*24*60*60*1000,
+		"title": "Short-Term Summer Mission",
+		"description": "Navajo Reservation in Arizona",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 7, 31, 0, 0, 0, 0),
+		"duration": 4*24*60*60*1000,
+		"title": "Junior High Summer Retreat",
+		"description": "@ Tahquitz Pines",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 7, 31, 0, 0, 0, 0),
+		"duration": 4*24*60*60*1000,
+		"title": "High School Summer Retreat",
+		"description": "@ Lake Arrowhead",
+	});
+	/*
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 5, 7, 0, 0, 0, 0),
+		"duration": 0,
+		"title": "",
+		"description": "",
+	});
+	*/
+	/*
+May 1: Children's Day Joint Worship 11:00 AM
+May 7: Love Festival for people with developmental disabilities
+May 8: Mothers' Day Celebration
+May 15: Annual Teachers' Day Luncheon 12:30 PM @ Patio
+June 10: Bi-Monthly Parents/Teachers' Prayer Meeting
+June 17~19: Vacation Bible School: Cave Quest
+June 26: CE Graduation
+July 1~8: Short-Term Summer Mission: Navajo Reservation in Arizona
+July 31~August 3: Junior High Summer Retreat @ Tahquitz Pines
+July 31~August 3: High School Summer Retreat @ Lake Arrowhead
+*/
+	var i, len=eventList.length;
+	for(i=0;i<len;++i){
+		var event = eventList[i];
+		var start = event.start;
+		var duration = event.duration;
+		var date = Code.getTimeFromTimeStamp(start);
+		var stamp = Code.getTimeStamp(date);
+		console.log( this.formatTimeHumanReadable(date, duration) );
+	}
+// Code.getTimeStamp
+//Code.getTimeMilliseconds();
+//Code.getTimeZone = function(){
+}
+giau.CalendarView.prototype.formatTimeHumanReadable = function(timestamp, duration){
+	var date1 = new Date(timestamp);
+		var month1 = Code.monthsLong[date1.getMonth()];
+		var day1 = date1.getDate();
+		var dow1 = Code.daysOfWeekLong[date1.getDay()];
+		var hour1 = date1.getHours();
+		var min1 = date1.getMinutes();
+		var ampm1 = "AM"
+		if(hour1 >= 12){
+			ampm1 = "PM";
+			if(hour1 >= 13){
+				hour1 -= 12;
+			}
+		}
+	if(duration==0){
+		return ""+dow1+", "+month1+" "+day1+" @ "+hour1+":"+Code.prependFixed(""+min1,"0",2)+" "+ampm1;
+	}else{
+		var date2 = new Date(timestamp + duration);
+		var month2 = Code.monthsLong[date2.getMonth()];
+		var day2 = date2.getDate();
+		var dow2 = Code.daysOfWeekLong[date2.getDay()];
+		var hour2 = date2.getHours();
+		var min2 = date2.getMinutes();
+		return ""+month1+" "+day1+" - "+month2+" "+day2;
+	}
+	return null;
+}
 
 
 

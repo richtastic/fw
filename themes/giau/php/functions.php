@@ -101,6 +101,15 @@ function create_page(){
 	</div>
 
 
+	<!-- CALENDAR EVENTS -->
+	<div class="sectionContainerDepartments" style="background-color: rgba(255,255,255,1.0);">
+		<div class="headerSectionMain">UPCOMING EVENTS</div>
+		<div class="departmentInternalContainer">
+			<div class="giauCalendarList"></div>
+		</div>
+		<div class="footerSectionMain"></div>
+	</div>
+
 	<!-- DEPARTMENTS -->
 	<div class="sectionContainerDepartments" style="background-color: rgba(255,255,255,1.0);">
 		<div class="headerSectionMain">DEPARTMENTS</div>
