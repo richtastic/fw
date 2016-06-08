@@ -72,7 +72,7 @@ function create_page(){
 		</script>
 		<meta name="viewport" content="width=device-width, initial-scale=1" maximum-scale=1>
 	</head>
-	<body style="bgColor:#F00; max-width:1000px; margin: 0 auto;">
+	<body style="bgColor:#F00; margin: 0 auto;">
 
 	<!-- HEADER NAVIGATION -->
 	<!-- <?php create_navigation($pageList); ?> -->
@@ -102,7 +102,7 @@ function create_page(){
 
 
 	<!-- CALENDAR EVENTS -->
-	<div class="sectionContainerDepartments" style="background-color: rgba(255,255,255,1.0);">
+	<div class="sectionContainerDepartments limitedWidth" style="background-color: rgba(255,255,255,1.0);">
 		<div class="headerSectionMain">UPCOMING EVENTS</div>
 		<div class="departmentInternalContainer">
 			<div class="giauCalendarList"></div>
@@ -111,7 +111,7 @@ function create_page(){
 	</div>
 
 	<!-- DEPARTMENTS -->
-	<div class="sectionContainerDepartments" style="background-color: rgba(255,255,255,1.0);">
+	<div class="sectionContainerDepartments limitedWidth" style="background-color: rgba(255,255,255,1.0);">
 		<div class="headerSectionMain">DEPARTMENTS</div>
 		<div class="departmentInternalContainer">
 			<div class="giauCategoryListing"></div>
@@ -120,7 +120,7 @@ function create_page(){
 	</div>
 
 	<!-- INFO STATEMENT GROUP -->
-	<div class="sectionContainerMissionStatement"  style="background-color: rgba(230,228,222,1.0);">
+	<div class="sectionContainerMissionStatement limitedWidth"  style="background-color: rgba(230,228,222,1.0);">
 		<div class="centeredText ultraImportantText">THROUGH WORSHIP,</div>
 		<div class="centeredText importantText">Bible Study & accountability</div>
 		<div class="centeredText standardText">we strive to provide an environment for our <b>children and youth</b> to experience the grace of God.</div>
@@ -129,9 +129,9 @@ function create_page(){
 	</div>
 
 	<!-- PHOTO GALLERY -->
-	<div class=""  style="height:400px; background-color: rgba(255,255,255,1.0);">
+	<div class="limitedWidth"  style="height:400px; background-color: rgba(255,255,255,1.0);">
 		<div class="headerSectionMain">PHOTOS</div>
-		<div class="giauImageGallery giauImageGalleryShowNavigation" style="position:relative; width:100%; height:400px;">
+		<div class="giauImageGallery giauImageGalleryShowNavigation" style="position:relative; width:100%; height:400px;"></div>
 	</div>
 
 	<!-- QUOTE GALLERY -->
@@ -158,7 +158,7 @@ July 31~August 3: High School Summer Retreat @ Lake Arrowhead
 	-->
 
 	<!-- GOOGLE MAP -->
-	<div class=""  style="background-color: rgba(255,0,5,0.5); text-align:center; width:100%;">
+	<div class="limitedWidth"  style="background-color: rgba(255,0,5,0.5); text-align:center; width:100%;">
 	<script src='https://maps.googleapis.com/maps/api/js?v=3.exp'></script>
 	<div style='overflow:hidden;height:400px;width:100%; display:inline-block; margin: 0 auto;'>
 		<div id='gmap_canvas' style='height:400px;width:100%;'></div>
@@ -169,7 +169,6 @@ July 31~August 3: High School Summer Retreat @ Lake Arrowhead
 		function init_map(){var myOptions = {zoom:10,center:new google.maps.LatLng(34.0709617,-118.18122349999999),mapTypeId: google.maps.MapTypeId.ROADMAP};map = new google.maps.Map(document.getElementById('gmap_canvas'), myOptions);marker = new google.maps.Marker({map: map,position: new google.maps.LatLng(34.0709617,-118.18122349999999)});infowindow = new google.maps.InfoWindow({content:'<strong>The Father\'s House</strong><br>2241 N Eastern Ave<br/>Los Angeles, CA 90032<br/>'});google.maps.event.addListener(marker, 'click', function(){infowindow.open(map,marker);});infowindow.open(map,marker);}google.maps.event.addDomListener(window, 'load', init_map);
 		</script>
 	</div>
-
 
 	<!-- DEBUGGING -->
 	<?php echo $pageRequest; ?>

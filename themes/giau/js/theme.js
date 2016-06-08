@@ -606,6 +606,7 @@ giau.ImageGallery.prototype._updateLayout = function(index){
 
 
 giau.CalendarView = function(element){
+	this._container = element;
 	var eventList = [];
 	eventList.push({
 		"start": Code.getTimeStamp(2016, 5, 1, 11, 0, 0, 0),
@@ -687,14 +688,90 @@ July 1~8: Short-Term Summer Mission: Navajo Reservation in Arizona
 July 31~August 3: Junior High Summer Retreat @ Tahquitz Pines
 July 31~August 3: High School Summer Retreat @ Lake Arrowhead
 */
+	var container = this._container;
 	var i, len=eventList.length;
+	var todayNowMilliseconds = Code.getTimeMilliseconds(true);
 	for(i=0;i<len;++i){
 		var event = eventList[i];
 		var start = event.start;
 		var duration = event.duration;
 		var date = Code.getTimeFromTimeStamp(start);
+
+		var end = date + duration;
+		// don't display past events
+		var timeCutOff = todayNowMilliseconds - 30*24*60*60*1000; // 1 week previous
+		var titleColor = "#000000";
+		var descriptionColor = "#333";
+		var backgroundColor = "#EEEEEE";
+
+		if(end<timeCutOff){
+			continue;
+		}
+		if(end<todayNowMilliseconds){
+			backgroundColor = "#F5F5F5";
+			titleColor = "#999";
+			descriptionColor = "#999";
+		}
+
+		
 		var stamp = Code.getTimeStamp(date);
-		console.log( this.formatTimeHumanReadable(date, duration) );
+		var displayDate = this.formatTimeHumanReadable(date, duration);
+		var displayTitle = event.title;
+		var displayDescription = event.description;
+		
+		var div;
+		div = Code.newDiv();
+			//Code.setStyleWidth(div,"100%");
+			Code.setStyleMargin(div,"0");
+			Code.setStyleDisplay(div,"block");
+			Code.setStyleTextAlign(div,"center");
+			Code.setStylePadding(div,"10px 10px 10px 10px");
+			Code.setStyleBackground(div,backgroundColor);
+			Code.setStyleMargin(div,"0px 0px 12px 0px");
+			Code.addChild(container,div);
+		var cont = div;
+		// LEFT
+		div = Code.newDiv();
+			Code.setContent(div, displayTitle);
+			Code.setStyleDisplay(div,"inline-block");
+			Code.setStyleWidth(div,"30%");
+			Code.setStyleFontSize(div,"18px");
+			Code.setStyleTextAlign(div,"left");
+			Code.setStyleFontWeight(div,"bold");
+			Code.setStyleColor(div,titleColor);
+			Code.setStyleVerticalAlign(div,"top");
+			//Code.setStyleWidth(div,"30%");
+			Code.addChild(cont,div);
+		// DIV
+			div = Code.newDiv();
+			Code.setStyleDisplay(div,"inline-block");
+			Code.setStyleWidth(div,"5%");
+			Code.addChild(cont,div);
+		// CENTER
+		div = Code.newDiv();
+			Code.setContent(div, displayDescription);
+			Code.setStyleDisplay(div,"inline-block");
+			Code.setStyleWidth(div,"30%");
+			Code.setStyleFontSize(div,"12px");
+			Code.setStyleTextAlign(div,"left");
+			Code.setStyleColor(div,descriptionColor);
+			Code.setStyleVerticalAlign(div,"top");
+			Code.addChild(cont,div);
+		// DIV
+			div = Code.newDiv();
+			Code.setStyleDisplay(div,"inline-block");
+			Code.setStyleWidth(div,"5%");
+			Code.addChild(cont,div);
+		// RIGHT
+		div = Code.newDiv();
+			Code.setContent(div, displayDate);
+			Code.setStyleDisplay(div,"inline-block");
+			Code.setStyleWidth(div,"30%");
+			Code.setStyleFontSize(div,"12px");
+			Code.setStyleTextAlign(div,"right");
+			Code.setStyleColor(div,descriptionColor);
+			Code.setStyleVerticalAlign(div,"top");
+			Code.addChild(cont,div);
 	}
 // Code.getTimeStamp
 //Code.getTimeMilliseconds();
