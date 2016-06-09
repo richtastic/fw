@@ -13,6 +13,13 @@ giau.prototype.initialize = function(){
 	console.log("loaded");
 	// GLOBAL EVENTS
 
+	// NAVIGATION
+	var navigationLists = $(".giauNavigationItemList");
+	navigationLists.each(function(index, element){
+		var navigation = new giau.NavigationList(element);
+	});
+	
+
 	// IMAGE GALLERIES
 	var imageGalleries = $(".giauImageGallery");
 	imageGalleries.each(function(index, element){
@@ -229,6 +236,44 @@ giau.GalleryListing.prototype.updateLayout = function(){
 	currentY += rowHeight;
 	// container
 	Code.setStyleHeight(this._container, currentY+"px");
+}
+
+giau.NavigationList = function(element){
+	this._container = element;//Code.getParent(element);
+	var contents = Code.getContent(this._container);
+	console.log("navigation: "+contents);
+	var menuItems = contents.split(",");
+	var i, len = menuItems.length;
+	for(i=0; i<len; ++i){
+		menuItems[i] = menuItems[i].trim();
+	}
+	console.log(menuItems);
+	//console.log("navigation: "+contents);
+	var optionElementList = [];
+	var div;
+	Code.emptyDom(this._container);
+	for(i=0; i<len; ++i){
+		div = Code.newDiv();
+		Code.setContent(div,menuItems[i]);
+		Code.setStyleDisplay(div,"inline-block");
+		Code.setStylePadding(div,"10px");
+		Code.setStyleColor(div,"#FFF");
+		Code.setStyleFontFamily(div,"'siteThemeRegular'");
+		Code.addStyle(div,"text-shadow: 0px 0px 3px rgba(0,0,0, 1.0);");
+		Code.addChild(this._container,div);
+		optionElementList.push(div);
+	}
+	div = Code.newDiv();
+		Code.setContent(div,"HOME");
+		Code.setStyleDisplay(div,"inline-block");
+		Code.setStylePosition(div,"absolute");
+		Code.setStyleBorder(div,"solid");
+		Code.setStyleBorderWidth(div,"2px");
+		Code.setStyleBorderColor(div,"#FFF");
+		Code.addStyle(div,"top:0px; left:0px;");
+		Code.addChild(this._container,div);
+	this._selectedHighlight = div;
+	
 }
 
 giau.InfoOverlay = function(element){ // Overlay Float Alert
@@ -737,7 +782,8 @@ July 31~August 3: High School Summer Retreat @ Lake Arrowhead
 			Code.setStyleWidth(div,"30%");
 			Code.setStyleFontSize(div,"18px");
 			Code.setStyleTextAlign(div,"left");
-			Code.setStyleFontWeight(div,"bold");
+			//Code.setStyleFontWeight(div,"bold");
+			Code.addClass(div,"calendarEventListItemTitle");
 			Code.setStyleColor(div,titleColor);
 			Code.setStyleVerticalAlign(div,"top");
 			//Code.setStyleWidth(div,"30%");
@@ -754,6 +800,7 @@ July 31~August 3: High School Summer Retreat @ Lake Arrowhead
 			Code.setStyleWidth(div,"30%");
 			Code.setStyleFontSize(div,"12px");
 			Code.setStyleTextAlign(div,"left");
+			Code.addClass(div,"calendarEventListItemDescription");
 			Code.setStyleColor(div,descriptionColor);
 			Code.setStyleVerticalAlign(div,"top");
 			Code.addChild(cont,div);
@@ -769,6 +816,7 @@ July 31~August 3: High School Summer Retreat @ Lake Arrowhead
 			Code.setStyleWidth(div,"30%");
 			Code.setStyleFontSize(div,"12px");
 			Code.setStyleTextAlign(div,"right");
+			Code.addClass(div,"calendarEventListItemDate");
 			Code.setStyleColor(div,descriptionColor);
 			Code.setStyleVerticalAlign(div,"top");
 			Code.addChild(cont,div);

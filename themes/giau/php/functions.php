@@ -92,11 +92,12 @@ function create_page(){
 		<!-- HEADER -->
 		<div class="headerNavigationContainer" style="position:absolute;">
 			<!-- LOGO -->
-			<div class="organizationLogoContainer" style="display:inline-block; position:absolute; left:0; top:0; "><img class="navigationMenuLogo" src="<?php echo relativePathIMG()."logo_fathers_house.png" ?>" /></div>
-			<!-- NAVIGATION -->
-			<!-- <div class="navigationContainer" style="display:inline-block; margin: 0 auto; text-align: center;  position:absolute; top:0; ">Home, Departments, Staff, Forms, Directions, Contact Us</div> -->
+			<div class="organizationLogoContainer" style="display:inline-block; float:left; left:0; top:0; "><img class="navigationMenuLogo" src="<?php echo relativePathIMG()."logo_fathers_house.png" ?>" /></div>
 			<!-- LANGUAGE SWITCH -->
-			<!-- <div class="languageSwitchContainer" style="display:inline-block; position:absolute; right:0; top:0;  ">EN | 한국어</div> -->
+			<div class="languageSwitchContainer" style="display:inline-block; float:right; padding:10px;">EN | 한국어</div>
+			<!-- NAVIGATION -->
+			<div class="giauNavigationItemList navigationContainer" style="display:inline-block; position:relative; text-align: center; float:right; padding:2px;" >Home, Departments, Staff, Forms, Directions, Contact Us</div>
+			
 		</div>
 	</div>
 
@@ -140,22 +141,6 @@ function create_page(){
 		<div class="">quotes</div>
 	</div>
 -->
-	<!-- CALENDAR SCHEDULE -->
-<!--
-	<div class=""  style="height:400px; background-color: rgba(0,0,0,0.5);">
-		<div class="">info</div>
-	</div>
-May 1: Children's Day Joint Worship 11:00 AM
-May 7: Love Festival for people with developmental disabilities
-May 8: Mothers' Day Celebration
-May 15: Annual Teachers' Day Luncheon 12:30 PM @ Patio
-June 10: Bi-Monthly Parents/Teachers' Prayer Meeting
-June 17~19: Vacation Bible School: Cave Quest
-June 26: CE Graduation
-July 1~8: Short-Term Summer Mission: Navajo Reservation in Arizona
-July 31~August 3: Junior High Summer Retreat @ Tahquitz Pines
-July 31~August 3: High School Summer Retreat @ Lake Arrowhead
-	-->
 
 	<!-- GOOGLE MAP -->
 	<div class="limitedWidth"  style="background-color: rgba(255,0,5,0.5); text-align:center; width:100%;">
