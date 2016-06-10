@@ -1,0 +1,20 @@
+Leaf/Nursery:
+#b9cc33
+
+Duck/Kindergarten
+#fee600
+
+Apple/Elementary:
+#f15a29
+
+Pencil/Jr High
+#b81e70
+
+Book/High School
+#3a1955
+
+Yinyang/Korean:
+#c92127
+
+
+
