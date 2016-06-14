@@ -57,3 +57,41 @@ image gallery sizes:
 2) med - old-phone: 960x540
 3) high - desktop : 1920x1080
 
+
+## box testing
+```
+rm -r /repos/ff
+rm -r /repos/fw
+cp -r /media/sf_zirbr001/dev/extRepos/ff /repos
+cp -r /media/sf_zirbr001/dev/extRepos/fw /repos
+
+chmod -R 777 /repos/ff
+chmod -R 777 /repos/fw
+
+ln -s /repos/ff/src/code /repos/fw/themes/giau/js/
+```
+
+
+## lftp
+```
+lftp
+open -u USERNAME,PASSWORD  ftp.lacpc.org
+# GOTO
+cd www/ce/wp-content/themes
+lcd /media/sf_zirbr001/dev/extRepos/fw/themes/
+# COPY GIAU
+rm -rf ./giau
+mirror -R giau giau
+# COPY FF
+cd /www/ce/wp-content/themes/giau/js
+lcd /media/sf_zirbr001/dev/extRepos/ff/src
+# COPY CODE
+mirror -R code code
+# CHMOD READ ACCESS:
+cd /www/ce/wp-content/themes/
+chmod -R 755 giau/
+```
+
+
+
+
