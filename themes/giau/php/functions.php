@@ -96,7 +96,7 @@ function create_page(){
 			<!-- LANGUAGE SWITCH -->
 			<div class="languageSwitchContainer" style="display:inline-block; float:right; padding:10px;">EN | 한국어</div>
 			<!-- NAVIGATION -->
-			<div class="giauNavigationItemList navigationContainer" style="display:inline-block; position:relative; text-align: center; float:right; padding:2px;" >Home, Departments, Staff, Forms, Directions, Contact Us</div>
+			<div class="giauNavigationItemList navigationContainer" style="display:inline-block; position:relative; text-align: center; float:right; padding:6px;" >Home, Departments, Staff, Forms, Directions, Contact Us</div>
 			
 		</div>
 	</div>

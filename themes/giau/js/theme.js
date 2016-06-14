@@ -191,37 +191,37 @@ giau.GalleryListing = function(element){
 	listings.push({
 		"title":"Nursery",
 		"shading_color":0x99b9cc33,
-		"icon_url":departmentImagePrefix+"icon_leaf.png"),
+		"icon_url":(departmentImagePrefix+"icon_leaf.png"),
 		"image_url":(departmentImagePrefix+"nursery.jpg"),
 	});
 	listings.push({
 		"title":"Kindergarten",
 		"shading_color":0x99fee600,
-		"icon_url":departmentImagePrefix+"icon_duck.png"),
+		"icon_url":(departmentImagePrefix+"icon_duck.png"),
 		"image_url":(departmentImagePrefix+"kindergarten.jpg"),
 	});
 	listings.push({
 		"title":"Elementary",
 		"shading_color":0x99f15a29,
-		"icon_url":departmentImagePrefix+"icon_apple.png"),
+		"icon_url":(departmentImagePrefix+"icon_apple.png"),
 		"image_url":(departmentImagePrefix+"elementary.jpg"),
 	});
 	listings.push({
 		"title":"Junior High",
 		"shading_color":0x99b81e70,
-		"icon_url":departmentImagePrefix+"icon_pencil.png"),
+		"icon_url":(departmentImagePrefix+"icon_pencil.png"),
 		"image_url":(departmentImagePrefix+"junior_high.jpg"),
 	});
 	listings.push({
 		"title":"High School",
 		"shading_color":0x993a1955,
-		"icon_url":departmentImagePrefix+"icon_book.png"),
+		"icon_url":(departmentImagePrefix+"icon_book.png"),
 		"image_url":(departmentImagePrefix+"high_school.jpg"),
 	});
 	listings.push({
 		"title":"Korean School",
 		"shading_color":0x99c92127,
-		"icon_url":departmentImagePrefix+"icon_yinyang.png"),
+		"icon_url":(departmentImagePrefix+"icon_yinyang.png"),
 		"image_url":(departmentImagePrefix+"korean_school.jpg"),
 	});
 
@@ -235,16 +235,36 @@ giau.GalleryListing = function(element){
 		Code.setContent(title,listing["title"]);
 		Code.addClass(title,"");
 		var img = Code.newImage();
-		img.src = listing["image_url"];
+			Code.setSrc(img,listing["image_url"]);
+			Code.setStylePosition(img,"absolute");
+			Code.setStyleWidth(img,"100%");
+			Code.setStyleHeight(img,"100%");
+			Code.setStyleLeft(img,"0px");
+			Code.setStyleTop(img,"0px");
 		var icon = Code.newImage();
-		icon.src = listing["icon_url"];
+			Code.setSrc(icon,listing["icon_url"]);
+			Code.setStyleDisplay(icon,"inline");
+			Code.setStylePosition(icon,"absolute");
+			Code.setStyleLeft(icon,"0px");
+			Code.setStyleTop(icon,"0px");
+			Code.setStyleWidth(icon,"50%");
+			//Code.setStyleHeight(icon,"50%");
+			Code.setStylePadding(icon,"10% 0% 0% 25%");
 		var shader = Code.newDiv();
 			var colorHex = listing["shading_color"];
 			var colorJS = Code.getJSColorFromARGB(colorHex);
 			Code.setStyleBackground(shader,colorJS);
+			Code.setStylePosition(shader,"absolute");
+			Code.setStyleWidth(shader,"100%");
+			Code.setStyleHeight(shader,"100%");
+			Code.setStyleLeft(shader,"0px");
+			Code.setStyleTop(shader,"0px");
 		var contentContainer = Code.newDiv();
+			Code.setStyleVerticalAlign(contentContainer,"middle");
+			Code.setStyleTextAlign(contentContainer,"center");
+
 			Code.addChild(this._container,container);
-			Code.addChild(container,contentContainer);0
+			Code.addChild(container,contentContainer);
 				Code.addChild(contentContainer, img);
 				Code.addChild(contentContainer, shader);
 				Code.addChild(contentContainer, icon);
@@ -252,6 +272,7 @@ giau.GalleryListing = function(element){
 		listing["content"] = contentContainer;
 		listing["image"] = img;
 		listing["text"] = title;
+		listing["icon"] = icon;
 		listing["element"] = container;
 	}
 	this.updateLayout();
@@ -266,7 +287,6 @@ giau.GalleryListing.prototype._handleWindowResizedFxn = function(){
 }
 
 giau.GalleryListing.prototype.updateLayout = function(){
-	console.log("updateLayout");
 	var listings = this._galleryList;
 
 	var maximumColumnCount = 3;
@@ -280,6 +300,7 @@ giau.GalleryListing.prototype.updateLayout = function(){
 	var elementHeight = 150;//elementMinWidth;
 	var elementWidthToHeight = elementWidth/elementHeight;
 	var colCount = Math.floor(widthContainer/elementWidth);
+
 	if(colCount<=1){
 		colCount = 1;
 		elementWidth = widthContainer;
@@ -306,6 +327,7 @@ giau.GalleryListing.prototype.updateLayout = function(){
 	var colWidth = elementWidth + spacingX;
 	j = 0;
 	for(i=0; i<len; ++i){
+		
 		var listing = listings[i];
 		var container = listing["element"];
 		var content = listing["content"];
@@ -373,24 +395,81 @@ giau.NavigationList = function(element){
 		div = Code.newDiv();
 		Code.setContent(div,menuItems[i]);
 		Code.setStyleDisplay(div,"inline-block");
-		Code.setStylePadding(div,"10px");
+		Code.setStylePadding(div,"6px 6px 4px 6px");
 		Code.setStyleColor(div,"#FFF");
 		Code.setStyleFontFamily(div,"'siteThemeRegular'");
 		Code.addStyle(div,"text-shadow: 0px 0px 3px rgba(0,0,0, 1.0);");
 		Code.addChild(this._container,div);
 		optionElementList.push(div);
 	}
+	this._optionElementList = optionElementList;
 	div = Code.newDiv();
-		Code.setContent(div,"HOME");
+		Code.setContent(div,"");
 		Code.setStyleDisplay(div,"inline-block");
 		Code.setStylePosition(div,"absolute");
-		Code.setStyleBorder(div,"solid");
-		Code.setStyleBorderWidth(div,"2px");
+		//Code.setStyleBorder(div,"solid");
+		//Code.setStyleBorderWidth(div,"2px");
 		Code.setStyleBorderColor(div,"#FFF");
 		Code.addStyle(div,"top:0px; left:0px;");
+		//Code.setStyleBackground(div,"rgba(200,200,0,0.5)");
 		Code.addChild(this._container,div);
+		var borderColor = "#FFF";
+		var borderWidth = "2px";
+		var border = [];
+			for(i=0;i<4;++i){
+				var d = Code.newDiv();
+				Code.addChild(div,d);
+				Code.setStyleDisplay(d,"inline-block");
+				Code.setStylePosition(d,"absolute");
+				Code.setStyleBackground(d,borderColor);
+				if(i==0||i==1){ // t/b
+					Code.setStyleWidth(d,"100%");
+					Code.setStyleHeight(d,borderWidth);
+					Code.setStyleLeft(d,"0px");
+				}else if(i==2||i==3){ // l/r
+					Code.setStyleHeight(d,"100%");
+					Code.setStyleWidth(d,borderWidth);
+					Code.setStyleTop(d,"0px");
+				}
+				if(i==0){ // t
+					Code.setStyleTop(d,"0px");
+				}else if(i==1){ // b
+					Code.setStyleBottom(d,"0px");
+				}else if(i==2){ // l
+					Code.setStyleLeft(d,"0px");
+				}else if(i==3){ // r
+					Code.setStyleRight(d,"0px");
+				}
+			}
+	this._selectedIndex = 0; // home
 	this._selectedHighlight = div;
-	
+	// LISTENERS
+	this._jsDispatch = new JSDispatch();
+	this._jsDispatch.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
+	//this._jsDispatch.addJSEventListener(this._container, Code.JS_EVENT_CLICK, this._handleContainerClickedFxn, this);
+
+	// SET INITIAL LAYOUT
+	this.updateLayout();
+}
+giau.NavigationList.prototype._handleWindowResizedFxn = function(){
+	this.updateLayout();
+}
+giau.NavigationList.prototype.updateLayout = function(){
+	console.log("UPDATE LAYOUT")
+	var widthContainer = $(this._container).width();
+	var heightContainer = $(this._container).height();
+	//var widthElement = $(this._eleme
+	var highlightElement = this._selectedHighlight;
+	var selected = this._optionElementList[this._selectedIndex];
+	var pos = $(selected).position();
+	var width = $(selected).outerWidth();
+	var height = $(selected).outerHeight();
+	console.log(pos,width,height)
+	Code.setStyleLeft(highlightElement,pos.left+"px");
+	Code.setStyleTop(highlightElement,pos.top+"px");
+	Code.setStyleWidth(highlightElement,width+"px");
+	Code.setStyleHeight(highlightElement,height+"px");
+
 }
 
 giau.InfoOverlay = function(element){ // Overlay Float Alert
@@ -957,15 +1036,17 @@ giau.CalendarView.prototype.formatTimeHumanReadable = function(timestamp, durati
 			}
 		}
 	if(duration==0){
-		return ""+dow1+", "+month1+" "+day1+" @ "+hour1+":"+Code.prependFixed(""+min1,"0",2)+" "+ampm1;
+		return ""+dow1+", "+month1+" "+day1;//+" @ "+hour1+":"+Code.prependFixed(""+min1,"0",2)+" "+ampm1;
 	}else{
+		var dowShort1 = Code.daysOfWeekShort[date1.getDay()];
 		var date2 = new Date(timestamp + duration);
 		var month2 = Code.monthsLong[date2.getMonth()];
 		var day2 = date2.getDate();
 		var dow2 = Code.daysOfWeekLong[date2.getDay()];
+		var dowShort2 = Code.daysOfWeekShort[date2.getDay()];
 		var hour2 = date2.getHours();
 		var min2 = date2.getMinutes();
-		return ""+month1+" "+day1+" - "+month2+" "+day2;
+		return ""+month1+" "+day1+" ("+dowShort1+")"+" - "+month2+" "+day2+" ("+dowShort2+")";
 	}
 	return null;
 }
