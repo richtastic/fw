@@ -101,6 +101,15 @@ function create_page(){
 		</div>
 	</div>
 
+	<!-- STAFF BIOGRAPHIES -->
+	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
+		<div class="headerSectionMain">MEET THE STAFF</div>
+		<!-- <div class="departmentInternalContainer"> -->
+			<div class="giauBiographyList"></div>
+		<!-- </div> -->
+		<div class="footerSectionMain"></div>
+	</div>
+
 
 	<!-- CALENDAR EVENTS -->
 	<div class="sectionContainerDepartments limitedWidth" style="background-color: rgba(255,255,255,1.0);">

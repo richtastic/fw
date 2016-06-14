@@ -43,6 +43,12 @@ giau.prototype.initialize = function(){
 	calendarListings.each(function(index, element){
 		var listing = new giau.CalendarView(element);
 	});
+
+	// BIOGRAPHIES
+	var bioListings = $(".giauBiographyList");
+	bioListings.each(function(index, element){
+		var listing = new giau.BioView(element);
+	});
 	
 
 	// // INFO FLOATERS
@@ -76,7 +82,7 @@ giau.Calendar = function(element){ //
 	});
 }
 
-giau.Bio = function(element){ //
+giau.BioView = function(element){ //
 	this._container = element;
 	var personnelImagePrefix = "./wp-content/themes/giau/img/personnel/";
 
@@ -157,23 +163,81 @@ giau.Bio = function(element){ //
 
 	this._personnelList = personnelList;
 
+//Code.addChild(this._container,containerElement);
+Code.setStyleDisplay(this._container,"inline-block");
+Code.setStylePosition(this._container,"relative");
+
+	var columns = 2;
 	var i, len = personnelList.length;
 	for(i=0; i<len; ++i){
 		var person = personnelList[i];
+	var outerElement = Code.newDiv();
+			Code.setStyleDisplay(outerElement,"block");
+			Code.setStylePosition(outerElement,"relative");
+			//Code.setStyleWidth(outerElement,"100%");
+			//Code.setStyleBackground(outerElement,"#00F");
+			Code.setStylePadding(outerElement,"2% 2% 2% 2%");
 		var containerElement = Code.newDiv();
+			Code.setStyleBackground(containerElement,"#EEE");
+			//Code.setStyleBackground(containerElement,"#F00");
+			Code.setStyleDisplay(containerElement,"inline-block");
+			Code.setStylePosition(containerElement,"relative");
+			Code.setStyleVerticalAlign(containerElement,"top");
+			Code.setStyleWidth(containerElement,"92%");
+			Code.setStylePadding(containerElement, "4%");
+			//Code.setStyleMinHeight(containerElement,"100px");
 		var imageIconElement = Code.newImage();
-			Code.setSrc(imageIcon, person["image_url"]);
+			Code.setSrc(imageIconElement, person["image_url"]);
 		var nameElement = Code.newDiv();
 			Code.setContent(nameElement,person["display_name"]);
+			Code.setStyleDisplay(nameElement,"block");
+			Code.setStyleFontFamily(nameElement,"siteThemeBold");
+			Code.setStyleFontSize(nameElement,"16px");
+			Code.setStyleColor(nameElement,"#333");
+			Code.addStyle(nameElement,"text-transform:uppercase");
+			Code.setStylePadding(nameElement,"2px 0px 10px 0px");
 		var titleElement = Code.newDiv();
 			Code.setContent(titleElement,person["title"]);
+			Code.setStyleDisplay(titleElement,"block");
+			Code.setStyleFontFamily(titleElement,"siteThemeLight");
+			Code.setStyleFontSize(titleElement,"10px");
+			Code.setStyleFontStyle(titleElement,"italic");
+			Code.setStyleColor(titleElement,"#333");
 		var descriptionElement = Code.newDiv();
 			Code.setContent(descriptionElement,person["description"]);
-		Code.addChild(this._container,containerElement);
-		Code.addChild(containerElement,imageIconElement);
-		Code.addChild(containerElement,nameElement);
-		Code.addChild(containerElement,titleElement);
-		Code.addChild(containerElement,descriptionElement);
+			Code.setStyleDisplay(descriptionElement,"block");
+			Code.setStyleFontFamily(descriptionElement,"siteThemeLight");
+			Code.setStyleFontSize(descriptionElement,"14px");
+			Code.setStyleColor(descriptionElement,"#333");
+		var leftColumnElement = Code.newDiv();
+			Code.setStyleTextAlign(leftColumnElement,"center");
+			Code.setStyleDisplay(leftColumnElement,"inline-block");
+//			Code.setStyleBackground(leftColumnElement,"#F0F");
+			Code.setStyleWidth(leftColumnElement,"30%");
+			Code.setStyleFloat(leftColumnElement,"left");
+			// Code.setStyleHeight(leftColumnElement,"100%");
+			// Code.setStylePosition(leftColumnElement,"relative");
+			// Code.setStyleLeft(leftColumnElement,"0px");
+			// Code.setStyleTop(leftColumnElement,"0px");
+
+		var rightColumnElement = Code.newDiv();
+			//Code.setStyleBackground(rightColumnElement,"#F00");
+			Code.setStyleDisplay(rightColumnElement,"inline-block");
+//			Code.setStyleBackground(rightColumnElement,"#0FF");
+			Code.setStyleWidth(rightColumnElement,"70%");
+			Code.setStyleFloat(rightColumnElement,"right");
+			// Code.setStylePosition(rightColumnElement,"relative");
+			// Code.setStyleRight(rightColumnElement,"0px");
+			// Code.setStyleTop(rightColumnElement,"0px");
+		Code.addChild(this._container, outerElement);
+		Code.addChild(outerElement,containerElement);
+			Code.addChild(containerElement,leftColumnElement);
+				Code.addChild(leftColumnElement,imageIconElement);
+			Code.addChild(containerElement,rightColumnElement);
+				
+				Code.addChild(rightColumnElement,titleElement);
+				Code.addChild(rightColumnElement,nameElement);
+				Code.addChild(rightColumnElement,descriptionElement);
 	}
 }
 
@@ -395,7 +459,7 @@ giau.NavigationList = function(element){
 		div = Code.newDiv();
 		Code.setContent(div,menuItems[i]);
 		Code.setStyleDisplay(div,"inline-block");
-		Code.setStylePadding(div,"6px 6px 4px 6px");
+		Code.setStylePadding(div,"6px 10px 4px 10px");
 		Code.setStyleColor(div,"#FFF");
 		Code.setStyleFontFamily(div,"'siteThemeRegular'");
 		Code.addStyle(div,"text-shadow: 0px 0px 3px rgba(0,0,0, 1.0);");
@@ -552,8 +616,10 @@ giau.ImageGallery = function(element){
 			//this._coverBorderLeft
 			if(Code.hasClass(this._container,"giauImageGalleryShowNavigation")){
 				//giauImageGalleryShowNavigation
-				this._coverIconLeft.src = GLOBAL_SERVER_IMAGE_PATH+"/gallery_button_left.png";
-				this._coverIconRight.src = GLOBAL_SERVER_IMAGE_PATH+"gallery_button_right.png";
+				// this._coverIconLeft.src = GLOBAL_SERVER_IMAGE_PATH+"/gallery_button_left.png";
+				// this._coverIconRight.src = GLOBAL_SERVER_IMAGE_PATH+"gallery_button_right.png";
+				this._coverIconLeft.src = GLOBAL_SERVER_IMAGE_PATH+"left_arrow_box.png";
+				this._coverIconRight.src = GLOBAL_SERVER_IMAGE_PATH+"right_arrow_box.png";
 			}else{
 
 			}
