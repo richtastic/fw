@@ -77,6 +77,9 @@ giau.Calendar = function(element){ //
 }
 
 giau.Bio = function(element){ //
+	this._container = element;
+	var personnelImagePrefix = "./wp-content/themes/giau/img/personnel/";
+
 	var personnelList = [];
 	personnelList.push({
 		"first_name": "",
@@ -84,7 +87,7 @@ giau.Bio = function(element){ //
 		"display_name": "Joseph Kim",
 		"title": "Director of Christian Education, Interim Junior High Pastor", // position
 		"description": "Joseph is happily married to Joyce, the woman of his dreams. He has a bachelor’s degree in civil engineering and a Master of Divinity degree and was called into vocational ministry in 2004. He began serving at LACPC as a high school pastor in December 2006 and by God’s grace is currently serving as the director of Christian Education.",
-		"image_url": "",
+		"image_url": personnelImagePrefix+"default.png",
 		"uri": "", // http://www.google.com
 	});
 	// 
@@ -94,7 +97,7 @@ giau.Bio = function(element){ //
 		"display_name": "Tony Park",
 		"title": "Elder of Christian Education",
 		"description": "Bio forthcoming.",
-		"image_url": "",
+		"image_url": personnelImagePrefix+"default.png",
 		"uri": "",
 	});
 	personnelList.push({
@@ -103,7 +106,7 @@ giau.Bio = function(element){ //
 		"display_name": "Kurt Kim",
 		"title": "Secretary",
 		"description": "Bio forthcoming.",
-		"image_url": "",
+		"image_url": personnelImagePrefix+"default.png",
 		"uri": "",
 	});
 	personnelList.push({
@@ -112,7 +115,7 @@ giau.Bio = function(element){ //
 		"display_name": "Sebastian Lee",
 		"title": "Finance Deacon",
 		"description": "Bio forthcoming.",
-		"image_url": "",
+		"image_url": personnelImagePrefix+"default.png",
 		"uri": "",
 	});
 	personnelList.push({
@@ -121,7 +124,7 @@ giau.Bio = function(element){ //
 		"display_name": "Andrew Lim",
 		"title": "High School Pastor",
 		"description": "Andrew has been attending LACPC ever since he was a high school freshman. He got his bachelor’s degree from UC Irvine and a Masters in Pastoral Studies from Azusa Pacific University. He has been serving as the high school pastor since May of last year and also works full time as a high school English teacher.",
-		"image_url": "",
+		"image_url": personnelImagePrefix+"default.png",
 		"uri": "",
 	});
 	personnelList.push({
@@ -130,7 +133,7 @@ giau.Bio = function(element){ //
 		"display_name": "Boram Lee",
 		"title": "Elementary Pastor",
 		"description": "Born and raised in Los Angeles, Boram has a BA in cognitive psychology, a multiple subjects credential, and a master’s degree in teaching. She began seminary in January 2013 at Azusa Pacific University where she is studying to obtain an MA in pastoral studies with an emphasis is youth and family ministry. Her passion is to serve and train young children so that they can develop a solid relationship with God.",
-		"image_url": "",
+		"image_url": personnelImagePrefix+"default.png",
 		"uri": "",
 	});
 	personnelList.push({
@@ -139,7 +142,7 @@ giau.Bio = function(element){ //
 		"display_name": "Sheen Hong",
 		"title": "Kindergarten Pastor",
 		"description": "Sheen Hong is a loving mother of two children, Karis and Jin-Sung, and happy wife of Joshua, husband and a Chaplain. She has a bachelor’s degree in Christian education and Master of Arts degree in Christian Education. She was called into Children’s ministry in 2009. She began serving at LACPC as a Kindergarten pastor in December 2015.",
-		"image_url": "",
+		"image_url": personnelImagePrefix+"default.png",
 		"uri": "",
 	});
 	personnelList.push({
@@ -148,20 +151,30 @@ giau.Bio = function(element){ //
 		"display_name": "Jessica Won",
 		"title": "Nursery Pastor",
 		"description": "Jessica Won is married to Peter Won and has twin boys and a girl. She has a degree of Child Development from Patten University and currently working on M.Div. from Azusa University. She loves to share gospel to children and now oversees the nursery department.",
-		"image_url": "",
+		"image_url": personnelImagePrefix+"default.png",
 		"uri": "",
 	});
-	/*
-	personnelList.push({
-		"first_name": "",
-		"last_name": "",
-		"display_name": "",
-		"title": "",
-		"description": "",
-		"image_url": "",
-		"uri": "",
-	});
-*/
+
+	this._personnelList = personnelList;
+
+	var i, len = personnelList.length;
+	for(i=0; i<len; ++i){
+		var person = personnelList[i];
+		var containerElement = Code.newDiv();
+		var imageIconElement = Code.newImage();
+			Code.setSrc(imageIcon, person["image_url"]);
+		var nameElement = Code.newDiv();
+			Code.setContent(nameElement,person["display_name"]);
+		var titleElement = Code.newDiv();
+			Code.setContent(titleElement,person["title"]);
+		var descriptionElement = Code.newDiv();
+			Code.setContent(descriptionElement,person["description"]);
+		Code.addChild(this._container,containerElement);
+		Code.addChild(containerElement,imageIconElement);
+		Code.addChild(containerElement,nameElement);
+		Code.addChild(containerElement,titleElement);
+		Code.addChild(containerElement,descriptionElement);
+	}
 }
 
 giau.GalleryListing = function(element){
@@ -174,29 +187,42 @@ giau.GalleryListing = function(element){
 
 	var listings = [];
 	var departmentImagePrefix = "./wp-content/themes/giau/img/departments/";
+
 	listings.push({
 		"title":"Nursery",
-		"image_url":(departmentImagePrefix+"nursery.png"),
+		"shading_color":0x99b9cc33,
+		"icon_url":departmentImagePrefix+"icon_leaf.png"),
+		"image_url":(departmentImagePrefix+"nursery.jpg"),
 	});
 	listings.push({
 		"title":"Kindergarten",
-		"image_url":(departmentImagePrefix+"kindergarten.png"),
+		"shading_color":0x99fee600,
+		"icon_url":departmentImagePrefix+"icon_duck.png"),
+		"image_url":(departmentImagePrefix+"kindergarten.jpg"),
 	});
 	listings.push({
 		"title":"Elementary",
-		"image_url":(departmentImagePrefix+"elementary.png"),
+		"shading_color":0x99f15a29,
+		"icon_url":departmentImagePrefix+"icon_apple.png"),
+		"image_url":(departmentImagePrefix+"elementary.jpg"),
 	});
 	listings.push({
 		"title":"Junior High",
-		"image_url":(departmentImagePrefix+"junior_high.png"),
+		"shading_color":0x99b81e70,
+		"icon_url":departmentImagePrefix+"icon_pencil.png"),
+		"image_url":(departmentImagePrefix+"junior_high.jpg"),
 	});
 	listings.push({
 		"title":"High School",
-		"image_url":(departmentImagePrefix+"high_school.png"),
+		"shading_color":0x993a1955,
+		"icon_url":departmentImagePrefix+"icon_book.png"),
+		"image_url":(departmentImagePrefix+"high_school.jpg"),
 	});
 	listings.push({
 		"title":"Korean School",
-		"image_url":(departmentImagePrefix+"korean_school.png"),
+		"shading_color":0x99c92127,
+		"icon_url":departmentImagePrefix+"icon_yinyang.png"),
+		"image_url":(departmentImagePrefix+"korean_school.jpg"),
 	});
 
 	this._galleryList = listings;
@@ -210,9 +236,20 @@ giau.GalleryListing = function(element){
 		Code.addClass(title,"");
 		var img = Code.newImage();
 		img.src = listing["image_url"];
+		var icon = Code.newImage();
+		icon.src = listing["icon_url"];
+		var shader = Code.newDiv();
+			var colorHex = listing["shading_color"];
+			var colorJS = Code.getJSColorFromARGB(colorHex);
+			Code.setStyleBackground(shader,colorJS);
+		var contentContainer = Code.newDiv();
 			Code.addChild(this._container,container);
-			Code.addChild(container,img);
+			Code.addChild(container,contentContainer);0
+				Code.addChild(contentContainer, img);
+				Code.addChild(contentContainer, shader);
+				Code.addChild(contentContainer, icon);
 			Code.addChild(container,title);
+		listing["content"] = contentContainer;
 		listing["image"] = img;
 		listing["text"] = title;
 		listing["element"] = container;
@@ -271,14 +308,19 @@ giau.GalleryListing.prototype.updateLayout = function(){
 	for(i=0; i<len; ++i){
 		var listing = listings[i];
 		var container = listing["element"];
+		var content = listing["content"];
+			Code.setStylePosition(content, "absolute");
+			Code.setStyleLeft(content, currentX+"px");
+			Code.setStyleTop(content, currentY+"px");
+			Code.setStyleWidth(content, elementWidth+"px");
+			Code.setStyleHeight(content, elementHeight+"px");
+		var icon = listing["icon"];
+			Code.setStyleMargin(icon, "0 auto");
 		var img = listing["image"];
-			Code.setStylePosition(img, "absolute");
-			Code.setStyleLeft(img, currentX+"px");
-			Code.setStyleTop(img, currentY+"px");
-			Code.setStyleWidth(img, elementWidth+"px");
-			Code.setStyleHeight(img, elementHeight+"px");
-			//Code.setStyleBackground(img, "#F00");
-		//
+			Code.setStylePosition(img, "relative");
+			Code.setStyleWidth(img, "100%");
+			Code.setStyleHeight(img, "100%");
+			Code.setStyleMargin(img, "0");
 		var title = listing["text"];
 		//title.style.font.size = 32+"px";
 		//title.style.fontsize = 32+"px";
