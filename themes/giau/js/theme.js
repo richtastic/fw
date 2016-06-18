@@ -166,28 +166,24 @@ giau.BioView = function(element){ //
 	this._personnelList = personnelList;
 
 //Code.addChild(this._container,containerElement);
-Code.setStyleDisplay(this._container,"inline-block");
+Code.setStyleDisplay(this._container,"block");
 Code.setStylePosition(this._container,"relative");
 
-	var columns = 2;
+	var col = 0;
 	var i, len = personnelList.length;
 	for(i=0; i<len; ++i){
 		var person = personnelList[i];
 	var outerElement = Code.newDiv();
-			Code.setStyleDisplay(outerElement,"block");
+			//Code.setStyleDisplay(outerElement,"inline-block");
+			Code.setStyleDisplay(outerElement,"table-cell");
 			Code.setStylePosition(outerElement,"relative");
-			//Code.setStyleWidth(outerElement,"100%");
-			//Code.setStyleBackground(outerElement,"#00F");
-			Code.setStylePadding(outerElement,"2% 2% 2% 2%");
 		var containerElement = Code.newDiv();
 			Code.setStyleBackground(containerElement,"#EEE");
-			//Code.setStyleBackground(containerElement,"#F00");
-			Code.setStyleDisplay(containerElement,"inline-block");
+			Code.setStyleDisplay(containerElement,"inline-block"); // fit height
 			Code.setStylePosition(containerElement,"relative");
 			Code.setStyleVerticalAlign(containerElement,"top");
-			Code.setStyleWidth(containerElement,"92%");
-			Code.setStylePadding(containerElement, "4%");
-			//Code.setStyleMinHeight(containerElement,"100px");
+			Code.setStyleHeight(containerElement,"100%");
+			Code.setStyleMinHeight(containerElement,"100px");
 		var imageIconElement = Code.newImage();
 			Code.setSrc(imageIconElement, person["image_url"]);
 		var nameElement = Code.newDiv();
@@ -204,7 +200,7 @@ Code.setStylePosition(this._container,"relative");
 			Code.setStyleFontFamily(titleElement,"siteThemeLight");
 			Code.setStyleFontSize(titleElement,"10px");
 			Code.setStyleFontStyle(titleElement,"italic");
-			Code.setStyleColor(titleElement,"#333");
+			Code.setStyleColor(titleElement,"#555");
 		var descriptionElement = Code.newDiv();
 			Code.setContent(descriptionElement,person["description"]);
 			Code.setStyleDisplay(descriptionElement,"block");
@@ -240,6 +236,82 @@ Code.setStylePosition(this._container,"relative");
 				Code.addChild(rightColumnElement,titleElement);
 				Code.addChild(rightColumnElement,nameElement);
 				Code.addChild(rightColumnElement,descriptionElement);
+		person["element"] = outerElement;
+		person["container"] = containerElement;
+	}
+	this.updateLayout();
+
+	// LISTENERS
+	this._jsDispatch = new JSDispatch();
+	this._jsDispatch.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
+}
+
+giau.BioView.prototype._handleWindowResizedFxn = function(){
+	this.updateLayout();
+}
+
+giau.BioView.prototype.updateLayout = function(){
+	var listings = this._galleryList;
+
+	var maximumColumnCount = 3;
+	var elementMinWidth = 300;
+	var elementMaxWidth = 300; // to next row size
+	var widthContainer = $(this._container).width();
+	var heightContainer = $(this._container).height();
+
+console.log(widthContainer)
+
+	var outerPadding = 10;
+	var innerPadding = 10;
+	var columns = Math.floor(widthContainer/elementMaxWidth);
+	if(widthContainer<elementMinWidth){
+		columns = 1;
+	}
+	var colWidth = Math.floor(widthContainer/columns);
+	console.log(colWidth)
+
+	var personnelList = this._personnelList;
+	var i, len = personnelList.length;
+Code.removeAllChildren(this._container);
+var row;
+	for(i=0; i<len; ++i){
+		if(i%columns==0){
+			row = Code.newDiv();
+			Code.setStyleDisplay(row,"inline-block");
+			Code.setStylePosition(row,"relative");
+			Code.setStyleWidth(row,widthContainer+"px");
+			//Code.setStyleHeight(row,"");
+		}
+
+		var person = personnelList[i];
+		var outerElement = person["element"];
+		var innerElement = person["container"];
+		// 
+		//	TODO: USE A ROW BLOCK FOR THE CELL TO EXPAND TO
+		//
+		var outerWidth = (colWidth-2*outerPadding);
+		var innerWidth = (outerWidth-2*innerPadding);
+		Code.setStyleWidth(outerElement,outerWidth+"px");
+		Code.setStylePadding(outerElement,outerPadding+"px");
+		Code.setStyleWidth(innerElement,innerWidth);
+		Code.setStylePadding(innerElement,innerPadding+"px");
+
+		/*
+		var outerElement = Code.newDiv();
+			Code.setStyleDisplay(outerElement,"table-cell");
+			//Code.setStylePosition(outerElement,"relative");
+			Code.setStyleWidth(outerElement,"50%");
+			Code.setStyleHeight(outerElement,"100%");
+			Code.setStyleBackground(outerElement,"#F3f");
+			if(i%2==0){
+				Code.setContent(outerElement,"56346345645 ad ");
+			}else {
+				Code.setContent(outerElement,"56346345645 ad 56346345645 ad 56346345645 ad 56346345645 ad 56346345645 ad 56346345645 ad ");
+			}
+		*/
+		Code.addChild(this._container, row);
+		Code.addChild(row, outerElement);
+		
 	}
 }
 

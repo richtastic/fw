@@ -102,14 +102,11 @@ function create_page(){
 	</div>
 
 	<!-- STAFF BIOGRAPHIES -->
-<!-- 
 	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
 		<div class="headerSectionMain">MEET THE STAFF</div>
 			<div class="giauBiographyList"></div>
 		<div class="footerSectionMain"></div>
 	</div>
--->
-
 
 	<!-- CALENDAR EVENTS -->
 	<div class="sectionContainerDepartments limitedWidth" style="background-color: rgba(255,255,255,1.0);">
@@ -139,7 +136,7 @@ function create_page(){
 	</div>
 
 	<!-- PHOTO GALLERY -->
-	<div class="limitedWidth"  style="height:400px; background-color: rgba(255,255,255,1.0);">
+	<div class="limitedWidth"  style="background-color: rgba(255,255,255,1.0);">
 		<div class="headerSectionMain">PHOTOS</div>
 		<div class="giauImageGallery giauImageGalleryShowNavigation" style="position:relative; width:100%; height:400px;"></div>
 	</div>
@@ -150,6 +147,11 @@ function create_page(){
 		<div class="">quotes</div>
 	</div>
 -->
+
+	<!-- CONTACT -->
+	<div class="limitedWidth" style="background-color: rgba(0,255,255,0.5);">
+		<div class="giauImageGallery">Contact Us</div>
+	</div>
 
 	<!-- GOOGLE MAP -->
 	<div class="limitedWidth"  style="background-color: rgba(255,0,5,0.5); text-align:center; width:100%;">
