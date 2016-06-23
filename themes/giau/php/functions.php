@@ -45,7 +45,15 @@ function create_page(){
 	$fileJavaScriptMain = relativePathJS()."theme.js";
 	$pageRequest = getParameterOrDefault( KEY_GET_PARAM_PAGE(), "" );
 	$pageList = ["Home", "Departments", "Staff", "Forms", "Directions", "Contact Us"];
-
+	$PAGE_REQUEST_TYPE_HOME = "home";
+	$PAGE_REQUEST_TYPE_DEPARTMENTS = "departments";
+	$PAGE_REQUEST_TYPE_STAFF = "staff";
+	$PAGE_REQUEST_TYPE_FORMS = "forms";
+	$PAGE_REQUEST_TYPE_LOCATION = "location";
+	$PAGE_REQUEST_TYPE_CONTACT = "contact";
+	if(!isset($pageRequest;)){
+		$pageRequest; = "home";
+	}
 ?>
 <html>
 	<head>
@@ -76,7 +84,9 @@ function create_page(){
 
 	<!-- HEADER NAVIGATION -->
 	<!-- <?php create_navigation($pageList); ?> -->
-
+<?php
+if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
+?>
 	<!-- FEATURE IMAGE -->
 	<div class="featurePresentationContainer giauImageGallery giauImageGalleryAutomated" style="">
 		<!-- FEATURE INFO OVERLAY -->
@@ -99,22 +109,6 @@ function create_page(){
 			<div class="giauNavigationItemList navigationContainer" style="display:inline-block; position:relative; text-align: center; float:right; padding:6px;" >Home, Departments, Staff, Forms, Directions, Contact Us</div>
 			
 		</div>
-	</div>
-
-	<!-- STAFF BIOGRAPHIES -->
-	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
-		<div class="headerSectionMain">MEET THE STAFF</div>
-			<div class="giauBiographyList"></div>
-		<div class="footerSectionMain"></div>
-	</div>
-
-	<!-- CALENDAR EVENTS -->
-	<div class="sectionContainerDepartments limitedWidth" style="background-color: rgba(255,255,255,1.0);">
-		<div class="headerSectionMain">UPCOMING EVENTS</div>
-		<div class="departmentInternalContainer">
-			<div class="giauCalendarList"></div>
-		</div>
-		<div class="footerSectionMain"></div>
 	</div>
 
 	<!-- DEPARTMENTS -->
@@ -141,19 +135,53 @@ function create_page(){
 		<div class="giauImageGallery giauImageGalleryShowNavigation" style="position:relative; width:100%; height:400px;"></div>
 	</div>
 
+
+	<!-- CALENDAR EVENTS -->
+	<div class="sectionContainerDepartments limitedWidth" style="background-color: rgba(255,255,255,1.0);">
+		<div class="headerSectionMain">UPCOMING EVENTS</div>
+		<div class="departmentInternalContainer">
+			<div class="giauCalendarList"></div>
+		</div>
+		<div class="footerSectionMain"></div>
+	</div>
+
+
+	<!-- INFO STATEMENT GROUP 2 -->
+	<div class="sectionContainerMissionStatement limitedWidth"  style="background-color: rgba(230,228,222,1.0);">
+		<div class="centeredText ultraImportantText">Deuteronomy 6:6-7</div>
+		
+		<div class="centeredText standardText">"These commandments I give you today are to be upon your hearts.</div>
+		<div class="centeredText standardText">Impress them on your children. Talk about them when you sit at home and</div>
+		<div class="centeredText standardText">when you walk along the road, when you are down and when you get up."</div>
+	</div>
+
 	<!-- QUOTE GALLERY -->
 <!--
 	<div class=""  style="height:400px; background-color: rgba(0,255,255,0.5);">
 		<div class="">quotes</div>
 	</div>
 -->
-
-	<!-- CONTACT -->
-	<div class="limitedWidth" style="background-color: rgba(0,255,255,0.5);">
-		<div class="giauImageGallery">Contact Us</div>
+	
+<?php
+}else if($pageRequest==$PAGE_REQUEST_TYPE_STAFF){
+?>
+	<!-- STAFF BIOGRAPHIES -->
+	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
+		<div class="headerSectionMain">MEET THE STAFF</div>
+			<div class="giauBiographyList"></div>
+		<div class="footerSectionMain"></div>
 	</div>
-
-	<!-- GOOGLE MAP -->
+<?php
+}else if($pageRequest==$PAGE_REQUEST_TYPE_FORMS){
+?>
+	<!-- DOWNLOADS -->
+	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
+		<div class="headerSectionMain">FORMS</div>
+	</div>
+<?php
+}else if($pageRequest==$PAGE_REQUEST_TYPE_LOCATION){
+?>
+		<!-- GOOGLE MAP -->
 	<div class="limitedWidth"  style="background-color: rgba(255,0,5,0.5); text-align:center; width:100%;">
 	<script src='https://maps.googleapis.com/maps/api/js?v=3.exp'></script>
 	<div style='overflow:hidden;height:400px;width:100%; display:inline-block; margin: 0 auto;'>
@@ -165,6 +193,25 @@ function create_page(){
 		function init_map(){var myOptions = {zoom:10,center:new google.maps.LatLng(34.0709617,-118.18122349999999),mapTypeId: google.maps.MapTypeId.ROADMAP};map = new google.maps.Map(document.getElementById('gmap_canvas'), myOptions);marker = new google.maps.Marker({map: map,position: new google.maps.LatLng(34.0709617,-118.18122349999999)});infowindow = new google.maps.InfoWindow({content:'<strong>The Father\'s House</strong><br>2241 N Eastern Ave<br/>Los Angeles, CA 90032<br/>'});google.maps.event.addListener(marker, 'click', function(){infowindow.open(map,marker);});infowindow.open(map,marker);}google.maps.event.addDomListener(window, 'load', init_map);
 		</script>
 	</div>
+
+<?php
+}else if($pageRequest==$PAGE_REQUEST_TYPE_CONTACT){
+?>
+	<!-- CONTACT -->
+	<div class="limitedWidth" style="background-color: rgba(0,255,255,0.5);">
+		<div class="giauContactForm"></div>
+	</div>
+
+<?php
+}else{
+?>
+	<!-- UNKNOWN 404 -->
+	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
+		<div class="headerSectionMain">;)</div>
+	</div>
+<?php
+}
+?>
 
 	<!-- DEBUGGING -->
 	<?php echo $pageRequest; ?>

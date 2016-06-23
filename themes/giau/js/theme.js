@@ -49,6 +49,12 @@ giau.prototype.initialize = function(){
 	bioListings.each(function(index, element){
 		var listing = new giau.BioView(element);
 	});
+
+	// CONTACT
+	var contactListings = $(".giauContactForm");
+	contactListings.each(function(index, element){
+		var contact = new giau.ContactView(element);
+	});
 	
 
 	// // INFO FLOATERS
@@ -83,6 +89,67 @@ giau.Calendar = function(element){ //
 }
 
 // ce-andy.jpg
+
+giau.ContactView = function(element){ //
+	this._container = element;
+
+	var contactTitle = "CONTACT US";
+	var contactInfo = "For more information, you can contact:\nJoseph Kim (Director of Christian Education)\nPhone: (213) 200-6092\nEmail: thefathershouse.lacpc@gmail.com";
+	
+	var otherTitle = "GET SOCIAL";
+	var otherInfo = "We have a ton of scial meda links you can follow";
+
+	var messageTitle = "SEND A MESSAGE";
+	var messageInfo = "Got more questions? Write us a note, and we'll get back to you.";
+	var nameFieldDefault = "Name";
+	var emailFieldDefault = "Email";
+	var bodyFieldDefault = "Type your comment here";
+
+	var botCheckText = "Check here if you are a human.";
+	var sendMessageButtonText = "SendMessage";
+
+		var divInfo = Code.newDiv(messageInfo);
+		var divName = Code.newDiv(nameFieldDefault);
+		var divEmail = Code.newDiv(emailFieldDefault);
+		var divComment = Code.newDiv();
+		var divBot = Code.newDiv();
+		var divSend = Code.newDiv();
+			Code.setContent(divSend, sendMessageButtonText);
+
+
+	var containerElement;
+	var rows = [];
+		rows.push({ "leftContent": contactTitle,
+					"rightContent": contactInfo});
+		rows.push({ "leftContent": otherTitle,
+					"rightContent": otherInfo});
+		rows.push({ "leftContent": messageTitle,
+					"rightElements":[divInfo, divName, divEmail, divComment, divBot, divSend],
+					"rightContent": null});
+	var i, j, len = rows.length;
+	for(i=0;i<len;++i){
+		var row = rows[i];
+		var rowElement = Code.newDiv();
+		var leftColElement = Code.newDiv();
+		var rightColElement = Code.newDiv();
+
+		var leftContent = row["leftContent"];
+		var rightContent = row["rightContent"];
+		var rightElements = row["rightElements"];
+
+		Code.setContent(leftCol, leftContent);
+
+		if(rightContent){
+			Code.setContent(rightCol, rightContent);
+		}else if(rightElements && rightElements.length>0){
+			for(j=0;j<rightElements.length;++j){
+				var element = rightElements[j];
+				Code.addChild(rightCol, element);
+			}
+		}
+	}	
+
+}
 
 giau.BioView = function(element){ //
 	this._container = element;
