@@ -57,11 +57,11 @@ giau.prototype.initialize = function(){
 	});
 	
 
-	// // INFO FLOATERS
-	// var imageGalleries = $(".giauElementFloater");
-	// imageGalleries.each(function(index, element){
-	// 	var gallery = new giau.ImageGallery(element);
-	// });
+	// INFO FLOATERS
+	var imageGalleries = $(".giauElementFloater");
+	imageGalleries.each(function(index, element){
+		var gallery = new giau.ImageGallery(element);
+	});
 }
 
 giau.ElementFloater = function(element){ //
@@ -87,8 +87,6 @@ giau.Calendar = function(element){ //
 		"uri": "http://www.google.com",
 	});
 }
-
-// ce-andy.jpg
 
 giau.ContactView = function(element){ //
 	this._container = element;
@@ -147,8 +145,7 @@ giau.ContactView = function(element){ //
 				Code.addChild(rightCol, element);
 			}
 		}
-	}	
-
+	}
 }
 
 giau.BioView = function(element){ //
@@ -199,7 +196,7 @@ giau.BioView = function(element){ //
 		"display_name": "Andrew Lim",
 		"title": "High School Pastor",
 		"description": "Andrew has been attending LACPC ever since he was a high school freshman. He got his bachelor’s degree from UC Irvine and a Masters in Pastoral Studies from Azusa Pacific University. He has been serving as the high school pastor since May of last year and also works full time as a high school English teacher.",
-		"image_url": personnelImagePrefix+"anonymous.jpg",
+		"image_url": personnelImagePrefix+"ce-andy.jpg",
 		"uri": "",
 	});
 	personnelList.push({
@@ -253,6 +250,9 @@ Code.setStylePosition(this._container,"relative");
 			Code.setStyleMinHeight(containerElement,"100px");
 		var imageIconElement = Code.newImage();
 			Code.setSrc(imageIconElement, person["image_url"]);
+			Code.setStyleWidth(imageIconElement,"100%");
+			Code.addStyle(imageIconElement,"border-radius:100%;");
+			//Code.setStyleMargin(imageIconElement,"0 10px");
 		var nameElement = Code.newDiv();
 			Code.setContent(nameElement,person["display_name"]);
 			Code.setStyleDisplay(nameElement,"block");
@@ -285,11 +285,16 @@ Code.setStylePosition(this._container,"relative");
 			// Code.setStyleLeft(leftColumnElement,"0px");
 			// Code.setStyleTop(leftColumnElement,"0px");
 
+		var midColumnElement = Code.newDiv();
+			Code.setStyleDisplay(midColumnElement,"inline-block");
+			Code.setStyleWidth(midColumnElement,"6%");
+			Code.setStyleFloat(midColumnElement,"left");
+
 		var rightColumnElement = Code.newDiv();
 			//Code.setStyleBackground(rightColumnElement,"#F00");
 			Code.setStyleDisplay(rightColumnElement,"inline-block");
 //			Code.setStyleBackground(rightColumnElement,"#0FF");
-			Code.setStyleWidth(rightColumnElement,"70%");
+			Code.setStyleWidth(rightColumnElement,"64%");
 			Code.setStyleFloat(rightColumnElement,"right");
 			// Code.setStylePosition(rightColumnElement,"relative");
 			// Code.setStyleRight(rightColumnElement,"0px");
@@ -298,8 +303,10 @@ Code.setStylePosition(this._container,"relative");
 		Code.addChild(outerElement,containerElement);
 			Code.addChild(containerElement,leftColumnElement);
 				Code.addChild(leftColumnElement,imageIconElement);
-			Code.addChild(containerElement,rightColumnElement);
-				
+
+			Code.addChild(containerElement,midColumnElement);
+
+				Code.addChild(containerElement,rightColumnElement);
 				Code.addChild(rightColumnElement,titleElement);
 				Code.addChild(rightColumnElement,nameElement);
 				Code.addChild(rightColumnElement,descriptionElement);
@@ -583,29 +590,57 @@ giau.GalleryListing.prototype.updateLayout = function(){
 }
 
 giau.NavigationList = function(element){
-	this._container = element;//Code.getParent(element);
-	var contents = Code.getContent(this._container);
-	console.log("navigation: "+contents);
-	var menuItems = contents.split(",");
-	var i, len = menuItems.length;
-	for(i=0; i<len; ++i){
-		menuItems[i] = menuItems[i].trim();
+	this._container = element;
+
+	// LISTENERS
+	this._jsDispatch = new JSDispatch();
+	this._jsDispatch.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
+
+	var i, len;
+	var listElement = Code.getChild(element,0);
+	var menuItems = [];
+	var foundSelectedIndex = 0;
+	if(listElement){
+		len = Code.numChildren(listElement);
+		for(i=0; i<len; ++i){
+			var child = Code.getChild(listElement,i);
+			var j, len2 = Code.numChildren(child);
+			var title = "";
+			var url = "";
+			for(j=0;j<len2;++j){
+				var c = Code.getChild(child,j);
+				if(Code.hasClass(c,"display")){
+					title = Code.getContent(c);
+				}else if(Code.hasClass(c,"url")){
+					url = Code.getContent(c);
+				}else if(Code.hasClass(c,"selected")){
+					foundSelectedIndex = i;
+				}
+			}
+			Code.emptyDom(child);
+			menuItems.push( {"title":title, "url":url} );
+		}
 	}
-	console.log(menuItems);
+	Code.emptyDom(listElement);
+	Code.emptyDom(this._container);
 	//console.log("navigation: "+contents);
 	var optionElementList = [];
 	var div;
-	Code.emptyDom(this._container);
 	for(i=0; i<len; ++i){
 		div = Code.newDiv();
-		Code.setContent(div,menuItems[i]);
+		var title = menuItems[i]["title"];
+		var url = menuItems[i]["url"];
+		Code.setContent(div,title);
 		Code.setStyleDisplay(div,"inline-block");
 		Code.setStylePadding(div,"6px 10px 4px 10px");
 		Code.setStyleColor(div,"#FFF");
 		Code.setStyleFontFamily(div,"'siteThemeRegular'");
 		Code.addStyle(div,"text-shadow: 0px 0px 3px rgba(0,0,0, 1.0);");
+		Code.setStyleBackground(div,"rgba(0,0,0,0.0)");
 		Code.addChild(this._container,div);
-		optionElementList.push(div);
+		optionElementList.push({"element":div,"url":url});
+		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_CLICK, this._handleContentClickedFxn, this);
+		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_TOUCH_TAP, this._handleContentTappedxn, this);
 	}
 	this._optionElementList = optionElementList;
 	div = Code.newDiv();
@@ -616,7 +651,6 @@ giau.NavigationList = function(element){
 		//Code.setStyleBorderWidth(div,"2px");
 		Code.setStyleBorderColor(div,"#FFF");
 		Code.addStyle(div,"top:0px; left:0px;");
-		//Code.setStyleBackground(div,"rgba(200,200,0,0.5)");
 		Code.addChild(this._container,div);
 		var borderColor = "#FFF";
 		var borderWidth = "2px";
@@ -646,18 +680,33 @@ giau.NavigationList = function(element){
 					Code.setStyleRight(d,"0px");
 				}
 			}
-	this._selectedIndex = 0; // home
+
+	this._selectedIndex = foundSelectedIndex; // home
 	this._selectedHighlight = div;
-	// LISTENERS
-	this._jsDispatch = new JSDispatch();
-	this._jsDispatch.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
+	
 	//this._jsDispatch.addJSEventListener(this._container, Code.JS_EVENT_CLICK, this._handleContainerClickedFxn, this);
 
 	// SET INITIAL LAYOUT
 	this.updateLayout();
 }
+giau.NavigationList.prototype._handleContentClickedFxn = function(e){
+	var target = Code.getTargetFromMouseEvent(e);
+	for(var i=0; i<this._optionElementList.length; ++i){
+		if(this._optionElementList[i]["element"]==target){
+			this.selectedIndex(i);
+		}
+	}
+}
+giau.NavigationList.prototype._handleContentTappedFxn = function(e){
+	console.log(e);
+}
 giau.NavigationList.prototype._handleWindowResizedFxn = function(){
 	this.updateLayout();
+}
+giau.NavigationList.prototype.selectedIndex = function(index){
+	var selected = this._optionElementList[index];
+	var url = selected["url"];
+	document.location.href = url;
 }
 giau.NavigationList.prototype.updateLayout = function(){
 	console.log("UPDATE LAYOUT")
@@ -665,7 +714,7 @@ giau.NavigationList.prototype.updateLayout = function(){
 	var heightContainer = $(this._container).height();
 	//var widthElement = $(this._eleme
 	var highlightElement = this._selectedHighlight;
-	var selected = this._optionElementList[this._selectedIndex];
+	var selected = this._optionElementList[this._selectedIndex]["element"];
 	var pos = $(selected).position();
 	var width = $(selected).outerWidth();
 	var height = $(selected).outerHeight();

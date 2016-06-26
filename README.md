@@ -68,7 +68,16 @@ cp -r /media/sf_zirbr001/dev/extRepos/fw /repos
 chmod -R 777 /repos/ff
 chmod -R 777 /repos/fw
 
+rm /repos/fw/themes/giau/js/code 
 ln -s /repos/ff/src/code /repos/fw/themes/giau/js/
+
+
+
+#speicfic files
+
+cp /media/sf_zirbr001/dev/extRepos/fw/themes/giau/php/functions.php /repos/fw/themes/giau/php/functions.php 
+cp /media/sf_zirbr001/dev/extRepos/fw/themes/giau/js/theme.js /repos/fw/themes/giau/js/theme.js 
+
 ```
 
 

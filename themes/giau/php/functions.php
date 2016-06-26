@@ -22,6 +22,11 @@ function relativePathIMG(){
 }
 
 
+function relativePathUploads(){
+	return getTemplateURIPath()."uploads/";
+}
+
+
 // function getParameterOrDefault($param){
 // 	return getParameterOrDefault($param,"");
 // }
@@ -38,22 +43,47 @@ function getParameterOrDefault($param, $def){
 }
 
 
+function page_link_from_page_name($pageName){
+	$root = site_url();
+	return $root."?page=".$pageName;
+}
+
 function create_page(){
 	$relativePathJSFF = relativePathJS()."code/";
 	$fileJavaScriptFF = relativePathJS()."code/FF.js";
 	$fileCSSMain = relativePathCSS()."theme.css";
 	$fileJavaScriptMain = relativePathJS()."theme.js";
-	$pageRequest = getParameterOrDefault( KEY_GET_PARAM_PAGE(), "" );
-	$pageList = ["Home", "Departments", "Staff", "Forms", "Directions", "Contact Us"];
+	
 	$PAGE_REQUEST_TYPE_HOME = "home";
 	$PAGE_REQUEST_TYPE_DEPARTMENTS = "departments";
 	$PAGE_REQUEST_TYPE_STAFF = "staff";
 	$PAGE_REQUEST_TYPE_FORMS = "forms";
 	$PAGE_REQUEST_TYPE_LOCATION = "location";
 	$PAGE_REQUEST_TYPE_CONTACT = "contact";
-	if(!isset($pageRequest;)){
-		$pageRequest; = "home";
-	}
+
+	$pageList = [
+				[
+					"title" => "Home",
+					"name" => $PAGE_REQUEST_TYPE_HOME
+				],[
+					"title" => "Departments",
+					"name" => $PAGE_REQUEST_TYPE_DEPARTMENTS
+				],[
+					"title" => "Staff",
+					"name" => $PAGE_REQUEST_TYPE_STAFF
+				],[
+					"title" => "Forms",
+					"name" => $PAGE_REQUEST_TYPE_FORMS
+				],[
+					"title" => "Directions",
+					"name" => $PAGE_REQUEST_TYPE_LOCATION
+				],[
+					"title" => "Contact Us",
+					"name" => $PAGE_REQUEST_TYPE_CONTACT
+				]
+				];
+
+	$pageRequest = getParameterOrDefault( KEY_GET_PARAM_PAGE(), $PAGE_REQUEST_TYPE_HOME );
 ?>
 <html>
 	<head>
@@ -82,8 +112,6 @@ function create_page(){
 	</head>
 	<body style="bgColor:#F00; margin: 0 auto;">
 
-	<!-- HEADER NAVIGATION -->
-	<!-- <?php create_navigation($pageList); ?> -->
 <?php
 if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 ?>
@@ -106,7 +134,8 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 			<!-- LANGUAGE SWITCH -->
 			<div class="languageSwitchContainer" style="display:inline-block; float:right; padding:10px;">EN | 한국어</div>
 			<!-- NAVIGATION -->
-			<div class="giauNavigationItemList navigationContainer" style="display:inline-block; position:relative; text-align: center; float:right; padding:6px;" >Home, Departments, Staff, Forms, Directions, Contact Us</div>
+			<!-- <div class="giauNavigationItemList navigationContainer" style="display:inline-block; position:relative; text-align: center; float:right; padding:6px;" >Home, Departments, Staff, Forms, Directions, Contact Us</div> -->
+			<?php create_navigation($pageList, $pageRequest); ?>
 			
 		</div>
 	</div>
@@ -177,6 +206,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	<!-- DOWNLOADS -->
 	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
 		<div class="headerSectionMain">FORMS</div>
+		<a href="<?php echo relativePathUploads()."/lacpc_medical_release_form_2015_2016.pdf"; ?>">lacpc_medical_release_form_2015_2016.pdf</a>
 	</div>
 <?php
 }else if($pageRequest==$PAGE_REQUEST_TYPE_LOCATION){
@@ -207,7 +237,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 ?>
 	<!-- UNKNOWN 404 -->
 	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
-		<div class="headerSectionMain">;)</div>
+		<div class="headerSectionMain"><?php echo $pageRequest; ?></div>
 	</div>
 <?php
 }
@@ -241,19 +271,30 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 
 
 
-function create_navigation($pageList){
+function create_navigation($pageList, $currentPageName){
 	?>
-	<div class="navigationMenuContainer">
-	<div class="navigationMenuLogoContainer">
-		<img class="navigationMenuLogo" src="<?php echo relativePathIMG()."logo_fathers_house.png" ?>" />
+	<div class="giauNavigationItemList navigationContainer" style="display:inline-block; position:relative; text-align: center; float:right; padding:6px;" >
+		<ul><?php
+			foreach($pageList as $pageData){
+				$pageName = $pageData["name"];
+				$pageDisplayTitle = $pageData["title"];
+				$pageURL = page_link_from_page_name($pageName);
+				?>
+				<li class="navigationMenuItem">
+					<div class="display"><?php echo $pageDisplayTitle; ?></div>
+					<div class="url"><?php echo $pageURL; ?></div>
+					<?php
+					if( strcmp($pageName,$currentPageName)==0 ){
+						?>
+						<div class="selected"></div>
+						<?php
+					}
+					?>
+				</li>
+				<?php
+			}
+		?></ul>
 	</div>
-	<ul><?php
-		foreach($pageList as $pageName){
-			?>
-			<li class="navigationMenuItem"><?php echo $pageName; ?></li>
-			<?php
-		}
-	?></ul></div>
 	<?php
 }
 
