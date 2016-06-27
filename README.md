@@ -77,6 +77,9 @@ ln -s /repos/ff/src/code /repos/fw/themes/giau/js/
 
 cp /media/sf_zirbr001/dev/extRepos/fw/themes/giau/php/functions.php /repos/fw/themes/giau/php/functions.php 
 cp /media/sf_zirbr001/dev/extRepos/fw/themes/giau/js/theme.js /repos/fw/themes/giau/js/theme.js 
+cp /media/sf_zirbr001/dev/extRepos/fw/themes/giau/css/theme.css /repos/fw/themes/giau/css/theme.css 
+cp /media/sf_zirbr001/dev/extRepos/ff/src/code/Code.js /repos/ff/src/code/Code.js 
+
 
 ```
 

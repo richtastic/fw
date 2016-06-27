@@ -47,6 +47,12 @@ ul {
 }
 
 
+.focusedCenterpieceWidth {
+	padding: 0% 25% 0% 25%;
+	width: 50%;
+}
+
+
 .imageTitleHeading {
 
 }
@@ -60,13 +66,22 @@ ul {
 
 .headerSectionMain {
 	padding: 10px;
-	font-family: 'siteThemeBold', 'Arial Black', 'Arial Bold', sans-serif;
+	font-family: 'siteThemeRegular', 'Arial Black', 'Arial Bold', sans-serif;
 	font-weight: bold;
 	font-size: 24px;
 	color: #222;
 }
 .footerSectionMain {
 	padding: 10px;
+}
+
+
+/* DIVIDERS */
+.sectionContainerDividerSmall {
+	height: 1px;
+	padding-left: 10px;
+	padding-right: 10px;
+	background-color: #DDD;
 }
 
 
@@ -187,23 +202,31 @@ ul {
 .ultraImportantText {
 	font-family: 'siteThemeBold', 'Arial Black', 'Arial Bold', sans-serif;
 	font-weight: bold;
-	font-size: 36px;
+	font-size: 30px;
 	color: #333;
 }
 .importantText {
 	font-family: 'siteThemeBold', 'Arial Black', 'Arial Bold', sans-serif;
-	font-size: 28px;
+	font-size: 24px;
 	color: #333;
 }
-.standardText {
+.dividerText {
+	padding: 10px;
+}
+/*.standardText {
 	font-size: 16px;
 	color: #333;
 	padding: 10px;
-}
-.standardText b , .standardText i, .standardText u {
-	font-size: 16px;
+}*/
+.standardText, .standardText b , .standardText i, .standardText u {
+	font-family: 'siteThemeLight', 'Arial', sans-serif;
+	font-size: 14px;
 	color: #333;
 }
+
+
+
+
 
 
 

@@ -115,7 +115,7 @@ giau.ContactView = function(element){ //
 			Code.setContent(divSend, sendMessageButtonText);
 
 
-	var containerElement;
+	var containerElement = this._container;
 	var rows = [];
 		rows.push({ "leftContent": contactTitle,
 					"rightContent": contactInfo});
@@ -135,16 +135,22 @@ giau.ContactView = function(element){ //
 		var rightContent = row["rightContent"];
 		var rightElements = row["rightElements"];
 
-		Code.setContent(leftCol, leftContent);
+		Code.setContent(leftColElement, leftContent);
 
 		if(rightContent){
-			Code.setContent(rightCol, rightContent);
+			Code.setContent(rightColElement, rightContent);
 		}else if(rightElements && rightElements.length>0){
 			for(j=0;j<rightElements.length;++j){
 				var element = rightElements[j];
-				Code.addChild(rightCol, element);
+				Code.addChild(rightColElement, element);
 			}
 		}
+
+		Code.addChild(rowElement,leftColElement);
+		Code.addChild(rowElement,rightColElement);
+
+		console.log(rowElement);
+		Code.addChild(containerElement, rowElement);
 	}
 }
 
@@ -159,7 +165,7 @@ giau.BioView = function(element){ //
 		"display_name": "Joseph Kim",
 		"title": "Director of Christian Education, Interim Junior High Pastor", // position
 		"description": "Joseph is happily married to Joyce, the woman of his dreams. He has a bachelor’s degree in civil engineering and a Master of Divinity degree and was called into vocational ministry in 2004. He began serving at LACPC as a high school pastor in December 2006 and by God’s grace is currently serving as the director of Christian Education.",
-		"image_url": personnelImagePrefix+"ce-joe.jpg",
+		"image_url": personnelImagePrefix+"ce-joe.png",
 		"uri": "", // http://www.google.com
 	});
 	// 
@@ -196,7 +202,7 @@ giau.BioView = function(element){ //
 		"display_name": "Andrew Lim",
 		"title": "High School Pastor",
 		"description": "Andrew has been attending LACPC ever since he was a high school freshman. He got his bachelor’s degree from UC Irvine and a Masters in Pastoral Studies from Azusa Pacific University. He has been serving as the high school pastor since May of last year and also works full time as a high school English teacher.",
-		"image_url": personnelImagePrefix+"ce-andy.jpg",
+		"image_url": personnelImagePrefix+"ce-andy.png",
 		"uri": "",
 	});
 	personnelList.push({
@@ -205,7 +211,7 @@ giau.BioView = function(element){ //
 		"display_name": "Boram Lee",
 		"title": "Elementary Pastor",
 		"description": "Born and raised in Los Angeles, Boram has a BA in cognitive psychology, a multiple subjects credential, and a master’s degree in teaching. She began seminary in January 2013 at Azusa Pacific University where she is studying to obtain an MA in pastoral studies with an emphasis is youth and family ministry. Her passion is to serve and train young children so that they can develop a solid relationship with God.",
-		"image_url": personnelImagePrefix+"ce-boram.jpg",
+		"image_url": personnelImagePrefix+"ce-boram.png",
 		"uri": "",
 	});
 	personnelList.push({
@@ -214,7 +220,7 @@ giau.BioView = function(element){ //
 		"display_name": "Sheen Hong",
 		"title": "Kindergarten Pastor",
 		"description": "Sheen Hong is a loving mother of two children, Karis and Jin-Sung, and happy wife of Joshua, husband and a Chaplain. She has a bachelor’s degree in Christian education and Master of Arts degree in Christian Education. She was called into Children’s ministry in 2009. She began serving at LACPC as a Kindergarten pastor in December 2015.",
-		"image_url": personnelImagePrefix+"ce-hong.jpg",
+		"image_url": personnelImagePrefix+"ce-hong.png",
 		"uri": "",
 	});
 	personnelList.push({
@@ -223,7 +229,7 @@ giau.BioView = function(element){ //
 		"display_name": "Jessica Won",
 		"title": "Nursery Pastor",
 		"description": "Jessica Won is married to Peter Won and has twin boys and a girl. She has a degree of Child Development from Patten University and currently working on M.Div. from Azusa University. She loves to share gospel to children and now oversees the nursery department.",
-		"image_url": personnelImagePrefix+"ce-jessica.jpg",
+		"image_url": personnelImagePrefix+"ce-jessica.png",
 		"uri": "",
 	});
 
@@ -439,6 +445,12 @@ giau.GalleryListing = function(element){
 
 	this._galleryList = listings;
 
+	var iconToContainerWidthToHeight = 0.75;
+	var iconPercentSize = 30;//50;
+	var iconLeftPercent = (100-iconPercentSize)*0.5; // 25
+	var iconTopPercent = (100-iconPercentSize)*iconToContainerWidthToHeight*0.5; // 10
+	console.log(iconPercentSize,iconLeftPercent+iconTopPercent);
+
 	var i, len = listings.length;
 	for(i=0; i<len; ++i){
 		var listing = listings[i];
@@ -459,9 +471,9 @@ giau.GalleryListing = function(element){
 			Code.setStylePosition(icon,"absolute");
 			Code.setStyleLeft(icon,"0px");
 			Code.setStyleTop(icon,"0px");
-			Code.setStyleWidth(icon,"50%");
+			Code.setStyleWidth(icon,iconPercentSize+"%");
 			//Code.setStyleHeight(icon,"50%");
-			Code.setStylePadding(icon,"10% 0% 0% 25%");
+			Code.setStylePadding(icon,iconTopPercent+"% 0% 0% "+iconLeftPercent+"%");
 		var shader = Code.newDiv();
 			var colorHex = listing["shading_color"];
 			var colorJS = Code.getJSColorFromARGB(colorHex);
@@ -560,15 +572,15 @@ giau.GalleryListing.prototype.updateLayout = function(){
 		//title.style.fontsize = 32+"px";
 		Code.setStyleFontWeight(title, "lighter");
 		if(colCount==1){
-			Code.setStyleFontSize(title, 24+"px");
+			Code.setStyleFontSize(title, 22+"px");
 		}else{
-			Code.setStyleFontSize(title, 16+"px");
+			Code.setStyleFontSize(title, 14+"px");
 		}
-		Code.setStyleFontFamily(title, "Arial, sans-serif");
+		Code.setStyleFontFamily(title, "'siteThemeLight', Arial, sans-serif");
 			Code.setStylePadding(title, "4px 0px 0px 0px");
 			Code.setStyleColor(title, "#666");
 			Code.setStyleDisplay(title, "inline-block");
-			Code.setStyleTextAlign(title, "left");
+			Code.setStyleTextAlign(title, "center");
 			Code.setStylePosition(title, "absolute");
 			Code.setStyleLeft(title, currentX+"px");
 			Code.setStyleWidth(title, elementWidth+"px");
@@ -1188,6 +1200,7 @@ July 31~August 3: High School Summer Retreat @ Lake Arrowhead
 	var container = this._container;
 	var i, len=eventList.length;
 	var todayNowMilliseconds = Code.getTimeMilliseconds(true);
+	var yesterdayNowMilliseconds = todayNowMilliseconds - 1*24*60*60*1000; // 1 day previous
 	for(i=0;i<len;++i){
 		var event = eventList[i];
 		var start = event.start;
@@ -1204,7 +1217,8 @@ July 31~August 3: High School Summer Retreat @ Lake Arrowhead
 		if(end<timeCutOff){
 			continue;
 		}
-		if(end<todayNowMilliseconds){
+
+		if(end<yesterdayNowMilliseconds){
 			backgroundColor = "#F5F5F5";
 			titleColor = "#999";
 			descriptionColor = "#999";
@@ -1222,7 +1236,7 @@ July 31~August 3: High School Summer Retreat @ Lake Arrowhead
 			Code.setStyleMargin(div,"0");
 			Code.setStyleDisplay(div,"block");
 			Code.setStyleTextAlign(div,"center");
-			Code.setStylePadding(div,"10px 10px 10px 10px");
+			Code.setStylePadding(div,"20px 10px 20px 10px");
 			Code.setStyleBackground(div,backgroundColor);
 			Code.setStyleMargin(div,"0px 0px 12px 0px");
 			Code.addChild(container,div);
@@ -1281,7 +1295,7 @@ giau.CalendarView.prototype.formatTimeHumanReadable = function(timestamp, durati
 	var date1 = new Date(timestamp);
 		var month1 = Code.monthsLong[date1.getMonth()];
 		var day1 = date1.getDate();
-		var dow1 = Code.daysOfWeekLong[date1.getDay()];
+		var dow1 = Code.daysOfWeekLong[(date1.getDay()+6)%7];
 		var hour1 = date1.getHours();
 		var min1 = date1.getMinutes();
 		var ampm1 = "AM"
@@ -1294,12 +1308,12 @@ giau.CalendarView.prototype.formatTimeHumanReadable = function(timestamp, durati
 	if(duration==0){
 		return ""+dow1+", "+month1+" "+day1;//+" @ "+hour1+":"+Code.prependFixed(""+min1,"0",2)+" "+ampm1;
 	}else{
-		var dowShort1 = Code.daysOfWeekShort[date1.getDay()];
+		var dowShort1 = Code.daysOfWeekShort[(date1.getDay()+6)%7];
 		var date2 = new Date(timestamp + duration);
 		var month2 = Code.monthsLong[date2.getMonth()];
 		var day2 = date2.getDate();
-		var dow2 = Code.daysOfWeekLong[date2.getDay()];
-		var dowShort2 = Code.daysOfWeekShort[date2.getDay()];
+		var dow2 = Code.daysOfWeekLong[(date2.getDay()+6)%7];
+		var dowShort2 = Code.daysOfWeekShort[(date2.getDay()+6)%7];
 		var hour2 = date2.getHours();
 		var min2 = date2.getMinutes();
 		return ""+month1+" "+day1+" ("+dowShort1+")"+" - "+month2+" "+day2+" ("+dowShort2+")";
