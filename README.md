@@ -72,13 +72,41 @@ rm /repos/fw/themes/giau/js/code
 ln -s /repos/ff/src/code /repos/fw/themes/giau/js/
 
 
+# plugin
+rm -r /var/www/html/wordpress/wp-content/plugins/giau
+cp -r /media/sf_zirbr001/dev/extRepos/fw/plugins/giau/ /var/www/html/wordpress/wp-content/plugins/giau
+chmod -R 777 /var/www/html/wordpress/wp-content/plugins/giau
+
+
 
 #speicfic files
 
+cp /media/sf_zirbr001/dev/extRepos/fw/themes/giau/index.php /repos/fw/themes/giau/index.php 
+cp /media/sf_zirbr001/dev/extRepos/fw/themes/giau/data.php /repos/fw/themes/giau/data.php 
 cp /media/sf_zirbr001/dev/extRepos/fw/themes/giau/php/functions.php /repos/fw/themes/giau/php/functions.php 
 cp /media/sf_zirbr001/dev/extRepos/fw/themes/giau/js/theme.js /repos/fw/themes/giau/js/theme.js 
 cp /media/sf_zirbr001/dev/extRepos/fw/themes/giau/css/theme.css /repos/fw/themes/giau/css/theme.css 
 cp /media/sf_zirbr001/dev/extRepos/ff/src/code/Code.js /repos/ff/src/code/Code.js 
+
+
+#DEBUGGING
+tail -f /var/log/php_errors.log
+tail -f /var/log/apache2/error.log
+
+```
+
+
+
+### SQL
+```
+mysql -u wordpressuser -p
+> qwerty
+show databases;
+use wordpress;
+show tables;
+show columns from wp_giau_languagization;
+
+
 
 
 ```

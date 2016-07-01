@@ -96,6 +96,7 @@ ul {
 	z-index: 200;
 	/*background-color: rgba(0,255,0, 0.5);*/
 }
+
 /* LOGO */
 .organizationLogoContainer {
 	background-color: rgba(0,0,0, 0.0);
@@ -280,6 +281,22 @@ ul {
 	font-family: 'siteThemeLight';
 }
 
+/* directions */
+.addressSectionTitle {
+	font-family: 'siteThemeRegular';
+	font-size: 16px;
+	padding-left: 10px;
+	color: #333;
+}
+.addressSectionDescription {
+	font-family: 'siteThemeLight';
+	font-size: 14px;
+	padding-left: 10px;
+	color: #333;
+}
+.addressSectionDivider {
+	padding: 8px;
+}
 
 @font-face {
 	font-family: siteThemeRegular;

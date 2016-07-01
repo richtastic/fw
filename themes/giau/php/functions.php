@@ -34,6 +34,11 @@ function relativePathUploads(){
 }
 
 
+function absoluteWordpressServerURL(){
+	return site_url();
+}
+
+
 // function getParameterOrDefault($param){
 // 	return getParameterOrDefault($param,"");
 // }
@@ -51,7 +56,7 @@ function getParameterOrDefault($param, $def){
 
 
 function page_link_from_page_name($pageName){
-	$root = site_url();
+	$root = absoluteWordpressServerURL();
 	return $root."?page=".$pageName;
 }
 
@@ -101,6 +106,8 @@ function create_page(){
 		<script rel="text/javascript" src="<?php echo $fileJavaScriptMain; ?>"></script>
 		<script type="text/javascript">
 			// START
+				GLOBAL_SERVER_ROOT_PATH = "<?php echo absoluteWordpressServerURL(); ?>";
+				GLOBAL_SERVER_QUERY_PATH = "<?php echo absoluteWordpressServerURL().'/'.'data'; ?>";
 				GLOBAL_SERVER_IMAGE_PATH = "<?php echo relativePathIMG(); ?>";
 				$(document).ready( function(){
 					var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
@@ -141,7 +148,6 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 			<!-- LANGUAGE SWITCH -->
 			<div class="languageSwitchContainer" style="display:inline-block; float:right; padding:10px;">EN | 한국어</div>
 			<!-- NAVIGATION -->
-			<!-- <div class="giauNavigationItemList navigationContainer" style="display:inline-block; position:relative; text-align: center; float:right; padding:6px;" >Home, Departments, Staff, Forms, Directions, Contact Us</div> -->
 			<?php create_navigation($pageList, $pageRequest); ?>
 			
 		</div>
@@ -223,8 +229,20 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 <?php
 }else if($pageRequest==$PAGE_REQUEST_TYPE_LOCATION){
 ?>
-		<!-- GOOGLE MAP -->
-	<div class="limitedWidth"  style="background-color: rgba(255,0,5,0.5); text-align:center; width:100%;">
+	<!-- DIRECTIONS -->
+	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
+		<div class="headerSectionMain">DIRECTIONS</div>
+	</div>
+
+	<!-- ADDRESS -->
+	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
+		<div class="addressSectionTitle">Los Angeles Presbyterian Church</div>
+		<div class="addressSectionDescription">2241 N. Eastern Ave. Los Angeles, CA 90032</div>
+		<div class="addressSectionDivider"></div>
+	</div>
+	
+	<!-- GOOGLE MAP -->
+	<div class="limitedWidth"  style="background-color: rgba(255,255,255,0.0); text-align:center; width:100%;">
 	<script src='https://maps.googleapis.com/maps/api/js?v=3.exp'></script>
 	<div style='overflow:hidden;height:400px;width:100%; display:inline-block; margin: 0 auto;'>
 		<div id='gmap_canvas' style='height:400px;width:100%;'></div>

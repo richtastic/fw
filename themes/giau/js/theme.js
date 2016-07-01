@@ -91,11 +91,17 @@ giau.Calendar = function(element){ //
 giau.ContactView = function(element){ //
 	this._container = element;
 
+	// LISTENERS
+	this._jsDispatch = new JSDispatch();
+	//this._jsDispatch.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
+	this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_CLICK, this._handleSubmitClickedFxn, this);
+	this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_TOUCH_TAP, this._handleSubmitTappedFxn, this);
+
 	var contactTitle = "CONTACT US";
 	var contactInfo = "For more information, you can contact:\nJoseph Kim (Director of Christian Education)\nPhone: (213) 200-6092\nEmail: thefathershouse.lacpc@gmail.com";
 	
 	var otherTitle = "GET SOCIAL";
-	var otherInfo = "We have a ton of scial meda links you can follow";
+	var otherInfo = "We have a ton of social meda links you can follow";
 
 	var messageTitle = "SEND A MESSAGE";
 	var messageInfo = "Got more questions? Write us a note, and we'll get back to you.";
@@ -107,12 +113,29 @@ giau.ContactView = function(element){ //
 	var sendMessageButtonText = "SendMessage";
 
 		var divInfo = Code.newDiv(messageInfo);
-		var divName = Code.newDiv(nameFieldDefault);
+		//var divName = Code.newDiv(nameFieldDefault);
+			var divName = Code.newInputText();
+			Code.setTextPlaceholder(divName,"Name");
+			Code.setStyleWidth(divName,"90%");
+			Code.setStyleDisplay(divName,"block");
+			Code.setStyleTextAlign(divName,"left");
 		var divEmail = Code.newDiv(emailFieldDefault);
-		var divComment = Code.newDiv();
-		var divBot = Code.newDiv();
-		var divSend = Code.newDiv();
-			Code.setContent(divSend, sendMessageButtonText);
+		//var divComment = Code.newDiv();
+			var divComment = Code.newInputTextArea();
+			Code.setTextPlaceholder(divComment,"Comment");
+			Code.setStyleWidth(divComment,"90%");
+			Code.setStyleDisplay(divComment,"block");
+			Code.setStyleTextAlign(divComment,"left");
+
+		//var divBot = Code.newDiv();
+			var divBot = Code.newInputCheckbox("isUserHuman","yes");
+			Code.setStyleDisplay(divBot,"block");
+			Code.setStyleTextAlign(divBot,"left");
+		//var divSend = Code.newDiv();
+			var divSend = Code.newInputSubmit(sendMessageButtonText);
+			Code.setStyleDisplay(divSend,"block");
+			Code.setStyleTextAlign(divSend,"left");
+			//Code.setContent(divSend, sendMessageButtonText);
 
 
 	var containerElement = this._container;
@@ -145,13 +168,71 @@ giau.ContactView = function(element){ //
 				Code.addChild(rightColElement, element);
 			}
 		}
-
+		Code.addChild(containerElement, rowElement);
 		Code.addChild(rowElement,leftColElement);
 		Code.addChild(rowElement,rightColElement);
+		
 
-		console.log(rowElement);
-		Code.addChild(containerElement, rowElement);
+		Code.setStyleDisplay(rowElement,"block");
+		Code.setStyleBackground(rowElement,"#00F");
+		Code.setStylePadding(rowElement,"10px");
+
+		Code.setStyleWidth(leftColElement,"50%");
+			Code.setStyleFontFamily(leftColElement,"'siteThemeRegular'");
+			Code.setStyleFontSize(leftColElement,"18px");
+			Code.setStyleDisplay(leftColElement,"inline-block");
+			//Code.setStyleDisplay(leftColElement,"table-cell");
+			//Code.setStyleFloat(leftColElement,"left");
+			Code.setStylePadding(leftColElement,"0px");
+			Code.setStylePosition(leftColElement,"relative");
+			Code.setStyleColor(leftColElement,"#000");
+			Code.setStyleBackground(leftColElement,"#0F0");
+			
+		Code.setStyleWidth(rightColElement,"50%");
+			Code.setStyleFontFamily(rightColElement,"'siteThemeLight'");
+			Code.setStyleDisplay(rightColElement,"inline-block");
+			Code.setStyleFontSize(rightColElement,"14px");
+			//Code.setStyleDisplay(rightColElement,"table-cell");
+			//Code.setStyleFloat(rightColElement,"right");
+			Code.setStylePadding(rightColElement,"0px");
+			Code.setStylePosition(rightColElement,"relative");
+			Code.setStyleBackground(rightColElement,"#F00");
+			Code.setStyleColor(rightColElement,"#333");
+
+			// Code.setStyleVerticalAlign(containerElement,"top");
+			// Code.setStyleHeight(containerElement,"100%");
+			// Code.setStyleMinHeight(containerElement,"100px");
 	}
+	Code.setStylePadding(containerElement,"10px");
+		
+}
+giau.ContactView._handleSubmitClickedFxn = function(e){
+	console.log(e);
+	this._submitFormData();
+}
+giau.ContactView._handleSubmitTappedFxn = function(e){
+	console.log(e);
+	this._submitFormData();
+}
+giau.ContactView._submitFormData = function(){
+	console.log("submit form data");
+
+	// do a check first
+
+	var url = GLOBAL_SERVER_QUERY_PATH+"";
+
+	var ajax = new Ajax();
+	ajax.url(url);
+	ajax.method(Ajax.METHOD_TYPE_POST);
+	ajax.params({
+		"operation":"submit_contact_form",
+		"name":"?",
+		"email":"?",
+		"comment":"?"
+	});
+	ajax.callback(function(){
+		console.log("callback");
+	});
 }
 
 giau.BioView = function(element){ //
