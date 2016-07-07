@@ -43,6 +43,9 @@ function GIAU_TABLE_NAME_SECTION(){
 function GIAU_TABLE_NAME_WIDGET(){
 	return "widget";
 }
+function GIAU_TABLE_NAME_CALENDAR(){
+	return "calendar";
+}
 
 function GIAU_FULL_TABLE_NAME_LANGUAGIZATION(){
 	return WORDPRESS_TABLE_PREFIX()."".GIAU_TABLE_PREFIX()."".GIAU_TABLE_NAME_LANGUAGIZATION();
@@ -56,6 +59,10 @@ function GIAU_FULL_TABLE_NAME_SECTION(){
 function GIAU_FULL_TABLE_NAME_WIDGET(){
 	return WORDPRESS_TABLE_PREFIX()."".GIAU_TABLE_PREFIX()."".GIAU_TABLE_NAME_WIDGET();
 }
+function GIAU_FULL_TABLE_NAME_CALENDAR(){
+	return WORDPRESS_TABLE_PREFIX()."".GIAU_TABLE_PREFIX()."".GIAU_TABLE_NAME_CALENDAR();
+}
+
 // function GIAU_FULL_TABLE_NAME_NAVIGATION(){
 // 	global $wpdb;
 // 	$wordpress_prefix = $wpdb->prefix;
@@ -174,6 +181,46 @@ function giau_create_database(){
 	error_log($sql);
 	dbDelta( $sql );
 
+
+	// WIDGET
+	// id
+	// created
+	// modified
+	// name = widget name
+	// configuration = default json configuration
+	$sql = "CREATE TABLE ".GIAU_FULL_TABLE_NAME_WIDGET()." (
+		id int NOT NULL AUTO_INCREMENT,
+		created VARCHAR(32) NOT NULL,
+		modified VARCHAR(32) NOT NULL,
+		name VARCHAR(32) NOT NULL,
+		configuration TEXT NOT NULL,
+		UNIQUE KEY id (id)
+		) $charset_collate
+	;";
+	error_log($sql);
+	dbDelta( $sql );
+
+	// SECTION
+	// id
+	// created
+	// modified
+	// short_name = ?
+	// title = display title
+	// configuration = overriding json configuration
+	$sql = "CREATE TABLE ".GIAU_FULL_TABLE_NAME_SECTION()." (
+		id int NOT NULL AUTO_INCREMENT,
+		created VARCHAR(32) NOT NULL,
+		modified VARCHAR(32) NOT NULL,
+		short_name VARCHAR(16) NOT NULL,
+		title VARCHAR(255) NOT NULL,
+		widget VARCHAR(255) NOT NULL,
+		configuration TEXT NOT NULL,
+		UNIQUE KEY id (id)
+		) $charset_collate
+	;";
+	error_log($sql);
+	dbDelta( $sql );
+
 	// PAGES
 	// id = unique entry number EG: 123
 	// created = ISO-8601 timestamp first made  EG: 2016-07-01T18:35:43.0000Z
@@ -189,6 +236,30 @@ function giau_create_database(){
 		short_name VARCHAR(16) NOT NULL,
 		title VARCHAR(255) NOT NULL,
 		sectionList VARCHAR(255) NOT NULL,
+		UNIQUE KEY id (id)
+		) $charset_collate
+	;";
+	error_log($sql);
+	dbDelta( $sql );
+
+	// CALENDAR
+	// id = unique entry number EG: 123
+	// created = ISO-8601 timestamp first made  EG: 2016-07-01T18:35:43.0000Z
+	// modified = ISO-8601 timestamp last changed  EG: 2015-06-28T12:34:56.0000Z
+	// short_name = human readable id
+	// title = 
+	// description = 
+	// start_date = millisecond dime stamp
+	// duration = milliseconds
+	$sql = "CREATE TABLE ".GIAU_FULL_TABLE_NAME_CALENDAR()." (
+		id int NOT NULL AUTO_INCREMENT,
+		created VARCHAR(32) NOT NULL,
+		modified VARCHAR(32) NOT NULL,
+		short_name VARCHAR(32) NOT NULL,
+		title VARCHAR(255) NOT NULL,
+		description VARCHAR(65535) NOT NULL,
+		start_date VARCHAR(32) NOT NULL,
+		duration VARCHAR(32) NOT NULL,
 		UNIQUE KEY id (id)
 		) $charset_collate
 	;";
@@ -218,7 +289,9 @@ function giau_remove_database(){
 	$sql = "DROP TABLE IF EXISTS ".GIAU_FULL_TABLE_NAME_WIDGET()." ;";
 	$wpdb->query($sql);
 
-
+	// CALENDAR
+	$sql = "DROP TABLE IF EXISTS ".GIAU_FULL_TABLE_NAME_CALENDAR()." ;";
+	$wpdb->query($sql);
 }
 // RUN
 //giau_init_fxn();
@@ -242,6 +315,29 @@ register_activation_hook( __FILE__, 'giau_callback_activation' );
 register_deactivation_hook( __FILE__, 'giau_callback_deactivation' );
 
 
+function giau_calendar_events_all(){
+	global $wpdb;
+	$table = GIAU_FULL_TABLE_NAME_CALENDAR();
+	$querystr = "
+	    SELECT ".$table.".* 
+	    FROM ".$table."
+	    ORDER BY id DESC
+	";
+	error_log("QUERY: ".$querystr);
+	$results = $wpdb->get_results($querystr, ARRAY_A);
+	return $results;
+	// foreach( $results as $row ) {
+	// 	$row_id = $row["id"];
+	// 	$row_created = $row["created"];
+	// 	$row_modified = $row["modified"];
+	// 	$row_short_name = $row["short_name"];
+	// 	$row_title = $row["title"];
+	// 	$row_description = $row["description"];
+	// 	$row_start_date = $row["start_date"];
+	// 	$row_duration = $row["duration"];
+	// }
+}
+
 
 function giau_default_fill_database(){
 	error_log("giau_default_fill_database");
@@ -262,6 +358,23 @@ function giau_default_fill_database(){
 			)
 		);
 	// WIDGET
+
+	// SECTION
+
+	// PAGE
+
+	// CALENDAR ITEMS
+	$wpdb->insert(GIAU_FULL_TABLE_NAME_CALENDAR(),
+		array(
+			"created" => $timestampNow,
+			"modified" => $timestampNow,
+			"short_name" => "childrens-day-2016",
+			"title" => "Children's Day",
+			"description" => "Joint Worship 11:00 AM",
+			"start_date" =>  stringFromDate( dateFromString("2016-05-01 11:00:00.0000") ),
+			"duration" => "0",
+			)
+		);
 	// preset defined list of widgets
 }
 

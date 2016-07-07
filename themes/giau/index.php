@@ -7,7 +7,44 @@
  */
 
 
-include (TEMPLATEPATH . '/php/functions.php');
+include_once (TEMPLATEPATH . '/php/functions.php');
+
+// 
+$fxns = TEMPLATEPATH . '/../../plugins/giau/php/functions.php';
+error_log($fxns);
+// include_once ($fxns);
+
+// $GIAU_ROOT_PATH = dirname(__FILE__);
+// error_log("GIAU_ROOT_PATH: ".$GIAU_ROOT_PATH);
+// require_once($GIAU_ROOT_PATH.'/php/functions.php');
+//require_once_directory( dirname(__FILE__)."/php/" );
+
+//error_log( dateFromString( "2016-07-05 12:45:31.6000" ) );
+
+
+    $results = giau_calendar_events_all();
+
+    foreach( $results as $row ) {
+        $row_id = $row["id"];
+        $row_created = $row["created"];
+        $row_modified = $row["modified"];
+        $row_short_name = $row["short_name"];
+        $row_title = $row["title"];
+        $row_description = $row["description"];
+        $row_start_date = $row["start_date"];
+        $row_duration = $row["duration"];
+        error_log("FOUND: ".$row_id." = ".$row_title);
+    }
+
+// for($i=0; $i<count($results); ++$i){
+// 	$result = $results[$i];
+// 	//$modified = $result["modified"];
+// 	error_log($i.": ".$result);
+// 	print_r($result);
+// 	echo "<br/>";
+// 	print_r($result->modified);
+// 	echo "<br/>";
+
 
 
 error_log("HAI - ".time());

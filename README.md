@@ -71,6 +71,16 @@ chmod -R 777 /repos/fw
 rm /repos/fw/themes/giau/js/code 
 ln -s /repos/ff/src/code /repos/fw/themes/giau/js/
 
+# theme
+rm -r /var/www/html/wordpress/wp-content/themes/giau/index.php 
+cp -r /media/sf_zirbr001/dev/extRepos/fw/themes/giau/index.php /var/www/html/wordpress/wp-content/themes/giau/index.php 
+chmod -R 777 /repos/fw/
+
+rm -r /var/www/html/wordpress/wp-content/themes/giau
+cp -r /media/sf_zirbr001/dev/extRepos/fw/themes/giau /var/www/html/wordpress/wp-content/themes/giau
+chmod -R 777 /var/www/html/wordpress/wp-content/themes/giau
+
+
 
 # plugin
 rm -r /var/www/html/wordpress/wp-content/plugins/giau
