@@ -79,6 +79,7 @@ chmod -R 777 /repos/fw/
 rm -r /var/www/html/wordpress/wp-content/themes/giau
 cp -r /media/sf_zirbr001/dev/extRepos/fw/themes/giau /var/www/html/wordpress/wp-content/themes/giau
 chmod -R 777 /var/www/html/wordpress/wp-content/themes/giau
+ln -s /repos/ff/src/code /var/www/html/wordpress/wp-content/themes/giau/js
 
 
 
@@ -86,6 +87,8 @@ chmod -R 777 /var/www/html/wordpress/wp-content/themes/giau
 rm -r /var/www/html/wordpress/wp-content/plugins/giau
 cp -r /media/sf_zirbr001/dev/extRepos/fw/plugins/giau/ /var/www/html/wordpress/wp-content/plugins/giau
 chmod -R 777 /var/www/html/wordpress/wp-content/plugins/giau
+
+# rm -r /var/www/html/wordpress/wp-content/plugins/giau && cp -r /media/sf_zirbr001/dev/extRepos/fw/plugins/giau/ /var/www/html/wordpress/wp-content/plugins/giau && chmod -R 777 /var/www/html/wordpress/wp-content/plugins/giau
 
 
 
@@ -117,7 +120,7 @@ show tables;
 show columns from wp_giau_languagization;
 
 
-
+wp methods excape strings for you, no need for mysql_real_escape_string
 
 ```
 
@@ -141,6 +144,16 @@ mirror -R code code
 cd /www/ce/wp-content/themes/
 chmod -R 755 giau/
 ```
+
+
+
+
+
+
+
+
+
+http://code.tutsplus.com/articles/data-sanitization-and-validation-with-wordpress--wp-25536
 
 
 

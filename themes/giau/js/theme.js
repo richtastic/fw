@@ -237,8 +237,9 @@ giau.ContactView._submitFormData = function(){
 
 giau.BioView = function(element){ //
 	this._container = element;
-	var personnelImagePrefix = "./wp-content/themes/giau/img/personnel/";
-
+	this.personnelImagePrefix = "./wp-content/themes/giau/img/personnel/";
+	this._default_bio_description = "Bio forthcoming.";
+	this._default_bio_image = "anonymous.jpg";
 	var personnelList = [];
 	personnelList.push({
 		"first_name": "",
@@ -246,8 +247,8 @@ giau.BioView = function(element){ //
 		"display_name": "Joseph Kim",
 		"title": "Director of Christian Education, Interim Junior High Pastor", // position
 		"description": "Joseph is happily married to Joyce, the woman of his dreams. He has a bachelor’s degree in civil engineering and a Master of Divinity degree and was called into vocational ministry in 2004. He began serving at LACPC as a high school pastor in December 2006 and by God’s grace is currently serving as the director of Christian Education.",
-		"image_url": personnelImagePrefix+"ce-joe.png",
-		"uri": "", // http://www.google.com
+		"image_url": "ce-joe.png",
+		"uri": "",
 	});
 	// 
 	personnelList.push({
@@ -255,8 +256,8 @@ giau.BioView = function(element){ //
 		"last_name": "",
 		"display_name": "Tony Park",
 		"title": "Elder of Christian Education",
-		"description": "Bio forthcoming.",
-		"image_url": personnelImagePrefix+"anonymous.jpg",
+		"description": "",
+		"image_url": "";
 		"uri": "",
 	});
 	personnelList.push({
@@ -264,8 +265,8 @@ giau.BioView = function(element){ //
 		"last_name": "",
 		"display_name": "Kurt Kim",
 		"title": "Secretary",
-		"description": "Bio forthcoming.",
-		"image_url": personnelImagePrefix+"anonymous.jpg",
+		"description":"" "Bio forthcoming.",
+		"image_url": "",
 		"uri": "",
 	});
 	personnelList.push({
@@ -274,7 +275,7 @@ giau.BioView = function(element){ //
 		"display_name": "Sebastian Lee",
 		"title": "Finance Deacon",
 		"description": "Bio forthcoming.",
-		"image_url": personnelImagePrefix+"anonymous.jpg",
+		"image_url": "",
 		"uri": "",
 	});
 	personnelList.push({
@@ -283,7 +284,7 @@ giau.BioView = function(element){ //
 		"display_name": "Andrew Lim",
 		"title": "High School Pastor",
 		"description": "Andrew has been attending LACPC ever since he was a high school freshman. He got his bachelor’s degree from UC Irvine and a Masters in Pastoral Studies from Azusa Pacific University. He has been serving as the high school pastor since May of last year and also works full time as a high school English teacher.",
-		"image_url": personnelImagePrefix+"ce-andy.png",
+		"image_url": "ce-andy.png",
 		"uri": "",
 	});
 	personnelList.push({
@@ -292,7 +293,7 @@ giau.BioView = function(element){ //
 		"display_name": "Boram Lee",
 		"title": "Elementary Pastor",
 		"description": "Born and raised in Los Angeles, Boram has a BA in cognitive psychology, a multiple subjects credential, and a master’s degree in teaching. She began seminary in January 2013 at Azusa Pacific University where she is studying to obtain an MA in pastoral studies with an emphasis is youth and family ministry. Her passion is to serve and train young children so that they can develop a solid relationship with God.",
-		"image_url": personnelImagePrefix+"ce-boram.png",
+		"image_url": "ce-boram.png",
 		"uri": "",
 	});
 	personnelList.push({
@@ -301,7 +302,7 @@ giau.BioView = function(element){ //
 		"display_name": "Sheen Hong",
 		"title": "Kindergarten Pastor",
 		"description": "Sheen Hong is a loving mother of two children, Karis and Jin-Sung, and happy wife of Joshua, husband and a Chaplain. She has a bachelor’s degree in Christian education and Master of Arts degree in Christian Education. She was called into Children’s ministry in 2009. She began serving at LACPC as a Kindergarten pastor in December 2015.",
-		"image_url": personnelImagePrefix+"ce-hong.png",
+		"image_url": "ce-hong.png",
 		"uri": "",
 	});
 	personnelList.push({
@@ -310,7 +311,7 @@ giau.BioView = function(element){ //
 		"display_name": "Jessica Won",
 		"title": "Nursery Pastor",
 		"description": "Jessica Won is married to Peter Won and has twin boys and a girl. She has a degree of Child Development from Patten University and currently working on M.Div. from Azusa University. She loves to share gospel to children and now oversees the nursery department.",
-		"image_url": personnelImagePrefix+"ce-jessica.png",
+		"image_url": "ce-jessica.png",
 		"uri": "",
 	});
 
@@ -336,7 +337,12 @@ Code.setStylePosition(this._container,"relative");
 			Code.setStyleHeight(containerElement,"100%");
 			Code.setStyleMinHeight(containerElement,"100px");
 		var imageIconElement = Code.newImage();
-			Code.setSrc(imageIconElement, person["image_url"]);
+			var imageURL = person["image_url"];
+			if(!imageURL || imageURL==""){
+				imageURL = this._default_bio_image;
+			}
+			imageURL = this.personnelImagePrefix + "" + imageURL;
+			Code.setSrc(imageIconElement, imageURL);
 			Code.setStyleWidth(imageIconElement,"100%");
 			Code.addStyle(imageIconElement,"border-radius:100%;");
 			//Code.setStyleMargin(imageIconElement,"0 10px");
@@ -356,7 +362,11 @@ Code.setStylePosition(this._container,"relative");
 			Code.setStyleFontStyle(titleElement,"italic");
 			Code.setStyleColor(titleElement,"#555");
 		var descriptionElement = Code.newDiv();
-			Code.setContent(descriptionElement,person["description"]);
+			var description = person["description"];
+			if(!description || description==""){
+				description = this._default_bio_description;
+			}
+			Code.setContent(descriptionElement,description);
 			Code.setStyleDisplay(descriptionElement,"block");
 			Code.setStyleFontFamily(descriptionElement,"siteThemeLight");
 			Code.setStyleFontSize(descriptionElement,"14px");
