@@ -184,7 +184,7 @@ https://codex.wordpress.org/Creating_Options_Pages
 
 
 
-# NEW COPY:
+# VBOX
 cp /media/sf_zirbr001/dev/extRepos/fw/themes/giau/js/theme.js /var/www/html/wordpress/wp-content/themes/giau/js/theme.js 
 chmod -R 777 /var/www/html/wordpress/wp-content/themes/giau
 
@@ -198,6 +198,14 @@ ln -s /repos/ff/src/code /var/www/html/wordpress/wp-content/themes/giau/js
 
 
 
+
+
+
+
+# XUBUNTU NATIVE SETUP
+
+ln -s ~/universe/repo/fw/themes/giau/ /var/www/html/wordpress/wp-content/themes/giau
+ln -s ~/universe/repo/fw/plugins/giau/ /var/www/html/wordpress/wp-content/plugins/giau
 
 
 
