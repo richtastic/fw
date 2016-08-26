@@ -94,11 +94,13 @@ giau.ContactView = function(element){ //
 	// LISTENERS
 	this._jsDispatch = new JSDispatch();
 	//this._jsDispatch.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
-	this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_CLICK, this._handleSubmitClickedFxn, this);
-	this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_TOUCH_TAP, this._handleSubmitTappedFxn, this);
+	// .addJSEventListener = function(object, type, fxn, ctx){
+
+	// this._jsDispatch.addJSEventListener(element, Code.JS_EVENT_CLICK, this._handleSubmitClickedFxn, this);
+	// this._jsDispatch.addJSEventListener(element, Code.JS_EVENT_TOUCH_TAP, this._handleSubmitTappedFxn, this);
 
 	var contactTitle = "CONTACT US";
-	var contactInfo = "For more information, you can contact:\nJoseph Kim (Director of Christian Education)\nPhone: (213) 200-6092\nEmail: thefathershouse.lacpc@gmail.com";
+	var contactInfo = "For more information, you can contact:<br/><br/>Joseph Kim (Director of Christian Education<br/>Phone: (213) 200-6092<br/>Email: thefathershouse.lacpc@gmail.com";
 	
 	var otherTitle = "GET SOCIAL";
 	var otherInfo = "We have a ton of social meda links you can follow";
@@ -107,35 +109,104 @@ giau.ContactView = function(element){ //
 	var messageInfo = "Got more questions? Write us a note, and we'll get back to you.";
 	var nameFieldDefault = "Name";
 	var emailFieldDefault = "Email";
-	var bodyFieldDefault = "Type your comment here";
+	var bodyFieldDefault = "Comment";
 
 	var botCheckText = "Check here if you are a human.";
 	var sendMessageButtonText = "SendMessage";
 
 		var divInfo = Code.newDiv(messageInfo);
+			Code.setStyleFontFamily(divInfo,"'siteThemeLight'");
+			Code.setStyleDisplay(divInfo,"inline-block");
+			Code.setStyleFontSize(divInfo,"14px");
+			Code.setStyleColor(divInfo,"#333");
 		//var divName = Code.newDiv(nameFieldDefault);
 			var divName = Code.newInputText();
-			Code.setTextPlaceholder(divName,"Name");
-			Code.setStyleWidth(divName,"90%");
+			Code.setTextPlaceholder(divName,nameFieldDefault);
+			Code.setStyleWidth(divName,"100%");
 			Code.setStyleDisplay(divName,"block");
 			Code.setStyleTextAlign(divName,"left");
-		var divEmail = Code.newDiv(emailFieldDefault);
+			Code.setStyleBorder(divName,"solid");
+			Code.setStyleBorderWidth(divName,"1px");
+			Code.setStyleBorderColor(divName,"#333");
+				Code.setStyleHeight(divName,"24px");
+				
+		var divEmail = Code.newInputText();
+			Code.setTextPlaceholder(divEmail,emailFieldDefault);
+			Code.setStyleWidth(divEmail,"100%");
+			Code.setStyleDisplay(divEmail,"block");
+			Code.setStyleTextAlign(divEmail,"left");
+			Code.setStyleBorder(divEmail,"solid");
+			Code.setStyleBorderWidth(divEmail,"1px");
+			Code.setStyleBorderColor(divEmail,"#333");
+				Code.setStyleHeight(divEmail,"24px");
+			// Code.setStyleFontFamily(divEmail,"'siteThemeLight'");
+			// Code.setStyleDisplay(divEmail,"inline-block");
+			// Code.setStyleFontSize(divEmail,"14px");
+			// Code.setStyleColor(divEmail,"#333");
+
+		var divDivs = [];
+		for(var i=0; i<5; ++i){
+			var divDiv1 = Code.newDiv();
+				Code.setStyleWidth(divDiv1,"100%");
+				Code.setStyleHeight(divDiv1,"10px");
+			divDivs.push(divDiv1);
+		}
+		// var divDiv2 = Code.newDiv();
+		// 	Code.setStyleWidth(divDiv2,"100%");
+		// 	Code.setStyleHeight(divDiv2,"10px");
+
 		//var divComment = Code.newDiv();
 			var divComment = Code.newInputTextArea();
-			Code.setTextPlaceholder(divComment,"Comment");
-			Code.setStyleWidth(divComment,"90%");
+			Code.setTextPlaceholder(divComment,bodyFieldDefault);
+			Code.setStyleWidth(divComment,"100%");
 			Code.setStyleDisplay(divComment,"block");
 			Code.setStyleTextAlign(divComment,"left");
+			Code.setStyleBorder(divComment,"solid");
+			Code.setStyleBorderWidth(divComment,"1px");
+			Code.setStyleBorderColor(divComment,"#333");
+				Code.setStyleHeight(divComment,"80px");
 
 		//var divBot = Code.newDiv();
-			var divBot = Code.newInputCheckbox("isUserHuman","yes");
-			Code.setStyleDisplay(divBot,"block");
-			Code.setStyleTextAlign(divBot,"left");
+			var divBot = Code.newDiv();
+				Code.setStyleDisplay(divBot,"block");
+				Code.setStyleTextAlign(divBot,"left");
+				Code.setStyleVerticalAlign(divBot,"middle");
+
+				var divBotCheck = Code.newInputCheckbox("isUserHuman","yes");
+					Code.setStyleDisplay(divBotCheck,"inline-block");
+				
+				var divBotText = Code.newDiv(botCheckText);
+					Code.setStyleFontFamily(divBotText,"'siteThemeLight'");
+					Code.setStyleDisplay(divBotText,"inline-block");
+					Code.setStyleFontSize(divBotText,"14px");
+					Code.setStyleColor(divBotText,"#333");
+					Code.setStylePadding(divBotText,"0px 0px 0px 10px");
+
+				Code.addChild(divBot, divBotCheck);
+				Code.addChild(divBot, divBotText);
+
+
 		//var divSend = Code.newDiv();
 			var divSend = Code.newInputSubmit(sendMessageButtonText);
 			Code.setStyleDisplay(divSend,"block");
 			Code.setStyleTextAlign(divSend,"left");
+			Code.setStyleBorder(divSend,"solid");
+			Code.setStyleBorderWidth(divSend,"1px");
+			Code.setStyleBorderColor(divSend,"#333");
+			Code.setStylePadding(divSend,"4px");
+			Code.setStyleBackground(divSend,"#FFF");
+				Code.setStyleFontFamily(divSend,"'siteThemeRegular");
+				//Code.setStyleDisplay(divInfo,"inline-block");
+				Code.setStyleFontSize(divSend,"14px");
+				Code.setStyleColor(divSend,"#333");
+				//Code.setStyleHeight(divSend,"24px");
 			//Code.setContent(divSend, sendMessageButtonText);
+
+console.log(this._handleSubmitClickedFxn)
+console.log(this._handleSubmitTappedFxn)
+
+			this._jsDispatch.addJSEventListener(divSend, Code.JS_EVENT_CLICK, this._handleSubmitClickedFxn, this);
+			this._jsDispatch.addJSEventListener(divSend, Code.JS_EVENT_TOUCH_TAP, this._handleSubmitTappedFxn, this);
 
 
 	var containerElement = this._container;
@@ -145,7 +216,7 @@ giau.ContactView = function(element){ //
 		rows.push({ "leftContent": otherTitle,
 					"rightContent": otherInfo});
 		rows.push({ "leftContent": messageTitle,
-					"rightElements":[divInfo, divName, divEmail, divComment, divBot, divSend],
+					"rightElements":[divInfo, divDivs[0], divName, divDivs[1], divEmail, divDivs[2], divComment, divDivs[3], divBot, divDivs[4], divSend],
 					"rightContent": null});
 	var i, j, len = rows.length;
 	for(i=0;i<len;++i){
@@ -174,19 +245,21 @@ giau.ContactView = function(element){ //
 		
 
 		Code.setStyleDisplay(rowElement,"block");
-		Code.setStyleBackground(rowElement,"#00F");
+		//Code.setStyleBackground(rowElement,"#00F");
 		Code.setStylePadding(rowElement,"10px");
+
+		Code.setStyleVerticalAlign(rowElement,"top");
 
 		Code.setStyleWidth(leftColElement,"50%");
 			Code.setStyleFontFamily(leftColElement,"'siteThemeRegular'");
-			Code.setStyleFontSize(leftColElement,"18px");
+			Code.setStyleFontSize(leftColElement,"20px");
 			Code.setStyleDisplay(leftColElement,"inline-block");
 			//Code.setStyleDisplay(leftColElement,"table-cell");
-			//Code.setStyleFloat(leftColElement,"left");
+			Code.setStyleFloat(leftColElement,"left");
 			Code.setStylePadding(leftColElement,"0px");
 			Code.setStylePosition(leftColElement,"relative");
 			Code.setStyleColor(leftColElement,"#000");
-			Code.setStyleBackground(leftColElement,"#0F0");
+			//Code.setStyleBackground(leftColElement,"#0F0");
 			
 		Code.setStyleWidth(rightColElement,"50%");
 			Code.setStyleFontFamily(rightColElement,"'siteThemeLight'");
@@ -196,7 +269,7 @@ giau.ContactView = function(element){ //
 			//Code.setStyleFloat(rightColElement,"right");
 			Code.setStylePadding(rightColElement,"0px");
 			Code.setStylePosition(rightColElement,"relative");
-			Code.setStyleBackground(rightColElement,"#F00");
+			//Code.setStyleBackground(rightColElement,"#F00");
 			Code.setStyleColor(rightColElement,"#333");
 
 			// Code.setStyleVerticalAlign(containerElement,"top");
@@ -206,15 +279,15 @@ giau.ContactView = function(element){ //
 	Code.setStylePadding(containerElement,"10px");
 		
 }
-giau.ContactView._handleSubmitClickedFxn = function(e){
+giau.ContactView.prototype._handleSubmitClickedFxn = function(e){
 	console.log(e);
 	this._submitFormData();
 }
-giau.ContactView._handleSubmitTappedFxn = function(e){
+giau.ContactView.prototype._handleSubmitTappedFxn = function(e){
 	console.log(e);
 	this._submitFormData();
 }
-giau.ContactView._submitFormData = function(){
+giau.ContactView.prototype._submitFormData = function(){
 	console.log("submit form data");
 
 	// do a check first
@@ -233,6 +306,8 @@ giau.ContactView._submitFormData = function(){
 	ajax.callback(function(){
 		console.log("callback");
 	});
+
+	alert("form sent successfully");
 }
 
 giau.BioView = function(element){ //
@@ -257,7 +332,7 @@ giau.BioView = function(element){ //
 		"display_name": "Tony Park",
 		"title": "Elder of Christian Education",
 		"description": "",
-		"image_url": "";
+		"image_url": "",
 		"uri": "",
 	});
 	personnelList.push({
@@ -265,7 +340,7 @@ giau.BioView = function(element){ //
 		"last_name": "",
 		"display_name": "Kurt Kim",
 		"title": "Secretary",
-		"description":"" "Bio forthcoming.",
+		"description":"Bio forthcoming.",
 		"image_url": "",
 		"uri": "",
 	});
