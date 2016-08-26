@@ -344,4 +344,15 @@ function create_footer(){
 	<?php
 }
 
+
+
+
+
 ?>
+
+
+
+
+
+
+

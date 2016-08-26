@@ -63,7 +63,7 @@ add_action('init', 'dcc_rewrite_tags', 10, 0);
 
 flush_rewrite_rules();
 //add_rewrite_rule("bacon","index.php","top");
-add_rewrite_rule("bacon","/wordpress/index.php","top");
+add_rewrite_rule("bacon","/wp/index.php","top");
 
 //flush_rewrite_rules();
 
@@ -75,6 +75,11 @@ add_rewrite_rule("bacon","/wordpress/index.php","top");
 // // HERE REWRITE RULE PRINT OUT
 // global $wp_rewrite;
 // print_r($wp_rewrite->rules);
+
+
+
+
+
 
 
 create_page();
