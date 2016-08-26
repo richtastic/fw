@@ -71,8 +71,10 @@ add_rewrite_rule("bacon","/wordpress/index.php","top");
 // add_rewrite_rule("bacon","index.php","top");
 // flush_rewrite_rules();
 
-global $wp_rewrite;
-print_r($wp_rewrite->rules);
+
+// // HERE REWRITE RULE PRINT OUT
+// global $wp_rewrite;
+// print_r($wp_rewrite->rules);
 
 
 create_page();
