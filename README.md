@@ -150,11 +150,16 @@ chmod -R 755 giau/
 
 
 
-
+https://codex.wordpress.org/Administration_Menus
 
 
 http://code.tutsplus.com/articles/data-sanitization-and-validation-with-wordpress--wp-25536
 
 
+
+
+
+http://ottopress.com/2009/wordpress-settings-api-tutorial/
+https://codex.wordpress.org/Creating_Options_Pages
 
 
