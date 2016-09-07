@@ -19,6 +19,11 @@ giau.prototype.initialize = function(){
 		var navigation = new giau.NavigationList(element);
 	});
 	
+	// LANGUAGE TOGGLES
+	var languageLists = $(".giauLanguageToggleSwitch");
+	languageLists.each(function(index, element){
+		var languageSwitch = new giau.LanguageToggle(element);
+	});
 
 	// IMAGE GALLERIES
 	var imageGalleries = $(".giauImageGallery");
@@ -767,12 +772,48 @@ giau.GalleryListing.prototype.updateLayout = function(){
 	Code.setStyleHeight(this._container, currentY+"px");
 }
 
+giau.LanguageToggle = function(element){
+	this._container = element;
+	console.log("LanguageToggle",this._container);
+}
+
 giau.NavigationList = function(element){
 	this._container = element;
 
 	// LISTENERS
 	this._jsDispatch = new JSDispatch();
 	this._jsDispatch.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
+
+	var styleMenuColor = 0xFF000000; // FFF
+	var styleMenuShadow = null; // 0xFF000000
+	var styleBorderMenuColorBottom = 0xFFEEF0EF;
+	var styleBorderMenuColorTop = 0xFFDDE3DD;
+	var styleBGMenuColor = 0xFFEFF1F0;
+	var styleFontTextColor = 0xFF333333;
+	var styleFontTextSize = 12;
+
+	// container styling
+	if(styleBGMenuColor){
+		Code.setStyleBackground(this._container, Code.getJSColorFromARGB(styleBGMenuColor) );
+	}
+	
+	Code.setStyleBorder(this._container,"solid");
+	if(styleBorderMenuColorTop){
+		Code.setStyleBorderWidthTop(this._container,"2px");
+		Code.setStyleBorderColorTop(this._container, Code.getJSColorFromARGB(styleBorderMenuColorTop) );
+	}else{
+		Code.setStyleBorderWidthTop(this._container,"0px");
+	}
+	if(styleBorderMenuColorBottom){
+		Code.setStyleBorderWidthBottom(this._container,"2px");
+		Code.setStyleBorderColorBottom(this._container, Code.getJSColorFromARGB(styleBorderMenuColorBottom) );
+	}else{
+		Code.setStyleBorderWidthBottom(this._container,"0px");
+	}
+	if(true){
+		Code.setStyleBorderWidthLeft(this._container,"0px");
+		Code.setStyleBorderWidthRight(this._container,"0px");
+	}
 
 	var i, len;
 	var listElement = Code.getChild(element,0);
@@ -782,18 +823,15 @@ giau.NavigationList = function(element){
 		len = Code.numChildren(listElement);
 		for(i=0; i<len; ++i){
 			var child = Code.getChild(listElement,i);
-			var j, len2 = Code.numChildren(child);
 			var title = "";
 			var url = "";
-			for(j=0;j<len2;++j){
-				var c = Code.getChild(child,j);
-				if(Code.hasClass(c,"display")){
-					title = Code.getContent(c);
-				}else if(Code.hasClass(c,"url")){
-					url = Code.getContent(c);
-				}else if(Code.hasClass(c,"selected")){
-					foundSelectedIndex = i;
-				}
+			var dataDisplay = "data-display";
+			var dataURL = "data-url";
+			var dataSelected = "data-selected";
+			title = Code.getPropertyOrDefault(child,dataDisplay,title);
+			url = Code.getPropertyOrDefault(child,dataURL,url);
+			if(Code.hasProperty(child,dataSelected)){
+				foundSelectedIndex = i;
 			}
 			Code.emptyDom(child);
 			menuItems.push( {"title":title, "url":url} );
@@ -811,10 +849,21 @@ giau.NavigationList = function(element){
 		Code.setContent(div,title);
 		Code.setStyleDisplay(div,"inline-block");
 		Code.setStylePadding(div,"6px 10px 4px 10px");
-		Code.setStyleColor(div,"#FFF");
-		Code.setStyleFontFamily(div,"'siteThemeRegular'");
-		Code.addStyle(div,"text-shadow: 0px 0px 3px rgba(0,0,0, 1.0);");
+		Code.setStyleFontSize(div,"14px");
+		Code.setStyleColor(div, Code.getJSColorFromARGB(styleMenuColor) );
+		if(styleMenuShadow){
+			Code.addStyle(div,"text-shadow: 0px 0px 3px "+Code.getJSColorFromARGB(styleMenuShadow)+";");
+		}
+		if(foundSelectedIndex==i){
+			Code.setStyleFontFamily(div,"'siteThemeRegular'");
+			Code.setStyleCursor(div,Code.JS_CURSOR_STYLE_DEFAULT);
+		}else{
+			Code.setStyleFontFamily(div,"'siteThemeLight'");
+			Code.setStyleCursor(div,Code.JS_CURSOR_STYLE_FINGER);
+		}
 		Code.setStyleBackground(div,"rgba(0,0,0,0.0)");
+		Code.setStyleColor(div, Code.getJSColorFromARGB(styleFontTextColor) );
+		Code.setStyleFontSize(div, styleFontTextSize+"px" );
 		Code.addChild(this._container,div);
 		optionElementList.push({"element":div,"url":url});
 		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_CLICK, this._handleContentClickedFxn, this);
@@ -888,6 +937,7 @@ giau.NavigationList.prototype.selectedIndex = function(index){
 }
 giau.NavigationList.prototype.updateLayout = function(){
 	console.log("UPDATE LAYOUT")
+	/*
 	var widthContainer = $(this._container).width();
 	var heightContainer = $(this._container).height();
 	//var widthElement = $(this._eleme
@@ -901,7 +951,7 @@ giau.NavigationList.prototype.updateLayout = function(){
 	Code.setStyleTop(highlightElement,pos.top+"px");
 	Code.setStyleWidth(highlightElement,width+"px");
 	Code.setStyleHeight(highlightElement,height+"px");
-
+	*/
 }
 
 giau.InfoOverlay = function(element){ // Overlay Float Alert
@@ -1367,6 +1417,10 @@ July 31~August 3: High School Summer Retreat @ Lake Arrowhead
 	var i, len=eventList.length;
 	var todayNowMilliseconds = Code.getTimeMilliseconds(true);
 	var yesterdayNowMilliseconds = todayNowMilliseconds - 1*24*60*60*1000; // 1 day previous
+	var foundActiveEvents = 0;
+	var div;
+	var noFoundEventsText = "No Upcoming Events";
+	var noEventsTextColor = "#666";
 	for(i=0;i<len;++i){
 		var event = eventList[i];
 		var start = event.start;
@@ -1390,13 +1444,13 @@ July 31~August 3: High School Summer Retreat @ Lake Arrowhead
 			descriptionColor = "#999";
 		}
 
+		++foundActiveEvents;
 		
 		var stamp = Code.getTimeStamp(date);
 		var displayDate = this.formatTimeHumanReadable(date, duration);
 		var displayTitle = event.title;
 		var displayDescription = event.description;
 		
-		var div;
 		div = Code.newDiv();
 			//Code.setStyleWidth(div,"100%");
 			Code.setStyleMargin(div,"0");
@@ -1452,6 +1506,19 @@ July 31~August 3: High School Summer Retreat @ Lake Arrowhead
 			Code.setStyleColor(div,descriptionColor);
 			Code.setStyleVerticalAlign(div,"top");
 			Code.addChild(cont,div);
+	}
+	if(foundActiveEvents==0){
+		div = Code.newDiv();
+			Code.setContent(div, noFoundEventsText);
+			Code.setStyleDisplay(div,"block");
+			// Code.setStyleWidth(div,"30%");
+			Code.setStyleFontSize(div,"12px");
+			Code.setStyleFontStyleItalic(div);
+			Code.setStyleTextAlign(div,"center");
+			// Code.addClass(div,"calendarEventListItemDate");
+			Code.setStyleColor(div,noEventsTextColor);
+			// Code.setStyleVerticalAlign(div,"top");
+			Code.addChild(container,div);
 	}
 // Code.getTimeStamp
 //Code.getTimeMilliseconds();

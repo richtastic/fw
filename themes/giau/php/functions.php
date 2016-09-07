@@ -11,6 +11,9 @@ $_SERVER['HTTP_USER_AGENT']
 function KEY_GET_PARAM_PAGE(){
 	return "page";
 }
+function KEY_GET_PARAM_SUBPAGE(){
+	return "sp";
+}
 
 function getTemplateURIPath(){
 	return wp_make_link_relative( get_template_directory_uri()."/" );
@@ -38,6 +41,10 @@ function absoluteWordpressServerURL(){
 	return site_url();
 }
 
+function getColorHexFooter(){
+	return "111E2F";
+}
+
 
 // function getParameterOrDefault($param){
 // 	return getParameterOrDefault($param,"");
@@ -56,46 +63,62 @@ function getParameterOrDefault($param, $def){
 
 
 function page_link_from_page_name($pageName){
-	$root = absoluteWordpressServerURL();
-	return $root."?page=".$pageName;
+	return page_link_from_page_name_subpage($pageName,null);
 }
+
+function page_link_from_page_name_subpage($pageName,$subpage){
+	$root = absoluteWordpressServerURL();
+	return $root."?page=".$pageName."&sp=".($subpage ? $subpage : "");
+}
+
 
 function create_page(){
 	$relativePathJSFF = relativePathJS()."code/";
 	$fileJavaScriptFF = relativePathJS()."code/FF.js";
 	$fileCSSMain = relativePathCSS()."theme.css";
 	$fileJavaScriptMain = relativePathJS()."theme.js";
+
+	$PAGE_REQUEST_PARAMETER_PAGE = "page";
+	$PAGE_REQUEST_PARAMETER_SUBPAGE = "sp";
 	
 	$PAGE_REQUEST_TYPE_HOME = "home";
 	$PAGE_REQUEST_TYPE_DEPARTMENTS = "departments";
 	$PAGE_REQUEST_TYPE_STAFF = "staff";
 	$PAGE_REQUEST_TYPE_FORMS = "forms";
-	$PAGE_REQUEST_TYPE_LOCATION = "location";
+	$PAGE_REQUEST_TYPE_INFO = "info";
 	$PAGE_REQUEST_TYPE_CONTACT = "contact";
+
+	$SUBPAGE_REQUEST_TYPE_NURSERY = "nursery";
+	$SUBPAGE_REQUEST_TYPE_KINDERGARTEN = "kindergarten";
+	$SUBPAGE_REQUEST_TYPE_ELEMENTARY = "elementary";
+	$SUBPAGE_REQUEST_TYPE_JUNIORHIGH = "juniorhigh";
+	$SUBPAGE_REQUEST_TYPE_HIGHSCHOOL = "highschool";
+	$SUBPAGE_REQUEST_TYPE_KOREANSCHOOL = "koreanschool";
 
 	$pageList = [
 				[
 					"title" => "Home",
-					"name" => $PAGE_REQUEST_TYPE_HOME
+					"page" => $PAGE_REQUEST_TYPE_HOME
 				],[
 					"title" => "Departments",
-					"name" => $PAGE_REQUEST_TYPE_DEPARTMENTS
+					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS
 				],[
 					"title" => "Staff",
-					"name" => $PAGE_REQUEST_TYPE_STAFF
+					"page" => $PAGE_REQUEST_TYPE_STAFF
 				],[
 					"title" => "Forms",
-					"name" => $PAGE_REQUEST_TYPE_FORMS
-				],[
-					"title" => "Directions",
-					"name" => $PAGE_REQUEST_TYPE_LOCATION
+					"page" => $PAGE_REQUEST_TYPE_FORMS
 				],[
 					"title" => "Contact Us",
-					"name" => $PAGE_REQUEST_TYPE_CONTACT
+					"page" => $PAGE_REQUEST_TYPE_CONTACT
+				],[
+					"title" => "LACPC",
+					"page" => $PAGE_REQUEST_TYPE_INFO
 				]
 				];
 
 	$pageRequest = getParameterOrDefault( KEY_GET_PARAM_PAGE(), $PAGE_REQUEST_TYPE_HOME );
+	$subpageRequest = getParameterOrDefault( KEY_GET_PARAM_SUBPAGE(), $PAGE_REQUEST_TYPE_HOME );
 ?>
 <html>
 	<head>
@@ -208,7 +231,80 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 		<div class="">quotes</div>
 	</div>
 -->
+<?php
+}else{
+?>
+
 	
+	<!-- FEATURE TITLE -->
+	<div class="headerTitleContainer" style="display:block;">
+		<div class="headerNavigationContainer" style="display:table;">
+			
+			<!-- LOGO -->
+			<div class="organizationTitleContainer" style="display:table-cell;  border-collapse: collapse; ">
+				<div class="mainNavigationBarTitle" >THE FATHER'S HOUSE</div>
+				<div class="mainNavigationBarHeading" >FORMS</div>
+			</div>
+			<!-- NAVIGATION -->
+			<?php create_navigation($pageList, $pageRequest, null); ?>
+			<!-- LANGUAGE SWITCH -->
+			<div class="languageSwitchContainer giauLanguageToggleSwitch" style="display:table-cell; padding:10px; color:#000;">
+				<div style="display:inline-block;" data-language="en">EN</div>
+				<div style="display:inline-block;" data-language="ko">KO</div>
+			</div>
+
+		</div>
+	</div>
+<?php
+}
+?>
+
+<?php
+if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
+	//
+?>
+<?php
+}else if($pageRequest==$PAGE_REQUEST_TYPE_DEPARTMENTS){
+?>
+	<!-- SUB0MENU NAV -->
+	<div class="headerSubNavigationContainer" style="height:50px; width:100%; display:table; text-align:center; vertical-align:middle;">
+	<?php
+				$pageListSubmenu = [
+				[
+					"title" => "Nursery",
+					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
+					"sp" => $SUBPAGE_REQUEST_TYPE_NURSERY
+				],
+				[
+					"title" => "Kindergarten",
+					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
+					"sp" => $SUBPAGE_REQUEST_TYPE_KINDERGARTEN
+				],
+				[
+					"title" => "Elementary",
+					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
+					"sp" => $SUBPAGE_REQUEST_TYPE_ELEMENTARY
+				],
+				[
+					"title" => "Junior High",
+					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
+					"sp" => $SUBPAGE_REQUEST_TYPE_JUNIORHIGH
+				],
+				[
+					"title" => "High School",
+					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
+					"sp" => $SUBPAGE_REQUEST_TYPE_HIGHSCHOOL
+				],
+				[
+					"title" => "Korean School",
+					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
+					"sp" => $SUBPAGE_REQUEST_TYPE_KOREANSCHOOL
+				],
+				];
+			?>
+		<?php create_navigation($pageListSubmenu, $pageRequest, $subpageRequest) ?> 
+		<!-- "display:inline-block;  vertical-align:middle;");  -->
+	</div>
 <?php
 }else if($pageRequest==$PAGE_REQUEST_TYPE_STAFF){
 ?>
@@ -221,13 +317,20 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 <?php
 }else if($pageRequest==$PAGE_REQUEST_TYPE_FORMS){
 ?>
+	
 	<!-- DOWNLOADS -->
 	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
-		<div class="headerSectionMain">FORMS</div>
-		<a href="<?php echo relativePathUploads()."/lacpc_medical_release_form_2015_2016.pdf"; ?>">lacpc_medical_release_form_2015_2016.pdf</a>
+		<!-- <div class="headerSectionMain">FORMS</div> -->
+		<div class="titleSectionMain">Download forms and documentation here:</div>
+		<div class="formItemDownload">
+			<a href="<?php echo relativePathUploads()."/lacpc_medical_release_form_2016_2017.pdf"; ?>">LACPC Medical Release Form 2016-2017 (pdf)</a>
+		</div>
+		<div class="formItemDownload">
+			<a href="<?php echo relativePathUploads()."/photograph_release_form.pdf"; ?>">LACPC Photograph Release Form (pdf)</a>
+		</div>
 	</div>
 <?php
-}else if($pageRequest==$PAGE_REQUEST_TYPE_LOCATION){
+}else if($pageRequest==$PAGE_REQUEST_TYPE_INFO){
 ?>
 	<!-- DIRECTIONS -->
 	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
@@ -277,10 +380,11 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	<!-- <?php echo $pageRequest; ?> -->
 
 	<!-- FOOTER -->
-	<div class="sectionContainerFooter" style="background-color: #303030;">
-		<div class="footerElementLogo">
+	<div class="sectionContainerFooter" style="background-color: #<?php echo getColorHexFooter(); ?>;">
+		<!-- <div class="footerElementLogo">
 			<img style="width:150px;" src="<?php echo relativePathIMG()."logo_fathers_house.png" ?>" />
-		</div>
+		</div> -->
+		<div class="footerElementTitle">THE FATHER'S HOUSE</div>
 		<div class="footerElementSocialGrouping">
 		<a href="https://www.facebook.com/thefathershouse.lacpc"><img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_facebook.png" ?>" /></a>
 		<a href="https://twitter.com/thefathersh0use?lang=en"><img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_twitter.png" ?>" /></a>
@@ -290,6 +394,8 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 		<div class="footerElementTextLine">Los Angeles Presbyterian Church</div>
 		<div class="footerElementTextLine">2241 N. Eastern Ave.</div>
 		<div class="footerElementTextLine">Los Angeles, CA 90032</div>
+		<div class="footerElementTextLine">&nbsp;</div>
+		<div class="footerElementTextCopyright">LACPC Christian Education &copy; 2016</div>
 		<div class="footerElementBottom"></div>
 	</div>
 	<!-- <?php create_footer(); ?> -->
@@ -300,27 +406,60 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 }
 
 
+/*
 
-function create_navigation($pageList, $currentPageName){
+departments
+border:EEF0EF
+body: #EFF1F0
+
+
+pages = {
+	name: "nursery", title: "Nursery"
+	title: "Kindergarten"
+	title: "Elementary"
+	title: "Junior High"
+	title: "High School"
+	title: "Korean School"
+}
+
+*/
+function create_navigation($pageList, $currentPageName, $currentSubPageName){
+	$isTable = true;
+	$displayType = null;
 	?>
-	<div class="giauNavigationItemList navigationContainer" style="display:inline-block; position:relative; text-align: center; float:right; padding:6px;" >
+	<div class="giauNavigationItemList navigationContainer" style="<?php
+	if($displayType!=null){
+		echo $displayType;
+	}else{
+		if($isTable){ ?>
+		display:table-cell; vertical-align:middle; text-align:center;
+		<?php
+		}else{ ?>
+		display:inline-block; position:relative; text-align: center; float:right; padding:6px; <?php
+		}
+	}
+	?> " >
 		<ul><?php
 			foreach($pageList as $pageData){
-				$pageName = $pageData["name"];
+				$pageName = $pageData["page"];
+				$subPageName = $pageData["sp"];
 				$pageDisplayTitle = $pageData["title"];
-				$pageURL = page_link_from_page_name($pageName);
+				$pageURL = page_link_from_page_name_subpage($pageName,$subPageName);
 				?>
-				<li class="navigationMenuItem">
-					<div class="display"><?php echo $pageDisplayTitle; ?></div>
-					<div class="url"><?php echo $pageURL; ?></div>
+				<div class="navigationMenuItem"
+					data-display="<?php echo $pageDisplayTitle; ?>"
+					data-url="<?php echo $pageURL; ?>"
 					<?php
 					if( strcmp($pageName,$currentPageName)==0 ){
+						if(!$subPageName || ($subPageName && strcmp($subPageName,$currentSubPageName)==0) ){
 						?>
-						<div class="selected"></div>
+						data-selected="selected"
 						<?php
+						}
 					}
 					?>
-				</li>
+					>
+				</div>
 				<?php
 			}
 		?></ul>
