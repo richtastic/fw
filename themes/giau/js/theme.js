@@ -774,8 +774,116 @@ giau.GalleryListing.prototype.updateLayout = function(){
 
 giau.LanguageToggle = function(element){
 	this._container = element;
-	console.log("LanguageToggle",this._container);
-}
+
+	// LISTENERS
+	this._jsDispatch = new JSDispatch();
+	this._jsDispatch.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
+
+	var styleTextSize = 12;
+	var styleTextColor = 0xFF111111;
+
+	var storageDictionaryKey = Code.getPropertyOrDefault(this._container, "data-storage", "language");
+	var storageDictionaryValue = Code.getCookie(storageDictionaryKey);
+	this._storageDictionaryKey = storageDictionaryKey;
+//console.log(storageDictionaryKey+" = '"+storageDictionaryValue+"'")
+
+
+	this._languageList = [];
+	var i, len, entry, div, element, name, language, child;
+	len = Code.numChildren(this._container);
+	for(i=0; i<len; ++i){
+		child = Code.getChild(this._container, i);
+		language = Code.getProperty(child, "data-language");
+		var display = Code.getProperty(child, "data-display");
+		var url = Code.getProperty(child, "data-url");
+		if(display && language && url){
+			entry = {"name":display, "language":language, "url":url, "element":null};
+			this._languageList.push(entry);
+		}
+	}
+	// add items automatically
+	Code.removeAllChildren(this._container);
+	len = this._languageList.length;
+	var foundLanguageIndex = -1;
+	for(i=0; i<len; ++i){
+		entry = this._languageList[i];
+		name = entry["name"];
+		language = entry["language"];
+		div = Code.newDiv();
+			Code.setContent(div, name);
+			Code.setStyleDisplay(div,"inline-block");
+			Code.setStyleFontSize(div,styleTextSize+"px");
+			Code.setStyleColor(div, Code.getJSColorFromARGB(styleTextColor) );
+			Code.setStylePadding(div,"10px 2px 10px 2px");
+		if(storageDictionaryValue==language){
+			Code.setStyleFontFamily(div,"'siteThemeRegular'");
+			foundLanguageIndex = i;
+		}else{
+			Code.setStyleFontFamily(div,"'siteThemeLight'");
+		}
+		entry["element"] = div;
+		Code.addChild(this._container, div);
+		// listening
+		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_CLICK, this._handleContentClickedFxn, this);
+		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_TOUCH_TAP, this._handleContentTappedxn, this);
+		// divider
+		if(i<len-1){
+			div = Code.newDiv();
+			Code.setContent(div,"|");
+			Code.setStyleDisplay(div,"inline-block");
+			Code.setStyleFontSize(div,styleTextSize+"px");
+			Code.setStyleFontFamily(div,"'siteThemeLight'");
+			Code.setStyleColor(div, Code.getJSColorFromARGB(styleTextColor) );
+			Code.setStylePadding(div,"0px 0px 0px 0px");
+			Code.addChild(this._container, div);
+		}
+	}
+	// 
+	if(foundLanguageIndex<0 && this._languageList.length>0){
+		foundLanguageIndex = 0;
+		language = this._languageList[foundLanguageIndex]["language"];
+		Code.setCookie(storageDictionaryKey, language);
+		
+	}
+	this._selectedLanguageIndex = foundLanguageIndex;
+	// 
+	this.updateLayout();
+};
+giau.LanguageToggle.prototype._handleContentClickedFxn = function(element){
+	this._selectElement(element);
+};
+giau.LanguageToggle.prototype._handleContentTappedxn = function(element){
+	this._selectElement(element);
+};
+giau.LanguageToggle.prototype._selectElement = function(e){
+	console.log("sLEECTED");
+	var target = Code.getTargetFromMouseEvent(e);
+	for(var i=0; i<this._languageList.length; ++i){
+		var entry = this._languageList[i];
+		var ele = entry["element"];
+		if(target==ele){
+			console.log("i: "+i)
+			if(i!=this._selectedLanguageIndex){
+				var language = entry["language"];
+				Code.setCookie(this._storageDictionaryKey, language);
+				var url = entry["url"];
+				//document.location.href = url;
+				document.location.reload();
+			}
+			break;
+		}
+	}
+	// set the local language
+	// reload the page
+};
+giau.LanguageToggle.prototype._handleWindowResizedFxn = function(){
+	this.updateLayout();
+};
+giau.LanguageToggle.prototype.updateLayout = function(){
+	console.log("UPDATE LANGUAGE SWITCH")
+};
+
+
 
 giau.NavigationList = function(element){
 	this._container = element;

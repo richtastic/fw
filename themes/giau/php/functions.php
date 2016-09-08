@@ -15,6 +15,17 @@ function KEY_GET_PARAM_SUBPAGE(){
 	return "sp";
 }
 
+function KEY_COOKIE_PARAM_LANGUAGE(){
+	return "language_value";
+}
+function getCookieLanguage(){
+	$cookie = $_COOKIE[KEY_COOKIE_PARAM_LANGUAGE()];
+	if(isset($cookie)){
+		return $cookie;
+	}
+	return null;
+}
+
 function getTemplateURIPath(){
 	return wp_make_link_relative( get_template_directory_uri()."/" );
 }
@@ -239,7 +250,6 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	<!-- FEATURE TITLE -->
 	<div class="headerTitleContainer" style="display:block;">
 		<div class="headerNavigationContainer" style="display:table;">
-			
 			<!-- LOGO -->
 			<div class="organizationTitleContainer" style="display:table-cell;  border-collapse: collapse; ">
 				<div class="mainNavigationBarTitle" >THE FATHER'S HOUSE</div>
@@ -248,9 +258,9 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 			<!-- NAVIGATION -->
 			<?php create_navigation($pageList, $pageRequest, null); ?>
 			<!-- LANGUAGE SWITCH -->
-			<div class="languageSwitchContainer giauLanguageToggleSwitch" style="display:table-cell; padding:10px; color:#000;">
-				<div style="display:inline-block;" data-language="en">EN</div>
-				<div style="display:inline-block;" data-language="ko">KO</div>
+			<div class="languageSwitchContainer giauLanguageToggleSwitch" style="display:table-cell; padding:10px; vertical-align:middle; text-align:right;"  data-storage="<?php echo KEY_COOKIE_PARAM_LANGUAGE(); ?>">
+				<div style="display:inline-block;" data-language="en" data-display="EN" data-url="./"></div>
+				<div style="display:inline-block;" data-language="ko" data-display="KO" data-url="./"></div>
 			</div>
 
 		</div>
@@ -267,7 +277,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 }else if($pageRequest==$PAGE_REQUEST_TYPE_DEPARTMENTS){
 ?>
 	<!-- SUB0MENU NAV -->
-	<div class="headerSubNavigationContainer" style="height:50px; width:100%; display:table; text-align:center; vertical-align:middle;">
+	<div class="headerSubNavigationContainer" style="width:100%; display:table; text-align:center; vertical-align:middle;">
 	<?php
 				$pageListSubmenu = [
 				[
@@ -305,6 +315,70 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 		<?php create_navigation($pageListSubmenu, $pageRequest, $subpageRequest) ?> 
 		<!-- "display:inline-block;  vertical-align:middle;");  -->
 	</div>
+	<div class="" style="display:block; background-color:#F00; text-align:center; position:relative; border-style:solid; border-width:2px; border-color:#000;">
+		<div class="" style="display:inline-block; width:50%; padding: 18px; ">
+			<div class="" style="display:inline-block; color:#FFF;">Nursery of Overflowing Love</div>
+			<div class="" style="display:inline-block; color:#FFF;">And now these three remain: fath, hope and love, but the greatest of these is love. - 1 Corinthians 13:13</div>
+		</div>
+		<div class="" style="display:inline-block; width:25%; position:absolute; right:0; top:0; bottom:0;">
+			<img src="./wp-content/themes/giau/img/departments/icon_leaf.png" style="max-height:100%;" />
+		</div>
+	</div>
+	<!-- <div class="" style="display:block; background-color:#0F0; text-align:center;">
+		<img src="./wp-content/themes/giau/img/departments/icon_leaf.png" style="max-width:100%; height:100px;" />
+	</div> -->
+
+		<!-- PHOTO GALLERY -->
+	<div class="limitedWidth"  style="background-color: rgba(255,255,255,1.0);">
+		<div class="giauImageGallery giauImageGalleryShowNavigation" style="position:relative; width:100%; height:400px;"></div>
+	</div>
+
+
+
+	<div class="" style="display:block; background-color:#333;">
+		<div class="" style="display:table; width: 100%; background-color:#00F; text-align:center;">
+			<div class="" style="display:table-row; background-color:#0FF; text-align:center;">
+				<div class="" style="display:table-cell; background-color:#0FF; text-align:center;">
+					<div>Sunday Worship 1st Service</div>
+					<div>9:00 AM @Nursury Worship Room (in Nursery Building)</div>
+				</div>
+				<div style="display:table-cell; background-color:#F00; ">2</div>
+				<div style="display:table-cell; background-color:#FF0; ">3</div>
+			</div>
+		</div>
+	</div>
+	<div class="" style="display:table; background-color:#F00; position:relative; width:100%;">
+		<div style="display:table-cell; width:40%; background-color:#0F0; text-align:center;">
+			<img src="./wp-content/themes/giau/img/personnel/ce-jessica.png" style="width:100px; border-radius: 50%; display:inline-block;">
+			<div style="display:inline-block; width:100%; padding:10px 0px 2px 0px;">Jessica Won</div>
+			<div style="display:inline-block; width:100%; " >jcb4jessica@gmail.com</div>
+			<div style="display:inline-block; width:100%; ">323 203 4044</div>
+		</div>
+		<div style="display:table-cell; width:60%; background-color:#0FF; text-align:center;">
+			<div style="display:inline-block; padding: 5%; ">The Nursery department at LACPC envisions a children's ministry that follows the overarching theme of the education department, "Father's House." Thruogh nursery department's worship, gudance, and nuturing, we hope to restablish the following:</div>
+			<div style="display:inline-block;">1</div>
+			<div style="display:inline-block;">Family worships and communication with families that will enrich the spiritual lives of our young children.</div>
+			<div style="display:inline-block;">2</div>
+			<div style="display:inline-block;">Family visitations that will enhance the love of God.</div>
+			<div style="display:inline-block;">3</div>
+			<div style="display:inline-block;">Revival and acceptance of multicultural children and families.</div>
+		</div>
+	</div>
+
+
+
+
+
+	<!-- CALENDAR EVENTS -->
+	<div class="sectionContainerDepartments limitedWidth" style="background-color: rgba(255,255,255,1.0);">
+		<div class="headerSectionMain">Schedule of Events</div>
+		<div class="departmentInternalContainer">
+			<div class="giauCalendarList"></div>
+		</div>
+		<div class="footerSectionMain"></div>
+	</div>
+
+
 <?php
 }else if($pageRequest==$PAGE_REQUEST_TYPE_STAFF){
 ?>
@@ -353,7 +427,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 		<div><small><a href="http://www.proxysitereviews.com/lime-proxies">lime proxies</a></small></div> -->
 		<style>#gmap_canvas img{max-width:none!important;background:none!important}</style></div>
 		<script type='text/javascript'>
-		function init_map(){var myOptions = {zoom:10,center:new google.maps.LatLng(34.0709617,-118.18122349999999),mapTypeId: google.maps.MapTypeId.ROADMAP};map = new google.maps.Map(document.getElementById('gmap_canvas'), myOptions);marker = new google.maps.Marker({map: map,position: new google.maps.LatLng(34.0709617,-118.18122349999999)});infowindow = new google.maps.InfoWindow({content:'<strong>The Father\'s House</strong><br>2241 N Eastern Ave<br/>Los Angeles, CA 90032<br/>'});google.maps.event.addListener(marker, 'click', function(){infowindow.open(map,marker);});infowindow.open(map,marker);}google.maps.event.addDomListener(window, 'load', init_map);
+		function init_map(){var myOptions = {zoom:10,center:new google.maps.LatLng(34.0709617,-118.1812235),mapTypeId: google.maps.MapTypeId.ROADMAP};map = new google.maps.Map(document.getElementById('gmap_canvas'), myOptions);marker = new google.maps.Marker({map: map,position: new google.maps.LatLng(34.0709617,-118.18122349999999)});infowindow = new google.maps.InfoWindow({content:'<strong>The Father\'s House</strong><br>2241 N Eastern Ave<br/>Los Angeles, CA 90032<br/>'});google.maps.event.addListener(marker, 'click', function(){infowindow.open(map,marker);});infowindow.open(map,marker);}google.maps.event.addDomListener(window, 'load', init_map);
 		</script>
 	</div>
 
@@ -432,7 +506,7 @@ function create_navigation($pageList, $currentPageName, $currentSubPageName){
 		echo $displayType;
 	}else{
 		if($isTable){ ?>
-		display:table-cell; vertical-align:middle; text-align:center;
+		display:table-cell; vertical-align:middle; text-align:center;     padding: 8px 0px 8px 0px; 
 		<?php
 		}else{ ?>
 		display:inline-block; position:relative; text-align: center; float:right; padding:6px; <?php
