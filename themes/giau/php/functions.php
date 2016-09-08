@@ -315,13 +315,13 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 		<?php create_navigation($pageListSubmenu, $pageRequest, $subpageRequest) ?> 
 		<!-- "display:inline-block;  vertical-align:middle;");  -->
 	</div>
-	<div class="" style="display:block; background-color:#F00; text-align:center; position:relative; border-style:solid; border-width:2px; border-color:#000;">
-		<div class="" style="display:inline-block; width:50%; padding: 18px; ">
-			<div class="" style="display:inline-block; color:#FFF;">Nursery of Overflowing Love</div>
-			<div class="" style="display:inline-block; color:#FFF;">And now these three remain: fath, hope and love, but the greatest of these is love. - 1 Corinthians 13:13</div>
+	<div class="" style="display:block; background-color:#F00; text-align:center; position:relative; border-style:solid; border-width:2px 0px 2px 0px; border-top-color:#000;">
+		<div class="departmentStatementContainer">
+			<div class="departmentStatementTitle" style="">Nursery of Overflowing Love</div>
+			<div class="departmentStatementBody" style="">And now these three remain: fath, hope and love, but the greatest of these is love. - 1 Corinthians 13:13</div>
 		</div>
-		<div class="" style="display:inline-block; width:25%; position:absolute; right:0; top:0; bottom:0;">
-			<img src="./wp-content/themes/giau/img/departments/icon_leaf.png" style="max-height:100%;" />
+		<div class="departmentStatementLogoContainer" style="">
+			<img src="./wp-content/themes/giau/img/departments/icon_leaf.png" class="departmentStatementLogo" style="" />
 		</div>
 	</div>
 	<!-- <div class="" style="display:block; background-color:#0F0; text-align:center;">
@@ -335,33 +335,39 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 
 
 
-	<div class="" style="display:block; background-color:#333;">
-		<div class="" style="display:table; width: 100%; background-color:#00F; text-align:center;">
-			<div class="" style="display:table-row; background-color:#0FF; text-align:center;">
-				<div class="" style="display:table-cell; background-color:#0FF; text-align:center;">
-					<div>Sunday Worship 1st Service</div>
-					<div>9:00 AM @Nursury Worship Room (in Nursery Building)</div>
+	<div class="" style="display:block; background-color:#FFF; padding:20px;">
+		<div class="" style="display:table; width: 100%; text-align:center;">
+			<div class="" style="display:table-row; text-align:center;">
+				<div class="departmentScheduleItemContainer" style="">
+					<div class="departmentScheduleItemTitle">Sunday Worship<br/>1st Service</div>
+					<div class="departmentScheduleItemInfo">9:00 AM<br/>@Nursury Worship Room<br/>(in Nursery Building)</div>
 				</div>
-				<div style="display:table-cell; background-color:#F00; ">2</div>
-				<div style="display:table-cell; background-color:#FF0; ">3</div>
+				<div class="departmentScheduleItemContainer" style="">
+					<div class="departmentScheduleItemTitle">Sunday Worship<br/>1st Service</div>
+					<div class="departmentScheduleItemInfo">9:00 AM<br/>@Nursury Worship Room<br/>(in Nursery Building)</div>
+				</div>
+				<div class="departmentScheduleItemContainer" style="">
+					<div class="departmentScheduleItemTitle">Sunday Worship<br/>1st Service</div>
+					<div class="departmentScheduleItemInfo">9:00 AM<br/>@Nursury Worship Room<br/>(in Nursery Building)</div>
+				</div>
 			</div>
 		</div>
 	</div>
-	<div class="" style="display:table; background-color:#F00; position:relative; width:100%;">
-		<div style="display:table-cell; width:40%; background-color:#0F0; text-align:center;">
-			<img src="./wp-content/themes/giau/img/personnel/ce-jessica.png" style="width:100px; border-radius: 50%; display:inline-block;">
-			<div style="display:inline-block; width:100%; padding:10px 0px 2px 0px;">Jessica Won</div>
-			<div style="display:inline-block; width:100%; " >jcb4jessica@gmail.com</div>
-			<div style="display:inline-block; width:100%; ">323 203 4044</div>
+	<div class="" style="display:table; position:relative; width:100%;">
+		<div style="display:table-cell; width:40%; text-align:center;">
+			<img class="departmentInstructorDescription" src="./wp-content/themes/giau/img/personnel/ce-jessica.png" style="width:100px; border-radius: 50%; display:inline-block;">
+			<div class="departmentInstructorDescriptionTitle">Jessica Won</div>
+			<div class="departmentInstructorDescriptionInfo">jcb4jessica@gmail.com</div>
+			<div class="departmentInstructorDescriptionInfo">(323) 203-4044</div>
 		</div>
-		<div style="display:table-cell; width:60%; background-color:#0FF; text-align:center;">
-			<div style="display:inline-block; padding: 5%; ">The Nursery department at LACPC envisions a children's ministry that follows the overarching theme of the education department, "Father's House." Thruogh nursery department's worship, gudance, and nuturing, we hope to restablish the following:</div>
-			<div style="display:inline-block;">1</div>
-			<div style="display:inline-block;">Family worships and communication with families that will enrich the spiritual lives of our young children.</div>
-			<div style="display:inline-block;">2</div>
-			<div style="display:inline-block;">Family visitations that will enhance the love of God.</div>
-			<div style="display:inline-block;">3</div>
-			<div style="display:inline-block;">Revival and acceptance of multicultural children and families.</div>
+		<div style="display:table-cell; width:60%; text-align:center;">
+			<div class="departmentDescriptionItemBold">The Nursery department at LACPC envisions a children's ministry that follows the overarching theme of the education department, "Father's House." Through nursery department's worship, gudance, and nuturing, we hope to restablish the following:</div>
+			<div class="departmentDescriptionItemFeatured">1</div>
+			<div class="departmentDescriptionItemInfo">Family worships and communication with families that will enrich the spiritual lives of our young children.</div>
+			<div class="departmentDescriptionItemFeatured">2</div>
+			<div class="departmentDescriptionItemInfo">Family visitations that will enhance the love of God.</div>
+			<div class="departmentDescriptionItemFeatured">3</div>
+			<div class="departmentDescriptionItemInfo">Revival and acceptance of multicultural children and families.</div>
 		</div>
 	</div>
 
@@ -411,6 +417,11 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 		<div class="headerSectionMain">DIRECTIONS</div>
 	</div>
 
+
+<?php
+}else if($pageRequest==$PAGE_REQUEST_TYPE_CONTACT){
+?>
+
 	<!-- ADDRESS -->
 	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
 		<div class="addressSectionTitle">Los Angeles Presbyterian Church</div>
@@ -431,9 +442,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 		</script>
 	</div>
 
-<?php
-}else if($pageRequest==$PAGE_REQUEST_TYPE_CONTACT){
-?>
+	
 	<!-- CONTACT -->
 	<div class="limitedWidth" style="">
 		<div class="giauContactForm"></div>

@@ -329,6 +329,103 @@ ul {
 	border-radius: 50%;
 }
 
+.departmentStatementContainer {
+	display:inline-block;
+	width:50%;
+	padding: 24px 18px 18px 24px; 
+}
+.departmentStatementTitle {
+	font-family: 'siteThemeBold', 'Arial', sans-serif;
+	font-size: 14px;
+	color: #FFF;
+	display:inline-block;
+}
+
+.departmentStatementBody {
+	font-family: 'siteThemeLight', 'Arial', sans-serif;
+	font-size: 14px;
+	color: #FFF;
+	display:inline-block;
+	padding-bottom: 2px;
+}
+.departmentStatementLogoContainer {
+	display:inline-block;
+	width:25%;
+	position:absolute;
+	top:0;
+	right:0;
+	top:0;
+	bottom:0;
+	text-align: right;
+	z-index: 100;
+}
+.departmentStatementLogo {
+	max-height:100%;
+	padding-right: 20px;
+}
+.departmentScheduleItemContainer {
+	display: table-cell;
+	text-align:center;
+}
+.departmentScheduleItemTitle {
+	font-family: 'siteThemeRegular', 'Arial', sans-serif;
+	font-size: 14px;
+	color: #111;
+	padding: 10px;
+}
+.departmentScheduleItemInfo {
+	font-family: 'siteThemeLight', 'Arial', sans-serif;
+	font-size: 14px;
+	color: #666;
+	padding: 10px;
+}
+.departmentInstructorDescriptionImage {
+	width: 100px;
+	border-radius: 50%;
+	display: inline-block;
+}
+.departmentInstructorDescriptionTitle{
+	display:inline-block;
+	width: 100%;
+	padding: 10px 0px 2px 0px;
+	font-family: 'siteThemeLight', 'Arial', sans-serif;
+	font-size: 14px;
+	color: #666;
+}
+.departmentInstructorDescriptionInfo {
+	display:inline-block;
+	width: 100%;
+	padding: 0px;
+	font-family: 'siteThemeLight', 'Arial', sans-serif;
+	font-size: 14px;
+	color: #666;
+}
+
+.departmentDescriptionItemBold {
+	display:inline-block;
+	width: 100%;
+	padding: 5%;
+	font-family: 'siteThemeRegular', 'Arial', sans-serif;
+	font-size: 16px;
+	color: #111;
+	line-height: 150%;
+}
+.departmentDescriptionItemFeatured {
+	display:inline-block;
+	width: 100%;
+	padding: 2px;
+	font-family: 'siteThemeBold', 'Arial', sans-serif;
+	font-size: 20px;
+	color: #000;
+}
+.departmentDescriptionItemInfo {
+	display:inline-block;
+	width: 50%;
+	padding: 2px;
+	font-family: 'siteThemeLight', 'Arial', sans-serif;
+	font-size: 16px;
+	color: #111;
+}
 
 .calendarEventListItemTitle {
 	font-family: 'siteThemeRegular';

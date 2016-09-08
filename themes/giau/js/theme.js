@@ -455,7 +455,7 @@ Code.setStylePosition(this._container,"relative");
 			Code.setStyleTextAlign(leftColumnElement,"center");
 			Code.setStyleDisplay(leftColumnElement,"inline-block");
 //			Code.setStyleBackground(leftColumnElement,"#F0F");
-			Code.setStyleWidth(leftColumnElement,"30%");
+			Code.setStyleWidth(leftColumnElement,"20%");
 			Code.setStyleFloat(leftColumnElement,"left");
 			// Code.setStyleHeight(leftColumnElement,"100%");
 			// Code.setStylePosition(leftColumnElement,"relative");
@@ -471,7 +471,7 @@ Code.setStylePosition(this._container,"relative");
 			//Code.setStyleBackground(rightColumnElement,"#F00");
 			Code.setStyleDisplay(rightColumnElement,"inline-block");
 //			Code.setStyleBackground(rightColumnElement,"#0FF");
-			Code.setStyleWidth(rightColumnElement,"64%");
+			Code.setStyleWidth(rightColumnElement,"74%");
 			Code.setStyleFloat(rightColumnElement,"right");
 			// Code.setStylePosition(rightColumnElement,"relative");
 			// Code.setStyleRight(rightColumnElement,"0px");
@@ -506,11 +506,9 @@ giau.BioView.prototype.updateLayout = function(){
 
 	var maximumColumnCount = 3;
 	var elementMinWidth = 300;
-	var elementMaxWidth = 300; // to next row size
+	var elementMaxWidth = 400; // to next row size
 	var widthContainer = $(this._container).width();
 	var heightContainer = $(this._container).height();
-
-console.log(widthContainer)
 
 	var outerPadding = 10;
 	var innerPadding = 10;
