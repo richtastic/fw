@@ -171,6 +171,17 @@ ul {
 .featureInfoOverlay {
 	text-align: center;
 }
+.featureInfoOverlayHeading {
+	display: inline-block;
+	font-family: 'siteThemeBold', 'Arial Black', 'Arial Bold', sans-serif;
+	font-weight: bold;
+	font-size: 28px;
+	color: #FFF;
+	text-shadow: 0px 1px 5px rgba(0,0,0, 0.5);
+	padding-top: 0px;
+	padding-bottom: 00px;
+	padding-top: 10px;
+}
 .featureInfoOverlayTitle {
 	display: inline-block;
 	font-family: 'siteThemeBold', 'Arial Black', 'Arial Bold', sans-serif;
@@ -178,14 +189,15 @@ ul {
 	font-size: 48px;
 	color: #FFF;
 	text-shadow: 0px 1px 5px rgba(0,0,0, 0.5);
-	padding-top: 10px;
+	padding-top: 0px;
+	margin-top: -10px;
 	padding-bottom: 0px;
 }
 .featureInfoOverlaySubtitle {
 	display: inline-block;
 	font-family: 'siteThemeBold', 'Arial Black', 'Arial Bold', sans-serif;
 	font-weight: bold;
-	font-size: 24px;
+	font-size: 20px;
 	color: #FFF;
 	text-shadow: 0px 1px 3px rgba(0,0,0, 0.5);
 	margin-top: -10px;
@@ -339,6 +351,7 @@ ul {
 	font-size: 14px;
 	color: #FFF;
 	display:inline-block;
+	text-shadow: 0px 1px 5px rgba(0,0,0, 0.3);
 }
 
 .departmentStatementBody {
@@ -347,6 +360,7 @@ ul {
 	color: #FFF;
 	display:inline-block;
 	padding-bottom: 2px;
+	text-shadow: 0px 1px 5px rgba(0,0,0, 0.3);
 }
 .departmentStatementLogoContainer {
 	display:inline-block;
@@ -404,7 +418,7 @@ ul {
 .departmentDescriptionItemBold {
 	display:inline-block;
 	width: 100%;
-	padding: 5%;
+	padding: 0px 0px 30px 0px;
 	font-family: 'siteThemeRegular', 'Arial', sans-serif;
 	font-size: 16px;
 	color: #111;
@@ -413,7 +427,7 @@ ul {
 .departmentDescriptionItemFeatured {
 	display:inline-block;
 	width: 100%;
-	padding: 2px;
+	padding: 4px 0px 4px 0px;
 	font-family: 'siteThemeBold', 'Arial', sans-serif;
 	font-size: 20px;
 	color: #000;

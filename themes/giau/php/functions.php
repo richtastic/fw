@@ -129,11 +129,41 @@ function create_page(){
 				];
 
 	$pageRequest = getParameterOrDefault( KEY_GET_PARAM_PAGE(), $PAGE_REQUEST_TYPE_HOME );
-	$subpageRequest = getParameterOrDefault( KEY_GET_PARAM_SUBPAGE(), $PAGE_REQUEST_TYPE_HOME );
+	$subpageRequest = getParameterOrDefault( KEY_GET_PARAM_SUBPAGE(), null );
+
+
+	// prep data stuff
+	$headingTitleDisplay = "?";
+	if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
+		$headingTitleDisplay = "";
+	}else if($pageRequest==$PAGE_REQUEST_TYPE_DEPARTMENTS){
+		if($subpageRequest==null || $subpageRequest==""){
+			$subpageRequest=$SUBPAGE_REQUEST_TYPE_NURSERY;
+		}
+
+		if($subpageRequest==$SUBPAGE_REQUEST_TYPE_NURSERY){
+			$headingTitleDisplay = "NURSERY";
+		}else if($subpageRequest==$SUBPAGE_REQUEST_TYPE_KINDERGARTEN){
+			$headingTitleDisplay = "KINDERGARDEN";
+		}else if($subpageRequest==$SUBPAGE_REQUEST_TYPE_ELEMENTARY){
+			$headingTitleDisplay = "ELEMENTARY";
+		}else if($subpageRequest==$SUBPAGE_REQUEST_TYPE_JUNIORHIGH){
+			$headingTitleDisplay = "\"HIS\" JR. HIGH";
+		}else if($subpageRequest==$SUBPAGE_REQUEST_TYPE_HIGHSCHOOL){
+			$headingTitleDisplay = "HIGH SCHOOL";
+		}
+	}else if($pageRequest==$PAGE_REQUEST_TYPE_STAFF){
+		$headingTitleDisplay = "STAFF";
+	}else if($pageRequest==$PAGE_REQUEST_TYPE_FORMS){
+		$headingTitleDisplay = "FORMS";
+	}else if($pageRequest==$PAGE_REQUEST_TYPE_CONTACT){
+		$headingTitleDisplay = "CONTACT US";
+	}
+
 ?>
 <html>
 	<head>
-		<title>The Father's House</title>
+		<title>The Father's House | <?php echo $headingTitleDisplay; ?></title>
 		<link rel="stylesheet" href="<?php echo $fileCSSMain; ?>">
 		<script rel="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
 		<script rel="text/javascript" src="<?php echo $fileJavaScriptFF; ?>"></script>
@@ -167,12 +197,14 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	<div class="featurePresentationContainer giauImageGallery giauImageGalleryAutomated" style="">
 		<!-- FEATURE INFO OVERLAY -->
 		<div class="featureInfoOverlay giauInfoOverlay" style="">
-			<div class="featureInfoOverlayTitle" style="margin: 0 auto; ">JOIN US FOR WORSHIP</div>
+			<div class="featureInfoOverlayHeading">THE FATHER'S HOUSE</div>
 			<div></div>
-			<div class="featureInfoOverlaySubtitle">Every Sunday at 11:00 a.m.</div>
+			<div class="featureInfoOverlayTitle" style="">JOIN US FOR WORSHIP</div>
+			<div></div>
+			<div class="featureInfoOverlaySubtitle">Sunday at 11:00 a.m.</div>
 			<div></div>
 			<!-- <a href="http://www.google.com"> -->
-			<div class="featureInfoOverlayButton" style="" >Directions</div>
+			<!-- <div class="featureInfoOverlayButton" style="" >Directions</div> -->
 			<!-- </a> -->
 		</div>
 		<!-- HEADER -->
@@ -180,7 +212,8 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 			<!-- LOGO -->
 			<div class="organizationLogoContainer" style="display:inline-block; float:left; left:0; top:0; "><img class="navigationMenuLogo" src="<?php echo relativePathIMG()."logo_fathers_house.png" ?>" /></div>
 			<!-- LANGUAGE SWITCH -->
-			<div class="languageSwitchContainer" style="display:inline-block; float:right; padding:10px;">EN | 한국어</div>
+			<!-- <div class="languageSwitchContainer" style="display:inline-block; float:right; padding:10px;">EN | 한국어</div> -->
+			<div class="languageSwitchContainer" style="display:inline-block; float:right; padding:10px;"><?php create_language_switch(""); ?></div> 
 			<!-- NAVIGATION -->
 			<?php create_navigation($pageList, $pageRequest); ?>
 			
@@ -245,6 +278,9 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 <?php
 }else{
 ?>
+<?php
+ // ...
+?>
 
 	
 	<!-- FEATURE TITLE -->
@@ -253,15 +289,12 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 			<!-- LOGO -->
 			<div class="organizationTitleContainer" style="display:table-cell;  border-collapse: collapse; ">
 				<div class="mainNavigationBarTitle" >THE FATHER'S HOUSE</div>
-				<div class="mainNavigationBarHeading" >FORMS</div>
+				<div class="mainNavigationBarHeading" ><?php echo $headingTitleDisplay; ?></div>
 			</div>
 			<!-- NAVIGATION -->
 			<?php create_navigation($pageList, $pageRequest, null); ?>
 			<!-- LANGUAGE SWITCH -->
-			<div class="languageSwitchContainer giauLanguageToggleSwitch" style="display:table-cell; padding:10px; vertical-align:middle; text-align:right;"  data-storage="<?php echo KEY_COOKIE_PARAM_LANGUAGE(); ?>">
-				<div style="display:inline-block;" data-language="en" data-display="EN" data-url="./"></div>
-				<div style="display:inline-block;" data-language="ko" data-display="KO" data-url="./"></div>
-			</div>
+			<?php create_language_switch(""); ?>
 
 		</div>
 	</div>
@@ -308,20 +341,275 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 				[
 					"title" => "Korean School",
 					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
-					"sp" => $SUBPAGE_REQUEST_TYPE_KOREANSCHOOL
+					"sp" => $SUBPAGE_REQUEST_TYPE_KOREANSCHOOL,
+					"url" => "http://www.google.com"
 				],
 				];
 			?>
 		<?php create_navigation($pageListSubmenu, $pageRequest, $subpageRequest) ?> 
 		<!-- "display:inline-block;  vertical-align:middle;");  -->
 	</div>
-	<div class="" style="display:block; background-color:#F00; text-align:center; position:relative; border-style:solid; border-width:2px 0px 2px 0px; border-top-color:#000;">
-		<div class="departmentStatementContainer">
-			<div class="departmentStatementTitle" style="">Nursery of Overflowing Love</div>
-			<div class="departmentStatementBody" style="">And now these three remain: fath, hope and love, but the greatest of these is love. - 1 Corinthians 13:13</div>
+	<?php
+
+	$departmentPageDataPageNursery = [
+		"heading" => "NURSERY",
+		"statement_title" => "Nursery of Overflowing Love",
+		"statement_body" => "And now these three remain: fath, hope and love, but the greatest of these is love. - 1 Corinthians 13:13",
+		"statement_image_suffix" => "featured_nursery.png",
+		"statement_color_bg" => "#CBC42D",
+		"statement_color_top" => "#BBBB22",
+		"statement_color_bot" => "#BBBB22",
+		"services" => [
+			[
+				"title" => "Sunday Worship<br/>1st Service",
+				"body" => "9:00 AM<br/>@ Nursery Worship Room<br/>(in Nursery Building)"
+			],
+			[
+				"title" => "Sunday Worship<br/>2nd Service",
+				"body" => "11:00 AM<br/>@ Nursery Worship Room<br/>(in Nursery Building)"
+			],
+			[
+				"title" => "Friday Night<br/>Fellowship",
+				"body" => "8:00 PM<br/>@ Nursery Building"
+			]
+		],
+		"personnel" => [
+			[
+				"display_name" => "Jessica Won",
+				"display_email" => "jcb4jessica@gmail.com",
+				"display_phone" => "(323) 203-4044",
+				"image_relative_path" => "ce-jessica.png"
+			]
+		],
+		"breakdown" => [
+			[
+				"type" => "bold",
+				"display" => "The Nursery department at LACPC envisions a children's ministry that follows the overarching theme of the education department, \"Father's House.\" Through nursery department's worship, gudance, and nuturing, we hope to restablish the following:"
+			],
+			[
+				"type" => "featured",
+				"display" => "1"
+			],
+			[
+				"type" => "info",
+				"display" => "Family worships and communication with families that will enrich the spiritual lives of our young children."
+			],
+			[
+				"type" => "featured",
+				"display" => "2"
+			],
+			[
+				"type" => "info",
+				"display" => "Family visitations that will enhance the love of God."
+			],
+			[
+				"type" => "featured",
+				"display" => "3"
+			],
+			[
+				"type" => "info",
+				"display" => "Revival and acceptance of multicultural children and families."
+			],
+		]
+
+
+	];
+	$departmentPageDataPageKindergarden = [
+		"heading" => "KINDERGARDEN",
+		"statement_title" => "Grown in Christ, as God's Children",
+		"statement_body" => "Worship the LORD with gladness: come before him with joyful song. - Psalm 100:2",
+		"statement_image_suffix" => "featured_kindergarden.png",
+		"statement_color_bg" => "#E0D011",
+		"statement_color_top" => "#DDC313",
+		"statement_color_bot" => "#DDC313",
+		"services" => [
+			[
+				"title" => "Sunday Worship",
+				"body" => "11:00 AM<br/>@ Kindergarden Worship Room<br/>(in Kindergarden Building)"
+			],
+			[
+				"title" => "Sunday Bible Study",
+				"body" => "11:40 AM<br/>@ Classroom #302, 303, 306<br/>(in Kindergarden Building)"
+			],
+			[
+				"title" => "Friday Night<br/>Bible Study",
+				"body" => "8:00 PM<br/>@ Classroom #303<br/>(in Kindergarden Building)"
+			]
+		],
+		"personnel" => [
+			[
+				"display_name" => "Sheen Hong",
+				"display_email" => "Pastorhong71@gmail.com",
+				"display_phone" => "(213) 369-5590",
+				"image_relative_path" => "ce-hong.png"
+			]
+		],
+		"breakdown" => [
+			[
+				"type" => "bold",
+				"display" => "As a goal, let children grow in the Lord Jesus Christ, building the image of God through the \"Word of God.\" Becoming disciples of Jesus in the joy of worshipping God as well as becoming evangelists of Jesus in Children's lives."
+			],
+			[
+				"type" => "bold",
+				"display" => "For families, Christian education builds up in a family and provide parents with training opportunities and teaching materials to be active ministry supporters."
+			],
+		]
+	];
+	$departmentPageDataPageElementary = [
+		"heading" => "ELEMENTARY",
+		"statement_title" => null,
+		"statement_body" => "Start children off on the way they should go, and even when they are old they will not turn from it - Proverbs 22:6",
+		"statement_image_suffix" => "featured_elementary.png",
+		"statement_color_bg" => "#F1592A",
+		"statement_color_top" => "#DD5526",
+		"statement_color_bot" => "#DD5526",
+		"services" => [
+			[
+				"title" => "Sunday Worship",
+				"body" => "11:00 AM<br/>@ Elementary Worship Room"
+			],
+			[
+				"title" => "Sunday Worship<br/>2nd Service",
+				"body" => "11:45 AM<br/>@ Classroom #138, 139, 140, 141, 142"
+			],
+			[
+				"title" => "Friday Program: AWANA",
+				"body" => "8:00 - 8:30 PM<br/>Game Time (Cafeteria)<br/><br/>8:30 - 9:00 PM<br>Handbook Time<br/>(Classrooms)<br/><br/>9:00 - 9:20 PM<br/>Coundil Time (Choir Room)"
+			]
+		],
+		"personnel" => [
+			[
+				"display_name" => "Pastor Boram Lee",
+				"display_email" => "boramjdsn@gmail.com",
+				"display_phone" => "(909) 868-8457",
+				"image_relative_path" => "ce-boram.png"
+			]
+		],
+		"breakdown" => [
+			[
+				"type" => "bold",
+				"display" => "Elementary Department's vision and goal is to start children off on their journey of faith through:"
+			],
+			[
+				"type" => "featured",
+				"display" => "1"
+			],
+			[
+				"type" => "info",
+				"display" => "Fostering a joy and desire to lean about God (fun and engaging worship, bible studies, and events)"
+			],
+			[
+				"type" => "featured",
+				"display" => "2"
+			],
+			[
+				"type" => "info",
+				"display" => "Implementing the basic Christian disciplines (prayer, quiet time, bible reading)"
+			],
+			[
+				"type" => "featured",
+				"display" => "3"
+			],
+			[
+				"type" => "info",
+				"display" => "Encouraging an active Christian lifestyle (knowledge into action)"
+			],
+		]
+	];
+	$departmentPageDataPageJRHigh = [
+		"heading" => "\"HIS\" JR. HIGH",
+		"statement_title" => "Live for the Lord for he are His",
+		"statement_body" => "If we live, we live to the Lord; and if we die, we die to the Lord. So, whether we live or die, we belong to the Lord. -?",
+		"statement_image_suffix" => "featured_jrhigh.png",
+		"statement_color_bg" => "#BA1E71",
+		"statement_color_top" => "#B91370",
+		"statement_color_bot" => "#B91370",
+		"services" => [
+			[
+				"title" => "Sunday Worship",
+				"body" => "11:00 AM<br/>@ Junior High Worship Room"
+			],
+			[
+				"title" => "Sunday Bible Study",
+				"body" => "12:00 PM<br/>@ Classroom #150, 152, 153"
+			],
+			[
+				"title" => "Friday Night Bible Study",
+				"body" => "8:00 PM<br/>@ Junior High Worship Room"
+			]
+		],
+		"personnel" => [
+			[
+				"display_name" => "Reverend Joseph Kim",
+				"display_email" => "jmkim75@gmail.com",
+				"display_phone" => "(213) 200-6092",
+				"image_relative_path" => "ce-joe.png"
+			]
+		],
+		"breakdown" => [
+			[
+				"type" => "bold",
+				"display" => "We belong to God and belonging to God is the greatest blessing and encouragement that anyone can have. Being His is a great blessing but another aspect of being His is to live and die for Him. Our lives belong to Him therfore we should live our lives accodring to His will."
+			],
+		]
+	];
+	$departmentPageDataPageHighSchool = [
+		"heading" => "HIGH SCHOOL",
+		"statement_title" => null,
+		"statement_body" => "But seek first his kingdom and his righteousness, and all these things will be given to you as well. Therefore do not worry about tomorrow, for tomorrow will worry about itself.",
+		"statement_image_suffix" => "featured_highschool.png",
+		"statement_color_bg" => "#3B1955",
+		"statement_color_top" => "#361650",
+		"statement_color_bot" => "#361650",
+		"services" => [
+			[
+				"title" => "Sunday Worship",
+				"body" => "11:00 AM<br/>@ High School Worship Room"
+			],
+			[
+				"title" => "Sunday Bible Study",
+				"body" => "12:00 PM<br/>@ Classroom #135, 136, 137, 148"
+			],
+			[
+				"title" => "Friday Night Bible Study",
+				"body" => "8:00 PM<br/>@ High School Worship Room"
+			]
+		],
+		"personnel" => [
+			[
+				"display_name" => "Andrew Lim",
+				"display_email" => "mrlimshhs@gmail.com",
+				"display_phone" => "(626) 536-6126",
+				"image_relative_path" => "ce-andy.png"
+			]
+		],
+		"breakdown" => [
+			[
+				"type" => "bold",
+				"display" => "Our mission is to help take the next step in their spiritual lives and grown in maturity in their relationship with Jesus. The high school years are a challenging time when sudents have so many other activities competing for their time and energy, and we emphasize prioritizing their personal relationship with Jesus amidst all of the busyness in their lives. Students are encouraged to go beyond a simple emotional relationship with God and have a relationship marked by spiritual discipline and obedience."
+			],
+		]
+	];
+	$departmentPageData = null;
+	if($subpageRequest==$SUBPAGE_REQUEST_TYPE_NURSERY){
+		$departmentPageData = $departmentPageDataPageNursery;
+	}else if($subpageRequest==$SUBPAGE_REQUEST_TYPE_KINDERGARTEN){
+		$departmentPageData = $departmentPageDataPageKindergarden;
+	}else if($subpageRequest==$SUBPAGE_REQUEST_TYPE_ELEMENTARY){
+		$departmentPageData = $departmentPageDataPageElementary;
+	}else if($subpageRequest==$SUBPAGE_REQUEST_TYPE_JUNIORHIGH){
+		$departmentPageData = $departmentPageDataPageJRHigh;
+	}else if($subpageRequest==$SUBPAGE_REQUEST_TYPE_HIGHSCHOOL){
+		$departmentPageData = $departmentPageDataPageHighSchool;
+	}
+	?>
+	<div class="limitedWidth" style="display:block; background-color:<?php echo $departmentPageData["statement_color_bg"]; ?>; text-align:center; position:relative; border-style:solid; border-width:2px 0px 2px 0px; border-top-color:<?php echo $departmentPageData["statement_color_top"]; ?>; border-bottom-color:<?php echo $departmentPageData["statement_color_bot"]; ?>;">
+		<div class="departmentStatementContainer" style="">
+			<div class="departmentStatementTitle" style=""><?php echo $departmentPageData["statement_title"]; ?></div>
+			<div class="departmentStatementBody" style=""><?php echo $departmentPageData["statement_body"]; ?></div>
 		</div>
 		<div class="departmentStatementLogoContainer" style="">
-			<img src="./wp-content/themes/giau/img/departments/icon_leaf.png" class="departmentStatementLogo" style="" />
+			<img src="./wp-content/themes/giau/img/departments/<?php echo $departmentPageData["statement_image_suffix"]; ?>" class="departmentStatementLogo" style="" />
 		</div>
 	</div>
 	<!-- <div class="" style="display:block; background-color:#0F0; text-align:center;">
@@ -338,36 +626,74 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	<div class="" style="display:block; background-color:#FFF; padding:20px;">
 		<div class="" style="display:table; width: 100%; text-align:center;">
 			<div class="" style="display:table-row; text-align:center;">
+			<?php
+				$servicesList = $departmentPageData["services"];
+				if($servicesList && sizeof($servicesList)>0 ){
+				$len = sizeof($servicesList);
+				$i;
+				for($i=0; $i<$len; ++$i){
+					$service = $servicesList[$i];
+					$title = $service["title"];
+					$body = $service["body"];
+			?>
 				<div class="departmentScheduleItemContainer" style="">
-					<div class="departmentScheduleItemTitle">Sunday Worship<br/>1st Service</div>
-					<div class="departmentScheduleItemInfo">9:00 AM<br/>@Nursury Worship Room<br/>(in Nursery Building)</div>
+					<div class="departmentScheduleItemTitle"><?php echo $title; ?></div>
+					<div class="departmentScheduleItemInfo"><?php echo $body; ?></div>
 				</div>
-				<div class="departmentScheduleItemContainer" style="">
-					<div class="departmentScheduleItemTitle">Sunday Worship<br/>1st Service</div>
-					<div class="departmentScheduleItemInfo">9:00 AM<br/>@Nursury Worship Room<br/>(in Nursery Building)</div>
-				</div>
-				<div class="departmentScheduleItemContainer" style="">
-					<div class="departmentScheduleItemTitle">Sunday Worship<br/>1st Service</div>
-					<div class="departmentScheduleItemInfo">9:00 AM<br/>@Nursury Worship Room<br/>(in Nursery Building)</div>
-				</div>
+			<?php
+				}
+				}
+			?>
 			</div>
 		</div>
 	</div>
 	<div class="" style="display:table; position:relative; width:100%;">
-		<div style="display:table-cell; width:40%; text-align:center;">
-			<img class="departmentInstructorDescription" src="./wp-content/themes/giau/img/personnel/ce-jessica.png" style="width:100px; border-radius: 50%; display:inline-block;">
-			<div class="departmentInstructorDescriptionTitle">Jessica Won</div>
-			<div class="departmentInstructorDescriptionInfo">jcb4jessica@gmail.com</div>
-			<div class="departmentInstructorDescriptionInfo">(323) 203-4044</div>
+		<div style="display:table-cell; width:40%; vertical-align:top; text-align:center;">
+		<?php
+			$personnel = $departmentPageData["personnel"][0];
+			if($personnel){
+				$image = $personnel["image_relative_path"];
+				$name = $personnel["display_name"];
+				$email = $personnel["display_email"];
+				$phone = $personnel["display_phone"];
+		?>
+			<img class="departmentInstructorDescription" src="./wp-content/themes/giau/img/personnel/<?php echo $image; ?>" style="width:100px; border-radius: 50%; display:inline-block;">
+			<div class="departmentInstructorDescriptionTitle"><?php echo $name; ?></div>
+			<div class="departmentInstructorDescriptionInfo"><?php echo $email; ?></div>
+			<div class="departmentInstructorDescriptionInfo"><?php echo $phone; ?></div>
+		<?php
+			}
+		?>
 		</div>
-		<div style="display:table-cell; width:60%; text-align:center;">
-			<div class="departmentDescriptionItemBold">The Nursery department at LACPC envisions a children's ministry that follows the overarching theme of the education department, "Father's House." Through nursery department's worship, gudance, and nuturing, we hope to restablish the following:</div>
-			<div class="departmentDescriptionItemFeatured">1</div>
-			<div class="departmentDescriptionItemInfo">Family worships and communication with families that will enrich the spiritual lives of our young children.</div>
-			<div class="departmentDescriptionItemFeatured">2</div>
-			<div class="departmentDescriptionItemInfo">Family visitations that will enhance the love of God.</div>
-			<div class="departmentDescriptionItemFeatured">3</div>
-			<div class="departmentDescriptionItemInfo">Revival and acceptance of multicultural children and families.</div>
+		<div style="display:table-cell; width:60%; vertical-align:top; text-align:center; padding:0px 20px 0px 20px;">
+		<?php
+			$breakdownList = $departmentPageData["breakdown"];
+			if($breakdownList){
+				$len = sizeof($breakdownList);
+				$i;
+			for($i=0; $i<$len; ++$i){
+				$item = $breakdownList[$i];
+				$type = $item["type"];
+				$display = $item["display"];
+				if($type=="bold"){
+		?>
+			<div class="departmentDescriptionItemBold"><?php echo $display; ?></div>
+			<?php
+				}else if($type=="featured"){
+			?>
+			<div class="departmentDescriptionItemFeatured"><?php echo $display; ?></div>
+			<?php
+				}else if($type=="info"){
+			?>
+			<div class="departmentDescriptionItemInfo"><?php echo $display; ?></div>
+			<?php
+				}
+			?>
+			
+		<?php
+			}
+			}
+		?>
 		</div>
 	</div>
 
@@ -506,6 +832,14 @@ pages = {
 }
 
 */
+function create_language_switch($overrideCSS){
+	?>
+			<div class="languageSwitchContainer giauLanguageToggleSwitch" style="display:table-cell; padding:10px; vertical-align:middle; text-align:right;"  data-storage="<?php echo KEY_COOKIE_PARAM_LANGUAGE(); ?>">
+				<div style="display:inline-block;" data-language="en" data-display="EN" data-url="./"></div>
+				<div style="display:inline-block;" data-language="ko" data-display="KO" data-url="./"></div>
+			</div>
+<?php
+}
 function create_navigation($pageList, $currentPageName, $currentSubPageName){
 	$isTable = true;
 	$displayType = null;
@@ -527,7 +861,10 @@ function create_navigation($pageList, $currentPageName, $currentSubPageName){
 				$pageName = $pageData["page"];
 				$subPageName = $pageData["sp"];
 				$pageDisplayTitle = $pageData["title"];
-				$pageURL = page_link_from_page_name_subpage($pageName,$subPageName);
+				$pageURL = $pageData["url"];
+				if(!$pageURL){
+					$pageURL = page_link_from_page_name_subpage($pageName,$subPageName);
+				}
 				?>
 				<div class="navigationMenuItem"
 					data-display="<?php echo $pageDisplayTitle; ?>"
