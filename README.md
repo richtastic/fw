@@ -136,6 +136,8 @@ wp methods excape strings for you, no need for mysql_real_escape_string
 ```
 lftp
 open -u USERNAME,PASSWORD  ftp.lacpc.org
+
+# ---- 1:
 # GOTO
 cd www/ce/wp-content/themes
 lcd /media/sf_zirbr001/dev/extRepos/fw/themes/
@@ -150,6 +152,25 @@ mirror -R code code
 # CHMOD READ ACCESS:
 cd /www/ce/wp-content/themes/
 chmod -R 755 giau/
+
+
+# ---- 2:
+# GOTO
+cd www/ce/wp-content/themes
+lcd ~/universe/repo/fw/themes/
+# COPY GIAU
+rm -rf ./giau
+mirror -R giau giau
+# COPY FF
+cd /www/ce/wp-content/themes/giau/js
+lcd ~/universe/repo/ff/src
+# COPY CODE
+mirror -R code code
+# CHMOD READ ACCESS:
+cd /www/ce/wp-content/themes/
+chmod -R 755 giau/
+
+
 ```
 
 

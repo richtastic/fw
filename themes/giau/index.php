@@ -22,19 +22,25 @@ error_log($fxns);
 //error_log( dateFromString( "2016-07-05 12:45:31.6000" ) );
 
 
-    $results = giau_calendar_events_all();
+    // $results = giau_calendar_events_all();
 
-    foreach( $results as $row ) {
-        $row_id = $row["id"];
-        $row_created = $row["created"];
-        $row_modified = $row["modified"];
-        $row_short_name = $row["short_name"];
-        $row_title = $row["title"];
-        $row_description = $row["description"];
-        $row_start_date = $row["start_date"];
-        $row_duration = $row["duration"];
-        error_log("FOUND: ".$row_id." = ".$row_title);
-    }
+    // foreach( $results as $row ) {
+    //     $row_id = $row["id"];
+    //     $row_created = $row["created"];
+    //     $row_modified = $row["modified"];
+    //     $row_short_name = $row["short_name"];
+    //     $row_title = $row["title"];
+    //     $row_description = $row["description"];
+    //     $row_start_date = $row["start_date"];
+    //     $row_duration = $row["duration"];
+    //     error_log("FOUND: ".$row_id." = ".$row_title);
+    // }
+
+
+
+
+
+
 
 // for($i=0; $i<count($results); ++$i){
 // 	$result = $results[$i];

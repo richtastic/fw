@@ -586,7 +586,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	];
 	$departmentPageDataPageJRHigh = [
 		"heading" => "\"HIS\" JR. HIGH",
-		"statement_title" => "Live for the Lord for he are His",
+		"statement_title" => "Live for the Lord for ee are His",
 		"statement_body" => "If we live, we live to the Lord; and if we die, we die to the Lord. So, whether we live or die, we belong to the Lord. -?",
 		"statement_image_suffix" => "featured_jrhigh.png",
 		"statement_color_bg" => "#BA1E71",
