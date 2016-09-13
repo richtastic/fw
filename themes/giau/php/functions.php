@@ -124,7 +124,8 @@ function create_page(){
 					"page" => $PAGE_REQUEST_TYPE_CONTACT
 				],[
 					"title" => "LACPC",
-					"page" => $PAGE_REQUEST_TYPE_INFO
+					"page" => $PAGE_REQUEST_TYPE_INFO,
+					"url" => "http://www.lacpc.org"
 				]
 				];
 
@@ -158,6 +159,8 @@ function create_page(){
 		$headingTitleDisplay = "FORMS";
 	}else if($pageRequest==$PAGE_REQUEST_TYPE_CONTACT){
 		$headingTitleDisplay = "CONTACT US";
+	}else if($pageRequest==$PAGE_REQUEST_TYPE_INFO){
+		$headingTitleDisplay = "LACPC";
 	}
 
 ?>
@@ -194,7 +197,20 @@ function create_page(){
 if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 ?>
 	<!-- FEATURE IMAGE -->
-	<div class="featurePresentationContainer giauImageGallery giauImageGalleryAutomated" style="">
+	<div class="featurePresentationContainer giauImageGallery" data-autoplay="10000"  style="">
+		<?php
+			$galleryPrefix = relativePathIMG()."gallery_featured/";
+			$imageList = ["featured_06_opt.png","featured_02_opt.png","featured_03_opt.png","featured_04_opt.png","featured_05_opt.png","featured_01_opt.png"];
+			$i;
+			$len = sizeof($imageList);
+			for($i=0; $i<$len; ++$i){
+				$image = $imageList[$i];
+				?>
+				<div data-source="<?php echo $galleryPrefix.$image; ?>" style="display:none;"></div>
+				<?php
+			}
+		?>
+
 		<!-- FEATURE INFO OVERLAY -->
 		<div class="featureInfoOverlay giauInfoOverlay" style="">
 			<div class="featureInfoOverlayHeading">THE FATHER'S HOUSE</div>
@@ -208,14 +224,15 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 			<!-- </a> -->
 		</div>
 		<!-- HEADER -->
-		<div class="headerNavigationContainer" style="position:absolute;">
+		<div class="headerNavigationContainer" style="position:absolute; display:inline-block; text-align:center;">
+		<div class="" style="position:absolute; display:inline-block; left:0; right:0; top:0; height:50px; background-repeat:repeat-x; background-image:url('<?php echo relativePathIMG()."/shadow_fade_top.png"; ?>');"></div>
 			<!-- LOGO -->
-			<div class="organizationLogoContainer" style="display:inline-block; float:left; left:0; top:0; "><img class="navigationMenuLogo" src="<?php echo relativePathIMG()."logo_fathers_house.png" ?>" /></div>
+			<!-- <div class="organizationLogoContainer" style="display:inline-block; float:left; left:0; top:0; "><img class="navigationMenuLogo" src="<?php echo relativePathIMG()."logo_fathers_house.png" ?>" /></div> -->
 			<!-- LANGUAGE SWITCH -->
 			<!-- <div class="languageSwitchContainer" style="display:inline-block; float:right; padding:10px;">EN | 한국어</div> -->
-			<div class="languageSwitchContainer" style="display:inline-block; float:right; padding:10px;"><?php create_language_switch(""); ?></div> 
+			<div class="languageSwitchContainer" style="display:inline-block; position:absolute; right:0; top:0; padding-right:10px;"><?php create_language_switch("","data-color=\"0xFFFFFFFF\""); ?></div> 
 			<!-- NAVIGATION -->
-			<?php create_navigation($pageList, $pageRequest); ?>
+			<?php create_navigation($pageList, $pageRequest, null, "padding: 10px;", "data-darkmode=\"true\""); ?>
 			
 		</div>
 	</div>
@@ -246,7 +263,20 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	<!-- PHOTO GALLERY -->
 	<div class="limitedWidth"  style="background-color: rgba(255,255,255,1.0);">
 		<div class="headerSectionMain">PHOTOS</div>
-		<div class="giauImageGallery giauImageGalleryShowNavigation" style="position:relative; width:100%; height:400px;"></div>
+		<div class="giauImageGallery" data-autoplay="10000" data-navigation="true" style="position:relative; width:100%; height:400px;">
+		<?php
+			$galleryPrefix = relativePathIMG()."gallery_featured/";
+			$imageList = ["featured_01_opt.png","featured_02_opt.png","featured_03_opt.png","featured_04_opt.png","featured_05_opt.png","featured_06_opt.png"];
+			$i;
+			$len = sizeof($imageList);
+			for($i=0; $i<$len; ++$i){
+				$image = $imageList[$i];
+				?>
+				<div data-source="<?php echo $galleryPrefix.$image; ?>" style="display:none;"></div>
+				<?php
+			}
+		?>
+		</div>
 	</div>
 
 	<!-- DIVIDER -->
@@ -410,9 +440,21 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 				"type" => "info",
 				"display" => "Revival and acceptance of multicultural children and families."
 			],
+		],
+		"image_gallery" => [ // TODO : NURSERY IMAGES
+			"prefix" => relativePathIMG()."departments/galleries/"."elementary/",
+			"images" => [
+				"gallery_01.png",
+				"gallery_02.png",
+				"gallery_03.png",
+				"gallery_04.png",
+				"gallery_05.png",
+				"gallery_06.png",
+				"gallery_07.png",
+				"gallery_08.png",
+				"gallery_09.png"
+			]
 		]
-
-
 	];
 	$departmentPageDataPageKindergarden = [
 		"heading" => "KINDERGARDEN",
@@ -453,6 +495,18 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 				"type" => "bold",
 				"display" => "For families, Christian education builds up in a family and provide parents with training opportunities and teaching materials to be active ministry supporters."
 			],
+		],
+		"image_gallery" => [
+			"prefix" => relativePathIMG()."departments/galleries/"."kindergarden/",
+			"images" => [
+				"gallery_01.png",
+				"gallery_02.png",
+				"gallery_03.png",
+				"gallery_04.png",
+				"gallery_05.png",
+				"gallery_06.png",
+				"gallery_07.png"
+			]
 		]
 	];
 	$departmentPageDataPageElementary = [
@@ -514,6 +568,20 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 				"type" => "info",
 				"display" => "Encouraging an active Christian lifestyle (knowledge into action)"
 			],
+		],
+		"image_gallery" => [
+			"prefix" => relativePathIMG()."departments/galleries/"."elementary/",
+			"images" => [
+				"gallery_01.png",
+				"gallery_02.png",
+				"gallery_03.png",
+				"gallery_04.png",
+				"gallery_05.png",
+				"gallery_06.png",
+				"gallery_07.png",
+				"gallery_08.png",
+				"gallery_09.png"
+			]
 		]
 	];
 	$departmentPageDataPageJRHigh = [
@@ -551,6 +619,21 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 				"type" => "bold",
 				"display" => "We belong to God and belonging to God is the greatest blessing and encouragement that anyone can have. Being His is a great blessing but another aspect of being His is to live and die for Him. Our lives belong to Him therfore we should live our lives accodring to His will."
 			],
+		],
+		"image_gallery" => [
+			"prefix" => relativePathIMG()."departments/galleries/"."jrhigh/",
+			"images" => [
+				"gallery_01.png",
+				"gallery_02.png",
+				"gallery_03.png",
+				"gallery_04.png",
+				"gallery_05.png",
+				"gallery_06.png",
+				"gallery_07.png",
+				"gallery_08.png",
+				"gallery_09.png",
+				"gallery_10.png"
+			]
 		]
 	];
 	$departmentPageDataPageHighSchool = [
@@ -588,6 +671,13 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 				"type" => "bold",
 				"display" => "Our mission is to help take the next step in their spiritual lives and grown in maturity in their relationship with Jesus. The high school years are a challenging time when sudents have so many other activities competing for their time and energy, and we emphasize prioritizing their personal relationship with Jesus amidst all of the busyness in their lives. Students are encouraged to go beyond a simple emotional relationship with God and have a relationship marked by spiritual discipline and obedience."
 			],
+		],
+		"image_gallery" => [
+			"prefix" => relativePathIMG()."departments/galleries/"."highschool/",
+			"images" => [
+				"gallery_01.png",
+				"gallery_02.png"
+			]
 		]
 	];
 	$departmentPageData = null;
@@ -618,7 +708,28 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 
 		<!-- PHOTO GALLERY -->
 	<div class="limitedWidth"  style="background-color: rgba(255,255,255,1.0);">
-		<div class="giauImageGallery giauImageGalleryShowNavigation" style="position:relative; width:100%; height:400px;"></div>
+		<div class="giauImageGallery giauImageGalleryShowNavigation" data-autoplay="10000" style="position:relative; width:100%; height:400px;">
+			<?php 
+				$galleryImageContainer = $departmentPageData["image_gallery"];
+				if($galleryImageContainer){
+					$galleryPrefix = $galleryImageContainer["prefix"];
+					if(!$galleryPrefix){
+						$galleryPrefix = "";
+					}
+					$galleryImages = $galleryImageContainer["images"];
+					if($galleryImages){
+						$i;
+						$len = sizeof($galleryImages);
+						for($i=0; $i<$len; ++$i){
+							$image = $galleryImages[$i];
+							?>
+							<div data-source="<?php echo $galleryPrefix.$image; ?>" style="display:none;"></div>
+							<?php
+						}
+					}
+				}
+			?>
+		</div>
 	</div>
 
 
@@ -739,9 +850,9 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 }else if($pageRequest==$PAGE_REQUEST_TYPE_INFO){
 ?>
 	<!-- DIRECTIONS -->
-	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
+	<!-- <div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
 		<div class="headerSectionMain">DIRECTIONS</div>
-	</div>
+	</div> -->
 
 
 <?php
@@ -832,17 +943,22 @@ pages = {
 }
 
 */
-function create_language_switch($overrideCSS){
+function create_language_switch($overrideCSS,$additionalHTML){
+	$additionalHTML = $additionalHTML ? $additionalHTML : "";
 	?>
-			<div class="languageSwitchContainer giauLanguageToggleSwitch" style="display:table-cell; padding:10px; vertical-align:middle; text-align:right;"  data-storage="<?php echo KEY_COOKIE_PARAM_LANGUAGE(); ?>">
+			<div class="languageSwitchContainer giauLanguageToggleSwitch" style="display:table-cell; padding:10px; vertical-align:middle; text-align:right;"  data-storage="<?php echo KEY_COOKIE_PARAM_LANGUAGE(); ?>"  <?php echo $additionalHTML; ?> >
 				<div style="display:inline-block;" data-language="en" data-display="EN" data-url="./"></div>
 				<div style="display:inline-block;" data-language="ko" data-display="KO" data-url="./"></div>
 			</div>
 <?php
 }
-function create_navigation($pageList, $currentPageName, $currentSubPageName){
+function create_navigation($pageList, $currentPageName, $currentSubPageName, $additional, $additionalData){
 	$isTable = true;
 	$displayType = null;
+	if($additional){
+		$isTable = false;
+	}
+	$additionalData = $additionalData ? $additionalData : "";
 	?>
 	<div class="giauNavigationItemList navigationContainer" style="<?php
 	if($displayType!=null){
@@ -852,10 +968,10 @@ function create_navigation($pageList, $currentPageName, $currentSubPageName){
 		display:table-cell; vertical-align:middle; text-align:center;     padding: 8px 0px 8px 0px; 
 		<?php
 		}else{ ?>
-		display:inline-block; position:relative; text-align: center; float:right; padding:6px; <?php
+		display:inline-block; position:relative; text-align: center; padding:6px; text-align:center;<?php echo $additional;
 		}
 	}
-	?> " >
+	?> " <?php echo $additionalData; ?> >
 		<ul><?php
 			foreach($pageList as $pageData){
 				$pageName = $pageData["page"];

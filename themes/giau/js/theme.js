@@ -10,7 +10,7 @@ function giau(){
 
 
 giau.prototype.initialize = function(){
-	console.log("loaded");
+	
 	// GLOBAL EVENTS
 
 	// NAVIGATION
@@ -206,10 +206,6 @@ giau.ContactView = function(element){ //
 				Code.setStyleColor(divSend,"#333");
 				//Code.setStyleHeight(divSend,"24px");
 			//Code.setContent(divSend, sendMessageButtonText);
-
-console.log(this._handleSubmitClickedFxn)
-console.log(this._handleSubmitTappedFxn)
-
 			this._jsDispatch.addJSEventListener(divSend, Code.JS_EVENT_CLICK, this._handleSubmitClickedFxn, this);
 			this._jsDispatch.addJSEventListener(divSend, Code.JS_EVENT_TOUCH_TAP, this._handleSubmitTappedFxn, this);
 
@@ -319,7 +315,7 @@ giau.BioView = function(element){ //
 	this._container = element;
 	this.personnelImagePrefix = "./wp-content/themes/giau/img/personnel/";
 	this._default_bio_description = "Bio forthcoming.";
-	this._default_bio_image = "anonymous.jpg";
+	this._default_bio_image = "anonymous.png";
 	var personnelList = [];
 	personnelList.push({
 		"first_name": "",
@@ -517,7 +513,6 @@ giau.BioView.prototype.updateLayout = function(){
 		columns = 1;
 	}
 	var colWidth = Math.floor(widthContainer/columns);
-	console.log(colWidth)
 
 	var personnelList = this._personnelList;
 	var i, len = personnelList.length;
@@ -618,7 +613,6 @@ giau.GalleryListing = function(element){
 	var iconPercentSize = 30;//50;
 	var iconLeftPercent = (100-iconPercentSize)*0.5; // 25
 	var iconTopPercent = (100-iconPercentSize)*iconToContainerWidthToHeight*0.5; // 10
-	console.log(iconPercentSize,iconLeftPercent+iconTopPercent);
 
 	var i, len = listings.length;
 	for(i=0; i<len; ++i){
@@ -708,7 +702,7 @@ giau.GalleryListing.prototype.updateLayout = function(){
 	}
 	var rowCount = Math.ceil(colCount/elementCount);
 
-	console.log(widthContainer+"x"+heightContainer+" = colCount "+colCount)
+//	console.log(widthContainer+"x"+heightContainer+" = colCount "+colCount)
 	
 	var lm1 = len-1;
 	var spacingX = colCount<=1 ? 0.0 : (widthContainer - (elementWidth*colCount))/(colCount-1);
@@ -779,6 +773,10 @@ giau.LanguageToggle = function(element){
 
 	var styleTextSize = 12;
 	var styleTextColor = 0xFF111111;
+	var propertyColor = Code.getProperty(this._container,"data-color");
+	if(propertyColor){
+		styleTextColor = parseInt(propertyColor);
+	}
 
 	var storageDictionaryKey = Code.getPropertyOrDefault(this._container, "data-storage", "language");
 	var storageDictionaryValue = Code.getCookie(storageDictionaryKey);
@@ -854,13 +852,11 @@ giau.LanguageToggle.prototype._handleContentTappedxn = function(element){
 	this._selectElement(element);
 };
 giau.LanguageToggle.prototype._selectElement = function(e){
-	console.log("sLEECTED");
 	var target = Code.getTargetFromMouseEvent(e);
 	for(var i=0; i<this._languageList.length; ++i){
 		var entry = this._languageList[i];
 		var ele = entry["element"];
 		if(target==ele){
-			console.log("i: "+i)
 			if(i!=this._selectedLanguageIndex){
 				var language = entry["language"];
 				Code.setCookie(this._storageDictionaryKey, language);
@@ -897,6 +893,15 @@ giau.NavigationList = function(element){
 	var styleBGMenuColor = 0xFFEFF1F0;
 	var styleFontTextColor = 0xFF333333;
 	var styleFontTextSize = 12;
+
+	var isBlackMode = Code.getProperty(this._container,"data-darkmode");
+	if(isBlackMode){
+		styleBorderMenuColorBottom = null;
+		styleBorderMenuColorTop = null;
+		styleBGMenuColor = 0x00000000;
+		styleFontTextColor = 0xFFFFFFFF;
+		var styleMenuShadow = 0xFF000000;
+	}
 
 	// container styling
 	if(styleBGMenuColor){
@@ -958,7 +963,7 @@ giau.NavigationList = function(element){
 		Code.setStyleFontSize(div,"14px");
 		Code.setStyleColor(div, Code.getJSColorFromARGB(styleMenuColor) );
 		if(styleMenuShadow){
-			Code.addStyle(div,"text-shadow: 0px 0px 3px "+Code.getJSColorFromARGB(styleMenuShadow)+";");
+			Code.addStyle(div,"text-shadow: 0px 1px 3px "+Code.getJSColorFromARGB(styleMenuShadow)+";");
 		}
 		if(foundSelectedIndex==i){
 			Code.setStyleFontFamily(div,"'siteThemeRegular'");
@@ -1031,7 +1036,7 @@ giau.NavigationList.prototype._handleContentClickedFxn = function(e){
 	}
 }
 giau.NavigationList.prototype._handleContentTappedFxn = function(e){
-	console.log(e);
+	//console.log(e);
 }
 giau.NavigationList.prototype._handleWindowResizedFxn = function(){
 	this.updateLayout();
@@ -1042,7 +1047,7 @@ giau.NavigationList.prototype.selectedIndex = function(index){
 	document.location.href = url;
 }
 giau.NavigationList.prototype.updateLayout = function(){
-	console.log("UPDATE LAYOUT")
+	//console.log("UPDATE LAYOUT")
 	/*
 	var widthContainer = $(this._container).width();
 	var heightContainer = $(this._container).height();
@@ -1103,6 +1108,8 @@ giau.ImageGallery = function(element){
 	// SET ROOT ELEMENT
 	this._container = element;
 	Code.setStyleOverflow(this._container,"hidden"); // overflow: hidden;
+
+	var showNavigation = Code.getProperty(this._container,"data-navigation");
 	
 	// CREATE HIERARCHY
 	this._functionalityContainer = Code.newDiv();
@@ -1114,6 +1121,11 @@ giau.ImageGallery = function(element){
 		this._coverIconRight = Code.newImage();
 		this._coverBorderLeft = Code.newImage();
 		this._coverBorderRight = Code.newImage();
+		if(showNavigation){
+			this._overlayBorderLeft = Code.newDiv();
+			this._overlayBorderRight = Code.newDiv();
+		}
+		var overlayBorderColor = 0x99000000;
 		// A
 	this._primaryImageContainer = Code.newDiv();
 		Code.setStyleLeft(this._primaryImageContainer,0+"px");
@@ -1135,15 +1147,24 @@ giau.ImageGallery = function(element){
 		Code.addChild(this._functionalityContainer,this._coverContainer);
 			Code.addChild(this._coverContainer, this._coverBorderLeft);
 			Code.addChild(this._coverContainer, this._coverBorderRight);
+			if(showNavigation){
+				Code.addChild(this._coverContainer, this._overlayBorderLeft);
+				Code.addChild(this._coverContainer, this._overlayBorderRight);
+			}
 			Code.addChild(this._coverContainer, this._coverIconLeft);
 			Code.addChild(this._coverContainer, this._coverIconRight);
 			//this._coverBorderLeft
-			if(Code.hasClass(this._container,"giauImageGalleryShowNavigation")){
+			
+			if(showNavigation){
 				//giauImageGalleryShowNavigation
 				// this._coverIconLeft.src = GLOBAL_SERVER_IMAGE_PATH+"/gallery_button_left.png";
 				// this._coverIconRight.src = GLOBAL_SERVER_IMAGE_PATH+"gallery_button_right.png";
-				this._coverIconLeft.src = GLOBAL_SERVER_IMAGE_PATH+"left_arrow_box.png";
-				this._coverIconRight.src = GLOBAL_SERVER_IMAGE_PATH+"right_arrow_box.png";
+				// this._coverIconLeft.src = GLOBAL_SERVER_IMAGE_PATH+"left_arrow_box.png";
+				// this._coverIconRight.src = GLOBAL_SERVER_IMAGE_PATH+"right_arrow_box.png";
+				this._coverIconLeft.src = GLOBAL_SERVER_IMAGE_PATH+"gallery_arrow_left.png";
+				this._coverIconRight.src = GLOBAL_SERVER_IMAGE_PATH+"gallery_arrow_right.png";
+				Code.setStyleBackground(this._overlayBorderLeft,""+Code.getJSColorFromARGB(overlayBorderColor));
+				Code.setStyleBackground(this._overlayBorderRight,""+Code.getJSColorFromARGB(overlayBorderColor));
 			}else{
 
 			}
@@ -1160,9 +1181,12 @@ giau.ImageGallery = function(element){
 	this._animatonTicker = null;
 	this._automatedTicker = null;
 	this._isAutomated = false;
-	if(Code.hasClass(this._container,"giauImageGalleryAutomated")){
+	var autoTime = Code.getProperty(this._container,"data-autoplay");
+	if(autoTime){
+		autoTime = Number(autoTime);
+		autoTime = Math.max(autoTime,100);
 		this._isAutomated = true;
-		this._automatedTicker = new Ticker(6000);
+		this._automatedTicker = new Ticker(autoTime);
 		this._automatedTicker.addFunction(Ticker.EVENT_TICK, this._handleAutomatedTickerFxn, this);
 		this._automatedTicker.start();
 	}
@@ -1171,13 +1195,24 @@ giau.ImageGallery = function(element){
 	this._currentIndex = null;
 	this._coverElement = null;
 	this._underElement = null;
-	var imagePrefix = GLOBAL_SERVER_IMAGE_PATH+"/gallery_featured";
-	this._images = ["featured_01_opt.png","featured_02_opt.png","featured_03_opt.png","featured_04_opt.png","featured_05_opt.png","featured_06_opt.png"];
+
+	// generate images from children
 	this._loadedImages = [];
-	var i;
-	for(i=0; i<this._images.length; ++i){
-		this._images[i] = imagePrefix + "/" + this._images[i];
-		this._loadedImages[i] = null;
+	this._images = [];
+	var i, len, child, url;
+	var index = 0;
+	for(i=0; i<Code.numChildren(this._container); ++i){
+		child = Code.getChild(this._container,i);
+		if(child){
+			url = Code.getProperty(child,"data-source");
+			if(url){
+				this._images[index] = url;
+				this._loadedImages[index] = null;
+				++index;
+				Code.removeChild(this._container,child);
+				--i; // redo index
+			}
+		}
 	}
 	
 	// LISTENERS
@@ -1357,8 +1392,9 @@ giau.ImageGallery.prototype._updateLayout = function(index){
 		var size = Code.sizeToFitRectInRect(info.width,info.height, widthContainer,heightContainer);
 		var diffX = widthContainer - size.width;
 		var diffY = heightContainer - size.height;
-		var iconButtonWidth = 80;
-		var iconButtonHeight = 80;
+		var iconButtonWidth = 30;
+		var iconButtonHeight = 30;
+		var barIconWidth = 50;
 		Code.setSrc(this._primaryImageElement,info.url);
 
 		// FUNCTIONALITY CONTAINER
@@ -1379,20 +1415,39 @@ giau.ImageGallery.prototype._updateLayout = function(index){
 				Code.setStyleTop(this._coverBorderRight, 0+"px");
 				Code.setStyleHeight(this._coverBorderRight, "100%");
 				Code.setStyleWidth(this._coverBorderRight, "100px");
+				Code.setStylePosition(this._coverBorderRight, "absolute");
+				// SOLID
+				if(this._overlayBorderLeft && this._coverBorderRight){
+					// LEFT
+					Code.setStylePosition(this._overlayBorderLeft, "absolute");
+					Code.setStyleLeft(this._overlayBorderLeft, 0+"px");
+					Code.setStyleTop(this._overlayBorderLeft, 0+"px");
+					Code.setStyleBottom(this._overlayBorderLeft, 0+"px");
+					Code.setStyleWidth(this._overlayBorderLeft, barIconWidth+"px");
+					Code.setStyleHeight(this._overlayBorderLeft, "100%");
+					// RIGHT
+					Code.setStylePosition(this._overlayBorderRight, "absolute");
+					Code.setStyleRight(this._overlayBorderRight, 0+"px");
+					Code.setStyleTop(this._overlayBorderRight, 0+"px");
+					Code.setStyleBottom(this._overlayBorderRight, 0+"px");
+					Code.setStyleWidth(this._overlayBorderRight, barIconWidth+"px");
+					Code.setStyleHeight(this._overlayBorderRight, "100%");
+				}
 				// LEFT - BUTTON
 				if(this._coverIconLeft.src){
 					Code.setStylePosition(this._coverIconLeft, "absolute");
-					Code.setStyleLeft(this._coverIconLeft, "5%");
+					Code.setStyleLeft(this._coverIconLeft, "10px");
 					Code.setStyleTop(this._coverIconLeft, ((heightContainer-iconButtonHeight)*0.5)+"px");
-					Code.setStyleHeight(this._coverIconLeft, iconButtonHeight+"px");
+					//Code.setStyleHeight(this._coverIconLeft, iconButtonHeight+"px");
 					Code.setStyleWidth(this._coverIconLeft, iconButtonWidth+"px");
 					// RIGHT - BUTTON
 					Code.setStylePosition(this._coverIconRight, "absolute");
-					Code.setStyleRight(this._coverIconRight, "5%");
+					Code.setStyleRight(this._coverIconRight, "10px");
 					Code.setStyleTop(this._coverIconRight, ((heightContainer-iconButtonHeight)*0.5)+"px");
-					Code.setStyleHeight(this._coverIconRight, iconButtonHeight+"px");
+					//Code.setStyleHeight(this._coverIconRight, iconButtonHeight+"px");
 					Code.setStyleWidth(this._coverIconRight, iconButtonWidth+"px");
 				}
+			// behind
 			// ...
 		// INTERACTION CONTAINER
 			Code.setStylePosition(this._interactionContainer, "absolute");
@@ -1669,53 +1724,7 @@ giau.CalendarView.prototype.formatTimeHumanReadable = function(timestamp, durati
 giau.prototype._resize = function(e){
 	var width = $(window).width();
 	var height = $(window).height();
-	console.log(width,height)
 }
-
-giau.ImageGallery2 = function (element){
-	console.log(this);
-
-	var width = $(window).width();
-	var height = $(window).height();
-
-	// $(element).width(width)
-	// $(element).height("400px")
-
-	//var img = $(element).prepend('<img style="width:100px; height:100px" src="/wordpress/wp-content/themes/giau/img/feature_image_01.jpg" />');
-
-	var img = $('<img>', {"src":(GLOBAL_SERVER_IMAGE_PATH+"/feature_image_01.jpg")});
-	$(img).bind('load', function(){console.log("image loaded"); console.log(img[0].src);} );
-	img.appendTo(element)
-
-	//var img = $(element).prepend('<div style="background-image: url(\'/wordpress/wp-content/themes/giau/img/feature_image_01.jpg\'); " ></div>');
-	//var img = $(element).prepend('<div></div>');
-	
-	// background-repeat: no-repeat;
-
-	// console.log("image:");
-	// console.log(img);
-	
-
-	img.width(200)
-	img.height(400)
-
-	// $(img).css("width","200px");
-	// $(img).css("height","200px");
-
-	// $(img).css("width","200px");
-	// $(img).css("height","200px");
-
-	console.log($(img).width()+"x"+$(img).height())
-	
-
-	// $(img).css("background-image","url(\'/wordpress/wp-content/themes/giau/img/feature_image_01.jpg\')");
-	// $(img).css("background-repeat","no-repeat");
-	// $(img).css("background-position","cover");
-
-	//<img class="featureImageBackground"src="<?php echo relativePathIMG()."feature_image_01.jpg" ?>" />
-
-}
-
 
 
 
