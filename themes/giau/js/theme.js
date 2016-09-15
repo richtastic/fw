@@ -1554,6 +1554,71 @@ giau.CalendarView = function(element){
 		"title": "High School Summer Retreat",
 		"description": "@ Lake Arrowhead",
 	});
+/*
+
+
+x September 20~21, 2016         Orange Tour Conference
+x September 25 , 2016              도전! 한국어
+x October 31, 2016                    Hallelujah Night
+x November 10~11, 2016          CE Pastors’ Retreat
+x November 20, 2016                CE Thanksgiving Worship
+x December 10, 2016 Teacher Appreciation Banquet
+x December 23, 2016 Christmas Celebration
+x January 2~5, 2017                  Junior High & High School Winter Retreat
+
+
+
+
+
+*/
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 9, 21, 0, 0, 0, 0),
+		"duration": 1*24*60*60*1000,
+		"title": "Orange Tour Conference",
+		"description": "Orange Tour Conference",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 9, 25, 0, 0, 0, 0),
+		"duration": 0,
+		"title": "도전! 한국어",
+		"description": "도전! 한국어",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 10, 31, 0, 0, 0, 0),
+		"duration": 0,
+		"title": "Hallelujah Night",
+		"description": "Hallelujah Night",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 11, 10, 0, 0, 0, 0),
+		"duration": 1*24*60*60*1000,
+		"title": "CE Pastors’ Retreat",
+		"description": "CE Pastors’ Retreat",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 11, 20, 0, 0, 0, 0),
+		"duration": 0,
+		"title": "CE Thanksgiving Worship",
+		"description": "CE Thanksgiving Worship",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 12, 10, 0, 0, 0, 0),
+		"duration": 0,
+		"title": "Teacher Appreciation Banquet",
+		"description": "Teacher Appreciation Banquet",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 12, 23, 0, 0, 0, 0),
+		"duration": 0,
+		"title": "Christmas Celebration",
+		"description": "Christmas Celebration",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2017, 1, 2, 0, 0, 0, 0),
+		"duration": 3*24*60*60*1000,
+		"title": "Junior High & High School Winter Retreat",
+		"description": "Junior High & High School Winter Retreat",
+	});
 	/*
 	eventList.push({
 		"start": Code.getTimeStamp(2016, 5, 7, 0, 0, 0, 0),
