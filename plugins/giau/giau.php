@@ -258,22 +258,97 @@ if( isset($_POST["richie"]) ) {
 	$config = [
 		"items" => [
 			[
-				"name" => "hash_index",
-				"title" => "Identifier",
+				"name" => "first_name",
+				"title" => "First Name",
 				"type" => "text",
-				"hint" => "unique tag",
+				"hint" => "first name",
 				"value" => ""
 			],
 			[
-				"name" => "phrase_value",
-				"title" => "Phrase",
+				"name" => "last_name",
+				"title" => "Last Name",
+				"type" => "text",
+				"hint" => "first name",
+				"value" => ""
+			],
+			[
+				"name" => "display_name",
+				"title" => "First Name",
+				"type" => "text",
+				"hint" => "first name",
+				"value" => ""
+			],
+			[
+				"name" => "position",
+				"title" => "First Name",
+				"type" => "text",
+				"hint" => "first name",
+				"value" => ""
+			],
+			[
+				"name" => "email",
+				"title" => "First Name",
+				"type" => "text",
+				"hint" => "first name",
+				"value" => ""
+			],
+			[
+				"name" => "phone",
+				"title" => "First Name",
+				"type" => "text",
+				"hint" => "first name",
+				"value" => ""
+			],
+			[
+				"name" => "tags",
+				"title" => "First Name",
+				"type" => "text",
+				"hint" => "first name",
+				"value" => ""
+			],
+			[
+				"name" => "uri",
+				"title" => "First Name",
+				"type" => "text",
+				"hint" => "first name",
+				"value" => ""
+			],
+			[
+				"name" => "image_url",
+				"title" => "First Name",
+				"type" => "text",
+				"hint" => "first name",
+				"value" => ""
+			],
+			[
+				"name" => "description",
+				"title" => "Description",
 				"type" => "textarea",
-				"hint" => "display text",
+				"hint" => "description",
 				"value" => ""
 			]
 		],
-		"submit_text" => "Insert Language Phrase"
+		"submit_text" => "Insert User Bio"
 	];
+	/*
+	$sql = "CREATE TABLE ".GIAU_FULL_TABLE_NAME_BIO()." (
+		id int NOT NULL AUTO_INCREMENT,
+		created VARCHAR(32) NOT NULL,
+		modified VARCHAR(32) NOT NULL,
+		first_name VARCHAR(32) NOT NULL,
+		last_name VARCHAR(32) NOT NULL,
+		display_name VARCHAR(64) NOT NULL,
+		position VARCHAR(255) NOT NULL,
+		email VARCHAR(255) NOT NULL,
+		phone VARCHAR(255) NOT NULL,
+		tags VARCHAR(255) NOT NULL,
+		description VARCHAR(65535) NOT NULL,
+		uri VARCHAR(256) NOT NULL,
+		image_url VARCHAR(256) NOT NULL,
+		UNIQUE KEY id (id)
+		) $charset_collate
+	;";
+	*/
 	createForm("languagization", $_SERVER['REQUEST_URI'], $config);
 
 
