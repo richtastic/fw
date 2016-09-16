@@ -91,7 +91,7 @@ function dateFromString($str){ // seconds from Unix Epoc
 			$nnnn = $arr[3];
 		}
 	}
-	$date = mktime($hh,$nn,$ss,$mm,$dd,$yyyy,-1);
+	$date = mktime($hh,$nn,$ss,$mm,$dd,$yyyy);
 	// gmmktime
 	return $date;
 }

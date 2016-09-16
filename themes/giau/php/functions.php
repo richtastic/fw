@@ -189,7 +189,14 @@ function create_page(){
 					//var g = new giau();
 				});
 		</script>
+		<?php
+			$FAV_ICON_LOCATION =  get_stylesheet_directory_uri()."/img/favicon.ico";
+		?>
 		<meta name="viewport" content="width=device-width, initial-scale=1" maximum-scale=1>
+		<!-- FAV ICON -->
+		<link rel="shortcut icon" href="<?php echo $FAV_ICON_LOCATION; ?>" type="image/x-icon">
+		<link rel="icon" href="<?php echo $FAV_ICON_LOCATION; ?>" type="image/x-icon">
+		
 	</head>
 	<body style="bgColor:#F00; margin: 0 auto;">
 
@@ -734,7 +741,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 
 
 
-	<div class="" style="display:block; background-color:#FFF; padding:20px;">
+	<div class="limitedWidth" style="display:block; background-color:#FFF; padding:20px;">
 		<div class="" style="display:table; width: 100%; text-align:center;">
 			<div class="" style="display:table-row; text-align:center;">
 			<?php
@@ -758,7 +765,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 			</div>
 		</div>
 	</div>
-	<div class="" style="display:table; position:relative; width:100%;">
+	<div class="limitedWidth" style="display:table; position:relative; width:100%;">
 		<div style="display:table-cell; width:40%; vertical-align:top; text-align:center;">
 		<?php
 			$personnel = $departmentPageData["personnel"][0];

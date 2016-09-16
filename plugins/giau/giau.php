@@ -125,6 +125,17 @@ function giau_init_fxn() {
 	add_action(WP_ACTION_PLUGINS_LOADED, "giau_action_plugins_loaded_callback");
 	//
 	add_action(WP_ACTION_INIT, "giau_action_init_callback");
+
+
+	// ?
+	add_action('admin_bar_menu', 'add_site_menu_to_top_bar' );
+}
+
+function add_site_menu_to_top_bar() {
+	error_log("RICHIE add_site_menu_to_top_bar");
+	global $wp_admin_bar;
+	$menus = get_terms('nav_menu');
+	error_log("$menus: ".print_r($menus));
 }
 
 function giau_action_admin_menu() {
@@ -132,8 +143,8 @@ function giau_action_admin_menu() {
 	// OPTIONS > GIAU PLUGIN
 	add_options_page('Giau Plugin Options', 'Giau Plugin', 'manage_options', GIAU_UNIQUE_IDENTIFIER(), 'giau_admin_plugin_options');
 	// GIAU PLUGIN | MENU
-	add_menu_page('Giau Plugin Page', 'Giau Plugin', 'manage_options', 'giau-plugin-main', 'giau_admin_menu_page_main');
-		add_submenu_page('giau-plugin-main', 'Giau Sub Menu', 'Sub Menu', 'manage_options', 'giau-plugin-submenu', 'giau_admin_menu_page_submenu');
+	add_menu_page('Giau Plugin Page', 'Plugin Settings', 'manage_options', 'giau-plugin-main', 'giau_admin_menu_page_main');
+		add_submenu_page('giau-plugin-main', 'Giau Sub Menu', 'Data Entry | Control', 'manage_options', 'giau-plugin-submenu', 'giau_admin_menu_page_submenu');
 }
 
 function giau_admin_plugin_options() {
@@ -148,21 +159,142 @@ function giau_admin_plugin_options() {
 <?php
 }
 
+
+function sendEmail($toEmail, $fromEmail, $replyEmail, $subject, $body){
+	// http://www.html-form-guide.com/email-form/php-script-not-sending-email.html
+	// http://stackoverflow.com/questions/24644436/php-mail-form-doesnt-complete-sending-e-mail
+	if( $toEmail==null || count($toEmail)<1 ){
+		return 0;
+	}
+	$headers = "From: ".$fromEmail."\r\nReply-To: ".$replyEmail."";
+	return mail($toEmail, $subject, $body, $headers);
+	//error_log('MAIL: '.$toEmail.' | '.$subject.' | '.$body);
+}
+
 function giau_admin_menu_page_main(){
 ?>
-	<h1>Hello World Giau</h1>
+	<h1>Giau Plugin Settings</h1>
 <?php
 }
 function giau_admin_menu_page_submenu(){
-	// <form action="<?php echo $plugins_url ?>" method="post" enctype="multipart/form-data">
+	// print phpinfo();  
+	// return;
+	// $sendMail = sendEmail("zirbsster@gmail.com","zirbsster@gmail.com","zirbsster@gmail.com","subject","body");
+	// error_log("sendMail --- ".$sendMail );
+
+	// <form action=" echo $plugins_url " method="post" enctype="multipart/form-data">
+	/*
+	  onsubmit="return checkForm()"
+
+	*/
+	$form_name = "admin_tools_form";
+
+error_log("RICHIE --- ".esc_url( $_SERVER['REQUEST_URI'] ) );
+error_log("GOT --- ".$_POST["richie"] );
+if( isset($_POST["richie"]) ) {
+	error_log("DO" );
+	giau_insert_bio('Richie','X','X','X', '', '','');
+}
+// /wp/wp-admin/admin.php?page=giau-plugin-submenu,
+/*
+<form id="<?php echo $form_name; ?>" name="<?php echo $form_name; ?>" action="../wp-content/plugins/giau/php/admin_input.php" method="post">
+*/
 ?>
-	<h1>Hello World Sub Giau</h1>
+
+	<h1>Data Entry | Control</h1>
 	<!-- <form action="/wp-content/plugins/listeningto/formhtml.php" method="post"> -->
+
+
+<ul class="tab">
+  <li><a href="#" class="tablinks active" onclick="openCity(event, 'General')"><?php _e( 'General', 'admin-tools' ) ?></a></li>
+  <li><a href="#" class="tablinks" onclick="openCity(event, 'AdminMenu')"><?php _e( 'Admin Menu', 'admin-tools' ) ?></a></li>
+  <li><a href="#" class="tablinks" onclick="openCity(event, 'Plugins')"><?php _e( 'Plugins', 'admin-tools' ) ?></a></li>
+  <li><a href="#" class="tablinks" onclick="openCity(event, 'TopBar')"><?php _e( 'Top Bar', 'admin-tools' ) ?></a></li>
+</ul>
+<!-- http://www.w3schools.com/howto/howto_js_tabs.asp -->
+
+
+
+	<?php
+	// LANGUAGIZATION
+	$config = [
+		"items" => [
+			[
+				"name" => "hash_index",
+				"title" => "Identifier",
+				"type" => "text",
+				"hint" => "unique tag",
+				"value" => ""
+			],
+			[
+				"name" => "language",
+				"title" => "Language Code",
+				"type" => "option",
+				"hint" => "EN, KO, ...",
+				"options" => [
+					[
+						"display" => "EN",
+						"value" => "en-US"
+					],
+					[
+						"display" => "KO",
+						"value" => "ko-KP"
+					]
+				],
+				"value" => ""
+			],
+			[
+				"name" => "phrase_value",
+				"title" => "Phrase",
+				"type" => "textarea",
+				"hint" => "display text",
+				"value" => ""
+			]
+		],
+		"submit_text" => "Insert Language Phrase"
+	];
+	createForm("languagization", $_SERVER['REQUEST_URI'], $config);
+	// BIO
+	$config = [
+		"items" => [
+			[
+				"name" => "hash_index",
+				"title" => "Identifier",
+				"type" => "text",
+				"hint" => "unique tag",
+				"value" => ""
+			],
+			[
+				"name" => "phrase_value",
+				"title" => "Phrase",
+				"type" => "textarea",
+				"hint" => "display text",
+				"value" => ""
+			]
+		],
+		"submit_text" => "Insert Language Phrase"
+	];
+	createForm("languagization", $_SERVER['REQUEST_URI'], $config);
+
+
+/*
+
+
 	<form action="../wp-content/plugins/giau/php/admin_input.php" method="post">
 		Album: <input type="text" name="album" />
 		Artist: <input type="text" name="artist" />
 		<input type="submit">
 	</form>
+*/
+		?>
+	<ul>
+		<li>languages / translations</li>
+		<li>pages</li>
+		<li>sections</li>
+		<li>widgets</li>
+		<li>calendars</li>
+		<li>bios</li>
+	</ul>
 <?php
 }
 
@@ -192,6 +324,63 @@ function giau_action_unhandled_callback($item){
 	error_log("unhandled filter callback: ".$item);
 }
 
+
+function createForm($formName, $uri, $config){
+	?>
+	<form id="<?php echo $formName; ?>" name="<?php echo $formName; ?>" action="<?php esc_url( $uri ); ?>" method="post">
+		<?php
+			$items = $config["items"];
+			$submitText = $config["submit_text"];
+			$i;
+			for($i=0; $i<count($items); ++$i){
+				$item = $items[$i];
+				$title = $item["title"];
+				$type = $item["type"];
+				$name = $item["name"];
+				$hint = $item["hint"];
+				$value = $item["value"];
+				?>
+				<div><?php echo $title; ?>: </div>
+				<?php
+				if($type=="text"){
+					?>
+					<input type="text" name="<?php echo $name; ?>" value="<?php echo $value; ?>"  placeholder="<?php echo $hint; ?>" />
+					<?php
+				}else if($type=="textarea"){
+					?>
+					<textarea name="<?php echo $name; ?>" value="<?php echo $value; ?>"  placeholder="<?php echo $hint; ?>"></textarea>
+					<?php
+				}else if($type=="option"){
+					$options = $item["options"];
+					?>
+					<select name="<?php echo $name; ?>">
+					<?php
+					for($j=0; $j<count($options); ++$j) {
+						$option = $options[$j];
+						$display = $option["display"];
+						$value = $option["value"];
+						?>
+						<option value="<?php echo $value; ?>"><?php echo $display; ?></option>
+						<?php
+					}
+					?>
+					</select>
+					<?php
+				}else if($type=="radio"){
+					//
+				}else if($type=="hidden"){
+					//
+				}
+				?>
+				<br />
+				<?php
+			}
+		?>
+		<input type="hidden" name="richie" value="HIDDEN-RICHIE" />
+		<input type="submit" value="<?php echo $submitText; ?>">
+	</form>
+	<?php
+}
 
 
 
@@ -294,6 +483,7 @@ function giau_create_database(){
 	// description = 
 	// start_date = millisecond time stamp
 	// duration = milliseconds
+	// tags = comma-separated filtering
 	$sql = "CREATE TABLE ".GIAU_FULL_TABLE_NAME_CALENDAR()." (
 		id int NOT NULL AUTO_INCREMENT,
 		created VARCHAR(32) NOT NULL,
@@ -303,6 +493,7 @@ function giau_create_database(){
 		description VARCHAR(65535) NOT NULL,
 		start_date VARCHAR(32) NOT NULL,
 		duration VARCHAR(32) NOT NULL,
+		tags VARCHAR(255) NOT NULL,
 		UNIQUE KEY id (id)
 		) $charset_collate
 	;";
@@ -317,6 +508,11 @@ function giau_create_database(){
 	// display_name = 
 	// position = 
 	// description = 
+	// email = 
+	// phone = 
+	// tags =  ??? group =  ??? department? tags ?
+	// uri = 
+	// image_url = 
 	$sql = "CREATE TABLE ".GIAU_FULL_TABLE_NAME_BIO()." (
 		id int NOT NULL AUTO_INCREMENT,
 		created VARCHAR(32) NOT NULL,
@@ -325,6 +521,9 @@ function giau_create_database(){
 		last_name VARCHAR(32) NOT NULL,
 		display_name VARCHAR(64) NOT NULL,
 		position VARCHAR(255) NOT NULL,
+		email VARCHAR(255) NOT NULL,
+		phone VARCHAR(255) NOT NULL,
+		tags VARCHAR(255) NOT NULL,
 		description VARCHAR(65535) NOT NULL,
 		uri VARCHAR(256) NOT NULL,
 		image_url VARCHAR(256) NOT NULL,
@@ -490,7 +689,7 @@ function insert_widget($widgetName,$widgetConfig){
 			)
 		);
 }
-function insert_bio($firstName,$lastName,$displayName,$position,$description,$uri,$imageURL){
+function giau_insert_bio($firstName,$lastName,$displayName,$position,$description,$uri,$imageURL){
 	$timestampNow = stringFromDate( getDateNow() );
 	global $wpdb;
 	$wpdb->insert(GIAU_FULL_TABLE_NAME_BIO(),

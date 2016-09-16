@@ -2,6 +2,24 @@
 // admin_input.php
 
 error_log("ADMIN INPUT");
+
+
+global $wpdb;
+error_log("wpdb: ".print_r($wpdb));
+
+//header("Location: ");
+
+$firstName = "Richie";
+$lastName = "lasname";
+$displayName = "displayname";
+$position = "position";
+$description = "";
+$uri = "";
+$imageURL = "";
+
+giau_insert_bio($firstName,$lastName,$displayName,$position,$description,$uri,$imageURL);
+
+
 /*
 
 https://codex.wordpress.org/Custom_Fields#PostMeta_Functions
@@ -52,5 +70,36 @@ Sex: <input type="radio" name="customer_sex" value="male">Male <input type="radi
 Your Age: <input type="text" id="customer_age" name="customer_age" /><br />
 <input type="submit" value="Submit"/>
 </form>
+
+
+
+
+https://blog.samelh.com/2015/08/13/create-mysql-database-table-wordpress-insert-data-wpdb-html-form/
+
+
+
+$post_id = wp_insert_post($new_post);
+$url = get_permalink( $post_id );
+wp_redirect($url);
+exit();
+
+
+
+https://premium.wpmudev.org/blog/wordpress-plugin-development-guide/?utm_expid=3606929-84.YoGL0StOSa-tkbGo-lVlvw.0&utm_referrer=https%3A%2F%2Fwww.google.com%2F
+
+add_action( 'wp_head', 'my_facebook_tags' );
+function my_facebook_tags() {
+  echo 'I am in the head section';
+}
+
+
+https://www.sitepoint.com/build-your-own-wordpress-contact-form-plugin-in-5-minutes/
+
+add_shortcode( 'sitepoint_contact_form', 'cf_shortcode' );
+
+
+
+
+
 */
 ?>
