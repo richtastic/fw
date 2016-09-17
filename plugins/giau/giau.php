@@ -213,6 +213,30 @@ if( isset($_POST["richie"]) ) {
 </ul>
 <!-- http://www.w3schools.com/howto/howto_js_tabs.asp -->
 
+<?php
+// TEST SEARCHING DATABASE:
+	$languagizationResults = giau_languagization_paginated(0,10,[ ["language",0], ["id",0], ["hash_index",1] ]);
+	$index = 0;
+	foreach( $languagizationResults as $row ) {
+		$row_id = $row["id"];
+		$row_created = $row["created"];
+		$row_modified = $row["modified"];
+		$row_language = $row["language"];
+		$row_hash_index = $row["hash_index"];
+		$row_phrase_value = $row["phrase_value"];
+		error_log("GOT ITEM: (".$index.") = ".$row_hash_index);
+		++$index;
+	}
+
+	$substitutePhrase = giau_languagization_substitution("JOSEPH_KIM_BIO_FIRST_NAME_TEXT","en-US");
+	error_log("SUB 1: ".$substitutePhrase);
+	$substitutePhrase = giau_languagization_substitution("JOSEPH_KIM_BIO_FIRST_NAME_TEXT","ko-KP");
+	error_log("SUB 2: ".$substitutePhrase);
+	$substitutePhrase = giau_languagization_substitution("JOSEPH_KIM_BIO_FIRST_NAME_TEXT","x");
+	error_log("SUB 3: ".$substitutePhrase);
+	$substitutePhrase = giau_languagization_substitution("JOSEPH_KIM_BIO_FIRST_NAME_TEXT",null);
+	error_log("SUB 4: ".$substitutePhrase);
+?>
 
 
 	<?php
@@ -230,7 +254,7 @@ if( isset($_POST["richie"]) ) {
 				"name" => "language",
 				"title" => "Language Code",
 				"type" => "option",
-				"hint" => "EN, KO, ...",
+				"hint" => "",
 				"options" => [
 					[
 						"display" => "EN",
@@ -273,51 +297,51 @@ if( isset($_POST["richie"]) ) {
 			],
 			[
 				"name" => "display_name",
-				"title" => "First Name",
+				"title" => "Display Name",
 				"type" => "text",
-				"hint" => "first name",
+				"hint" => "display name",
 				"value" => ""
 			],
 			[
 				"name" => "position",
-				"title" => "First Name",
+				"title" => "Position",
 				"type" => "text",
-				"hint" => "first name",
+				"hint" => "executive, artist, etc.",
 				"value" => ""
 			],
 			[
 				"name" => "email",
-				"title" => "First Name",
+				"title" => "Email Address",
 				"type" => "text",
-				"hint" => "first name",
+				"hint" => "email",
 				"value" => ""
 			],
 			[
 				"name" => "phone",
-				"title" => "First Name",
+				"title" => "Phone Number",
 				"type" => "text",
-				"hint" => "first name",
+				"hint" => "phone",
 				"value" => ""
 			],
 			[
 				"name" => "tags",
-				"title" => "First Name",
+				"title" => "Tags",
 				"type" => "text",
-				"hint" => "first name",
+				"hint" => "bio, ",
 				"value" => ""
 			],
 			[
 				"name" => "uri",
-				"title" => "First Name",
+				"title" => "URL",
 				"type" => "text",
-				"hint" => "first name",
+				"hint" => "http://www.google.com",
 				"value" => ""
 			],
 			[
 				"name" => "image_url",
-				"title" => "First Name",
+				"title" => "Image",
 				"type" => "text",
-				"hint" => "first name",
+				"hint" => "todo: get from upload",
 				"value" => ""
 			],
 			[
@@ -330,38 +354,25 @@ if( isset($_POST["richie"]) ) {
 		],
 		"submit_text" => "Insert User Bio"
 	];
-	/*
-	$sql = "CREATE TABLE ".GIAU_FULL_TABLE_NAME_BIO()." (
-		id int NOT NULL AUTO_INCREMENT,
-		created VARCHAR(32) NOT NULL,
-		modified VARCHAR(32) NOT NULL,
-		first_name VARCHAR(32) NOT NULL,
-		last_name VARCHAR(32) NOT NULL,
-		display_name VARCHAR(64) NOT NULL,
-		position VARCHAR(255) NOT NULL,
-		email VARCHAR(255) NOT NULL,
-		phone VARCHAR(255) NOT NULL,
-		tags VARCHAR(255) NOT NULL,
-		description VARCHAR(65535) NOT NULL,
-		uri VARCHAR(256) NOT NULL,
-		image_url VARCHAR(256) NOT NULL,
-		UNIQUE KEY id (id)
-		) $charset_collate
-	;";
-	*/
-	createForm("languagization", $_SERVER['REQUEST_URI'], $config);
+	createForm("bio", $_SERVER['REQUEST_URI'], $config);
+	
+	// CALENDAR
+	$config = [
+		"items" => [
+			[
+				"name" => "first_name",
+				"title" => "First Name",
+				"type" => "text",
+				"hint" => "first name",
+				"value" => ""
+			]
+		],
+		"submit_text" => "Insert User Bio"
+	];
+	createForm("calendar", $_SERVER['REQUEST_URI'], $config);
 
 
-/*
-
-
-	<form action="../wp-content/plugins/giau/php/admin_input.php" method="post">
-		Album: <input type="text" name="album" />
-		Artist: <input type="text" name="artist" />
-		<input type="submit">
-	</form>
-*/
-		?>
+?>
 	<ul>
 		<li>languages / translations</li>
 		<li>pages</li>
@@ -585,9 +596,9 @@ function giau_create_database(){
 	// description = 
 	// email = 
 	// phone = 
-	// tags =  ??? group =  ??? department? tags ?
 	// uri = 
 	// image_url = 
+	// tags =  ??? group =  ??? department? tags ? for filtering
 	$sql = "CREATE TABLE ".GIAU_FULL_TABLE_NAME_BIO()." (
 		id int NOT NULL AUTO_INCREMENT,
 		created VARCHAR(32) NOT NULL,
@@ -598,10 +609,10 @@ function giau_create_database(){
 		position VARCHAR(255) NOT NULL,
 		email VARCHAR(255) NOT NULL,
 		phone VARCHAR(255) NOT NULL,
-		tags VARCHAR(255) NOT NULL,
 		description VARCHAR(65535) NOT NULL,
 		uri VARCHAR(256) NOT NULL,
 		image_url VARCHAR(256) NOT NULL,
+		tags VARCHAR(255) NOT NULL,
 		UNIQUE KEY id (id)
 		) $charset_collate
 	;";
@@ -673,7 +684,126 @@ function giau_calendar_events_all(){
 	// 	$row_duration = $row["duration"];
 	// }
 }
+function sortingQueryParamFromLists($columns, $sortIndexDirection){
+	// arrays must be non-null and non-zero lengths
+	if( !$columns || count($columns) == 0 || !$sortIndexDirection || count($sortIndexDirection) == 0 ){
+		return "";
+	}
+	$sortList = [];
+	$i;
+	$len = count($sortIndexDirection);
+	for($i=0; $i<$len; ++$i){
+		$method = $sortIndexDirection[$i];
+		if($method){
+			$column = $method[0];
+			$direction = $method[1];
+			if($column && $direction){
+				if(in_array($column,$colmns)){
+					$dir = "ASC";
+					if($direction==0){
+						$dir = "DESC";
+					}
+					sortList.push($column." ".$dir)
+				}
+			}
+		}
+	}
+	if( count($sortList) > 0 ){
+		$sortString = join(", ",$sortList);
+		$sortString = "ORDER BY ".$sortString;
+		return $sortString;
+	}
+	return "";
+}
+function giau_languagization_paginated($offset,$count,$sortIndexDirection){
+	// offset must be positive
+	if !$offset || $offset < 0 {
+		$offset = 0;
+	}
+	// count must be positive
+	if !$count || $count < 0 {
+		$count = 0;
+	}
+	if $count == 0 { // no results
+		return []
+	}
+	$limit = $offset + $count - 1;
+	// ordering
+	$indexes = ["id","created","modified","hash_index","language","phrase_value"];
+	$sorting = sortingQueryParamFromLists($indexes,$sortIndexDirection);
+	// QUERY
+	global $wpdb;
+	$table = GIAU_FULL_TABLE_NAME_LANGUAGIZATION();
+	$querystr = "
+	    SELECT ".$table.".* 
+	    FROM ".$table."
+	    ".$sorting."
+	    LIMIT ".$offset",".$limit."
+	";
+	error_log("LANGUAGIZATION QUERY: ".$querystr);
+	$results = $wpdb->get_results($querystr, ARRAY_A);
+	return $results;
+	// foreach( $results as $row ) {
+	// 	$row_id = $row["id"];
+	// 	$row_created = $row["created"];
+	// 	$row_modified = $row["modified"];
+	// 	$row_short_name = $row["short_name"];
+	// 	$row_title = $row["title"];
+	// 	$row_description = $row["description"];
+	// 	$row_start_date = $row["start_date"];
+	// 	$row_duration = $row["duration"];
+	// }
+}
 
+function giau_languagization_substitution($hash_index, $language){
+	$DEFAULT_LANGUAGE = "en-US";
+	// hash_index must be non-null and non-zero length
+	if(!$hash_index || strlen($hash_index)==0 ){
+		return "";
+	}
+	// language must be non-null and non-zero length
+	if(!$language || strlen($language)==0 ){
+		$language = $DEFAULT_LANGUAGE; // default language lookup
+	}
+	global $wpdb;
+	$hash_index = mysqli_real_escape_string($hash_index); // can limit based on allowed hash length
+	$language = mysqli_real_escape_string($language);
+	$table = GIAU_FULL_TABLE_NAME_LANGUAGIZATION();
+	$querystr = "
+	    SELECT language, phrase_value
+	    FROM ".$table."
+	    WHERE hash_index='".$hash_index."'
+	    ORDER BY id DESC
+	";
+	error_log("LANGUAGIZATION QUERY: ".$querystr);
+	// see if exact match exists, else default to 
+	$didFindMatch = false;
+	$matchFirst = null;
+	$matchSecond = null;
+	$matchThird = null;
+	$results = $wpdb->get_results($querystr, ARRAY_A);
+
+	foreach( $results as $row ) {
+		$row_language = $row["language"];
+		$row_phrase_value = $row["phrase_value"];
+		if($row_language==$language){ // desired exact language match
+			$matchFirst = $row_phrase_value;
+			break; // found top-priority match == done
+		}else if($row_language==$DEFAULT_LANGUAGE){ // desired language default
+			$matchSecond = $row_phrase_value;
+		}else if(!$matchThird){ // last-resort match anything
+			$matchThird = $row_phrase_value;
+		}
+	}
+	if($matchFirst){
+		return $matchFirst;
+	}else if($matchSecond){
+		return $matchSecond;
+	}else if($matchThird){
+		return $matchThird;
+	} // default return original phrase
+	return $hash_index;
+}
 
 function giau_default_fill_database(){
 	error_log("giau_default_fill_database");
@@ -684,15 +814,27 @@ function giau_default_fill_database(){
 
 
 	// LANGUAGIZATION
-	$wpdb->insert(GIAU_FULL_TABLE_NAME_LANGUAGIZATION(),
-		array(
-			"created" => $timestampNow,
-			"modified" => $timestampNow,
-			"hash_index" => "CALENDAR_TITLE_TEXT",
-			"language" => "en-US",
-			"phrase_value" => "Upcoming Events",
-			)
-		);
+	$langEng = "en-US";
+	$langKor = "ko-KP";
+	giau_insert_languagization($langEng,"CALENDAR_TITLE_TEXT","Upcoming Events");
+	giau_insert_languagization($langKor,"CALENDAR_TITLE_TEXT","다가오는 이벤트");
+
+	// -> BIO
+	function giau_insert_bio($firstName,$lastName,$displayName,$position,$email,$phone,$description,$uri,$imageURL,$tags){
+	giau_insert_languagization($langEng,"JOSEPH_KIM_BIO_FIRST_NAME_TEXT","Joseph");
+	giau_insert_languagization($langEng,"JOSEPH_KIM_BIO_LAST_NAME_TEXT","Kim");
+	giau_insert_languagization($langEng,"JOSEPH_KIM_BIO_DISPLAY_NAME_TEXT","Reverend Joseph Kim");
+	giau_insert_languagization($langEng,"JOSEPH_KIM_BIO_POSITION_TEXT","Director of Christian Education, Interim Junior High Pastor");
+	giau_insert_languagization($langEng,"JOSEPH_KIM_BIO_EMAIL_TEXT","jmkim75@gmail.com");
+	giau_insert_languagization($langEng,"JOSEPH_KIM_BIO_PHONE_TEXT","2132006092");
+	giau_insert_languagization($langEng,"JOSEPH_KIM_BIO_DESCRIPTION_TEXT","Joseph is happily married to Joyce, the woman of his dreams. He has a bachelor’s degree in civil engineering and a Master of Divinity degree and was called into vocational ministry in 2004. He began serving at LACPC as a high school pastor in December 2006 and by God’s grace is currently serving as the director of Christian Education.");
+	
+	giau_insert_languagization($langEng,"","");
+	giau_insert_languagization($langEng,"","");
+	giau_insert_languagization($langEng,"","");
+	giau_insert_languagization($langEng,"","");
+	giau_insert_languagization($langEng,"","");
+
 
 	// WIDGET
 	insert_widget('featured','{}');
@@ -726,30 +868,129 @@ function giau_default_fill_database(){
 	// preset defined list of widgets
 
 	// BIOs
-	insert_bio('Joseph','Kim','Joseph Kim','Director of Christian Education, Interim Junior High Pastor',
-			'Joseph is happily married to Joyce, the woman of his dreams. He has a bachelor’s degree in civil engineering and a Master of Divinity degree and was called into vocational ministry in 2004. He began serving at LACPC as a high school pastor in December 2006 and by God’s grace is currently serving as the director of Christian Education.',
-			'','ce-joe.png');
-	insert_bio('Tony','Park','Tony Park','Elder of Christian Education',
+	insert_bio(
+			'JOSEPH_KIM_BIO_FIRST_NAME_TEXT',
+			'JOSEPH_KIM_BIO_LAST_NAME_TEXT',
+			'JOSEPH_KIM_BIO_DISPLAY_NAME_TEXT',
+			'JOSEPH_KIM_BIO_POSITION_TEXT',
+			'JOSEPH_KIM_BIO_EMAIL_TEXT',
+			'JOSEPH_KIM_BIO_PHONE_TEXT',
+			'JOSEPH_KIM_BIO_DESCRIPTION_TEXT',
+			'JOSEPH_KIM_BIO_URI_TEXT',
+			'ce-joe.png',
+			'ce,bio,contact'
+			);
+	insert_bio(
+			'Tony',
+			'Park',
+			'Tony Park',
+			'Elder of Christian Education',
 			'',
-			'','');
-	insert_bio('Kurt','Kim','Kurt Kim','Secretary',
 			'',
-			'','');
-	insert_bio('Sebastian','Lee','Sebastian Lee','Finance Deacon',
 			'',
-			'','');
-	insert_bio('Andrew','Lim','Andrew Lim','High School Pastor',
+			'',
+			'',
+			'bio'
+			);
+	insert_bio( // kurt == jangyeon
+			'Kurt',
+			'Kim',
+			'Jangyeon Kim',
+			'Secretary',
+			'jangyeaonkim@gmail.com',
+			'5268571224',
+			'',
+			'',
+			'',
+			'bio,contact'
+			);
+	insert_bio(
+			'Sebastian',
+			'Lee',
+			'Sebastian Lee',
+			'Finance Deacon',
+			'',
+			'',
+			'',
+			'',
+			'',
+			'bio'
+			);
+	insert_bio(
+			'Andrew',
+			'Lim',
+			'Andrew Lim',
+			'High School Pastor',
+			'mrlimshhs@gmail.com',
+			'6265366126',
 			'Andrew has been attending LACPC ever since he was a high school freshman. He got his bachelor’s degree from UC Irvine and a Masters in Pastoral Studies from Azusa Pacific University. He has been serving as the high school pastor since May of last year and also works full time as a high school English teacher.',
-			'','ce-andy.png');
-	insert_bio('Boram','Lee','Boram Lee','Elementary Pastor',
+			'',
+			'ce-andy.png',
+			'highschool,bio,contact'
+			);
+	insert_bio(
+			'Boram',
+			'Lee',
+			'Boram Lee',
+			'Elementary Pastor',
+			'boramjdsn@gmail.com',
+			'9098688457',
 			'Born and raised in Los Angeles, Boram has a BA in cognitive psychology, a multiple subjects credential, and a master’s degree in teaching. She began seminary in January 2013 at Azusa Pacific University where she is studying to obtain an MA in pastoral studies with an emphasis is youth and family ministry. Her passion is to serve and train young children so that they can develop a solid relationship with God.',
-			'','ce-boram.png');
-	insert_bio('Sheen','Hong','Sheen Hong','Kindergarten Pastor',
+			'',
+			'ce-boram.png',
+			'elementary,bio,contact'
+			);
+	insert_bio(
+			'Sheen',
+			'Hong',
+			'Sheen Hong',
+			'Kindergarten Pastor',
+			'pastorhong71@gmail.com',
+			'2133695590',
 			'Sheen Hong is a loving mother of two children, Karis and Jin-Sung, and happy wife of Joshua, husband and a Chaplain. She has a bachelor’s degree in Christian education and Master of Arts degree in Christian Education. She was called into Children’s ministry in 2009. She began serving at LACPC as a Kindergarten pastor in December 2015.',
-			'','ce-hong.png');
-	insert_bio('Jessica Won','Won','Jessica Won','Nursery Pastor',
+			'',
+			'ce-hong.png',
+			'kindergarten,bio,contact'
+			);
+	insert_bio(
+			'Jessica Won',
+			'Won',
+			'Jessica Won',
+			'Nursery Pastor',
+			'jcb4jessica@gmail.com',
+			'3232034004',
 			'Jessica Won is married to Peter Won and has twin boys and a girl. She has a degree of Child Development from Patten University and currently working on M.Div. from Azusa University. She loves to share gospel to children and now oversees the nursery department.',
-			'','ce-jessica.png');
+			'',
+			'ce-jessica.png',
+			'bio,contact'
+			);
+}
+
+function giau_insert_languagization($language,$hash,$phrase){
+	// hash must be non-empty
+	if !$hash || strlen($hash) == 0 {
+		return
+	}
+	// language must be non-empty
+	if !$language || strlen($language) == 0 {
+		return
+	}
+	// phrase must be non-null
+	if !$phrase {
+		return
+	}
+	//
+	$timestampNow = stringFromDate( getDateNow() );
+	global $wpdb;
+	$wpdb->insert(GIAU_FULL_TABLE_NAME_LANGUAGIZATION(),
+		array(
+			"created" => $timestampNow,
+			"modified" => $timestampNow,
+			"hash_index" => $hash,
+			"language" => $language,
+			"phrase_value" => $position,
+		)
+	);
 }
 
 function insert_widget($widgetName,$widgetConfig){
@@ -761,10 +1002,12 @@ function insert_widget($widgetName,$widgetConfig){
 			"modified" => $timestampNow,
 			"name" => $widgetName,
 			"configuration" => $widgetConfig,
-			)
-		);
+		)
+	);
 }
-function giau_insert_bio($firstName,$lastName,$displayName,$position,$description,$uri,$imageURL){
+function giau_insert_bio($firstName,$lastName,$displayName,$position,$email,$phone,$description,$uri,$imageURL,$tags){
+	// phone: limit to only numbers
+	// tags: limit to comma-separated-length 255
 	$timestampNow = stringFromDate( getDateNow() );
 	global $wpdb;
 	$wpdb->insert(GIAU_FULL_TABLE_NAME_BIO(),
@@ -774,11 +1017,14 @@ function giau_insert_bio($firstName,$lastName,$displayName,$position,$descriptio
 			"first_name" => $firstName,
 			"last_name" => $lastName,
 			"position" => $position,
+			"email" => $email,
+			"phone" = $phone,
 			"description" => $description,
 			"uri" => $uri,
-			"image_url" => $imageURL
-			)
-		);
+			"image_url" => $imageURL,
+			"tags" = $tags
+		)
+	);
 }
 
 function localizationUSEnglish(){
