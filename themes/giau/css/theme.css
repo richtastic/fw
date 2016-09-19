@@ -468,6 +468,53 @@ ul {
 	padding: 8px;
 }
 
+.giauTableDisplayData table {
+	background-color: #FFF;
+}
+
+table {
+	border-collapse: collapse;
+	
+}
+/*thead, tbody, tfoot {
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
+}*/
+.even {
+	background-color: #DEF;
+}
+.odd {
+	background-color: #FFF;
+}
+
+table > thead > tr > td {
+	color: #000;
+	text-align: center;
+	background-color: #CDE;
+	margin-left:10px;
+	padding-right:1px;
+	font-weight: bold;
+
+	border-width: 1px;
+	border-style: solid;
+	border-color: #89A;
+	padding:3px;
+}
+
+table > tbody > tr > td {
+	color: #333;
+	text-align: left;
+	vertical-align: top;
+	background-color: #FFF;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #CDE;
+	padding:2px;
+}
+
+
+
 @font-face {
 	font-family: siteThemeRegular;
 	/* AvenirNextLTPro-Demi */

@@ -17,9 +17,170 @@ License: Apache License Version 2.0 | http://www.apache.org/licenses/LICENSE-2.0
 // this is called every time the plugins page is listed
 
 
+
+define( 'GIAU_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'GIAU_PLUGIN_URL', plugin_basename(__FILE__) );
+
+
 $GIAU_ROOT_PATH = dirname(__FILE__);
 error_log("GIAU_ROOT_PATH: ".$GIAU_ROOT_PATH);
 require_once($GIAU_ROOT_PATH.'/php/functions.php');
+
+
+
+
+class YC_AdminTools {
+
+function __construct() {
+
+	// add_action( 'admin_menu', array($this, 'ycat_admin_menu') );
+	// add_action( 'admin_init', array($this, 'ycat_register_setting') );
+	// add_action( 'admin_enqueue_scripts', array($this, 'add_scripts_and_styles') );
+	// add_action( 'plugins_loaded', array($this, 'ycat_load_textdomain') ); // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+	// add_action( 'pre_user_query', array($this, 'admin_user_hidden_query') );
+	// add_action( 'pre_current_active_plugins', array($this, 'hide_admin_tools_plugin') );
+	// add_action( 'admin_menu', array($this, 'remove_admin_menus'), 999 );
+	// add_action( 'pre_current_active_plugins', array($this, 'hide_plugins') );
+	// add_action( 'login_enqueue_scripts', array($this, 'my_login_logo') );
+	// add_action( 'init', array($this, 'hide_top_bar') ); // xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+	//add_action( 'admin_enqueue_scripts', array($this, 'my_small_logo') );
+	// add_action( 'wp_enqueue_scripts', array( $this, 'my_small_logo' ) );
+
+	// filter	
+}
+
+}
+
+
+
+/*
+function wp_ajax_create_new_post_handler(){
+	error_log("A");
+	if( isset($_POST) && isset($_POST['operation']) ){
+		error_log("OOOOOOOOOOOOOOOOOOOOOOOOOOO");
+		$response = '{ "result": "success" }';
+		wp_send_json( $response );
+	}
+}
+// function wp_ajax_create_new_post_handler(){
+// 	error_log("B");
+// }
+// Triggered for users that are logged in.
+add_action( 'wp_ajax_create_new_post', 'wp_ajax_create_new_post_handler' );
+// Triggered for users that are not logged in.
+add_action( 'wp_ajax_nopriv_create_new_post', 'wp_ajax_create_new_post_handler' );
+*/
+
+function admin_test(){
+	error_log("richie - admin test");
+	//wordpress_data_service();
+}
+//add_action('admin_init','admin_test');
+
+function regular_test(){
+	error_log("richie - regular test");
+	wordpress_data_service();
+}
+add_action('init','regular_test');
+
+function another_test(){
+	error_log("richie - another_test test");
+	error_log("         ".($_POST) );
+	printArray($_POST);
+	error_log("         ".($_GET) );
+	printArray($_GET);
+	//wordpress_data_service();
+}
+//add_action('wp_headers','another_test'); // WORKS ON MAIN PAGE ...
+
+//add_action('admin_head','admin_test');
+//add_action('get_header','another_test');
+//add_action('wp_head','another_test');
+
+
+function printArray($array, $pad=''){
+     foreach ($array as $key => $value){
+        //echo $pad . "$key => $value";
+        error_log( $pad . "$key => $value");
+        if(is_array($value)){
+            printArray($value, $pad.' ');
+        }  
+    } 
+}
+
+function wordpress_data_service(){
+	error_log("         wordpress_data_service -- ".$_POST['operation']);
+	if( isset($_POST) && isset($_POST['operation']) ){
+	//if( isset($_GET) && isset($_GET['operation']) ){
+		$operationType = $_POST['operation'];
+		$operationTable = $_POST['table'];
+		$operationOffset = $_POST['offset'];
+		$operationCount = $_POST['count'];
+		$operationOrder = $_POST['order'];
+		$operationSearch = $_POST['search'];
+		$response = [];
+		$response["result"] = "failure";
+		//wp_send_json( $response );
+		if($operationType=="get_table_page"){
+			$operationOffset = max(intval($operationOffset),0);
+			$operationCount = min(intval($operationCount),1000); // max 1000 results
+			$operationOrder = $operationOrder!==null ? $operationOrder : [];
+			$results = null;
+			$rowColumns = null;
+			if($operationTable=="localization"){
+				//$operationOrder = [ ["language",1], ["id",0], ["hash_index",1] ];
+				$operationOrder = [ ["hash_index",1], ["language",1], ["id",0] ];
+				$results = giau_languagization_paginated($operationOffset,$operationCount,$operationOrder);
+				$rowColumns = ["id","created","modified","language","hash_index","phrase_value"];
+			}else{
+				$operationOrder = [ ["start_date",1], ["duration",1], ["id",0] ];
+				$results = giau_calendar_paginated($operationOffset,$operationCount,$operationOrder);
+				$rowColumns = ["id","created","modified","short_name","title","description","start_date","duration","tags"];
+			}
+		}else if($operationType=="get_autocomplete"){
+			$operationOffset = 0;
+			if(!$operationCount){
+				$operationCount = 5;
+			}
+			// ignore spaces
+			$operationSearch = str_replace(" ", "%", $operationSearch);
+			$operationCount = min(intval($operationCount),10); // max 10 results
+			if($operationTable=="localization"){
+				$results = giau_languagization_autocomplete($operationSearch, $operationCount);
+				$rowColumns = ["hash_index","phrase_value"];
+			}else{
+				//
+			}
+		}
+		// afterwards
+		if($results!==null){
+			$index = 0;
+			$tableData = [];
+			foreach( $results as $row ) {
+				$tableRow = [];
+				foreach($rowColumns as $column){
+					$rowValue;
+					if($column=="\$index"){
+						$rowValue = $index;
+					}else{
+						$rowValue = $row[$column];
+					}
+					$tableRow[$column] = $rowValue;
+				}
+				++$index;
+				array_push($tableData, $tableRow);
+			}
+			$response["data"] = [
+				"offset" => $operationOffset,
+				"count" => $index,
+				"rows" => $tableData
+			];
+			$response["result"] = "success";
+		}
+		$response = json_encode($response);
+		wp_send_json( $response );
+	}
+}
 
 
 function WORDPRESS_TABLE_PREFIX(){
@@ -71,6 +232,15 @@ function GIAU_FULL_TABLE_NAME_BIO(){
 	return WORDPRESS_TABLE_PREFIX()."".GIAU_TABLE_PREFIX()."".GIAU_TABLE_NAME_BIO();
 }
 
+
+// INSERT VALUES
+function GIAU_DATA_QUERY_FORM_INDEX(){
+	return "form_id";
+}
+function GIAU_DATA_QUERY_TYPE_LANGUAGIZATION(){
+	return "languagization";
+}
+
 // function GIAU_FULL_TABLE_NAME_NAVIGATION(){
 // 	global $wpdb;
 // 	$wordpress_prefix = $wpdb->prefix;
@@ -96,9 +266,40 @@ function giau_callback_deactivation(){
 	flush_rewrite_rules();
 }
 
+// add_action( 'send_headers', 'add_header_xua' );
+// function add_header_xua() {
+// 	header( 'X-UA-Compatible: IE=edge,chrome=1' );
+// }
 
 
 
+//	add_action('wp_head', 'giau_action_page_head');
+	add_action('admin_head', 'giau_action_page_head');
+//add_action( 'get_header', 'giau_action_page_head' );
+
+// function wpb_adding_scripts() {
+// 	error_log("RICHIE - wpb_adding_scripts");
+// 	// wp_register_script('my_amazing_script', plugins_url('amazing_script.js', __FILE__), array('jquery'),'1.1', true);
+// 	// wp_enqueue_script('my_amazing_script');
+// }
+// add_action( 'wp_enqueue_scripts', 'wpb_adding_scripts' ); 
+
+
+// function themeslug_enqueue_style() {
+// 	wp_enqueue_style( 'core', 'style.css', false ); 
+// }
+// function themeslug_enqueue_script() {
+// 	wp_enqueue_script( 'my-js', 'filename.js', false );
+// }
+// add_action( 'wp_enqueue_scripts', 'themeslug_enqueue_style' );
+// add_action( 'wp_enqueue_scripts', 'themeslug_enqueue_script' );
+
+
+// function my_small_logo() {
+// 	error_log("my_small_logo - my_small_logo - my_small_logo - my_small_logo- my_small_logo");
+// 	wp_enqueue_script( 'my-js', 'filename.js', false );
+// }
+add_action( 'admin_enqueue_scripts', 'giau_admin_add_scripts' );
 
 
 function giau_init_fxn() {
@@ -107,6 +308,8 @@ function giau_init_fxn() {
 
 	$WP_ACTION_PLUGINS_LOADED = "plugins_loaded";
 	$WP_ACTION_INIT = "init";
+
+	$WP_ACTION_ADMIN_MENU_BAR = "admin_bar_menu";
 
 	$GIAU_PLUGIN_VERSION_KEY = "GIAU_PLUGIN_VERSION";
 	$GIAU_PLUGIN_VERSION_VALUE = "0.0.0";
@@ -122,14 +325,49 @@ function giau_init_fxn() {
 	giau_default_fill_database();
 
 	// PREPARE ACTION HANDLERS
-	add_action(WP_ACTION_PLUGINS_LOADED, "giau_action_plugins_loaded_callback");
+	add_action($WP_ACTION_PLUGINS_LOADED, "giau_action_plugins_loaded_callback");
 	//
-	add_action(WP_ACTION_INIT, "giau_action_init_callback");
+	add_action($WP_ACTION_INIT, "giau_action_init_callback");
 
+	//add_action('wp_head', 'giau_action_page_head');
 
 	// ?
-	add_action('admin_bar_menu', 'add_site_menu_to_top_bar' );
+	add_action($WP_ACTION_ADMIN_MENU_BAR, 'add_site_menu_to_top_bar' );
 }
+
+function getPluginURIPath(){
+	//return wp_make_link_relative( get_template_directory_uri()."/" );
+	//return wp_make_link_relative( get_template_directory_uri()."/" );
+	return plugins_url( "", GIAU_PLUGIN_URL );
+}
+
+function giau_action_page_head(){ // inject as desired
+
+	$fileJavaScriptFF = getPluginURIPath()."/js/code/FF.js";
+	$relativePathJSFF = getPluginURIPath()."/js/code/";
+	error_log("js path: ".$fileJavaScriptFF);
+	?>
+	<script rel="text/javascript" src="<?php echo $fileJavaScriptFF; ?>"></script>
+	<script rel="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready( function(){
+			var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
+				var g = new giau();
+			});
+		});
+	</script>
+	<?php
+}
+
+
+
+function giau_admin_add_scripts(){ // enqueue as expected
+	//wp_enqueue_script( "giau.js", plugins_url( "/js/giau.js", GIAU_PLUGIN_URL ) );
+	
+	wp_enqueue_script( "theme.js", plugins_url( "/js/theme.js", GIAU_PLUGIN_URL ) );
+}
+
+
 
 function add_site_menu_to_top_bar() {
 	error_log("RICHIE add_site_menu_to_top_bar");
@@ -190,11 +428,25 @@ function giau_admin_menu_page_submenu(){
 	$form_name = "admin_tools_form";
 
 error_log("RICHIE --- ".esc_url( $_SERVER['REQUEST_URI'] ) );
-error_log("GOT --- ".$_POST["richie"] );
-if( isset($_POST["richie"]) ) {
-	error_log("DO" );
-	giau_insert_bio('Richie','X','X','X', '', '','');
+//error_log("GOT --- ".$_POST["richie"] );
+// if( isset($_POST["richie"]) ) {
+// 	error_log("DO" );
+// 	giau_insert_bio('Richie','Last','Disp','Position', 'email', 'phone','description','uri','image','tags');
+// }
+
+
+if( isset($_POST) && isset($_POST['form_id']) ){
+	error_log("form data, send back json ??? " );
+	// $response = '{ "result": "success" }';
+	// wp_send_json( $response );
+
+	//GIAU_DATA_QUERY_FORM_INDEX()
+	$formID = $_POST(GIAU_DATA_QUERY_FORM_INDEX());
+	if( $formID == GIAU_DATA_QUERY_TYPE_LANGUAGIZATION() ){
+		error_log("DO LANGUAGE INSERTION ...");
+	}
 }
+
 // /wp/wp-admin/admin.php?page=giau-plugin-submenu,
 /*
 <form id="<?php echo $form_name; ?>" name="<?php echo $form_name; ?>" action="../wp-content/plugins/giau/php/admin_input.php" method="post">
@@ -215,7 +467,7 @@ if( isset($_POST["richie"]) ) {
 
 <?php
 // TEST SEARCHING DATABASE:
-	$languagizationResults = giau_languagization_paginated(0,10,[ ["language",0], ["id",0], ["hash_index",1] ]);
+	$languagizationResults = giau_languagization_paginated(0,10,[ ["language",1], ["id",0], ["hash_index",1] ]);
 	$index = 0;
 	foreach( $languagizationResults as $row ) {
 		$row_id = $row["id"];
@@ -224,21 +476,71 @@ if( isset($_POST["richie"]) ) {
 		$row_language = $row["language"];
 		$row_hash_index = $row["hash_index"];
 		$row_phrase_value = $row["phrase_value"];
-		error_log("GOT ITEM: (".$index.") = ".$row_hash_index);
+		//error_log("GOT ITEM: (".$index.") = ".$row_hash_index);
 		++$index;
 	}
 
-	$substitutePhrase = giau_languagization_substitution("JOSEPH_KIM_BIO_FIRST_NAME_TEXT","en-US");
-	error_log("SUB 1: ".$substitutePhrase);
-	$substitutePhrase = giau_languagization_substitution("JOSEPH_KIM_BIO_FIRST_NAME_TEXT","ko-KP");
-	error_log("SUB 2: ".$substitutePhrase);
-	$substitutePhrase = giau_languagization_substitution("JOSEPH_KIM_BIO_FIRST_NAME_TEXT","x");
-	error_log("SUB 3: ".$substitutePhrase);
-	$substitutePhrase = giau_languagization_substitution("JOSEPH_KIM_BIO_FIRST_NAME_TEXT",null);
-	error_log("SUB 4: ".$substitutePhrase);
+
+	$rowColumns = ["\$index","created","modified","language","hash_index","phrase_value"];
+	$results = $languagizationResults;
+	$index = 0;
+	?>$dataServiceURL = getPluginURIPath();
+		<table>
+	<?php
+	foreach( $languagizationResults as $row ) {
+		error_log("GOT ITEM: (".$index.") = ");
+		?>
+		<tr>
+		<?php
+		foreach($rowColumns as $column){
+			$rowValue;
+			if($column=="\$index"){
+				$rowValue = $index;
+			}else{
+				$rowValue = $row[$column];
+			}
+			?>
+			<td><?php echo $rowValue; ?></td>
+			<?php
+		}
+		//error_log("GOT ITEM: (".$index.") = ".$row_hash_index);
+		++$index;
+		?>
+		</tr>
+		<?php
+	}
+	?>
+		</table>
+
+<?php
+	//$dataServiceURL = getPluginURIPath();
+	//$dataServiceURL = get_site_url();
+	//$dataServiceURL = getPluginURIPath();
+	$dataServiceURL = "./";
+	error_log("THE URL: ".$dataServiceURL);
 ?>
+		<div class="giauDataTable"  data-table="localization" data-columns="created,modified,language,hash_index,phrase_value" data-url="<?php echo $dataServiceURL; ?>" data-settings-pages="true"  data-settings-arbitrary-page="true">
+		</div>
 
 
+		//wordpress_data_service();
+
+
+	<?php
+
+	/*
+	$substitutePhrase = giau_languagization_substitution("BIO_FIRST_NAME_JOSEPH_KIM_TEXT","en-US");
+	error_log("SUB 1: ".$substitutePhrase);
+	$substitutePhrase = giau_languagization_substitution("BIO_FIRST_NAME_JOSEPH_KIM_TEXT","ko-KP");
+	error_log("SUB 2: ".$substitutePhrase);
+	$substitutePhrase = giau_languagization_substitution("BIO_FIRST_NAME_JOSEPH_KIM_TEXT","x");
+	error_log("SUB 3: ".$substitutePhrase);
+	$substitutePhrase = giau_languagization_substitution("BIO_FIRST_NAME_JOSEPH_KIM_TEXT",null);
+	error_log("SUB 4: ".$substitutePhrase);
+	$substitutePhrase = giau_languagization_substitution("BIO_FIRST_NAME_JOSEPH_KIM_TEXT_X",null);
+	error_log("SUB 5: ".$substitutePhrase);
+	*/
+?>
 	<?php
 	// LANGUAGIZATION
 	$config = [
@@ -247,7 +549,7 @@ if( isset($_POST["richie"]) ) {
 				"name" => "hash_index",
 				"title" => "Identifier",
 				"type" => "text",
-				"hint" => "unique tag",
+				"hint" => "unique tag, eg: PAGE_TITLE_SUBTITLE_NAME_TEXT",
 				"value" => ""
 			],
 			[
@@ -273,11 +575,16 @@ if( isset($_POST["richie"]) ) {
 				"type" => "textarea",
 				"hint" => "display text",
 				"value" => ""
+			],
+			[
+				"name" => "".GIAU_DATA_QUERY_FORM_INDEX()."",
+				"type" => "hidden",
+				"value" => "".GIAU_DATA_QUERY_TYPE_LANGUAGIZATION().""
 			]
 		],
 		"submit_text" => "Insert Language Phrase"
 	];
-	createForm("languagization", $_SERVER['REQUEST_URI'], $config);
+	createForm(GIAU_DATA_QUERY_TYPE_LANGUAGIZATION(), $_SERVER['REQUEST_URI'], $config);
 	// BIO
 	$config = [
 		"items" => [
@@ -425,9 +732,11 @@ function createForm($formName, $uri, $config){
 				$name = $item["name"];
 				$hint = $item["hint"];
 				$value = $item["value"];
-				?>
-				<div><?php echo $title; ?>: </div>
-				<?php
+				if($type!="hidden"){
+					?>
+					<div><?php echo $title; ?>: </div>
+					<?php
+				}
 				if($type=="text"){
 					?>
 					<input type="text" name="<?php echo $name; ?>" value="<?php echo $value; ?>"  placeholder="<?php echo $hint; ?>" />
@@ -455,14 +764,15 @@ function createForm($formName, $uri, $config){
 				}else if($type=="radio"){
 					//
 				}else if($type=="hidden"){
-					//
+					?>
+					<input type="hidden" name="<?php echo $name; ?>" value="<?php echo $value; ?>" />
+					<?php
 				}
 				?>
 				<br />
 				<?php
 			}
 		?>
-		<input type="hidden" name="richie" value="HIDDEN-RICHIE" />
 		<input type="submit" value="<?php echo $submitText; ?>">
 	</form>
 	<?php
@@ -576,7 +886,7 @@ function giau_create_database(){
 		modified VARCHAR(32) NOT NULL,
 		short_name VARCHAR(32) NOT NULL,
 		title VARCHAR(255) NOT NULL,
-		description VARCHAR(65535) NOT NULL,
+		description VARCHAR(255) NOT NULL,
 		start_date VARCHAR(32) NOT NULL,
 		duration VARCHAR(32) NOT NULL,
 		tags VARCHAR(255) NOT NULL,
@@ -694,39 +1004,69 @@ function sortingQueryParamFromLists($columns, $sortIndexDirection){
 	$len = count($sortIndexDirection);
 	for($i=0; $i<$len; ++$i){
 		$method = $sortIndexDirection[$i];
-		if($method){
+		if($method!==null){
 			$column = $method[0];
 			$direction = $method[1];
-			if($column && $direction){
-				if(in_array($column,$colmns)){
+			if($column!==null && $direction!==null){
+				if(in_array($column,$columns)){
 					$dir = "ASC";
 					if($direction==0){
 						$dir = "DESC";
 					}
-					sortList.push($column." ".$dir)
+					array_push($sortList, $column." ".$dir);
 				}
 			}
 		}
 	}
-	if( count($sortList) > 0 ){
+	if(count($sortList) > 0){
 		$sortString = join(", ",$sortList);
 		$sortString = "ORDER BY ".$sortString;
 		return $sortString;
 	}
 	return "";
 }
+
+// select * from wp_giau_languagization where hash_index ilike '%joe%';
+function giau_languagization_autocomplete($searchValue, $count){ // search input / value / term
+	// value must be 2+characters
+	if($searchValue===null || strlen($searchValue)<=1){
+		return [];
+	}
+	$searchValue = esc_sql($searchValue);
+	// count must be positive
+	if(!$count || $count < 0){
+		$count = 0;
+	}
+	if($count == 0){ // no results
+		return [];
+	}
+	$criteria = "WHERE hash_index like '%".$searchValue."%' OR phrase_value like '%".$searchValue."%' ";
+	// QUERY
+	global $wpdb;
+	$table = GIAU_FULL_TABLE_NAME_LANGUAGIZATION();
+	$querystr = "
+	    SELECT ".$table.".* 
+	    FROM ".$table."
+	    ".$criteria." 
+	    LIMIT ".$count."
+	";
+	$results = $wpdb->get_results($querystr, ARRAY_A);
+	return $results;
+}
+
 function giau_languagization_paginated($offset,$count,$sortIndexDirection){
 	// offset must be positive
-	if !$offset || $offset < 0 {
+	if(!$offset || $offset < 0){
 		$offset = 0;
 	}
 	// count must be positive
-	if !$count || $count < 0 {
+	if(!$count || $count < 0){
 		$count = 0;
 	}
-	if $count == 0 { // no results
-		return []
+	if($count == 0){ // no results
+		return [];
 	}
+
 	$limit = $offset + $count - 1;
 	// ordering
 	$indexes = ["id","created","modified","hash_index","language","phrase_value"];
@@ -738,21 +1078,44 @@ function giau_languagization_paginated($offset,$count,$sortIndexDirection){
 	    SELECT ".$table.".* 
 	    FROM ".$table."
 	    ".$sorting."
-	    LIMIT ".$offset",".$limit."
+	    LIMIT ".$offset.",".$limit."
 	";
-	error_log("LANGUAGIZATION QUERY: ".$querystr);
+	error_log("LANGUAGIZATION QUERY B: ".$querystr);
 	$results = $wpdb->get_results($querystr, ARRAY_A);
 	return $results;
-	// foreach( $results as $row ) {
-	// 	$row_id = $row["id"];
-	// 	$row_created = $row["created"];
-	// 	$row_modified = $row["modified"];
-	// 	$row_short_name = $row["short_name"];
-	// 	$row_title = $row["title"];
-	// 	$row_description = $row["description"];
-	// 	$row_start_date = $row["start_date"];
-	// 	$row_duration = $row["duration"];
-	// }
+}
+
+function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,$endDate){
+	// offset must be positive
+	if(!$offset || $offset < 0){
+		$offset = 0;
+	}
+	// count must be positive
+	if(!$count || $count < 0){
+		$count = 0;
+	}
+	if($count == 0){ // no results
+		return [];
+	}
+
+	$limit = $offset + $count - 1;
+	// ordering
+	$indexes = ["id","created","modified","short_name","title","description","start_date","duration","tags"];
+	$sorting = sortingQueryParamFromLists($indexes,$sortIndexDirection);
+	// QUERY
+	global $wpdb;
+	$table = GIAU_FULL_TABLE_NAME_CALENDAR();
+	$criteria = " WHERE start_date >= ".$startDate." AND start_date <= ".$endDate." "; // BETWEEN, duration?
+	$querystr = "
+	    SELECT ".$table.".* 
+	    FROM ".$table."
+	    ".$criteria."
+	    ".$sorting."
+	    LIMIT ".$offset.",".$limit."
+	";
+	error_log("CALENDAR QUERY B: ".$querystr);
+	$results = $wpdb->get_results($querystr, ARRAY_A);
+	return $results;
 }
 
 function giau_languagization_substitution($hash_index, $language){
@@ -766,8 +1129,10 @@ function giau_languagization_substitution($hash_index, $language){
 		$language = $DEFAULT_LANGUAGE; // default language lookup
 	}
 	global $wpdb;
-	$hash_index = mysqli_real_escape_string($hash_index); // can limit based on allowed hash length
-	$language = mysqli_real_escape_string($language);
+	//  wpdb::_real_escape
+	// mysqli_real_escape_string
+	$hash_index = esc_sql($hash_index); // can limit based on allowed hash length
+	$language = esc_sql($language);
 	$table = GIAU_FULL_TABLE_NAME_LANGUAGIZATION();
 	$querystr = "
 	    SELECT language, phrase_value
@@ -775,7 +1140,7 @@ function giau_languagization_substitution($hash_index, $language){
 	    WHERE hash_index='".$hash_index."'
 	    ORDER BY id DESC
 	";
-	error_log("LANGUAGIZATION QUERY: ".$querystr);
+	error_log("LANGUAGIZATION QUERY A: ".$querystr);
 	// see if exact match exists, else default to 
 	$didFindMatch = false;
 	$matchFirst = null;
@@ -816,25 +1181,165 @@ function giau_default_fill_database(){
 	// LANGUAGIZATION
 	$langEng = "en-US";
 	$langKor = "ko-KP";
+
+	// MAIN PAGE ITEMS:
 	giau_insert_languagization($langEng,"CALENDAR_TITLE_TEXT","Upcoming Events");
 	giau_insert_languagization($langKor,"CALENDAR_TITLE_TEXT","다가오는 이벤트");
 
 	// -> BIO
-	function giau_insert_bio($firstName,$lastName,$displayName,$position,$email,$phone,$description,$uri,$imageURL,$tags){
-	giau_insert_languagization($langEng,"JOSEPH_KIM_BIO_FIRST_NAME_TEXT","Joseph");
-	giau_insert_languagization($langEng,"JOSEPH_KIM_BIO_LAST_NAME_TEXT","Kim");
-	giau_insert_languagization($langEng,"JOSEPH_KIM_BIO_DISPLAY_NAME_TEXT","Reverend Joseph Kim");
-	giau_insert_languagization($langEng,"JOSEPH_KIM_BIO_POSITION_TEXT","Director of Christian Education, Interim Junior High Pastor");
-	giau_insert_languagization($langEng,"JOSEPH_KIM_BIO_EMAIL_TEXT","jmkim75@gmail.com");
-	giau_insert_languagization($langEng,"JOSEPH_KIM_BIO_PHONE_TEXT","2132006092");
-	giau_insert_languagization($langEng,"JOSEPH_KIM_BIO_DESCRIPTION_TEXT","Joseph is happily married to Joyce, the woman of his dreams. He has a bachelor’s degree in civil engineering and a Master of Divinity degree and was called into vocational ministry in 2004. He began serving at LACPC as a high school pastor in December 2006 and by God’s grace is currently serving as the director of Christian Education.");
+	giau_insert_languagization($langEng,"BIO_FIRST_NAME_JOSEPH_KIM_TEXT","Joseph");
+	giau_insert_languagization($langEng,"BIO_LAST_NAME_JOSEPH_KIM_TEXT","Kim");
+	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_JOSEPH_KIM_TEXT","Reverend Joseph Kim");
+	giau_insert_languagization($langEng,"BIO_POSITION_JOSEPH_KIM_TEXT","Director of Christian Education, Interim Junior High Pastor");
+	giau_insert_languagization($langEng,"BIO_EMAIL_JOSEPH_KIM_TEXT","jmkim75@gmail.com");
+	giau_insert_languagization($langEng,"BIO_PHONE_JOSEPH_KIM_TEXT","2132006092");
+	giau_insert_languagization($langEng,"BIO_DESCRIPTION_JOSEPH_KIM_TEXT","Joseph is happily married to Joyce, the woman of his dreams. He has a bachelor’s degree in civil engineering and a Master of Divinity degree and was called into vocational ministry in 2004. He began serving at LACPC as a high school pastor in December 2006 and by God’s grace is currently serving as the director of Christian Education.");
 	
-	giau_insert_languagization($langEng,"","");
-	giau_insert_languagization($langEng,"","");
-	giau_insert_languagization($langEng,"","");
-	giau_insert_languagization($langEng,"","");
-	giau_insert_languagization($langEng,"","");
+	giau_insert_languagization($langEng,"BIO_FIRST_NAME_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_LAST_NAME_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_POSITION_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_EMAIL_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_PHONE_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_DESCRIPTION_JOSEPH_KIM_TEXT","");
 
+	giau_insert_languagization($langEng,"BIO_FIRST_NAME_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_LAST_NAME_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_POSITION_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_EMAIL_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_PHONE_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_DESCRIPTION_JOSEPH_KIM_TEXT","");
+
+	giau_insert_languagization($langEng,"BIO_FIRST_NAME_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_LAST_NAME_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_POSITION_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_EMAIL_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_PHONE_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_DESCRIPTION_JOSEPH_KIM_TEXT","");
+
+	giau_insert_languagization($langEng,"BIO_FIRST_NAME_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_LAST_NAME_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_POSITION_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_EMAIL_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_PHONE_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_DESCRIPTION_JOSEPH_KIM_TEXT","");
+
+	giau_insert_languagization($langEng,"BIO_FIRST_NAME_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_LAST_NAME_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_POSITION_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_EMAIL_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_PHONE_JOSEPH_KIM_TEXT","");
+	giau_insert_languagization($langEng,"BIO_DESCRIPTION_JOSEPH_KIM_TEXT","");
+
+	// -> CALENDAR
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_ORANGE_TOUR_CONFERENCE_2016_TITLE_TEXT","Orange Tour Conference");
+	giau_insert_languagization($langKor,"CALENDAR_EVENT_ORANGE_TOUR_CONFERENCE_2016_TITLE_TEXT","회의 Orange Tour");
+
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_KOREAN_CHALLENGE_2016_TITLE_TEXT","Korean Challenge!");
+	giau_insert_languagization($langKor,"CALENDAR_EVENT_KOREAN_CHALLENGE_2016_TITLE_TEXT","도전! 한국어");
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_KOREAN_CHALLENGE_2016_DESCRIPTION_TEXT","Korean Challenge!");
+	giau_insert_languagization($langKor,"CALENDAR_EVENT_KOREAN_CHALLENGE_2016_DESCRIPTION_TEXT","도전! 한국어");
+
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT","Hallelujah Night");
+	giau_insert_languagization($langKor,"CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT","할렐루야 의 밤");
+
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT","CE Pastors’ Retreat");
+	giau_insert_languagization($langKor,"CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT","CE 목사 후퇴");
+
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT","CE Thanksgiving Worship");
+	giau_insert_languagization($langKor,"CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT","추수 감사절 예배");
+
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT","Teacher Appreciation Banquet");
+	giau_insert_languagization($langKor,"CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT","교사 감사 연회");
+
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT","Christmas Celebration");
+	giau_insert_languagization($langKor,"CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT","크리스마스 축하");
+
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","Junior High & High School Winter Retreat");
+	giau_insert_languagization($langKor,"CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","Junior High & High School Winter Retreat");
+
+	giau_insert_calendar("event_korean_challenge_2016","CALENDAR_EVENT_ORANGE_TOUR_CONFERENCE_2016_TITLE_TEXT","CALENDAR_EVENT_ORANGE_TOUR_CONFERENCE_2016_TITLE_TEXT", stringFromHumanTime(2016, 9,20, 0, 0, 0, 0), 1*24*60*60*1000, "");
+	giau_insert_calendar("event_korean_challenge_2016","CALENDAR_EVENT_KOREAN_CHALLENGE_2016_TITLE_TEXT","CALENDAR_EVENT_KOREAN_CHALLENGE_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 9,25, 0, 0, 0, 0), 0*24*60*60*1000, "");
+	giau_insert_calendar("event_korean_challenge_2016","CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT","CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT", stringFromHumanTime(2016,10,31, 0, 0, 0, 0), 0*24*60*60*1000, "");
+	giau_insert_calendar("event_korean_challenge_2016","CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT","CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT", stringFromHumanTime(2016,11,10, 0, 0, 0, 0), 1*24*60*60*1000, "");
+	giau_insert_calendar("event_korean_challenge_2016","CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT","CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT", stringFromHumanTime(2016,11,20, 0, 0, 0, 0), 0*24*60*60*1000, "");
+	giau_insert_calendar("event_korean_challenge_2016","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT", stringFromHumanTime(2016,12,10, 0, 0, 0, 0), 0*24*60*60*1000, "");
+	giau_insert_calendar("event_korean_challenge_2016","CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT","CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT", stringFromHumanTime(2016,12,23, 0, 0, 0, 0), 0*24*60*60*1000, "");
+	giau_insert_calendar("event_korean_challenge_2016","CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT", stringFromHumanTime(2017, 1, 2, 0, 0, 0, 0), 3*24*60*60*1000, "");
+
+/*
+this._container = element;
+	var eventList = [];
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 5, 1, 11, 0, 0, 0),
+		"duration": 0,
+		"title": "Children's Day",
+		"description": "Joint Worship 11:00 AM",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 5, 7, 0, 0, 0, 0),
+		"duration": 0,
+		"title": "Love Festival",
+		"description": "Love Festival for people with developmental disabilities",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 5, 8, 0, 0, 0, 0),
+		"duration": 0,
+		"title": "Mothers' Day",
+		"description": "Mothers' Day Celebration",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 5, 15, 12, 30, 0, 0),
+		"duration": 0,
+		"title": "Teachers' Day",
+		"description": "Annual Teachers' Day Luncheon 12:30 PM @ Patio",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 6, 10, 0, 0, 0, 0),
+		"duration": 0,
+		"title": "Prayer Meeting",
+		"description": "Bi-Monthly Parents/Teachers' Prayer Meeting",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 6, 17, 0, 0, 0, 0),
+		"duration": 2*24*60*60*1000,
+		"title": "Vacation Bible School",
+		"description": "Vacation Bible School: Cave Quest",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 6, 26, 0, 0, 0, 0),
+		"duration": 0,
+		"title": "CE Graduation",
+		"description": "CE Graduation",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 7, 1, 0, 0, 0, 0),
+		"duration": 7*24*60*60*1000,
+		"title": "Short-Term Summer Mission",
+		"description": "Navajo Reservation in Arizona",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 7, 31, 0, 0, 0, 0),
+		"duration": 4*24*60*60*1000,
+		"title": "Junior High Summer Retreat",
+		"description": "@ Tahquitz Pines",
+	});
+	eventList.push({
+		"start": Code.getTimeStamp(2016, 7, 31, 0, 0, 0, 0),
+		"duration": 4*24*60*60*1000,
+		"title": "High School Summer Retreat",
+		"description": "@ Lake Arrowhead",
+	});
+*/
+
+	// ?
+	giau_insert_languagization($langEng,"","");
+	giau_insert_languagization($langEng,"","");
+	giau_insert_languagization($langEng,"","");
 
 	// WIDGET
 	insert_widget('featured','{}');
@@ -863,12 +1368,12 @@ function giau_default_fill_database(){
 			"description" => "Joint Worship 11:00 AM",
 			"start_date" =>  stringFromDate( dateFromString("2016-05-01 11:00:00.0000") ),
 			"duration" => "0",
-			)
-		);
+		)
+	);
 	// preset defined list of widgets
 
 	// BIOs
-	insert_bio(
+	giau_insert_bio(
 			'JOSEPH_KIM_BIO_FIRST_NAME_TEXT',
 			'JOSEPH_KIM_BIO_LAST_NAME_TEXT',
 			'JOSEPH_KIM_BIO_DISPLAY_NAME_TEXT',
@@ -880,7 +1385,7 @@ function giau_default_fill_database(){
 			'ce-joe.png',
 			'ce,bio,contact'
 			);
-	insert_bio(
+	giau_insert_bio(
 			'Tony',
 			'Park',
 			'Tony Park',
@@ -892,7 +1397,7 @@ function giau_default_fill_database(){
 			'',
 			'bio'
 			);
-	insert_bio( // kurt == jangyeon
+	giau_insert_bio( // kurt == jangyeon
 			'Kurt',
 			'Kim',
 			'Jangyeon Kim',
@@ -904,7 +1409,7 @@ function giau_default_fill_database(){
 			'',
 			'bio,contact'
 			);
-	insert_bio(
+	giau_insert_bio(
 			'Sebastian',
 			'Lee',
 			'Sebastian Lee',
@@ -916,7 +1421,7 @@ function giau_default_fill_database(){
 			'',
 			'bio'
 			);
-	insert_bio(
+	giau_insert_bio(
 			'Andrew',
 			'Lim',
 			'Andrew Lim',
@@ -928,7 +1433,7 @@ function giau_default_fill_database(){
 			'ce-andy.png',
 			'highschool,bio,contact'
 			);
-	insert_bio(
+	giau_insert_bio(
 			'Boram',
 			'Lee',
 			'Boram Lee',
@@ -940,7 +1445,7 @@ function giau_default_fill_database(){
 			'ce-boram.png',
 			'elementary,bio,contact'
 			);
-	insert_bio(
+	giau_insert_bio(
 			'Sheen',
 			'Hong',
 			'Sheen Hong',
@@ -952,7 +1457,7 @@ function giau_default_fill_database(){
 			'ce-hong.png',
 			'kindergarten,bio,contact'
 			);
-	insert_bio(
+	giau_insert_bio(
 			'Jessica Won',
 			'Won',
 			'Jessica Won',
@@ -968,16 +1473,16 @@ function giau_default_fill_database(){
 
 function giau_insert_languagization($language,$hash,$phrase){
 	// hash must be non-empty
-	if !$hash || strlen($hash) == 0 {
-		return
+	if(!$hash || strlen($hash) == 0){
+		return;
 	}
 	// language must be non-empty
-	if !$language || strlen($language) == 0 {
-		return
+	if(!$language || strlen($language) == 0){
+		return;
 	}
 	// phrase must be non-null
-	if !$phrase {
-		return
+	if(!$phrase){
+		return;
 	}
 	//
 	$timestampNow = stringFromDate( getDateNow() );
@@ -988,7 +1493,7 @@ function giau_insert_languagization($language,$hash,$phrase){
 			"modified" => $timestampNow,
 			"hash_index" => $hash,
 			"language" => $language,
-			"phrase_value" => $position,
+			"phrase_value" => $phrase,
 		)
 	);
 }
@@ -1005,6 +1510,7 @@ function insert_widget($widgetName,$widgetConfig){
 		)
 	);
 }
+
 function giau_insert_bio($firstName,$lastName,$displayName,$position,$email,$phone,$description,$uri,$imageURL,$tags){
 	// phone: limit to only numbers
 	// tags: limit to comma-separated-length 255
@@ -1018,11 +1524,29 @@ function giau_insert_bio($firstName,$lastName,$displayName,$position,$email,$pho
 			"last_name" => $lastName,
 			"position" => $position,
 			"email" => $email,
-			"phone" = $phone,
+			"phone" => $phone,
 			"description" => $description,
 			"uri" => $uri,
 			"image_url" => $imageURL,
-			"tags" = $tags
+			"tags" => $tags
+		)
+	);
+}
+
+function giau_insert_calendar($shortName, $title, $description, $startDate, $duration, $tags){
+	// tags: limit to comma-separated-length 255
+	$timestampNow = stringFromDate( getDateNow() );
+	global $wpdb;
+	$wpdb->insert(GIAU_FULL_TABLE_NAME_BIO(),
+		array(
+			"created" => $timestampNow,
+			"modified" => $timestampNow,
+			"short_name" => $shortName,
+			"title" => $title,
+			"description" => $description,
+			"start_date" => $startDate,
+			"duration" => $duration,
+			"tags" => $tags
 		)
 	);
 }

@@ -8,6 +8,49 @@ $_SERVER['HTTP_USER_AGENT']
 
 */
 
+
+// function wp_test(){
+// 	error_log("richie - wp_test");
+// 	wordpress_data_service();
+// }
+// add_action('wp_init','wp_test');
+
+
+//add_action('admin_head','admin_test');
+//add_action('get_header','another_test');
+//add_action('wp_head','another_test');
+
+
+// function printArray_2($array, $pad=''){
+//      foreach ($array as $key => $value){
+//         //echo $pad . "$key => $value";
+//         error_log( $pad . "$key => $value");
+//         if(is_array($value)){
+//             printArray($value, $pad.' ');
+//         }  
+//     } 
+// }
+
+// function wordpress_data_service_2(){
+// 	//
+// 	error_log("         wordpress_data_service -- ".$_POST['operation']);
+// 	//error_log("         wordpress_data_service -- ".$_GET['operation']);
+// 	error_log("         ".($_POST) );
+// 	error_log("         ".implode($_POST) );
+// 	//error_log("         ".print_r($_POST) );
+// 	printArray($_POST);
+// 	//printArray($_GET);
+// 	if( isset($_POST) && isset($_POST['operation']) ){
+// 	//if( isset($_GET) && isset($_GET['operation']) ){
+// 		$operationType = $_POST['operation'];
+// 		error_log("OOOOOOOOOOOOOOOOOOOOOOOOOOO === ".$operationType);
+// 		$response = '{ "result": "success" }';
+// 		wp_send_json( $response );
+// 	}
+// }
+
+
+
 function KEY_GET_PARAM_PAGE(){
 	return "page";
 }
@@ -163,6 +206,8 @@ function create_page(){
 		$headingTitleDisplay = "LACPC";
 	}
 
+	//wordpress_data_service_2();
+
 ?>
 <html>
 	<head>
@@ -180,13 +225,6 @@ function create_page(){
 					var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
 						var g = new giau();
 					});
-					//function ffLoadedFxn(){
-						//(new ScriptLoader("./",["Filter.js"],this,funLoadedFxn)).load();
-					//}
-					//function funLoadedFxn(){
-						//var filter = new Filter();
-					//}
-					//var g = new giau();
 				});
 		</script>
 		<?php
@@ -199,6 +237,17 @@ function create_page(){
 		
 	</head>
 	<body style="bgColor:#F00; margin: 0 auto;">
+
+<?php
+$dataServiceURL = get_site_url()."?data";
+$dataServiceURL = "";
+error_log("THE URL: ".$dataServiceURL);
+?>
+	<div class="giauDataTable giauTableDisplayData" data-table="localization" data-columns="language,hash_index,phrase_value" data-url="<?php echo $dataServiceURL; ?>" data-settings-pages="true"  data-settings-arbitrary-page="true">
+	</div>
+
+	<input type="text" class="giauAutoComplete" placeholder="language" data-columns="hash_index,phrase_value" data-params='{"operation":"get_autocomplete","table":"localization"}' data-url="<?php echo $dataServiceURL; ?>" style="width:300px; height:32px;">
+
 
 <?php
 if($pageRequest==$PAGE_REQUEST_TYPE_HOME){

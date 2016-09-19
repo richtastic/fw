@@ -67,6 +67,20 @@ giau.prototype.initialize = function(){
 	imageGalleries.each(function(index, element){
 		var gallery = new giau.ImageGallery(element);
 	});
+
+
+	// ADMIN TYPE STUFF --------------
+	// DATA - TABLES
+	var dataTableLists = $(".giauDataTable");
+	dataTableLists.each(function(index, element){
+		var dataTable = new giau.DataTable(element);
+	});
+
+	var autoCompleteLists = $(".giauAutoComplete");
+	autoCompleteLists.each(function(index, element){
+		var autoComplete = new giau.AutoComplete(element);
+	});
+	
 }
 
 giau.ElementFloater = function(element){ //
@@ -1554,25 +1568,9 @@ giau.CalendarView = function(element){
 		"title": "High School Summer Retreat",
 		"description": "@ Lake Arrowhead",
 	});
-/*
-
-
-x September 20~21, 2016         Orange Tour Conference
-x September 25 , 2016              도전! 한국어
-x October 31, 2016                    Hallelujah Night
-x November 10~11, 2016          CE Pastors’ Retreat
-x November 20, 2016                CE Thanksgiving Worship
-x December 10, 2016 Teacher Appreciation Banquet
-x December 23, 2016 Christmas Celebration
-x January 2~5, 2017                  Junior High & High School Winter Retreat
-
-
-
-
-
-*/
+	// new - 2
 	eventList.push({
-		"start": Code.getTimeStamp(2016, 9, 21, 0, 0, 0, 0),
+		"start": Code.getTimeStamp(2016, 9, 20, 0, 0, 0, 0),
 		"duration": 1*24*60*60*1000,
 		"title": "Orange Tour Conference",
 		"description": "Orange Tour Conference",
@@ -1619,26 +1617,6 @@ x January 2~5, 2017                  Junior High & High School Winter Retreat
 		"title": "Junior High & High School Winter Retreat",
 		"description": "Junior High & High School Winter Retreat",
 	});
-	/*
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 5, 7, 0, 0, 0, 0),
-		"duration": 0,
-		"title": "",
-		"description": "",
-	});
-	*/
-	/*
-May 1: Children's Day Joint Worship 11:00 AM
-May 7: Love Festival for people with developmental disabilities
-May 8: Mothers' Day Celebration
-May 15: Annual Teachers' Day Luncheon 12:30 PM @ Patio
-June 10: Bi-Monthly Parents/Teachers' Prayer Meeting
-June 17~19: Vacation Bible School: Cave Quest
-June 26: CE Graduation
-July 1~8: Short-Term Summer Mission: Navajo Reservation in Arizona
-July 31~August 3: Junior High Summer Retreat @ Tahquitz Pines
-July 31~August 3: High School Summer Retreat @ Lake Arrowhead
-*/
 	var container = this._container;
 	var i, len=eventList.length;
 	var todayNowMilliseconds = Code.getTimeMilliseconds(true);
@@ -1781,9 +1759,366 @@ giau.CalendarView.prototype.formatTimeHumanReadable = function(timestamp, durati
 }
 
 
+/*
+	<script type="text/javascript">
+		function doAjaxCall(){
+			
+			var url = document.location+"";
+			console.log("A: "+url);
+			var ajax = new Ajax();
+			ajax.url(url);
+			ajax.method(Ajax.METHOD_TYPE_POST);
+			ajax.params({
+				"operation":"languagization",
+				"name":"?",
+				"email":"?",
+				"comment":"?"
+			});
+			ajax.callback(function(d){
+				console.log("callback");
+				console.log(d);
+			});
+			console.log("B");
+			ajax.send();
+		}
+	</script>
+	<input type="button" value="ajax" onclick="doAjaxCall();"></input>
+
+*/
 
 
 
+giau.DataTable = function(element){
+	this._container = element;
+	this._jsDispatch = new JSDispatch();
+	console.log("data table");
+
+	this._url = Code.getProperty(this._container, "data-url");
+	this._currentPage = 0;
+	this._pageCount = 10;
+		var columns = Code.getProperty(this._container, "data-columns");
+	this._dataColumns = columns.split(",");
+	console.log(this._dataColumns)
+	this._dataTable = Code.getProperty(this._container, "data-table");
+	
+
+	this._button = Code.newInputButton("TAP");
+	Code.addChild(this._container, this._button);
+
+	this._jsDispatch.addJSEventListener(this._button, Code.JS_EVENT_CLICK, this._handleButtonClickedFxn, this);
+	this._jsDispatch.addJSEventListener(this._button, Code.JS_EVENT_TOUCH_TAP, this._handleButtonClickedFxn, this);
+
+
+	// ... 
+	this._getPage();
+}
+giau.DataTable.prototype._getPage = function(){
+	var start = this._currentPage * this._pageCount;
+	var end = start + this._pageCount;
+	var count = end-start;
+
+	var table = this._dataTable;
+	var url = this._url;
+
+	console.log("A-URL: "+url);
+	var ajax = new Ajax();
+	ajax.url(url);
+	ajax.method(Ajax.METHOD_TYPE_POST);
+	ajax.params({
+		"operation":"get_table_page",
+		"table":table,
+		"offset":start,
+		"count":count
+	});
+	ajax.context(this);
+	ajax.callback(function(d){
+		var obj = Code.parseJSON(d);
+		this.updateFromData(obj);
+	});
+	ajax.send();
+
+}
+giau.DataTable.prototype.updateFromData = function(data){
+	if(data){
+		var result = data["result"];
+		if(result=="success"){
+			var info = data["data"];
+			var offset = info["offset"];
+			var count = info["count"];
+			var rows = info["rows"];
+			var page = Math.floor(offset / this._pageCount);
+			var cols = this._dataColumns;
+			var i, j;
+			var rowCount = rows.length;
+			var colCount = cols.length;
+			//
+			var elementTable = Code.newTable();
+			var elementHeader = Code.addHeader(elementTable);
+			var elementRow = Code.addRow(elementHeader);
+			// HEADER
+			for(j=0; j<colCount; ++j){
+				var col = cols[j];
+				var elementCol = Code.addCell(elementRow);
+				Code.setContent(elementCol,col);
+			}
+			var elementBody = Code.addBody(elementTable);
+			// BODY
+			for(i=0; i<rowCount; ++i){
+				var row = rows[i];
+				var elementRow = Code.addRow(elementBody);
+				for(j=0; j<colCount; ++j){
+					var col = cols[j];
+					var value = row[col];
+					var elementCol = Code.addCell(elementRow);
+					Code.setContent(elementCol,value);
+					if(i%2==0){
+						Code.addClass(elementCol,"even");
+					}else{
+						Code.addClass(elementCol,"odd");
+					}
+				}
+				
+			}
+			// FOOTER
+			Code.removeAllChildren(this._container);
+			Code.addChild(this._container,elementTable);
+		}
+	}
+}
+giau.DataTable.prototype._handleButtonClickedFxn = function(){
+	console.log("get data");
+}
+
+
+
+
+
+
+
+giau.AutoComplete = function(element){
+	this._container = element;
+	this._jsDispatch = new JSDispatch();
+	console.log("autocomplete");
+
+	this._changeMiniumTime = 250;
+	this._lastChangeTimestamp = -1;
+	this._lastChangeValue = "";
+	this._ticker = new Ticker(this._changeMiniumTime);
+	this._ticker.addFunction(Ticker.EVENT_TICK, this._handleTickerFxn, this);
+	this._hintIsActive = false;
+
+	this._url = Code.getProperty(this._container, "data-url");
+		var params = Code.getProperty(this._container, "data-params");
+	this._dataParameters = Code.parseJSON(params);
+		var columns = Code.getProperty(this._container, "data-columns");
+	this._dataColumns = columns.split(",");
+	console.log(this._dataColumns)
+
+	//
+	this._overlay = Code.newDiv();
+	Code.addChild(document.body,this._overlay);
+	Code.setStylePosition(this._overlay,"absolute");
+	Code.setStyleZIndex(this._overlay,"999");
+	Code.setStyleLeft(this._overlay,"0px");
+	Code.setStyleTop(this._overlay,"0px");
+	Code.setStyleBackground(this._overlay,"#FFF");
+	Code.setStyleBorderWidth(this._overlay,"1px");
+	Code.setStyleBorder(this._overlay,"solid");
+	Code.setStyleBorderColor(this._overlay,"#F00");
+
+	Code.setStyleOverflow(this._overlay,"hidden");
+	//Code.setContent(this._overlay,"all good");
+
+	this._jsDispatch.addJSEventListener(this._container, Code.JS_EVENT_CLICK, this._handleElementClickedFxn, this);
+	this._jsDispatch.addJSEventListener(this._container, Code.JS_EVENT_TOUCH_TAP, this._handleElementClickedFxn, this);
+
+	this._jsDispatch.addJSEventListener(this._container, Code.JS_EVENT_FOCUS_IN, this._handleElementFocusInFxn, this);
+	this._jsDispatch.addJSEventListener(this._container, Code.JS_EVENT_FOCUS_OUT, this._handleElementFocusOutFxn, this);
+	this._jsDispatch.addJSEventListener(this._container, Code.JS_EVENT_PASTE, this._handleElementPasteFxn, this);
+	this._jsDispatch.addJSEventListener(this._container, Code.JS_EVENT_KEY_PRESS, this._handleElementKeyPressFxn, this);
+	this._jsDispatch.addJSEventListener(this._container, Code.JS_EVENT_KEY_UP, this._handleElementKeyUpFxn, this);
+	//
+	// this._jsDispatch.addJSEventListener(this._container, "change", this._handleA, this);
+	// this._jsDispatch.addJSEventListener(this._container, "onchange", this._handleA, this);
+	this._container.change = function(e){
+		console.log("nside");
+		console.log(e.target.value);
+	}
+
+	// Code.JS_EVENT_CHANGE
+	// JS_EVENT_ONCHANGE
+	// Code.JS_EVENT_TEXT_INPUT = "textinput";
+	// Code.JS_EVENT_ON_INPUT = "oninput";
+	this._jsDispatch.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
+	// ... 
+//	this._check();
+//this._ticker.start();
+}
+
+giau.AutoComplete.prototype._handleA = function(){
+	console.log("A");
+}
+giau.AutoComplete.prototype._handleElementKeyUpFxn = function(e){
+
+	var key = Code.getKeyCodeFromKeyboardEvent(e);
+	if(key==Keyboard.KEY_ESC){
+		this._setHintActive(!this._hintIsActive);
+	}
+}
+giau.AutoComplete.prototype._handleElementKeyPressFxn = function(e){
+	var target = Code.getTargetFromEvent(e);
+	var value = Code.getInputTextValue(target);
+	//console.log("got: "+value);
+	//console.log(e);
+	this._check(value);
+}
+giau.AutoComplete.prototype._handleElementPasteFxn = function(){
+	//console.log("paste");
+	this._check();
+}
+giau.AutoComplete.prototype._handleElementFocusInFxn = function(){
+	this._setHintActive(true);
+	this._check();
+}
+giau.AutoComplete.prototype._handleElementFocusOutFxn = function(){
+	//this._setHintActive(false); // timed ?
+	this._check();
+}
+giau.AutoComplete.prototype._handleElementClickedFxn = function(){
+	//console.log("click");
+}
+giau.AutoComplete.prototype._handleWindowResizedFxn = function(){
+	this._updateLayout();
+}
+giau.AutoComplete.prototype._setHintActive = function(toActive){
+	this._hintIsActive =  toActive;
+	this._updateLayout();
+}
+giau.AutoComplete.prototype._handleTickerFxn = function(){
+	console.log("ticked");
+	this._ticker.stop();
+	this._check();
+//	this._ticker.start();
+}
+giau.AutoComplete.prototype._check = function(value){
+	value = value !== undefined ? value : Code.getInputTextValue(this._container);
+	console.log(value);
+	this._requestData(value);
+	// console.log( $(this._container) );
+	// console.log( $(this._container).value );
+	/*
+console.log("check");
+	var currentTime = Code.getTimeMilliseconds();
+	var deltaTime = currentTime - this._lastChangeTimestamp;
+	if(deltaTime > this._changeMiniumTime){
+console.log("A");
+		this._ticker.stop();
+		this._lastChangeTimestamp = currentTime;
+		var value = Code.getInputTextValue(this._container);
+console.log("B",value,"C",this._lastChangeValue);
+console.log(Code.getProperty(this._container,"value") );
+		if(value!=this._lastChangeValue){
+			this._lastChangeValue = value;
+console.log(value);
+			if(value!=""){
+				if(this._hintIsActive){
+					//
+				}
+			}
+		}
+		// query url with param and get results
+	}else{
+		// set timer 
+		this._ticker.start();
+	}
+*/
+	//this._ticker.start();
+}
+giau.AutoComplete.prototype._updateLayout = function(){
+	if(this._hintIsActive){
+		console.log("show")
+		Code.setStyleDisplay(this._overlay,"block");
+	}else{
+		console.log("hide")
+		Code.setStyleDisplay(this._overlay,"none");
+	}
+
+	var widthContainer = $(this._container).width();
+	var heightContainer = $(this._container).height();
+		var offsetContainer = $(this._container).offset();
+	var xContainer = offsetContainer.left;
+	var yContainer = offsetContainer.top;
+
+	Code.setStyleLeft(this._overlay,""+xContainer+"px");
+	Code.setStyleTop(this._overlay,""+(yContainer+heightContainer)+"px");
+	Code.setStyleWidth(this._overlay,""+widthContainer+"px");
+	//Code.setStyleTop(this._overlay,""+(yContainer+heightContainer)+"px");
+console.log(xContainer,yContainer,widthContainer,heightContainer)
+}
+giau.AutoComplete.prototype._requestData = function(searchValue){
+	var url = this._url;
+	this._dataParameters["search"] = searchValue; // replace search param
+	var ajax = new Ajax();
+	ajax.url(url);
+	ajax.method(Ajax.METHOD_TYPE_POST);
+	ajax.params(this._dataParameters);
+	ajax.context(this);
+	ajax.callback(function(d){
+		var obj = Code.parseJSON(d);
+		this.updateFromData(obj);
+	});
+	ajax.send();
+}
+
+giau.AutoComplete.prototype.updateFromData = function(data){
+	console.log(data);
+	if(data){
+		var result = data["result"];
+		if(result=="success"){
+			var info = data["data"];
+			var offset = info["offset"];
+			var count = info["count"];
+			var rows = info["rows"];
+			var page = Math.floor(offset / this._pageCount);
+			var cols = this._dataColumns;
+			var i, j;
+			var rowCount = rows.length;
+			var colCount = cols.length;
+			colCount = 1;
+Code.removeAllChildren(this._overlay);
+			for(i=0; i<rowCount; ++i){
+				var row = rows[i];
+				//var elementRow = Code.addRow(elementBody);
+				var rowValue = row[cols[0]];// same for entire row
+				for(j=0; j<colCount; ++j){
+					var col = cols[j];
+					var value = row[col];
+					//var elementCol = Code.addCell(elementRow);
+					//Code.setContent(elementCol,value);
+					var elementCol = Code.newDiv(value);
+					Code.setProperty(elementCol,"data-data",rowValue);
+					Code.addChild(this._overlay,elementCol);
+					if(i%2==0){
+						Code.addClass(elementCol,"even");
+					}else{
+						Code.addClass(elementCol,"odd");
+					}
+					//
+					this._jsDispatch.addJSEventListener(elementCol, Code.JS_EVENT_CLICK, this._handleSelectElementClickFxn, this);
+				}
+				
+			}
+			this._updateLayout();
+		}
+	}
+}
+
+giau.AutoComplete.prototype._handleSelectElementClickFxn = function(e){
+	var target = Code.getTargetFromEvent(e);
+	var data = Code.getProperty(target,"data-data");
+	Code.setInputTextValue(this._container,data);
+	this._setHintActive(false);
+}
 
 
 giau.prototype._resize = function(e){
