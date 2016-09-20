@@ -61,13 +61,13 @@ function KEY_GET_PARAM_SUBPAGE(){
 function KEY_COOKIE_PARAM_LANGUAGE(){
 	return "language_value";
 }
-function getCookieLanguage(){
-	$cookie = $_COOKIE[KEY_COOKIE_PARAM_LANGUAGE()];
-	if(isset($cookie)){
-		return $cookie;
-	}
-	return null;
-}
+// function getCookieLanguage(){
+// 	$cookie = $_COOKIE[KEY_COOKIE_PARAM_LANGUAGE()];
+// 	if(isset($cookie)){
+// 		return $cookie;
+// 	}
+// 	return null;
+// }
 
 function getTemplateURIPath(){
 	return wp_make_link_relative( get_template_directory_uri()."/" );
@@ -238,16 +238,6 @@ function create_page(){
 	</head>
 	<body style="bgColor:#F00; margin: 0 auto;">
 
-<?php
-$dataServiceURL = get_site_url()."?data";
-$dataServiceURL = "";
-error_log("THE URL: ".$dataServiceURL);
-?>
-	<div class="giauDataTable giauTableDisplayData" data-table="localization" data-columns="language,hash_index,phrase_value" data-url="<?php echo $dataServiceURL; ?>" data-settings-pages="true"  data-settings-arbitrary-page="true">
-	</div>
-
-	<input type="text" class="giauAutoComplete" placeholder="language" data-columns="hash_index,phrase_value" data-params='{"operation":"get_autocomplete","table":"localization"}' data-url="<?php echo $dataServiceURL; ?>" style="width:300px; height:32px;">
-
 
 <?php
 if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
@@ -313,7 +303,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 		<!-- <div class="centeredText standardText">we strive to provide an environment for our <b>children and youth</b> to experience the grace of God.</div> -->
 		<div class="centeredText importantText focusedCenterpieceWidth">Through worship, Bible Study & accountability,</div>
 		<div class="centeredText dividerText focusedCenterpieceWidth"></div>
-		<div class="centeredText standardText focusedCenterpieceWidth">we strive to provide an environment for our children and youth to experience the grace of God. In addition, we aim to serve parents and entire families as well. More than just a children and youth ministry, our Christian Education department is a family ministry</div>
+		<div class="centeredText standardText focusedCenterpieceWidth">We strive to provide an environment for our children and youth to experience the grace of God. In addition, we aim to serve parents and entire families as well. More than just a children and youth ministry, our Christian Education department is a family ministry.</div>
 	</div>
 
 	<!-- PHOTO GALLERY -->
@@ -350,7 +340,9 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	<div class="sectionContainerDepartments limitedWidth" style="background-color: rgba(255,255,255,1.0);">
 		<div class="headerSectionMain">UPCOMING EVENTS</div>
 		<div class="departmentInternalContainer">
-			<div class="giauCalendarList"></div>
+			<?php
+			include_widget_calendar_events();
+			?>
 		</div>
 		<div class="footerSectionMain"></div>
 	</div>
@@ -872,7 +864,9 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	<div class="sectionContainerDepartments limitedWidth" style="background-color: rgba(255,255,255,1.0);">
 		<div class="headerSectionMain">Schedule of Events</div>
 		<div class="departmentInternalContainer">
-			<div class="giauCalendarList"></div>
+			<?php
+			include_widget_calendar_events();
+			?>
 		</div>
 		<div class="footerSectionMain"></div>
 	</div>

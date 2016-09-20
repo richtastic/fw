@@ -25,6 +25,7 @@ define( 'GIAU_PLUGIN_URL', plugin_basename(__FILE__) );
 $GIAU_ROOT_PATH = dirname(__FILE__);
 error_log("GIAU_ROOT_PATH: ".$GIAU_ROOT_PATH);
 require_once($GIAU_ROOT_PATH.'/php/functions.php');
+require_once($GIAU_ROOT_PATH.'/php/data.php');
 
 
 
@@ -78,13 +79,13 @@ function admin_test(){
 //add_action('admin_init','admin_test');
 
 function regular_test(){
-	error_log("richie - regular test");
+	//error_log("richie - regular test");
 	wordpress_data_service();
 }
 add_action('init','regular_test');
 
 function another_test(){
-	error_log("richie - another_test test");
+	//error_log("richie - another_test test");
 	error_log("         ".($_POST) );
 	printArray($_POST);
 	error_log("         ".($_GET) );
@@ -106,6 +107,141 @@ function printArray($array, $pad=''){
             printArray($value, $pad.' ');
         }  
     } 
+}
+
+function LANGUAGE_EN_US(){
+	return "en-US";
+}
+function LANGUAGE_KO_KP(){
+	return "ko-KP";
+}
+
+function CALENDAR_MONTHS_LONG_EN(){
+	return ["January","February","March","April","May","June","July","August","September","October","November","December"];
+}
+function CALENDAR_MONTHS_LONG_KO(){
+	return ["일월","이월","행진","사월","오월","유월","칠월","팔월","구월","시월","십일월","십이월"];
+}
+function CALENDAR_MONTHS_SHORT_EN(){
+	return ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+}
+function CALENDAR_MONTHS_SHORT_KO(){
+	return CALENDAR_MONTHS_LONG_KO();
+}
+function CALENDAR_DAYS_LONG_EN(){
+	return ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+}
+function CALENDAR_DAYS_LONG_KO(){
+	return ["월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"];
+}
+function CALENDAR_DAYS_SHORT_EN(){
+	return ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+}
+function CALENDAR_DAYS_SHORT_KO(){
+	return CALENDAR_DAYS_LONG_KO();
+}
+
+
+/*
+Code.monthsShort = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+Code.monthsLong = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+Code.daysOfWeekShort = 
+Code.daysOfWeekLong = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+*/
+
+
+function languageSpecificFromLanguage($lang){
+	$map = [
+		"en" => LANGUAGE_EN_US(),
+		"ko" => LANGUAGE_KO_KP()
+	];
+	$sub = $map[$lang];
+	if($sub){
+		return $sub;
+	}
+	return $lang;
+}
+
+function getCookieLanguage(){
+	$cookie = $_COOKIE[KEY_COOKIE_PARAM_LANGUAGE()];
+	if(isset($cookie)){
+		return languageSpecificFromLanguage($cookie);
+	}
+	return null;
+}
+function getValueFromMapCookieLanguage($map,$default){
+	$language = getCookieLanguage();
+	if($language!==null){
+		$value = $map[$language];
+		if($value!==null){
+			return $value;
+		}
+	}
+	return $default;
+}
+function getCookieMonthsOfYearLong(){
+	$map = [];
+	$map[LANGUAGE_EN_US()] = CALENDAR_MONTHS_LONG_EN();
+	$map[LANGUAGE_KO_KP()] = CALENDAR_MONTHS_LONG_KO();
+	return getValueFromMapCookieLanguage($map, CALENDAR_MONTHS_LONG_EN());
+}
+function getCookieMonthsOfYearShort(){
+	$map = [];
+	$map[LANGUAGE_EN_US()] = CALENDAR_MONTHS_SHORT_EN();
+	$map[LANGUAGE_KO_KP()] = CALENDAR_MONTHS_SHORT_KO();
+	return getValueFromMapCookieLanguage($map, CALENDAR_MONTHS_LONG_EN());
+}
+function getCookieDaysOfWeekLong(){
+	$map = [];
+	$map[LANGUAGE_EN_US()] = CALENDAR_DAYS_LONG_EN();
+	$map[LANGUAGE_KO_KP()] = CALENDAR_DAYS_LONG_KO();
+	return getValueFromMapCookieLanguage($map, CALENDAR_MONTHS_LONG_EN());
+}
+function getCookieDaysOfWeekShort(){
+	$map = [];
+	$map[LANGUAGE_EN_US()] = CALENDAR_DAYS_SHORT_EN();
+	$map[LANGUAGE_KO_KP()] = CALENDAR_DAYS_SHORT_KO();
+	return getValueFromMapCookieLanguage($map, CALENDAR_MONTHS_LONG_EN());
+}
+
+
+function include_widget_calendar_events(){
+?>
+	<div class="giauCalendarList"
+		data-months-short="<?php echo(implode(",",getCookieMonthsOfYearShort())); ?>"
+		data-months-long="<?php echo(implode(",",getCookieMonthsOfYearLong())); ?>"
+		data-days-short="<?php echo(implode(",",getCookieDaysOfWeekShort())); ?>"
+		data-days-long="<?php echo(implode(",",getCookieDaysOfWeekLong())); ?>"
+		>
+			<?php
+				$daysInTheFuture = 6*30; // 6 months
+				$dateNow = getDateNow();
+				$dateLimit = addTimeToSeconds($dateNow, 0,0,$daysInTheFuture, 0,0,0, 0);
+				$startDate = stringFromDate($dateNow);
+				$endDate = stringFromDate($dateLimit);
+				// error_log("start: ".$startDate);
+				// error_log("  end: ".$endDate);
+				$operationOffset = 0;
+				$operationCount = 100;
+				$operationOrder = [ ["start_date",1], ["duration",1], ["id",0] ];
+				$results = giau_calendar_paginated($operationOffset,$operationCount,$operationOrder, $startDate,$endDate);
+				$length = count($results);
+				$index = 0;
+				foreach($results as $row){
+					$row["$__"] = $index;
+					$included = ["$__","title","description","start_date","duration"];
+					$labels = ["data-index","data-title","data-description","data-start-date","data-duration"];
+					$extra = "";
+					$div = divWithDatasValuesLabelsExtras($row, $included, $labels, $extra);
+					//error_log($div);
+					echo $div;
+					++$index;
+				}
+				// function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,$endDate)
+				//$calendarResults = 
+			?>
+		</div>
+<?php
 }
 
 function wordpress_data_service(){
@@ -523,24 +659,6 @@ if( isset($_POST) && isset($_POST['form_id']) ){
 		</div>
 
 
-		//wordpress_data_service();
-
-
-	<?php
-
-	/*
-	$substitutePhrase = giau_languagization_substitution("BIO_FIRST_NAME_JOSEPH_KIM_TEXT","en-US");
-	error_log("SUB 1: ".$substitutePhrase);
-	$substitutePhrase = giau_languagization_substitution("BIO_FIRST_NAME_JOSEPH_KIM_TEXT","ko-KP");
-	error_log("SUB 2: ".$substitutePhrase);
-	$substitutePhrase = giau_languagization_substitution("BIO_FIRST_NAME_JOSEPH_KIM_TEXT","x");
-	error_log("SUB 3: ".$substitutePhrase);
-	$substitutePhrase = giau_languagization_substitution("BIO_FIRST_NAME_JOSEPH_KIM_TEXT",null);
-	error_log("SUB 4: ".$substitutePhrase);
-	$substitutePhrase = giau_languagization_substitution("BIO_FIRST_NAME_JOSEPH_KIM_TEXT_X",null);
-	error_log("SUB 5: ".$substitutePhrase);
-	*/
-?>
 	<?php
 	// LANGUAGIZATION
 	$config = [
@@ -560,11 +678,11 @@ if( isset($_POST) && isset($_POST['form_id']) ){
 				"options" => [
 					[
 						"display" => "EN",
-						"value" => "en-US"
+						"value" => LANGUAGE_EN_US()
 					],
 					[
 						"display" => "KO",
-						"value" => "ko-KP"
+						"value" => LANGUAGE_KO_KP()
 					]
 				],
 				"value" => ""
@@ -1105,7 +1223,19 @@ function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,
 	// QUERY
 	global $wpdb;
 	$table = GIAU_FULL_TABLE_NAME_CALENDAR();
-	$criteria = " WHERE start_date >= ".$startDate." AND start_date <= ".$endDate." "; // BETWEEN, duration?
+	$criteria = "";
+	//$criteria = " WHERE start_date >= ".$startDate." AND start_date <= ".$endDate." "; // BETWEEN, duration?
+	
+	//$criteria = " WHERE start_date BETWEEN ".$startDate." AND ".$endDate." "; // BETWEEN, duration?
+	$criteria = " ";
+	if($startDate && $endDate){
+		// double-check date values if not null
+		$startDate = esc_sql($startDate);
+		$endDate = esc_sql($endDate);
+		$dateFormat = "%Y-%m-%d %k:%i:%s.%f";
+		$criteria = " WHERE STR_TO_DATE(start_date,\"".$dateFormat."\") BETWEEN STR_TO_DATE(\"".$startDate."\",\"".$dateFormat."\") AND STR_TO_DATE(\"".$endDate."\",\"".$dateFormat."\") ";
+	}
+
 	$querystr = "
 	    SELECT ".$table.".* 
 	    FROM ".$table."
@@ -1113,13 +1243,30 @@ function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,
 	    ".$sorting."
 	    LIMIT ".$offset.",".$limit."
 	";
-	error_log("CALENDAR QUERY B: ".$querystr);
 	$results = $wpdb->get_results($querystr, ARRAY_A);
+	$results = filterRowsLanguagization($results,["title","description"]);
 	return $results;
+}
+function filterRowsLanguagization($rows,$fields){
+	$desiredLanguage = getCookieLanguage();
+	$i;
+	$len = count($rows);
+	for($i=0; $i<$len; ++$i){
+		$row = $rows[$i];
+		foreach($fields as $field){
+			$original = $row[$field];
+			if($original!==null){
+				$substitution = giau_languagization_substitution($original,$desiredLanguage);
+				$row[$field] = $substitution;
+			}
+		}
+		$rows[$i] = $row;
+	}
+	return $rows;
 }
 
 function giau_languagization_substitution($hash_index, $language){
-	$DEFAULT_LANGUAGE = "en-US";
+	$DEFAULT_LANGUAGE = LANGUAGE_EN_US();
 	// hash_index must be non-null and non-zero length
 	if(!$hash_index || strlen($hash_index)==0 ){
 		return "";
@@ -1140,7 +1287,6 @@ function giau_languagization_substitution($hash_index, $language){
 	    WHERE hash_index='".$hash_index."'
 	    ORDER BY id DESC
 	";
-	error_log("LANGUAGIZATION QUERY A: ".$querystr);
 	// see if exact match exists, else default to 
 	$didFindMatch = false;
 	$matchFirst = null;
@@ -1172,303 +1318,7 @@ function giau_languagization_substitution($hash_index, $language){
 
 function giau_default_fill_database(){
 	error_log("giau_default_fill_database");
-
-	$timestampNow = stringFromDate( getDateNow() );
-
-	global $wpdb;
-
-
-	// LANGUAGIZATION
-	$langEng = "en-US";
-	$langKor = "ko-KP";
-
-	// MAIN PAGE ITEMS:
-	giau_insert_languagization($langEng,"CALENDAR_TITLE_TEXT","Upcoming Events");
-	giau_insert_languagization($langKor,"CALENDAR_TITLE_TEXT","다가오는 이벤트");
-
-	// -> BIO
-	giau_insert_languagization($langEng,"BIO_FIRST_NAME_JOSEPH_KIM_TEXT","Joseph");
-	giau_insert_languagization($langEng,"BIO_LAST_NAME_JOSEPH_KIM_TEXT","Kim");
-	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_JOSEPH_KIM_TEXT","Reverend Joseph Kim");
-	giau_insert_languagization($langEng,"BIO_POSITION_JOSEPH_KIM_TEXT","Director of Christian Education, Interim Junior High Pastor");
-	giau_insert_languagization($langEng,"BIO_EMAIL_JOSEPH_KIM_TEXT","jmkim75@gmail.com");
-	giau_insert_languagization($langEng,"BIO_PHONE_JOSEPH_KIM_TEXT","2132006092");
-	giau_insert_languagization($langEng,"BIO_DESCRIPTION_JOSEPH_KIM_TEXT","Joseph is happily married to Joyce, the woman of his dreams. He has a bachelor’s degree in civil engineering and a Master of Divinity degree and was called into vocational ministry in 2004. He began serving at LACPC as a high school pastor in December 2006 and by God’s grace is currently serving as the director of Christian Education.");
-	giau_insert_languagization($langEng,"BIO_URI_JOSEPH_KIM_URI_TEXT","");
-	
-	giau_insert_languagization($langEng,"BIO_FIRST_NAME_TONY_PARK_TEXT","Tony");
-	giau_insert_languagization($langEng,"BIO_LAST_NAME_TONY_PARK_TEXT","Park");
-	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_TONY_PARK_TEXT","Tony Park");
-	giau_insert_languagization($langEng,"BIO_POSITION_TONY_PARK_TEXT","Elder of Christian Education");
-	giau_insert_languagization($langEng,"BIO_EMAIL_TONY_PARK_TEXT","");
-	giau_insert_languagization($langEng,"BIO_PHONE_TONY_PARK_TEXT","");
-	giau_insert_languagization($langEng,"BIO_DESCRIPTION_TONY_PARK_TEXT","");
-	giau_insert_languagization($langEng,"BIO_URI_TONY_PARK_URI_TEXT","");
-
-	giau_insert_languagization($langEng,"BIO_FIRST_NAME_KURT_KIM_TEXT","Kurt");
-	giau_insert_languagization($langEng,"BIO_LAST_NAME_KURT_KIM_TEXT","Kim");
-	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_KURT_KIM_TEXT","Jangyeon Kim");
-	giau_insert_languagization($langEng,"BIO_POSITION_KURT_KIM_TEXT","Secretary");
-	giau_insert_languagization($langEng,"BIO_EMAIL_KURT_KIM_TEXT","jangyeaonkim@gmail.com");
-	giau_insert_languagization($langEng,"BIO_PHONE_KURT_KIM_TEXT","5268571224");
-	giau_insert_languagization($langEng,"BIO_DESCRIPTION_KURT_KIM_TEXT","");
-	giau_insert_languagization($langEng,"BIO_URI_KURT_KIM_URI_TEXT","");
-
-	giau_insert_languagization($langEng,"BIO_FIRST_NAME_SEBASTIAN_LEE_TEXT","Sebastian");
-	giau_insert_languagization($langEng,"BIO_LAST_NAME_SEBASTIAN_LEE_TEXT","Lee");
-	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_SEBASTIAN_LEE_TEXT","Sebastian Lee");
-	giau_insert_languagization($langEng,"BIO_POSITION_SEBASTIAN_LEE_TEXT","Finance Deacon");
-	giau_insert_languagization($langEng,"BIO_EMAIL_SEBASTIAN_LEE_TEXT","");
-	giau_insert_languagization($langEng,"BIO_PHONE_SEBASTIAN_LEE_TEXT","");
-	giau_insert_languagization($langEng,"BIO_DESCRIPTION_SEBASTIAN_LEE_TEXT","");
-	giau_insert_languagization($langEng,"BIO_URI_SEBASTIAN_LEE_URI_TEXT","");
-
-	giau_insert_languagization($langEng,"BIO_FIRST_NAME_ANDREW_LIM_TEXT","Andrew");
-	giau_insert_languagization($langEng,"BIO_LAST_NAME_ANDREW_LIM_TEXT","Lim");
-	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_ANDREW_LIM_TEXT","Andrew Lim");
-	giau_insert_languagization($langEng,"BIO_POSITION_ANDREW_LIM_TEXT","High School Pastor");
-	giau_insert_languagization($langEng,"BIO_EMAIL_ANDREW_LIM_TEXT","mrlimshhs@gmail.com");
-	giau_insert_languagization($langEng,"BIO_PHONE_ANDREW_LIM_TEXT","6265366126");
-	giau_insert_languagization($langEng,"BIO_DESCRIPTION_ANDREW_LIM_TEXT","Andrew has been attending LACPC ever since he was a high school freshman. He got his bachelor’s degree from UC Irvine and a Masters in Pastoral Studies from Azusa Pacific University. He has been serving as the high school pastor since May of last year and also works full time as a high school English teacher.");
-	giau_insert_languagization($langEng,"BIO_URI_ANDREW_LIM_URI_TEXT","");
-
-	giau_insert_languagization($langEng,"BIO_FIRST_NAME_BORAM_LEE_TEXT","Boram");
-	giau_insert_languagization($langEng,"BIO_LAST_NAME_BORAM_LEE_TEXT","Lee");
-	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_BORAM_LEE_TEXT","Boram Lee");
-	giau_insert_languagization($langEng,"BIO_POSITION_BORAM_LEE_TEXT","Elementary Pastor");
-	giau_insert_languagization($langEng,"BIO_EMAIL_BORAM_LEE_TEXT","boramjdsn@gmail.com");
-	giau_insert_languagization($langEng,"BIO_PHONE_BORAM_LEE_TEXT","9098688457");
-	giau_insert_languagization($langEng,"BIO_DESCRIPTION_BORAM_LEE_TEXT","Born and raised in Los Angeles, Boram has a BA in cognitive psychology, a multiple subjects credential, and a master’s degree in teaching. She began seminary in January 2013 at Azusa Pacific University where she is studying to obtain an MA in pastoral studies with an emphasis is youth and family ministry. Her passion is to serve and train young children so that they can develop a solid relationship with God.");
-	giau_insert_languagization($langEng,"BIO_URI_BORAM_LEE_URI_TEXT","");
-
-	giau_insert_languagization($langEng,"BIO_FIRST_NAME_SHEEN_HONG_TEXT","Sheen");
-	giau_insert_languagization($langEng,"BIO_LAST_NAME_SHEEN_HONG_TEXT","Hong");
-	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_SHEEN_HONG_TEXT","Sheen Hong");
-	giau_insert_languagization($langEng,"BIO_POSITION_SHEEN_HONG_TEXT","Kindergarten Pastor");
-	giau_insert_languagization($langEng,"BIO_EMAIL_SHEEN_HONG_TEXT","pastorhong71@gmail.com");
-	giau_insert_languagization($langEng,"BIO_PHONE_SHEEN_HONG_TEXT","2133695590");
-	giau_insert_languagization($langEng,"BIO_DESCRIPTION_SHEEN_HONG_TEXT","Sheen Hong is a loving mother of two children, Karis and Jin-Sung, and happy wife of Joshua, husband and a Chaplain. She has a bachelor’s degree in Christian education and Master of Arts degree in Christian Education. She was called into Children’s ministry in 2009. She began serving at LACPC as a Kindergarten pastor in December 2015.");
-	giau_insert_languagization($langEng,"BIO_URI_SHEEN_HONG_URI_TEXT","");
-
-	giau_insert_languagization($langEng,"BIO_FIRST_NAME_JESSICA_WON_TEXT","Jessica");
-	giau_insert_languagization($langEng,"BIO_LAST_NAME_JESSICA_WON_TEXT","Won");
-	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_JESSICA_WON_TEXT","Jessica Won");
-	giau_insert_languagization($langEng,"BIO_POSITION_JESSICA_WON_TEXT","Nursery Pastor");
-	giau_insert_languagization($langEng,"BIO_EMAIL_JESSICA_WON_TEXT","jcb4jessica@gmail.com");
-	giau_insert_languagization($langEng,"BIO_PHONE_JESSICA_WON_TEXT","3232034004");
-	giau_insert_languagization($langEng,"BIO_DESCRIPTION_JESSICA_WON_TEXT","Jessica Won is married to Peter Won and has twin boys and a girl. She has a degree of Child Development from Patten University and currently working on M.Div. from Azusa University. She loves to share gospel to children and now oversees the nursery department.");
-	giau_insert_languagization($langEng,"BIO_URI_JESSICA_WON_URI_TEXT","");
-
-	// -> CALENDAR
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_CHILDRENS_DAY_2016_TITLE_TEXT","Children's Day");
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_CHILDRENS_DAY_2016_DESCRIPTION_TEXT","Joint Worship 11:00 AM");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_LOVE_FESTIVAL_2016_TITLE_TEXT","Love Festival");
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_LOVE_FESTIVAL_2016_DESCRIPTION_TEXT","Love Festival for people with developmental disabilities");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_MOTHERS_DAY_2016_TITLE_TEXT","Mothers' Day");
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_MOTHERS_DAY_2016_DESCRIPTION_TEXT","Mothers' Day Celebration");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_TEACHERS_DAY_2016_TITLE_TEXT","Teachers' Day");
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_TEACHERS_DAY_2016_DESCRIPTION_TEXT","Annual Teachers' Day Luncheon 12:30 PM @ Patio");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_PRAYER_MEETING_JUNE_2016_TITLE_TEXT","Prayer Meeting");
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_PRAYER_MEETING_JUNE_2016_DESCRIPTION_TEXT","Bi-Monthly Parents/Teachers' Prayer Meeting");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_VACATION_BIBLE_SCHOOL_2016_TITLE_TEXT","Vacation Bible School");
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_VACATION_BIBLE_SCHOOL_2016_DESCRIPTION_TEXT","Vacation Bible School: Cave Quest");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_CE_GRADUATION_2016_TITLE_TEXT","CE Graduation");
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_CE_GRADUATION_2016_DESCRIPTION_TEXT","CE Graduation");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_SUMMER_MISSION_2016_TITLE_TEXT","Short-Term Summer Mission");
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_SUMMER_MISSION_2016_DESCRIPTION_TEXT","Navajo Reservation in Arizona");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_JH_SUMMER_RETREAT_2016_TITLE_TEXT","Junior High Summer Retreat");
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_JH_SUMMER_RETREAT_2016_DESCRIPTION_TEXT","@ Tahquitz Pines");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT__2016_TITLE_TEXT","High School Summer Retreat");
-	giau_insert_languagization($langEng,"CALENDAR_EVENT__2016_DESCRIPTION_TEXT","@ Lake Arrowhead");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_ORANGE_TOUR_CONFERENCE_2016_TITLE_TEXT","Orange Tour Conference");
-	giau_insert_languagization($langKor,"CALENDAR_EVENT_ORANGE_TOUR_CONFERENCE_2016_TITLE_TEXT","회의 Orange Tour");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_KOREAN_CHALLENGE_2016_TITLE_TEXT","Korean Challenge!");
-	giau_insert_languagization($langKor,"CALENDAR_EVENT_KOREAN_CHALLENGE_2016_TITLE_TEXT","도전! 한국어");
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_KOREAN_CHALLENGE_2016_DESCRIPTION_TEXT","Korean Challenge!");
-	giau_insert_languagization($langKor,"CALENDAR_EVENT_KOREAN_CHALLENGE_2016_DESCRIPTION_TEXT","도전! 한국어");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT","Hallelujah Night");
-	giau_insert_languagization($langKor,"CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT","할렐루야 의 밤");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT","CE Pastors’ Retreat");
-	giau_insert_languagization($langKor,"CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT","CE 목사 후퇴");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT","CE Thanksgiving Worship");
-	giau_insert_languagization($langKor,"CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT","추수 감사절 예배");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT","Teacher Appreciation Banquet");
-	giau_insert_languagization($langKor,"CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT","교사 감사 연회");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT","Christmas Celebration");
-	giau_insert_languagization($langKor,"CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT","크리스마스 축하");
-
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","Junior High & High School Winter Retreat");
-	giau_insert_languagization($langKor,"CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","Junior High & High School Winter Retreat");
-	// set 1
-	giau_insert_calendar("event__2016","CALENDAR_EVENT_CHILDRENS_DAY_2016_TITLE_TEXT","CALENDAR_EVENT_CHILDRENS_DAY_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 5, 1,11, 0, 0, 0), 0*24*60*60*1000, "");
-	giau_insert_calendar("event__2016","CALENDAR_EVENT_LOVE_FESTIVAL_2016_TITLE_TEXT","CALENDAR_EVENT_LOVE_FESTIVAL_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 5, 7, 0, 0, 0, 0), 0*24*60*60*1000, "");
-	giau_insert_calendar("event__2016","CALENDAR_EVENT_MOTHERS_DAY_2016_TITLE_TEXT","CALENDAR_EVENT_MOTHERS_DAY_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 5, 8, 0, 0, 0, 0), 0*24*60*60*1000, "");
-	giau_insert_calendar("event__2016","CALENDAR_EVENT_TEACHERS_DAY_2016_TITLE_TEXT","CALENDAR_EVENT_TEACHERS_DAY_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 5,15,12,30, 0, 0), 0*24*60*60*1000, "");
-	giau_insert_calendar("event__2016","CALENDAR_EVENT_PRAYER_MEETING_JUNE_2016_TITLE_TEXT","CALENDAR_EVENT_PRAYER_MEETING_JUNE_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 6,10, 0, 0, 0, 0), 0*24*60*60*1000, "");
-	giau_insert_calendar("event__2016","CALENDAR_EVENT_VACATION_BIBLE_SCHOOL_2016_TITLE_TEXT","CALENDAR_EVENT_VACATION_BIBLE_SCHOOL_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 6,17, 0, 0, 0, 0), 2*24*60*60*1000, "");
-	giau_insert_calendar("event_ce_graduation_2016","CALENDAR_EVENT_CE_GRADUATION_2016_TITLE_TEXT","CALENDAR_EVENT_CE_GRADUATION_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 6,26, 0, 0, 0, 0), 0*24*60*60*1000, "");
-	giau_insert_calendar("event__2016","CALENDAR_EVENT_SUMMER_MISSION_2016_TITLE_TEXT","CALENDAR_EVENT_SUMMER_MISSION_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 7, 1, 0, 0, 0, 0), 7*24*60*60*1000, "");	
-	giau_insert_calendar("event__2016","CALENDAR_EVENT_JH_SUMMER_RETREAT_2016_TITLE_TEXT","CALENDAR_EVENT_JH_SUMMER_RETREAT_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 7,31, 0, 0, 0, 0), 4*24*60*60*1000, "");
-	giau_insert_calendar("event__2016","CALENDAR_EVENT__2016_TITLE_TEXT","CALENDAR_EVENT__2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 7,31, 0, 0, 0, 0), 4*24*60*60*1000, "");
-	// set 2
-	giau_insert_calendar("event_orange_tour_2016","CALENDAR_EVENT_ORANGE_TOUR_CONFERENCE_2016_TITLE_TEXT","CALENDAR_EVENT_ORANGE_TOUR_CONFERENCE_2016_TITLE_TEXT", stringFromHumanTime(2016, 9,20, 0, 0, 0, 0), 1*24*60*60*1000, "");
-	giau_insert_calendar("event_korean_challenge_2016","CALENDAR_EVENT_KOREAN_CHALLENGE_2016_TITLE_TEXT","CALENDAR_EVENT_KOREAN_CHALLENGE_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 9,25, 0, 0, 0, 0), 0*24*60*60*1000, "");
-	giau_insert_calendar("event_hallelujah_2016","CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT","CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT", stringFromHumanTime(2016,10,31, 0, 0, 0, 0), 0*24*60*60*1000, "");
-	giau_insert_calendar("event_pastor_retreat_2016","CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT","CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT", stringFromHumanTime(2016,11,10, 0, 0, 0, 0), 1*24*60*60*1000, "");
-	giau_insert_calendar("event_thanksgiving_worship_2016","CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT","CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT", stringFromHumanTime(2016,11,20, 0, 0, 0, 0), 0*24*60*60*1000, "");
-	giau_insert_calendar("event_teacher_appreciation_2016","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT", stringFromHumanTime(2016,12,10, 0, 0, 0, 0), 0*24*60*60*1000, "");
-	giau_insert_calendar("event_christmas_celebration_2016","CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT","CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT", stringFromHumanTime(2016,12,23, 0, 0, 0, 0), 0*24*60*60*1000, "");
-	giau_insert_calendar("event_jh_hs_winter_retreat_2017","CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT", stringFromHumanTime(2017, 1, 2, 0, 0, 0, 0), 3*24*60*60*1000, "");
-
-	// ?
-	giau_insert_languagization($langEng,"","");
-	giau_insert_languagization($langEng,"","");
-	giau_insert_languagization($langEng,"","");
-
-	// WIDGET
-	insert_widget('featured','{}');
-	insert_widget('navigation','{}');
-	insert_widget('language_switch','{}');
-	insert_widget('picture_list','{}');
-	insert_widget('info_statement','{}');
-	insert_widget('image_gallery','{}');
-	insert_widget('biography','{}');
-	insert_widget('google_map','{}');
-	insert_widget('calendar','{}');
-	insert_widget('footer','{}');
-	insert_widget('contact_form','{}');
-
-	// SECTION
-
-	// PAGE
-
-	// CALENDAR ITEMS
-	$wpdb->insert(GIAU_FULL_TABLE_NAME_CALENDAR(),
-		array(
-			"created" => $timestampNow,
-			"modified" => $timestampNow,
-			"short_name" => "childrens-day-2016",
-			"title" => "Children's Day",
-			"description" => "Joint Worship 11:00 AM",
-			"start_date" =>  stringFromDate( dateFromString("2016-05-01 11:00:00.0000") ),
-			"duration" => "0",
-		)
-	);
-	// preset defined list of widgets
-
-	// BIOs
-	giau_insert_bio(
-			'BIO_FIRST_NAME_JOSEPH_KIM_TEXT',
-			'BIO_LAST_NAME_JOSEPH_KIM_TEXT',
-			'BIO_DISPLAY_NAME_JOSEPH_KIM_TEXT',
-			'BIO_POSITION_JOSEPH_KIM_TEXT',
-			'BIO_EMAIL_JOSEPH_KIM_TEXT',
-			'BIO_PHONE_JOSEPH_KIM_TEXT',
-			'BIO_DESCRIPTION_JOSEPH_KIM_TEXT',
-			'BIO_URI_JOSEPH_KIM_URI_TEXT',
-			'ce-joe.png',
-			'ce,bio,contact'
-			);
-	giau_insert_bio(
-			'BIO_FIRST_NAME_TONY_PARK_TEXT',
-			'BIO_LAST_NAME_TONY_PARK_TEXT',
-			'BIO_DISPLAY_NAME_TONY_PARK_TEXT',
-			'BIO_POSITION_TONY_PARK_TEXT',
-			'BIO_EMAIL_TONY_PARK_TEXT',
-			'BIO_PHONE_TONY_PARK_TEXT',
-			'BIO_DESCRIPTION_TONY_PARK_TEXT',
-			'BIO_URI_TONY_PARK_URI_TEXT',
-			'',
-			'bio'
-			);
-		giau_insert_bio(
-			'BIO_FIRST_NAME_KURT_KIM_TEXT',
-			'BIO_LAST_NAME_KURT_KIM_TEXT',
-			'BIO_DISPLAY_NAME_KURT_KIM_TEXT',
-			'BIO_POSITION_KURT_KIM_TEXT',
-			'BIO_EMAIL_KURT_KIM_TEXT',
-			'BIO_PHONE_KURT_KIM_TEXT',
-			'BIO_DESCRIPTION_KURT_KIM_TEXT',
-			'BIO_URI_KURT_KIM_URI_TEXT',
-			'',
-			'bio,contact'
-			);
-	giau_insert_bio(
-			'BIO_FIRST_NAME_SEBASTIAN_LEE_TEXT',
-			'BIO_LAST_NAME_SEBASTIAN_LEE_TEXT',
-			'BIO_DISPLAY_NAME_SEBASTIAN_LEE_TEXT',
-			'BIO_POSITION_SEBASTIAN_LEE_TEXT',
-			'BIO_EMAIL_SEBASTIAN_LEE_TEXT',
-			'BIO_PHONE_SEBASTIAN_LEE_TEXT',
-			'BIO_DESCRIPTION_SEBASTIAN_LEE_TEXT',
-			'BIO_URI_SEBASTIAN_LEE_URI_TEXT',
-			'',
-			'bio'
-			);
-	giau_insert_bio(
-			'BIO_FIRST_NAME_ANDREW_LIM_TEXT',
-			'BIO_LAST_NAME_ANDREW_LIM_TEXT',
-			'BIO_DISPLAY_NAME_ANDREW_LIM_TEXT',
-			'BIO_POSITION_ANDREW_LIM_TEXT',
-			'BIO_EMAIL_ANDREW_LIM_TEXT',
-			'BIO_PHONE_ANDREW_LIM_TEXT',
-			'BIO_DESCRIPTION_ANDREW_LIM_TEXT',
-			'BIO_URI_ANDREW_LIM_URI_TEXT',
-			'ce-andy.png',
-			'highschool,bio,contact'
-			);
-	giau_insert_bio(
-			'BIO_FIRST_NAME_BORAM_LEE_TEXT',
-			'BIO_LAST_NAME_BORAM_LEE_TEXT',
-			'BIO_DISPLAY_NAME_BORAM_LEE_TEXT',
-			'BIO_POSITION_BORAM_LEE_TEXT',
-			'BIO_EMAIL_BORAM_LEE_TEXT',
-			'BIO_PHONE_BORAM_LEE_TEXT',
-			'BIO_DESCRIPTION_BORAM_LEE_TEXT',
-			'BIO_URI_BORAM_LEE_URI_TEXT',
-			'ce-boram.png',
-			'elementary,bio,contact'
-			);
-	giau_insert_bio(
-			'BIO_FIRST_NAME_SHEEN_HONG_TEXT',
-			'BIO_LAST_NAME_SHEEN_HONG_TEXT',
-			'BIO_DISPLAY_NAME_SHEEN_HONG_TEXT',
-			'BIO_POSITION_SHEEN_HONG_TEXT',
-			'BIO_EMAIL_SHEEN_HONG_TEXT',
-			'BIO_PHONE_SHEEN_HONG_TEXT',
-			'BIO_DESCRIPTION_SHEEN_HONG_TEXT',
-			'BIO_URI_SHEEN_HONG_URI_TEXT',
-			'ce-hong.png',
-			'kindergarten,bio,contact'
-			);
-	giau_insert_bio(
-			'BIO_FIRST_NAME_JESSICA_WON_TEXT',
-			'BIO_LAST_NAME_JESSICA_WON_TEXT',
-			'BIO_DISPLAY_NAME_JESSICA_WON_TEXT',
-			'BIO_POSITION_JESSICA_WON_TEXT',
-			'BIO_EMAIL_JESSICA_WON_TEXT',
-			'BIO_PHONE_JESSICA_WON_TEXT',
-			'BIO_DESCRIPTION_JESSICA_WON_TEXT',
-			'BIO_URI_JESSICA_WON_URI_TEXT',
-			'ce-jessica.png',
-			'bio,contact'
-			);
+	giau_data_default_insert_into_database();
 }
 
 function giau_insert_languagization($language,$hash,$phrase){
@@ -1514,6 +1364,7 @@ function insert_widget($widgetName,$widgetConfig){
 function giau_insert_bio($firstName,$lastName,$displayName,$position,$email,$phone,$description,$uri,$imageURL,$tags){
 	// phone: limit to only numbers
 	// tags: limit to comma-separated-length 255
+	$tags = commaSeparatedStringFromString($tags);
 	$timestampNow = stringFromDate( getDateNow() );
 	global $wpdb;
 	$wpdb->insert(GIAU_FULL_TABLE_NAME_BIO(),
@@ -1535,9 +1386,10 @@ function giau_insert_bio($firstName,$lastName,$displayName,$position,$email,$pho
 
 function giau_insert_calendar($shortName, $title, $description, $startDate, $duration, $tags){
 	// tags: limit to comma-separated-length 255
+	$tags = commaSeparatedStringFromString($tags);
 	$timestampNow = stringFromDate( getDateNow() );
 	global $wpdb;
-	$wpdb->insert(GIAU_FULL_TABLE_NAME_BIO(),
+	$wpdb->insert(GIAU_FULL_TABLE_NAME_CALENDAR(),
 		array(
 			"created" => $timestampNow,
 			"modified" => $timestampNow,
@@ -1550,14 +1402,48 @@ function giau_insert_calendar($shortName, $title, $description, $startDate, $dur
 		)
 	);
 }
+function commaSeparatedStringFromString($input){
+	$split = explode(",", $input);
+	$i;
+	$len = count($split);
+	$cleaned = [];
+	for($i=0; $i<$len; ++$i){ // remove whitespace from ends
+		$value = trim($split[$i]);
+		if(strlen($value)>0){
+			array_push($cleaned, $value);
+		}
 
-function localizationUSEnglish(){
-	return "en-US";
+	}
+	$output = implode(",",$cleaned);
+	return $output;
+}
+function divWithDatasValuesLabelsExtras($object, $included, $labels, $extra){
+	if($extra==null){
+		$extra = "";
+	}
+	if($included==null){
+		$included = [];
+	}
+	if($labels==null){
+		$labels = $included;
+	}
+	$div = '<div';
+	$i;
+	$len =  min(count($included), count($labels));
+	for($i=0; $i<$len; ++$i){
+		$lookup = $included[$i];
+		$value = $object[$lookup];
+		$key = $labels[$i];
+		if($value!==null && $key!==null){
+			$key = esc_html($key);
+			$value = esc_html($value);
+			$div = $div.' '.$key.'="'.$value.'" ';
+		}
+	}
+	$div = $div.' '.$extra.'></div>';
+	return $div;
 }
 
-function localizationKoreaKorean(){
-	return "ko-KP";
-}
 
 /*
 https://codex.wordpress.org/Plugin_API/Action_Reference
@@ -1590,10 +1476,12 @@ https://codex.wordpress.org/Plugin_API/Filter_Reference
 	add_filter('shutdown','gaio_action_unhandled_callback');
 	
 
-	// ?
-	add_filter('filter_name','gaio_filter_callback');
-	// ?
-	add_action('action_name','gaio_action_callback');
-	*/
+// ?
+add_filter('filter_name','gaio_filter_callback');
+// ?
+add_action('action_name','gaio_action_callback');
+*/
+
+//include_all_files(); // NOT WORK?
 
 ?>

@@ -230,3 +230,34 @@ ln -s ~/universe/repo/fw/plugins/giau/ /var/www/html/wordpress/wp-content/plugin
 
 
 
+
+# WP NOTES:
+```
+list of all hooks:
+http://adambrown.info/p/wp_hooks/hook
+
+
+
+
+
+
+
+```
+
+
+
+some code:
+
+<?php
+$dataServiceURL = get_site_url()."?data";
+$dataServiceURL = "";
+error_log("THE URL: ".$dataServiceURL);
+?>
+	<div class="giauDataTable giauTableDisplayData" data-table="localization" data-columns="language,hash_index,phrase_value" data-url="<?php echo $dataServiceURL; ?>" data-settings-pages="true"  data-settings-arbitrary-page="true">
+	</div>
+
+	<input type="text" class="giauAutoComplete" placeholder="language" data-columns="hash_index,phrase_value" data-params='{"operation":"get_autocomplete","table":"localization"}' data-url="<?php echo $dataServiceURL; ?>" style="width:300px; height:32px;">
+
+
+
+

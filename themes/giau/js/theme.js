@@ -1508,115 +1508,62 @@ giau.ImageGallery.prototype._updateLayout = function(index){
 giau.CalendarView = function(element){
 	this._container = element;
 	var eventList = [];
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 5, 1, 11, 0, 0, 0),
-		"duration": 0,
-		"title": "Children's Day",
-		"description": "Joint Worship 11:00 AM",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 5, 7, 0, 0, 0, 0),
-		"duration": 0,
-		"title": "Love Festival",
-		"description": "Love Festival for people with developmental disabilities",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 5, 8, 0, 0, 0, 0),
-		"duration": 0,
-		"title": "Mothers' Day",
-		"description": "Mothers' Day Celebration",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 5, 15, 12, 30, 0, 0),
-		"duration": 0,
-		"title": "Teachers' Day",
-		"description": "Annual Teachers' Day Luncheon 12:30 PM @ Patio",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 6, 10, 0, 0, 0, 0),
-		"duration": 0,
-		"title": "Prayer Meeting",
-		"description": "Bi-Monthly Parents/Teachers' Prayer Meeting",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 6, 17, 0, 0, 0, 0),
-		"duration": 2*24*60*60*1000,
-		"title": "Vacation Bible School",
-		"description": "Vacation Bible School: Cave Quest",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 6, 26, 0, 0, 0, 0),
-		"duration": 0,
-		"title": "CE Graduation",
-		"description": "CE Graduation",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 7, 1, 0, 0, 0, 0),
-		"duration": 7*24*60*60*1000,
-		"title": "Short-Term Summer Mission",
-		"description": "Navajo Reservation in Arizona",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 7, 31, 0, 0, 0, 0),
-		"duration": 4*24*60*60*1000,
-		"title": "Junior High Summer Retreat",
-		"description": "@ Tahquitz Pines",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 7, 31, 0, 0, 0, 0),
-		"duration": 4*24*60*60*1000,
-		"title": "High School Summer Retreat",
-		"description": "@ Lake Arrowhead",
-	});
-	// new - 2
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 9, 20, 0, 0, 0, 0),
-		"duration": 1*24*60*60*1000,
-		"title": "Orange Tour Conference",
-		"description": "Orange Tour Conference",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 9, 25, 0, 0, 0, 0),
-		"duration": 0,
-		"title": "도전! 한국어",
-		"description": "도전! 한국어",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 10, 31, 0, 0, 0, 0),
-		"duration": 0,
-		"title": "Hallelujah Night",
-		"description": "Hallelujah Night",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 11, 10, 0, 0, 0, 0),
-		"duration": 1*24*60*60*1000,
-		"title": "CE Pastors’ Retreat",
-		"description": "CE Pastors’ Retreat",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 11, 20, 0, 0, 0, 0),
-		"duration": 0,
-		"title": "CE Thanksgiving Worship",
-		"description": "CE Thanksgiving Worship",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 12, 10, 0, 0, 0, 0),
-		"duration": 0,
-		"title": "Teacher Appreciation Banquet",
-		"description": "Teacher Appreciation Banquet",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2016, 12, 23, 0, 0, 0, 0),
-		"duration": 0,
-		"title": "Christmas Celebration",
-		"description": "Christmas Celebration",
-	});
-	eventList.push({
-		"start": Code.getTimeStamp(2017, 1, 2, 0, 0, 0, 0),
-		"duration": 3*24*60*60*1000,
-		"title": "Junior High & High School Winter Retreat",
-		"description": "Junior High & High School Winter Retreat",
-	});
+	var i, div;
+	var propertyMonthsShort = "data-months-short";
+	var propertyMonthsLong = "data-months-long";
+	var propertyDaysShort = "data-days-short";
+	var propertyDaysLong = "data-days-long";
+	var propertyIndex = "data-index";
+	var propertyTitle = "data-title";
+	var propertyDescription = "data-description";
+	var propertyStartDate = "data-start-date";
+	var propertyDuration = "data-duration";
+	for(i=0; i<Code.numChildren(this._container); ++i){
+		div = Code.getChild(this._container,i);
+		if(Code.hasProperty(div,propertyIndex)){
+			var index = Code.getProperty(div,propertyIndex);
+			var title = Code.getProperty(div,propertyTitle);
+			var description = Code.getProperty(div,propertyDescription);
+			var startDate = Code.getProperty(div,propertyStartDate);
+			var duration = Code.getProperty(div,propertyDuration);
+			duration = parseInt(duration);
+			eventList.push({
+				"start": startDate,
+				"duration": duration,
+				"title": title,
+				"description": description,
+				"index": index
+			});
+			Code.removeChild(this._container,div);
+			--i; // recheck
+		}
+	}
+	// TRANSLATION DAYS | MONTHS
+	this._calendarMonthsShort = Code.monthsShort;
+	if(Code.hasProperty(this._container,propertyMonthsShort)){
+		var months = Code.getProperty(this._container,propertyMonthsShort);
+		this._calendarMonthsShort = months.split(",");
+		Code.setProperty(this._container,propertyMonthsShort,"");
+	}
+	this._calendarMonthsLong = Code.monthsLong;
+	if(Code.hasProperty(this._container,propertyMonthsLong)){
+		var months = Code.getProperty(this._container,propertyMonthsLong);
+		this._calendarMonthsLong = months.split(",");
+		Code.setProperty(this._container,propertyMonthsLong,"");
+	}
+	this._calendarDaysShort = Code.daysOfWeekShort;
+	if(Code.hasProperty(this._container,propertyDaysShort)){
+		var days = Code.getProperty(this._container,propertyDaysShort);
+		this._calendarDaysShort = days.split(",");
+		Code.setProperty(this._container,propertyDaysShort,"");
+	}
+	this._calendarDaysLong = Code.daysOfWeekLong;
+	if(Code.hasProperty(this._container,propertyDaysLong)){
+		var days = Code.getProperty(this._container,propertyDaysLong);
+		this._calendarDaysLong = days.split(",")
+;		Code.setProperty(this._container,propertyDaysLong,"");
+	}
+	// INIT
 	var container = this._container;
 	var i, len=eventList.length;
 	var todayNowMilliseconds = Code.getTimeMilliseconds(true);
@@ -1730,9 +1677,9 @@ giau.CalendarView = function(element){
 }
 giau.CalendarView.prototype.formatTimeHumanReadable = function(timestamp, duration){
 	var date1 = new Date(timestamp);
-		var month1 = Code.monthsLong[date1.getMonth()];
+		var month1 = this._calendarMonthsLong[date1.getMonth()];
 		var day1 = date1.getDate();
-		var dow1 = Code.daysOfWeekLong[(date1.getDay()+6)%7];
+		var dow1 = this._calendarDaysLong[(date1.getDay()+6)%7];
 		var hour1 = date1.getHours();
 		var min1 = date1.getMinutes();
 		var ampm1 = "AM"
@@ -1745,12 +1692,12 @@ giau.CalendarView.prototype.formatTimeHumanReadable = function(timestamp, durati
 	if(duration==0){
 		return ""+dow1+", "+month1+" "+day1;//+" @ "+hour1+":"+Code.prependFixed(""+min1,"0",2)+" "+ampm1;
 	}else{
-		var dowShort1 = Code.daysOfWeekShort[(date1.getDay()+6)%7];
+		var dowShort1 = this._calendarDaysShort[(date1.getDay()+6)%7];
 		var date2 = new Date(timestamp + duration);
-		var month2 = Code.monthsLong[date2.getMonth()];
+		var month2 = this._calendarMonthsLong[date2.getMonth()];
 		var day2 = date2.getDate();
-		var dow2 = Code.daysOfWeekLong[(date2.getDay()+6)%7];
-		var dowShort2 = Code.daysOfWeekShort[(date2.getDay()+6)%7];
+		var dow2 = this._calendarDaysLong[(date2.getDay()+6)%7];
+		var dowShort2 = this._calendarDaysShort[(date2.getDay()+6)%7];
 		var hour2 = date2.getHours();
 		var min2 = date2.getMinutes();
 		return ""+month1+" "+day1+" ("+dowShort1+")"+" - "+month2+" "+day2+" ("+dowShort2+")";

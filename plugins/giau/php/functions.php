@@ -38,6 +38,16 @@ function padRight($input, $padding, $count){
 function getDateNow(){
 	return dateFromString( date("Y-m-d H:i:s.0000") );
 }
+
+function addTimeToSeconds($seconds,$yea,$mon,$day,$hou,$min,$sec,$nano){
+	$oH = intval(date("H",$seconds));
+	$oN = intval(date("i",$seconds));
+	$oS = intval(date("s",$seconds));
+	$oM = intval(date("m",$seconds));
+	$oD = intval(date("d",$seconds));
+	$oY = intval(date("y",$seconds));
+	return mktime($oH+$hou,$oN+$min,$oS+$sec, $oM+$mon,$oD+$day,$oY+$yea);
+}
 function stringFromHumanTime($year, $month, $day, $hour, $minute, $second, $millisecond){// 0-9999, 1-12, 1-31, 0-23, 0-59, 0-59, 0-9999
 	$year = intval($year); $year = min(max($year,0),9999);
 	$month = intval($month); $month = min(max($month,1),12);
@@ -57,7 +67,7 @@ function stringFromHumanTime($year, $month, $day, $hour, $minute, $second, $mill
 	return $year."-".$month."-".$day." ".$hour.":".$minute.":".$second.".".$millisecond;
 }
 function stringFromDate($dat){
-	return date("Y-m-d H:i:s.0000",$dat); // YYYY-MM-DD HH:NN:SS.NNNN
+	return date("Y-m-d H:i:s.0000",$dat); // YYYY-MM-DD HH:MM:SS.NNNN
 }
 function timeValuesFromString($str){ // hour : minute : second . millisecond
 	if(strlen($str)<8){
