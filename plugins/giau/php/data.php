@@ -171,25 +171,6 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"","");
 	giau_insert_languagization($langEng,"","");
 
-	// WIDGET
-	insert_widget('featured','{}');
-	insert_widget('navigation','{}');
-	insert_widget('language_switch','{}');
-	insert_widget('picture_list','{}');
-	insert_widget('info_statement','{}');
-	insert_widget('image_gallery','{}');
-	insert_widget('biography','{}');
-	insert_widget('google_map','{}');
-	insert_widget('calendar','{}');
-	insert_widget('footer','{}');
-	insert_widget('contact_form','{}');
-
-	// SECTION
-
-	// PAGE
-
-	// preset defined list of widgets
-
 	// BIOs
 	giau_insert_bio(
 			'BIO_FIRST_NAME_JOSEPH_KIM_TEXT',
@@ -305,64 +286,106 @@ function giau_data_default_insert_into_database(){
 	// giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION__TEXT","");
 
 
-
-	// widget 
-	widget_image_gallery = [
-	"alias" => "image_gallery",
-	"name" => "Giau Image Gallery",
-	"cssClass" => "giauImageGallery",
-	"jsClass" => "giau.ImageGallery",
-	"configuration" => '
-		{
-			"fields": [
-				{
-					"name": "autoplay",
-					"type": "number"
-				},
-				{
-					"name": "display_navigation",
-					"type": "boolean"
-				},
-				{
-					"name": "style",
-					"type": "string"
-				},
-				{
-					"name": "images",
-					"type": "array-image"
-				}
-		}
-	'];
+	// WIDGET
 	/*
-	ALL TYPES: -- all literals are strings later parsed into actual primitive types in JS as needed
-		boolean = boolean
-		number = int, float
-		string = string
-		image = string, expecting an image URL
-			=> sub attribute languagization
-		array-<sub-type>
-				{
-					"name": "title",
-					"type": "string"
-					"languagization: "true"
-				}
-	*/
-	// section 
-	section_image_gallery_home_page_top = [
-		"name" => "home page top image gallery"
-		"widget" => "image_gallery",
-		"configuration" => '
-		{
-			"autoplay": "10000",
-			"display_navigation": "true",
-			"style": "position:relative; width:100%; height:400px;",
-			"images": [
-				"featured_01_opt.png",
-				"featured_02_opt.png"
+	insert_widget('featured','{}');
+	insert_widget('navigation','{}');
+	insert_widget('language_switch','{}');
+	insert_widget('picture_list','{}');
+	insert_widget('info_statement','{}');
+	insert_widget('image_gallery','{}');
+	insert_widget('biography','{}');
+	insert_widget('google_map','{}');
+	insert_widget('calendar','{}');
+	insert_widget('footer','{}');
+	insert_widget('contact_form','{}');
+	
+*/
+	// preset defined list of widgets
+
+	$widget_id_text_display = giau_insert_widget("text_display",
+		[
+			"alias" => "text_display",
+			"name" => "Giau Text Display",
+			"cssClass" => "giauImageGallery",
+			"jsClass" => "giau.ImageGallery",
+			"fields" => [
+				[
+					"name" => "text",
+					"type" => "string",
+					"languagization" => "true"
+				],
+				[
+					"name" => "class",
+					"type" => "string"
+				],
+				[
+					"name" => "style",
+					"type" => "string"
+				],
 			]
-		}
-		'
- 	];
+		]
+
+	);
+
+	// => IMAGE GALLERY
+	$widget_id_image_gallery = giau_insert_widget("image_gallery",
+		[
+			"alias" => "image_gallery",
+			"name" => "Giau Image Gallery",
+			"cssClass" => "giauImageGallery",
+			"jsClass" => "giau.ImageGallery",
+			"fields" => [
+				[
+					"name" => "autoplay",
+					"type" => "number"
+				],
+				[
+					"name" => "display_navigation",
+					"type" => "boolean"
+				],
+				[
+					"name" => "style",
+					"type" => "string"
+				],
+				[
+					"name" => "images",
+					"type" => "array-image"
+				]
+			]
+		]
+	);
+
+	giau_insert_languagization($langEng,"PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_BODY_TEXT","\"These commandments I give you today are to be upon your hearts. Impress them on your children. Talk about them when you sit at home and when you walk along the road, when you are down and when you get up.\"");
+	giau_insert_languagization($langEng,"PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_TITLE_TEXT","Deuteronomy 6:6-7");
+
+	$section_id_text_home_page_1 = giau_insert_section($widget_id_text_display,
+		[
+			// "name" => "home page quote deuteronomy 6, 6:7",
+			// "configuration" => [
+				"text" => "PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_BODY_TEXT",
+				"class" => "centeredText standardText focusedCenterpieceWidth",
+				"style" => ""
+			//]
+		]
+	, []);
+
+	// section 
+	$section_id_gallery_home_page_top = giau_insert_section($widget_id_image_gallery,
+		[
+			"name" => "home page top image gallery",
+			"configuration" => 
+			[
+				"autoplay" => "10000",
+				"display_navigation" => "true",
+				"style" => "position:relative; width:100%; height:400px;",
+				"images" => [
+					"featured_01_opt.png",
+					"featured_02_opt.png"
+				]
+			]
+		]
+ 	, []);
 
 	// page
 	/*
@@ -373,19 +396,17 @@ function giau_data_default_insert_into_database(){
 		sectionList VARCHAR(65535) NOT NULL,
 	*/
 
-	widget_front_page_navigation = [
-		"" => ""
-	]
+	// $widget_front_page_navigation = [
+	// 	"" => ""
+	// ];
 	// PAGE - MAIN
-	page_front_page = [
-		"name" => "Home Page"
-		"title" => ""
-		"widgets" => "?,?,?"
-	]
+	$page_id_front_page = giau_insert_page("home_page",[
+		$section_id_gallery_home_page_top
+		]);
 	// PAGE - DEPARTMENTS
-	page_departments_nursery = [
+	$page_departments_nursery = [
 		"title" => ""
-	]
+	];
 
 	// SUB-NAV-WIDGET
 
@@ -478,7 +499,20 @@ function giau_data_default_insert_into_database(){
 		]
 	];
 	*/
-
+/*
+	ALL TYPES: -- all literals are strings later parsed into actual primitive types in JS as needed
+		boolean = boolean
+		number = int, float
+		string = string
+		image = string, expecting an image URL
+			-> sub attribute languagization
+		array-<sub-type>
+				{
+					"name": "title",
+					"type": "string"
+					"languagization" => "true"
+				}
+	*/
 
 }
 

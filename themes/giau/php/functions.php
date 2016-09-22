@@ -238,6 +238,54 @@ function create_page(){
 	</head>
 	<body style="bgColor:#F00; margin: 0 auto;">
 
+<?php
+function fillOutSectionFromID($sectionID){
+	$section = giau_get_section_id($sectionID);
+	// error_log("  section: ".$section );
+	// error_log("  section: ".print_r($section) );
+	if($section!=null){
+		$widgetID = $section["widget"];
+		//error_log("GOT SECTION: ".$widgetID);
+		$widget = giau_get_widget_id($widgetID);
+		if($widget!==null){
+			//error_log("GOT WIDGET: ".$widget["name"]);
+			fillOutSectionFromWidget($widget,$section);
+		}
+	}else{
+		error_log("NO SECTION ");
+	}
+}
+function fillOutSectionFromWidget($widget,$section){
+	$widgetName = $widget["name"];
+	$lookup = [];
+	// lookup table
+	$lookup["text_display"] = handle_widget_text_display;
+
+	$fxn = $lookup[$widgetName];
+	if($fxn!=null){
+		$fxn($widget,$section);
+	}
+}
+
+function handle_widget_text_display($widget,$section){
+	$sectionJSON = json_decode($section["configuration"],true);
+	$text = $sectionJSON["text"];
+	$text = giau_languagization_substitution($text);
+	$class = $sectionJSON["class"];
+	?>
+	<div class="<?php echo $class; ?>"><?php echo $text; ?></div>
+	<?php
+}
+?>
+
+
+<?php
+
+fillOutSectionFromID(1);
+
+?>
+
+
 
 <?php
 if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
