@@ -94,19 +94,6 @@ giau.ButtonToggle = function(element){ //
 
 
 
-giau.Calendar = function(element){ //
-	var calendarItemList = [];
-	calendarItemList.push({
-		"start_time": Code.getTimeMilliseconds(),
-		"duration": (8*60*60*1000),
-		"title": "Super Fun Event",
-		"description": "a super fun event that lasts 8 hours",
-		"image_url": "",
-		"type": "", // work, fun, movie, game, sport, ... => icon
-		"uri": "http://www.google.com",
-	});
-}
-
 giau.ContactView = function(element){ //
 	this._container = element;
 
@@ -1499,11 +1486,6 @@ giau.ImageGallery.prototype._updateLayout = function(index){
 	}
 }
 
-// var err = $(".featureInfoOverlayTitle")[0];
-// Code.setContent(err,""+heightContainer+" / "+info.height+" | "+size.height+" = "+Math.round(diffY)+" = "+upY);
-
-
-
 
 giau.CalendarView = function(element){
 	this._container = element;
@@ -1704,36 +1686,6 @@ giau.CalendarView.prototype.formatTimeHumanReadable = function(timestamp, durati
 	}
 	return null;
 }
-
-
-/*
-	<script type="text/javascript">
-		function doAjaxCall(){
-			
-			var url = document.location+"";
-			console.log("A: "+url);
-			var ajax = new Ajax();
-			ajax.url(url);
-			ajax.method(Ajax.METHOD_TYPE_POST);
-			ajax.params({
-				"operation":"languagization",
-				"name":"?",
-				"email":"?",
-				"comment":"?"
-			});
-			ajax.callback(function(d){
-				console.log("callback");
-				console.log(d);
-			});
-			console.log("B");
-			ajax.send();
-		}
-	</script>
-	<input type="button" value="ajax" onclick="doAjaxCall();"></input>
-
-*/
-
-
 
 giau.DataTable = function(element){
 	this._container = element;

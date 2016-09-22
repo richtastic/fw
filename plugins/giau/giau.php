@@ -959,10 +959,10 @@ function giau_create_database(){
 		id int NOT NULL AUTO_INCREMENT,
 		created VARCHAR(32) NOT NULL,
 		modified VARCHAR(32) NOT NULL,
-		short_name VARCHAR(16) NOT NULL,
-		title VARCHAR(255) NOT NULL,
+		name VARCHAR(255) NOT NULL,
 		widget VARCHAR(255) NOT NULL,
 		configuration TEXT NOT NULL,
+		sectionList VARCHAR(65535) NOT NULL,
 		UNIQUE KEY id (id)
 		) $charset_collate
 	;";
@@ -980,9 +980,8 @@ function giau_create_database(){
 		id int NOT NULL AUTO_INCREMENT,
 		created VARCHAR(32) NOT NULL,
 		modified VARCHAR(32) NOT NULL,
-		short_name VARCHAR(16) NOT NULL,
-		title VARCHAR(255) NOT NULL,
-		sectionList VARCHAR(255) NOT NULL,
+		name VARCHAR(255) NOT NULL,
+		sectionList VARCHAR(65535) NOT NULL,
 		UNIQUE KEY id (id)
 		) $charset_collate
 	;";
@@ -1247,6 +1246,55 @@ function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,
 	$results = filterRowsLanguagization($results,["title","description"]);
 	return $results;
 }
+
+
+function giau_bio_paginated($offset,$count,$sortIndexDirection, $tags){
+	// offset must be positive
+	if(!$offset || $offset < 0){
+		$offset = 0;
+	}
+	// count must be positive
+	if(!$count || $count < 0){
+		$count = 0;
+	}
+	if($count == 0){ // no results
+		return [];
+	}
+
+	$limit = $offset + $count - 1;
+	// ordering
+	$indexes = ["id","created","modified","first_name","last_name","position","email","phone","description","uri","image_url","tags"];
+	$sorting = sortingQueryParamFromLists($indexes,$sortIndexDirection);
+	// QUERY
+	global $wpdb;
+	$table = GIAU_FULL_TABLE_NAME_BIO();
+	$criteria = "";
+	if($tags){
+		$tagCriteria = [];
+		foreach($tags as $tag){
+			$tag = esc_sql($tags);
+			array_push($tagCriteria, $tag);
+		}
+		if(count($tagCriteria)>0){
+			$criteria = " WHERE 1 ";
+			foreach($tagCriteria as $tag){
+				$criteria = $criteria." AND tags LIKE '%".$searchValue."%' ")
+			}
+		}
+	}
+error_log("SEARCHING FOR BIO LIKE: ".$criteria);
+	$querystr = "
+	    SELECT ".$table.".* 
+	    FROM ".$table."
+	    ".$criteria."
+	    ".$sorting."
+	    LIMIT ".$offset.",".$limit."
+	";
+	$results = $wpdb->get_results($querystr, ARRAY_A);
+	$results = filterRowsLanguagization($results,["title","description"]);
+	return $results;
+}
+
 function filterRowsLanguagization($rows,$fields){
 	$desiredLanguage = getCookieLanguage();
 	$i;

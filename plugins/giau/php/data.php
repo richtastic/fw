@@ -287,6 +287,199 @@ function giau_data_default_insert_into_database(){
 			'ce-jessica.png',
 			'bio,contact'
 	);
+
+
+	// NAV-WIDGET
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_HOME_TEXT","Home");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_DEPARTMENTS_TEXT","Departments");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_STAFF_TEXT","Staff");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_FORMS_TEXT","Forms");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_CONTACT_TEXT","Contact");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_LACPC_TEXT","LACPC");
+
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_HOME_TEXT","home");
+	// giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION__TEXT","");
+	// giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION__TEXT","");
+	// giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION__TEXT","");
+	// giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION__TEXT","");
+	// giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION__TEXT","");
+
+
+
+	// widget 
+	widget_image_gallery = [
+	"alias" => "image_gallery",
+	"name" => "Giau Image Gallery",
+	"cssClass" => "giauImageGallery",
+	"jsClass" => "giau.ImageGallery",
+	"configuration" => '
+		{
+			"fields": [
+				{
+					"name": "autoplay",
+					"type": "number"
+				},
+				{
+					"name": "display_navigation",
+					"type": "boolean"
+				},
+				{
+					"name": "style",
+					"type": "string"
+				},
+				{
+					"name": "images",
+					"type": "array-image"
+				}
+		}
+	'];
+	/*
+	ALL TYPES: -- all literals are strings later parsed into actual primitive types in JS as needed
+		boolean = boolean
+		number = int, float
+		string = string
+		image = string, expecting an image URL
+			=> sub attribute languagization
+		array-<sub-type>
+				{
+					"name": "title",
+					"type": "string"
+					"languagization: "true"
+				}
+	*/
+	// section 
+	section_image_gallery_home_page_top = [
+		"name" => "home page top image gallery"
+		"widget" => "image_gallery",
+		"configuration" => '
+		{
+			"autoplay": "10000",
+			"display_navigation": "true",
+			"style": "position:relative; width:100%; height:400px;",
+			"images": [
+				"featured_01_opt.png",
+				"featured_02_opt.png"
+			]
+		}
+		'
+ 	];
+
+	// page
+	/*
+		id int NOT NULL AUTO_INCREMENT,
+		created VARCHAR(32) NOT NULL,
+		modified VARCHAR(32) NOT NULL,
+		name VARCHAR(255) NOT NULL,
+		sectionList VARCHAR(65535) NOT NULL,
+	*/
+
+	widget_front_page_navigation = [
+		"" => ""
+	]
+	// PAGE - MAIN
+	page_front_page = [
+		"name" => "Home Page"
+		"title" => ""
+		"widgets" => "?,?,?"
+	]
+	// PAGE - DEPARTMENTS
+	page_departments_nursery = [
+		"title" => ""
+	]
+
+	// SUB-NAV-WIDGET
+
+	//EN|KO
+	//HomeDepartmentsStaffFormsContact UsLACPC
+
+
+	// PAGE DEPARTMENT - NURSURY
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_TITLE_TEXT","NURSERY");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SUBTITLE_TEXT","");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_STATEMENT_TITLE_TEXT","Nursery of Overflowing Love");
+
+
+
+
+	/*
+	$departmentPageDataPageNursery = [
+		"heading" => "NURSERY",
+		"statement_title" => "Nursery of Overflowing Love",
+		"statement_body" => "And now these three remain: fath, hope and love, but the greatest of these is love. - 1 Corinthians 13:13",
+		"statement_image_suffix" => "featured_nursery.png",
+		"statement_color_bg" => "#CBC42D",
+		"statement_color_top" => "#BBBB22",
+		"statement_color_bot" => "#BBBB22",
+		"services" => [
+			[
+				"title" => "Sunday Worship<br/>1st Service",
+				"body" => "9:00 AM<br/>@ Nursery Worship Room<br/>(in Nursery Building)"
+			],
+			[
+				"title" => "Sunday Worship<br/>2nd Service",
+				"body" => "11:00 AM<br/>@ Nursery Worship Room<br/>(in Nursery Building)"
+			],
+			[
+				"title" => "Friday Night<br/>Fellowship",
+				"body" => "8:00 PM<br/>@ Nursery Building"
+			]
+		],
+		"personnel" => [
+			[
+				"display_name" => "Jessica Won",
+				"display_email" => "jcb4jessica@gmail.com",
+				"display_phone" => "(323) 203-4044",
+				"image_relative_path" => "ce-jessica.png"
+			]
+		],
+		"breakdown" => [
+			[
+				"type" => "bold",
+				"display" => "The Nursery department at LACPC envisions a children's ministry that follows the overarching theme of the education department, \"Father's House.\" Through nursery department's worship, gudance, and nuturing, we hope to restablish the following:"
+			],
+			[
+				"type" => "featured",
+				"display" => "1"
+			],
+			[
+				"type" => "info",
+				"display" => "Family worships and communication with families that will enrich the spiritual lives of our young children."
+			],
+			[
+				"type" => "featured",
+				"display" => "2"
+			],
+			[
+				"type" => "info",
+				"display" => "Family visitations that will enhance the love of God."
+			],
+			[
+				"type" => "featured",
+				"display" => "3"
+			],
+			[
+				"type" => "info",
+				"display" => "Revival and acceptance of multicultural children and families."
+			],
+		],
+		"image_gallery" => [ // TODO : NURSERY IMAGES
+			"prefix" => relativePathIMG()."departments/galleries/"."elementary/",
+			"images" => [
+				"gallery_01.png",
+				"gallery_02.png",
+				"gallery_03.png",
+				"gallery_04.png",
+				"gallery_05.png",
+				"gallery_06.png",
+				"gallery_07.png",
+				"gallery_08.png",
+				"gallery_09.png"
+			]
+		]
+	];
+	*/
+
+
 }
 
 
