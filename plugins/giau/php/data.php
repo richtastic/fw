@@ -359,14 +359,22 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_BODY_TEXT","\"These commandments I give you today are to be upon your hearts. Impress them on your children. Talk about them when you sit at home and when you walk along the road, when you are down and when you get up.\"");
 	giau_insert_languagization($langEng,"PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_TITLE_TEXT","Deuteronomy 6:6-7");
 
-	$section_id_text_home_page_1 = giau_insert_section($widget_id_text_display,
+	$section_id_text_home_page_deuteronomy_title = giau_insert_section($widget_id_text_display,
 		[
-			// "name" => "home page quote deuteronomy 6, 6:7",
-			// "configuration" => [
+				"text" => "PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_TITLE_TEXT",
+				"class" => "centeredText standardText narrow50Text",
+		]
+	, []);
+	$section_id_text_home_page_deuteronomy_body = giau_insert_section($widget_id_text_display,
+		[
 				"text" => "PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_BODY_TEXT",
-				"class" => "centeredText standardText focusedCenterpieceWidth",
-				"style" => ""
-			//]
+				"class" => "centeredText importantText focusedCenterpieceWidth",
+		]
+	, []);
+	$section_id_text_home_page_deuteronomy_spacer = giau_insert_section($widget_id_text_display,
+		[
+				"text" => "",
+				"class" => "dividerText",
 		]
 	, []);
 
@@ -387,26 +395,21 @@ function giau_data_default_insert_into_database(){
 		]
  	, []);
 
-	// page
-	/*
-		id int NOT NULL AUTO_INCREMENT,
-		created VARCHAR(32) NOT NULL,
-		modified VARCHAR(32) NOT NULL,
-		name VARCHAR(255) NOT NULL,
-		sectionList VARCHAR(65535) NOT NULL,
-	*/
-
-	// $widget_front_page_navigation = [
-	// 	"" => ""
-	// ];
+	// PAGES 
+	
+	$PAGE_TAG_LIVE = "live";
 	// PAGE - MAIN
-	$page_id_front_page = giau_insert_page("home_page",[
-		$section_id_gallery_home_page_top
-		]);
+	$page_id_front_page = giau_insert_page("home_page",
+		[
+			$section_id_gallery_home_page_top,
+			section_id_text_home_page_deuteronomy_title,
+			section_id_text_home_page_deuteronomy_spacer,
+			section_id_text_home_page_deuteronomy_body
+		],
+		"".$PAGE_TAG_LIVE.""
+	);
 	// PAGE - DEPARTMENTS
-	$page_departments_nursery = [
-		"title" => ""
-	];
+	
 
 	// SUB-NAV-WIDGET
 

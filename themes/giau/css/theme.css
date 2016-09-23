@@ -253,11 +253,15 @@ ul {
 .dividerText {
 	padding: 10px;
 }
-/*.standardText {
-	font-size: 16px;
-	color: #333;
-	padding: 10px;
-}*/
+
+
+/* widget - display_text */
+.narrow50Text {
+	padding: 0% 25% 0% 25%;
+	width: 50%;
+}
+
+
 .standardText, .standardText b , .standardText i, .standardText u {
 	font-family: 'siteThemeLight', 'Arial', sans-serif;
 	font-size: 14px;

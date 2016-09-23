@@ -1021,6 +1021,10 @@ function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,
 	return $results;
 }
 
+function giau_get_page_id($pageID){
+	return giau_get_table_row_from_col(GIAU_FULL_TABLE_NAME_PAGE(), "id", $pageID);
+}
+
 function giau_get_section_id($sectionID){
 	return giau_get_table_row_from_col(GIAU_FULL_TABLE_NAME_SECTION(), "id", $sectionID);
 }

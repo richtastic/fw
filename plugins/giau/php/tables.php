@@ -19,6 +19,9 @@ function GIAU_TABLE_NAME_LANGUAGIZATION(){
 	return "languagization";
 }
 function GIAU_TABLE_NAME_PAGE(){
+	return "presentation_website";
+}
+function GIAU_TABLE_NAME_PAGE(){
 	return "presentation_page";
 }
 function GIAU_TABLE_NAME_SECTION(){
@@ -36,6 +39,9 @@ function GIAU_TABLE_NAME_BIO(){
 
 function GIAU_FULL_TABLE_NAME_LANGUAGIZATION(){
 	return WORDPRESS_TABLE_PREFIX()."".GIAU_TABLE_PREFIX()."".GIAU_TABLE_NAME_LANGUAGIZATION();
+}
+function GIAU_FULL_TABLE_NAME_WEBSITE(){
+	return WORDPRESS_TABLE_PREFIX()."".GIAU_TABLE_PREFIX()."".GIAU_TABLE_NAME_WEBSITE();
 }
 function GIAU_FULL_TABLE_NAME_PAGE(){
 	return WORDPRESS_TABLE_PREFIX()."".GIAU_TABLE_PREFIX()."".GIAU_TABLE_NAME_PAGE();
@@ -138,10 +144,28 @@ function giau_create_database(){
 		modified VARCHAR(32) NOT NULL,
 		name VARCHAR(255) NOT NULL,
 		sectionList VARCHAR(65535) NOT NULL,
+		tags VARCHAR(255) NOT NULL,
 		UNIQUE KEY id (id)
 		) $charset_collate
 	;";
 	dbDelta( $sql );
+
+	// WEBSITE
+	// id = unique entry number EG: 123
+	// created = ISO-8601 timestamp first made  EG: 2016-07-01T18:35:43.0000Z
+	// modified = ISO-8601 timestamp last changed  EG: 2015-06-28T12:34:56.0000Z
+	// start_page = main page id
+	// 
+	$sql = "CREATE TABLE ".GIAU_FULL_TABLE_NAME_WEBSITE()." (
+		id int NOT NULL AUTO_INCREMENT,
+		created VARCHAR(32) NOT NULL,
+		modified VARCHAR(32) NOT NULL,
+		start_page int NOT NULL,
+		UNIQUE KEY id (id)
+		) $charset_collate
+	;";
+	dbDelta( $sql );
+
 
 	// CALENDAR
 	// id = unique entry number EG: 123
@@ -211,6 +235,10 @@ function giau_remove_database(){
 
 	// LANGUAGIZATION
 	$sql = "DROP TABLE IF EXISTS ".GIAU_FULL_TABLE_NAME_LANGUAGIZATION()." ;";
+	$wpdb->query($sql);
+
+	// WEBSITE
+	$sql = "DROP TABLE IF EXISTS ".GIAU_FULL_TABLE_NAME_WEBSITE()." ;";
 	$wpdb->query($sql);
 
 	// PAGE
@@ -354,7 +382,8 @@ function giau_insert_page($pageName, $sectionIDList, $tags){
 			"created" => $timestampNow,
 			"modified" => $timestampNow,
 			"name" => $pageName,
-			"sectionList" => $sectionList
+			"sectionList" => $sectionList,
+			"tags" => $tags
 		)
 	);
 	return $wpdb->insert_id;

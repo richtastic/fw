@@ -239,20 +239,37 @@ function create_page(){
 	<body style="bgColor:#F00; margin: 0 auto;">
 
 <?php
+
+function fillOutPageFromID($pageID){
+	$page = giau_get_page_id($pageID);
+	if($page!=null){
+		$sectionList = $page["sectionList"]
+		if($sectionList){
+			$sectionList = split(",",$sectionList);
+			foreach($sectionID in $sectionList){
+				fillOutSectionFromID($sectionID);
+			}
+		}
+		// $widgetID = $section["widget"];
+		// $widget = giau_get_widget_id($widgetID);
+		// if($widget!==null){
+		// 	fillOutSectionFromWidget($widget,$section);
+		// }
+	}else{
+		error_log("NO PAGE");
+	}
+}
+
 function fillOutSectionFromID($sectionID){
 	$section = giau_get_section_id($sectionID);
-	// error_log("  section: ".$section );
-	// error_log("  section: ".print_r($section) );
 	if($section!=null){
 		$widgetID = $section["widget"];
-		//error_log("GOT SECTION: ".$widgetID);
 		$widget = giau_get_widget_id($widgetID);
 		if($widget!==null){
-			//error_log("GOT WIDGET: ".$widget["name"]);
 			fillOutSectionFromWidget($widget,$section);
 		}
 	}else{
-		error_log("NO SECTION ");
+		error_log("NO SECTION");
 	}
 }
 function fillOutSectionFromWidget($widget,$section){
@@ -281,7 +298,8 @@ function handle_widget_text_display($widget,$section){
 
 <?php
 
-fillOutSectionFromID(1);
+fillOutPageFromID(1);
+//fillOutSectionFromID(1);
 
 ?>
 
@@ -379,7 +397,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	<!-- INFO STATEMENT GROUP 2 -->
 	<div class="sectionContainerMissionStatement limitedWidth"  style="">
 		<div class="centeredText importantText focusedCenterpieceWidth">Deuteronomy 6:6-7</div>
-		<div class="centeredText dividerText focusedCenterpieceWidth"></div>
+		<div class="dividerText"></div>
 		<div class="centeredText standardText focusedCenterpieceWidth">"These commandments I give you today are to be upon your hearts. Impress them on your children. Talk about them when you sit at home and when you walk along the road, when you are down and when you get up."</div>
 	</div>
 
