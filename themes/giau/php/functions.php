@@ -243,24 +243,20 @@ function create_page(){
 function fillOutPageFromID($pageID){
 	$page = giau_get_page_id($pageID);
 	if($page!=null){
-		$sectionList = $page["sectionList"]
+		$sectionList = $page["sectionList"];
 		if($sectionList){
-			$sectionList = split(",",$sectionList);
-			foreach($sectionID in $sectionList){
+			$sectionList = explode(",",$sectionList);
+			foreach($sectionList as $sectionID){
 				fillOutSectionFromID($sectionID);
 			}
 		}
-		// $widgetID = $section["widget"];
-		// $widget = giau_get_widget_id($widgetID);
-		// if($widget!==null){
-		// 	fillOutSectionFromWidget($widget,$section);
-		// }
 	}else{
 		error_log("NO PAGE");
 	}
 }
 
 function fillOutSectionFromID($sectionID){
+	error_log("fillOutSectionFromID: ".$sectionID);
 	$section = giau_get_section_id($sectionID);
 	if($section!=null){
 		$widgetID = $section["widget"];
@@ -277,6 +273,8 @@ function fillOutSectionFromWidget($widget,$section){
 	$lookup = [];
 	// lookup table
 	$lookup["text_display"] = handle_widget_text_display;
+	$lookup["vertical_divider"] = handle_widget_vertical_divider;
+	$lookup["category_listing"] = handle_widget_category_listing;
 
 	$fxn = $lookup[$widgetName];
 	if($fxn!=null){
@@ -287,12 +285,109 @@ function fillOutSectionFromWidget($widget,$section){
 function handle_widget_text_display($widget,$section){
 	$sectionJSON = json_decode($section["configuration"],true);
 	$text = $sectionJSON["text"];
-	$text = giau_languagization_substitution($text);
+		$text = giau_languagization_substitution($text,null);
 	$class = $sectionJSON["class"];
 	?>
 	<div class="<?php echo $class; ?>"><?php echo $text; ?></div>
 	<?php
 }
+
+function handle_widget_vertical_divider($widget,$section){
+	$widgetJSON = decodeWidget($widget);
+	$sectionJSON = decodeSection($section);
+	$show_bar = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"show_bar");
+	// <div class="sectionContainerDividerSmall limitedWidth"  style="">
+	?>
+	
+	<div class="giauVerticalDividerContainer limitedWidth"  style="">
+	<?php
+	if($show_bar){
+		?>
+		<div class="giauVerticalDividerBar"  style=""></div>
+		<?php
+	}
+	?>
+	</div>
+	<?php
+}
+
+function handle_widget_category_listing($widget,$section){
+	$widgetJSON = decodeWidget($widget);
+	$sectionJSON = decodeSection($section);
+	$categoryList = $sectionJSON["categories"];
+	$categoryLength = count($categoryList);
+	//$rounded = section_get_value_widget_string($widgetJSON,$sectionJSON,"rounded");
+	$rounded = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"rounded") ? "true" :  "false";
+	/*
+
+	var propertyData = "data-data";
+	var propertyTitle = "data-title";
+	var propertyImage = "data-image";
+	var propertyURL = "data-url";
+	var propertyShading = "data-shading";
+	var propertyCover = "data-cover";
+	var propertyRounded = "data-rounded";
+	*/
+	?>
+	<div class="giauCategoryListingContainer limitedWidth" style="">
+		<div class="giauCategoryListing">
+			<?php
+			$i;
+			for($i=0;$i<$categoryLength;++$i){
+				$category = $categoryList[$i];
+				$image = $category["image"];
+				$name = $category["name"];
+				$uri = $category["uri"];
+				$shading = "";
+				$cover = "";
+				?>
+				<div style="display:none;" data-data="true" data-rounded="<?php echo $rounded; ?>" data-title="<?php echo $name; ?>" data-image="<?php echo $image; ?>" data-url="<?php echo $uri; ?>" data-cover="<?php echo $cover; ?>"  data-shading="<?php echo $shading; ?>" ?>" ></div>
+				<?php
+			}
+			?>
+		</div>
+	</div>
+	<?php
+	/*
+
+	var propertyData = "data-data";
+	var propertyTitle = "data-title";
+	var propertyImage = "data-image";
+	var propertyURL = "data-url";
+	var propertyShading = "data-shading";
+	var propertyCover = "data-cover";
+	var propertyRounded = "data-rounded";
+	*/
+}
+function decodeSection($section){
+	return json_decode($section["configuration"],true);
+}
+function decodeWidget($widget){
+	return json_decode($widget["configuration"],true);
+}
+function section_get_value_widget_boolean($widget,$section,$field){
+	if(!$section || !$widget){
+		return false;
+	}
+	$sectionValue = $section[$field]; // value
+	$widgetInfo = $widget[$field]; // info
+	if($sectionValue=="true"){
+		return true;
+	}
+	return false;
+}
+function section_get_value_widget_string($widget,$section,$field){
+	if(!$section || !$widget){
+		return "";
+	}
+	$sectionValue = $section[$field]; // value
+	$widgetInfo = $widget[$field]; // info
+	if($sectionValue!=null){
+		return $sectionValue;
+	}
+	return "";
+}
+
 ?>
 
 
@@ -350,27 +445,13 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	</div>
 
 	<!-- DEPARTMENTS -->
-	<div class="sectionContainerDepartments limitedWidth" style="background-color: rgba(255,255,255,1.0);">
-		<div class="headerSectionMain">DEPARTMENTS</div>
+	<!--<div class="sectionContainerDepartments limitedWidth" style="">
 		<div class="departmentInternalContainer">
 			<div class="giauCategoryListing"></div>
 		</div>
 		<div class="footerSectionMain"></div>
 	</div>
-
-	<!-- DIVIDER -->
-	<div class="sectionContainerDividerSmall limitedWidth"  style=""></div>
-
-	<!-- INFO STATEMENT GROUP -->
-	<div class="sectionContainerMissionStatement limitedWidth"  style="">
-		<!-- background-color: rgba(230,228,222,1.0); -->
-		<!-- <div class="centeredText ultraImportantText">Through worship, Bible Study & accountability</div> -->
-		<!-- <div class="centeredText importantText">Bible Study & accountability</div> -->
-		<!-- <div class="centeredText standardText">we strive to provide an environment for our <b>children and youth</b> to experience the grace of God.</div> -->
-		<div class="centeredText importantText focusedCenterpieceWidth">Through worship, Bible Study & accountability,</div>
-		<div class="centeredText dividerText focusedCenterpieceWidth"></div>
-		<div class="centeredText standardText focusedCenterpieceWidth">We strive to provide an environment for our children and youth to experience the grace of God. In addition, we aim to serve parents and entire families as well. More than just a children and youth ministry, our Christian Education department is a family ministry.</div>
-	</div>
+	-->
 
 	<!-- PHOTO GALLERY -->
 	<div class="limitedWidth"  style="background-color: rgba(255,255,255,1.0);">
@@ -390,17 +471,6 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 		?>
 		</div>
 	</div>
-
-	<!-- DIVIDER -->
-	<div class="sectionContainerDividerSmall limitedWidth"  style=""></div>
-
-	<!-- INFO STATEMENT GROUP 2 -->
-	<div class="sectionContainerMissionStatement limitedWidth"  style="">
-		<div class="centeredText importantText focusedCenterpieceWidth">Deuteronomy 6:6-7</div>
-		<div class="dividerText"></div>
-		<div class="centeredText standardText focusedCenterpieceWidth">"These commandments I give you today are to be upon your hearts. Impress them on your children. Talk about them when you sit at home and when you walk along the road, when you are down and when you get up."</div>
-	</div>
-
 
 	<!-- CALENDAR EVENTS -->
 	<div class="sectionContainerDepartments limitedWidth" style="background-color: rgba(255,255,255,1.0);">

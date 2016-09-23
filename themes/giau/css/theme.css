@@ -224,9 +224,7 @@ ul {
 }
 
 /* DEPARTMENTS */
-.sectionContainerDepartments {
-	padding: 10px;
-}
+
 .departmentInternalContainer {
 	padding: 4px;
 }
@@ -475,6 +473,34 @@ ul {
 .giauTableDisplayData table {
 	background-color: #FFF;
 }
+
+
+
+/* widget : vertical divider */
+.giauVerticalDividerContainer {
+	padding: 10px;
+	width: 100%;
+	display: inline-block;
+	text-align: center;
+}
+.giauVerticalDividerBar {
+	height: 6px;
+	width: 40%;
+	background-color: #000;
+	margin: 0 auto;
+	display: inline-block;
+}
+
+/* widget : category listing */
+.giauCategoryListingContainer {
+	padding: 10px;
+}
+.giauCategoryListing {
+	
+}
+
+
+
 
 table {
 	border-collapse: collapse;

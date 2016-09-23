@@ -1034,7 +1034,6 @@ function giau_get_widget_id($widgetID){
 }
 
 function giau_get_table_row_from_col($table,$column,$value){
-	error_log("giau_get_table_row_from_col: ".$table." ".$column." ".$value);
 	if(!$table || !$column || !$value){
 		return null;
 	}
@@ -1185,6 +1184,9 @@ function commaSeparatedStringFromString($input, $limitCount){
 	if(!$input){
 		return "";
 	}
+	if(is_array($input)){
+		$input = implode(",", $input);
+	}
 	$split = explode(",", $input);
 	$i;
 	$len = count($split);
@@ -1207,8 +1209,8 @@ function commaSeparatedStringFromString($input, $limitCount){
 	for($i=0; $i<$len; ++$i){
 		$tag = $cleaned[$i];
 		$l = strlen($len);
-		if($stringLength+$l <= $limitCount){
-			$output = $output."".$tag;
+		if($stringLength+$l <= ($limitCount+1)){
+			$output = $output.",".$tag;
 			$stringLength += $l;
 		}else{
 			break;

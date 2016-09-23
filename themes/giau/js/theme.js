@@ -40,7 +40,7 @@ giau.prototype.initialize = function(){
 	// CATEGORIES
 	var categoryListings = $(".giauCategoryListing");
 	categoryListings.each(function(index, element){
-		var listing = new giau.GalleryListing(element);
+		var listing = new giau.CategoryListing(element);
 	});
 
 	// CALENDARS
@@ -421,7 +421,7 @@ Code.setStylePosition(this._container,"relative");
 			imageURL = this.personnelImagePrefix + "" + imageURL;
 			Code.setSrc(imageIconElement, imageURL);
 			Code.setStyleWidth(imageIconElement,"100%");
-			Code.addStyle(imageIconElement,"border-radius:100%;");
+			Code.setStyleBorderRadius(imageIconElement,"100%;");
 			//Code.setStyleMargin(imageIconElement,"0 10px");
 		var nameElement = Code.newDiv();
 			Code.setContent(nameElement,person["display_name"]);
@@ -560,7 +560,7 @@ var row;
 	}
 }
 
-giau.GalleryListing = function(element){
+giau.CategoryListing = function(element){
 	this._container = element;
 
 	// LAYOUT
@@ -568,45 +568,39 @@ giau.GalleryListing = function(element){
 	Code.setStyleDisplay(this._container, "inline-block");
 	Code.setStyleWidth(this._container, "100%");
 
-	var listings = [];
-	var departmentImagePrefix = "./wp-content/themes/giau/img/departments/";
+	var propertyData = "data-data";
+	var propertyTitle = "data-title";
+	var propertyImage = "data-image";
+	var propertyURL = "data-url";
+	var propertyShading = "data-shading";
+	var propertyCover = "data-cover";
+	var propertyRounded = "data-rounded";
 
-	listings.push({
-		"title":"Nursery",
-		"shading_color":0x99b9cc33,
-		"icon_url":(departmentImagePrefix+"icon_leaf.png"),
-		"image_url":(departmentImagePrefix+"nursery.jpg"),
-	});
-	listings.push({
-		"title":"Kindergarten",
-		"shading_color":0x99fee600,
-		"icon_url":(departmentImagePrefix+"icon_duck.png"),
-		"image_url":(departmentImagePrefix+"kindergarten.jpg"),
-	});
-	listings.push({
-		"title":"Elementary",
-		"shading_color":0x99f15a29,
-		"icon_url":(departmentImagePrefix+"icon_apple.png"),
-		"image_url":(departmentImagePrefix+"elementary.jpg"),
-	});
-	listings.push({
-		"title":"Junior High",
-		"shading_color":0x99b81e70,
-		"icon_url":(departmentImagePrefix+"icon_pencil.png"),
-		"image_url":(departmentImagePrefix+"junior_high.jpg"),
-	});
-	listings.push({
-		"title":"High School",
-		"shading_color":0x993a1955,
-		"icon_url":(departmentImagePrefix+"icon_book.png"),
-		"image_url":(departmentImagePrefix+"high_school.jpg"),
-	});
-	listings.push({
-		"title":"Korean School",
-		"shading_color":0x99c92127,
-		"icon_url":(departmentImagePrefix+"icon_yinyang.png"),
-		"image_url":(departmentImagePrefix+"korean_school.jpg"),
-	});
+	var listings = [];
+
+	var i;
+	for(i=0; i<Code.numChildren(this._container); ++i){
+		var div = Code.getChild(this._container,i);
+		console.log(div);
+		if(Code.hasProperty(div,propertyData)){
+			var title = Code.getPropertyOrDefault(div,propertyTitle, null);
+			var image = Code.getProperty(div,propertyImage, null);
+			var url = Code.getPropertyOrDefault(div,propertyURL, null);
+			var shading = Code.getPropertyOrDefault(div,propertyShading, null);
+			var cover = Code.getPropertyOrDefault(div,propertyCover, null);
+			var rounded = Code.getPropertyOrDefault(div,propertyRounded, false) ? true : false;
+
+			var departmentImagePrefix = "./wp-content/themes/giau/img/departments/";
+			listings.push({
+				"title":title,
+				"shading_color":shading, // HEX: 0xAARRGGBB
+				"icon_url":cover,
+				"image_url":image,
+				"rounded":rounded,
+				"link_url":url
+			});
+		}
+	}
 
 	this._galleryList = listings;
 
@@ -618,6 +612,7 @@ giau.GalleryListing = function(element){
 	var i, len = listings.length;
 	for(i=0; i<len; ++i){
 		var listing = listings[i];
+		var url = listing["link_url"];
 		var container = Code.newDiv();
 		var title = Code.newDiv();
 		Code.setContent(title,listing["title"]);
@@ -629,8 +624,11 @@ giau.GalleryListing = function(element){
 			Code.setStyleHeight(img,"100%");
 			Code.setStyleLeft(img,"0px");
 			Code.setStyleTop(img,"0px");
-		var icon = Code.newImage();
-			Code.setSrc(icon,listing["icon_url"]);
+		var icon_url = listing["icon_url"];
+		var icon = null;
+		if(icon_url){
+			icon = Code.newImage();
+			Code.setSrc(icon,icon_url);
 			Code.setStyleDisplay(icon,"inline");
 			Code.setStylePosition(icon,"absolute");
 			Code.setStyleLeft(icon,"0px");
@@ -638,6 +636,7 @@ giau.GalleryListing = function(element){
 			Code.setStyleWidth(icon,iconPercentSize+"%");
 			//Code.setStyleHeight(icon,"50%");
 			Code.setStylePadding(icon,iconTopPercent+"% 0% 0% "+iconLeftPercent+"%");
+		}
 		var shader = Code.newDiv();
 			var colorHex = listing["shading_color"];
 			var colorJS = Code.getJSColorFromARGB(colorHex);
@@ -650,18 +649,30 @@ giau.GalleryListing = function(element){
 		var contentContainer = Code.newDiv();
 			Code.setStyleVerticalAlign(contentContainer,"middle");
 			Code.setStyleTextAlign(contentContainer,"center");
+		var anchor = Code.newAnchor(url);
 
-			Code.addChild(this._container,container);
-			Code.addChild(container,contentContainer);
-				Code.addChild(contentContainer, img);
-				Code.addChild(contentContainer, shader);
-				Code.addChild(contentContainer, icon);
-			Code.addChild(container,title);
+			// Code.addChild(this._container,container);
+			// Code.addChild(container,contentContainer);
+			// 	Code.addChild(contentContainer, img);
+			// 	Code.addChild(contentContainer, shader);
+			// 	Code.addChild(contentContainer, icon);
+			// Code.addChild(container,title);
+			Code.addChild(this._container,anchor);
+				Code.addChild(anchor,container);
+				Code.addChild(container,contentContainer);
+					Code.addChild(contentContainer, img);
+					Code.addChild(contentContainer, shader);
+					if(icon){
+						Code.addChild(contentContainer, icon);
+					}
+				Code.addChild(container,title);
+console.log("done")
 		listing["content"] = contentContainer;
 		listing["image"] = img;
 		listing["text"] = title;
 		listing["icon"] = icon;
 		listing["element"] = container;
+		listing["anchor"] = anchor;
 	}
 	this.updateLayout();
 
@@ -670,13 +681,13 @@ giau.GalleryListing = function(element){
 	this._jsDispatch.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
 }
 
-giau.GalleryListing.prototype._handleWindowResizedFxn = function(){
+giau.CategoryListing.prototype._handleWindowResizedFxn = function(){
 	this.updateLayout();
 }
 
-giau.GalleryListing.prototype.updateLayout = function(){
+giau.CategoryListing.prototype.updateLayout = function(){
 	var listings = this._galleryList;
-
+console.log("layout")
 	var maximumColumnCount = 3;
 	var elementMinWidth = 292;
 	var elementMaxWidth = 196;
@@ -684,8 +695,12 @@ giau.GalleryListing.prototype.updateLayout = function(){
 	var heightContainer = $(this._container).height();
 
 	var elementCount = listings.length;
-	var elementWidth = 200;//elementMinWidth;
-	var elementHeight = 150;//elementMinWidth;
+	// var elementWidth = 200;//elementMinWidth;
+	// var elementHeight = 150;//elementMinWidth;
+// SHOULD GET FROM IMAGES
+	var elementWidth = 180;
+	var elementHeight = 180;
+
 	var elementWidthToHeight = elementWidth/elementHeight;
 	var colCount = Math.floor(widthContainer/elementWidth);
 
@@ -725,12 +740,19 @@ giau.GalleryListing.prototype.updateLayout = function(){
 			Code.setStyleWidth(content, elementWidth+"px");
 			Code.setStyleHeight(content, elementHeight+"px");
 		var icon = listing["icon"];
+		if(icon){
 			Code.setStyleMargin(icon, "0 auto");
+		}
 		var img = listing["image"];
 			Code.setStylePosition(img, "relative");
 			Code.setStyleWidth(img, "100%");
 			Code.setStyleHeight(img, "100%");
 			Code.setStyleMargin(img, "0");
+		if(listing["rounded"]==true){
+			Code.setStyleBorderRadius(img,"100%;");
+		}else{
+			Code.setStyleBorderRadius(img,"0;");
+		}
 		var title = listing["text"];
 		//title.style.font.size = 32+"px";
 		//title.style.fontsize = 32+"px";

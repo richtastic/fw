@@ -18,7 +18,7 @@ function GIAU_TABLE_PREFIX(){
 function GIAU_TABLE_NAME_LANGUAGIZATION(){
 	return "languagization";
 }
-function GIAU_TABLE_NAME_PAGE(){
+function GIAU_TABLE_NAME_WEBSITE(){
 	return "presentation_website";
 }
 function GIAU_TABLE_NAME_PAGE(){
