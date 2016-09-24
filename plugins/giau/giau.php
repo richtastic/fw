@@ -976,7 +976,7 @@ function giau_languagization_paginated($offset,$count,$sortIndexDirection){
 	return $results;
 }
 
-function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,$endDate){
+function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,$endDate, $tags){
 	// offset must be positive
 	if(!$offset || $offset < 0){
 		$offset = 0;
@@ -997,16 +997,25 @@ function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,
 	global $wpdb;
 	$table = GIAU_FULL_TABLE_NAME_CALENDAR();
 	$criteria = "";
-	//$criteria = " WHERE start_date >= ".$startDate." AND start_date <= ".$endDate." "; // BETWEEN, duration?
 	
-	//$criteria = " WHERE start_date BETWEEN ".$startDate." AND ".$endDate." "; // BETWEEN, duration?
-	$criteria = " ";
+	$criteria = [];
 	if($startDate && $endDate){
 		// double-check date values if not null
 		$startDate = esc_sql($startDate);
 		$endDate = esc_sql($endDate);
 		$dateFormat = "%Y-%m-%d %k:%i:%s.%f";
-		$criteria = " WHERE STR_TO_DATE(start_date,\"".$dateFormat."\") BETWEEN STR_TO_DATE(\"".$startDate."\",\"".$dateFormat."\") AND STR_TO_DATE(\"".$endDate."\",\"".$dateFormat."\") ";
+		array_push($criteria, "STR_TO_DATE(start_date,\"".$dateFormat."\") BETWEEN STR_TO_DATE(\"".$startDate."\",\"".$dateFormat."\") AND STR_TO_DATE(\"".$endDate."\",\"".$dateFormat."\") ";
+	}
+	if($tags!=null && count($tags)>0 ){
+		foreach($tags as $tag){
+			$tag = esc_sql($tag);
+			//array_push($criteria, " tags LIKE '%".$tag."%' "); // TODO: "cat" will get BOTH  "the_cat" and "a_cat"
+			// [^,]TAG[,$]
+			array_push($criteria, " tags REGEXP \"[^,]".$tag."[,$]\" "); 
+		}
+	}
+	if(count($criteria)>0){
+		$criteria = "WHERE ".(implode(" AND ", pieces))
 	}
 
 	$querystr = "

@@ -144,29 +144,35 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","Junior High & High School Winter Retreat");
 	giau_insert_languagization($langKor,"CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","중학교 과 고등학교 겨울 수련회");
 
-	$calendar_tag_front_page = "frontpage";
+	$calendar_tag_front_page = "frontpage";//"fp";
+	$calendar_tag_nursery = "nrs";//"nursery";
+	$calendar_tag_kindergarten = "kg";//"kindergarten";
+	$calendar_tag_elementary = "ele";//"elementary";
+	$calendar_tag_juniorhigh = "jrh";//"juniorhigh";
+	$calendar_tag_highschool = "hs";//"highschool";
+	$calendar_tag_koreanschool = "ks";//"koreanschool";
 
 	// CALENDAR ITEMS
 	// set 1
-	giau_insert_calendar("event_childrens_day_2016","CALENDAR_EVENT_CHILDRENS_DAY_2016_TITLE_TEXT","CALENDAR_EVENT_CHILDRENS_DAY_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 5, 1,11, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page]);
-	giau_insert_calendar("event_love_festival_2016","CALENDAR_EVENT_LOVE_FESTIVAL_2016_TITLE_TEXT","CALENDAR_EVENT_LOVE_FESTIVAL_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 5, 7, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page]);
-	giau_insert_calendar("event_mothers_day_2016","CALENDAR_EVENT_MOTHERS_DAY_2016_TITLE_TEXT","CALENDAR_EVENT_MOTHERS_DAY_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 5, 8, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page]);
-	giau_insert_calendar("event_teachers_day_2016","CALENDAR_EVENT_TEACHERS_DAY_2016_TITLE_TEXT","CALENDAR_EVENT_TEACHERS_DAY_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 5,15,12,30, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page]);
+	giau_insert_calendar("event_childrens_day_2016","CALENDAR_EVENT_CHILDRENS_DAY_2016_TITLE_TEXT","CALENDAR_EVENT_CHILDRENS_DAY_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 5, 1,11, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_love_festival_2016","CALENDAR_EVENT_LOVE_FESTIVAL_2016_TITLE_TEXT","CALENDAR_EVENT_LOVE_FESTIVAL_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 5, 7, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_mothers_day_2016","CALENDAR_EVENT_MOTHERS_DAY_2016_TITLE_TEXT","CALENDAR_EVENT_MOTHERS_DAY_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 5, 8, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_teachers_day_2016","CALENDAR_EVENT_TEACHERS_DAY_2016_TITLE_TEXT","CALENDAR_EVENT_TEACHERS_DAY_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 5,15,12,30, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
 	giau_insert_calendar("event_prayer_meeting_2016","CALENDAR_EVENT_PRAYER_MEETING_JUNE_2016_TITLE_TEXT","CALENDAR_EVENT_PRAYER_MEETING_JUNE_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 6,10, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page]);
-	giau_insert_calendar("event_vacation_bible_study_2016","CALENDAR_EVENT_VACATION_BIBLE_SCHOOL_2016_TITLE_TEXT","CALENDAR_EVENT_VACATION_BIBLE_SCHOOL_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 6,17, 0, 0, 0, 0), 2*24*60*60*1000, [$calendar_tag_front_page]);
-	giau_insert_calendar("event_ce_graduation_2016","CALENDAR_EVENT_CE_GRADUATION_2016_TITLE_TEXT","CALENDAR_EVENT_CE_GRADUATION_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 6,26, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page]);
-	giau_insert_calendar("event_summer_mission_2016","CALENDAR_EVENT_SUMMER_MISSION_2016_TITLE_TEXT","CALENDAR_EVENT_SUMMER_MISSION_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 7, 1, 0, 0, 0, 0), 7*24*60*60*1000, [$calendar_tag_front_page]);	
-	giau_insert_calendar("event_jh_summer_retreat_2016","CALENDAR_EVENT_JH_SUMMER_RETREAT_2016_TITLE_TEXT","CALENDAR_EVENT_JH_SUMMER_RETREAT_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 7,31, 0, 0, 0, 0), 4*24*60*60*1000, [$calendar_tag_front_page]);
-	giau_insert_calendar("event_hs_summer_retreat_2016","CALENDAR_EVENT_HS_SUMMER_RETREAT_2016_TITLE_TEXT","CALENDAR_EVENT_HS_SUMMER_RETREAT_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 7,31, 0, 0, 0, 0), 4*24*60*60*1000, [$calendar_tag_front_page]);
+	giau_insert_calendar("event_vacation_bible_study_2016","CALENDAR_EVENT_VACATION_BIBLE_SCHOOL_2016_TITLE_TEXT","CALENDAR_EVENT_VACATION_BIBLE_SCHOOL_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 6,17, 0, 0, 0, 0), 2*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_ce_graduation_2016","CALENDAR_EVENT_CE_GRADUATION_2016_TITLE_TEXT","CALENDAR_EVENT_CE_GRADUATION_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 6,26, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_summer_mission_2016","CALENDAR_EVENT_SUMMER_MISSION_2016_TITLE_TEXT","CALENDAR_EVENT_SUMMER_MISSION_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 7, 1, 0, 0, 0, 0), 7*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_jh_summer_retreat_2016","CALENDAR_EVENT_JH_SUMMER_RETREAT_2016_TITLE_TEXT","CALENDAR_EVENT_JH_SUMMER_RETREAT_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 7,31, 0, 0, 0, 0), 4*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh]);
+	giau_insert_calendar("event_hs_summer_retreat_2016","CALENDAR_EVENT_HS_SUMMER_RETREAT_2016_TITLE_TEXT","CALENDAR_EVENT_HS_SUMMER_RETREAT_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 7,31, 0, 0, 0, 0), 4*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_highschool]);
 	// set 2
-	giau_insert_calendar("event_orange_tour_2016","CALENDAR_EVENT_ORANGE_TOUR_CONFERENCE_2016_TITLE_TEXT","CALENDAR_EVENT_ORANGE_TOUR_CONFERENCE_2016_TITLE_TEXT", stringFromHumanTime(2016, 9,20, 0, 0, 0, 0), 1*24*60*60*1000, [$calendar_tag_front_page]);
-	giau_insert_calendar("event_korean_challenge_2016","CALENDAR_EVENT_KOREAN_CHALLENGE_2016_TITLE_TEXT","CALENDAR_EVENT_KOREAN_CHALLENGE_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 9,25, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page]);
-	giau_insert_calendar("event_hallelujah_2016","CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT","CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT", stringFromHumanTime(2016,10,31, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page]);
-	giau_insert_calendar("event_pastor_retreat_2016","CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT","CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT", stringFromHumanTime(2016,11,10, 0, 0, 0, 0), 1*24*60*60*1000, [$calendar_tag_front_page]);
-	giau_insert_calendar("event_thanksgiving_worship_2016","CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT","CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT", stringFromHumanTime(2016,11,20, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page]);
-	giau_insert_calendar("event_teacher_appreciation_2016","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT", stringFromHumanTime(2016,12,10, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page]);
-	giau_insert_calendar("event_christmas_celebration_2016","CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT","CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT", stringFromHumanTime(2016,12,23, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page]);
-	giau_insert_calendar("event_jh_hs_winter_retreat_2017","CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT", stringFromHumanTime(2017, 1, 2, 0, 0, 0, 0), 3*24*60*60*1000, [$calendar_tag_front_page]);
+	giau_insert_calendar("event_orange_tour_2016","CALENDAR_EVENT_ORANGE_TOUR_CONFERENCE_2016_TITLE_TEXT","CALENDAR_EVENT_ORANGE_TOUR_CONFERENCE_2016_TITLE_TEXT", stringFromHumanTime(2016, 9,20, 0, 0, 0, 0), 1*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_korean_challenge_2016","CALENDAR_EVENT_KOREAN_CHALLENGE_2016_TITLE_TEXT","CALENDAR_EVENT_KOREAN_CHALLENGE_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 9,25, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_hallelujah_2016","CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT","CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT", stringFromHumanTime(2016,10,31, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_pastor_retreat_2016","CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT","CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT", stringFromHumanTime(2016,11,10, 0, 0, 0, 0), 1*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_thanksgiving_worship_2016","CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT","CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT", stringFromHumanTime(2016,11,20, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_teacher_appreciation_2016","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT", stringFromHumanTime(2016,12,10, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_christmas_celebration_2016","CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT","CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT", stringFromHumanTime(2016,12,23, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_jh_hs_winter_retreat_2017","CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT", stringFromHumanTime(2017, 1, 2, 0, 0, 0, 0), 3*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
 
 	// ?
 	giau_insert_languagization($langEng,"","");
@@ -358,6 +364,7 @@ function giau_data_default_insert_into_database(){
 			"fields" => [
 				"categories" => [
 					"type" => "array-object",
+					"description" => "category items",
 					"fields" => [
 						"image" => [
 							"type" => "string-image",
@@ -367,8 +374,7 @@ function giau_data_default_insert_into_database(){
 							"type" => "string",
 							"description" => "name for item"
 						]
-					],
-					"description" => "category items"
+					]
 				],
 				"rounded" => [
 					"type" => "boolean",
@@ -391,7 +397,8 @@ function giau_data_default_insert_into_database(){
 			"fields" => [
 				"autoplay" => [
 					"type" => "number",
-					"description" => "time in milliseconds to autoplay, 0 or negative turns this off"
+					"description" => "time in milliseconds to autoplay, 0 or negative turns this off",
+					"hint" => "eg: 10000"
 				],
 				"display_navigation" => [
 					"type" => "boolean",
@@ -408,6 +415,144 @@ function giau_data_default_insert_into_database(){
 		]
 	);
 
+	// => FOOTER
+	$widget_id_footer = giau_insert_widget("bottom_footer",
+		[
+			"alias" => "bottom_footer",
+			"name" => "Giau Bottom Footer",
+			"cssClass" => "",
+			"jsClass" => "",
+			"fields" => [
+				// "?" => [
+				// 	"type" => "?",
+				// 	"description" => "?"
+				// ]
+			]
+		]
+	);
+
+	// => CALENDAR LISTING
+	$widget_id_calendar_listing = giau_insert_widget("calendar_listing",
+		[
+			"alias" => "calendar_listing",
+			"name" => "Giau Bottom Footer",
+			"cssClass" => "giauCalendarList",
+			"jsClass" => "giau.CalendarListView",
+			"fields" => [
+				"tags" => [
+					"type" => "array-string",
+					"description" => "list of tags to filter on"
+				],
+				"range_start" => [
+					"type" => "number",
+					"description" => "start date or lookback time (milliseconds)"
+				],
+				"range_end" => [
+					"type" => "number",
+					"description" => "end date or lookahead time (milliseconds)"
+				],
+				"relative" => [
+					"type" => "boolean",
+					"description" => "whether to use start/end range from current date or as absolute date"
+				],
+				"order_recent_first" => [
+					"type" => "boolean",
+					"description" => "order by earlier to later"
+				]
+				"min_count" => [
+					"type" => "number",
+					"description" => "minimum number of items to display"
+				]
+				"max_count" => [
+					"type" => "number",
+					"description" => "maximum number of items to display"
+				]
+			]
+		]
+	);
+
+	// => SOCIAL APPS
+	$widget_id_social_apps = giau_insert_widget("social_apps",
+		[
+			"alias" => "social_apps",
+			"name" => "Giau Social Apps",
+			"cssClass" => "",
+			"jsClass" => "",
+			"fields" => [
+				"facebook" => [
+					"type" => "array-object",
+					"description" => "facebook data",
+					"fields" => [
+						"uri" => [
+							"type" => "string",
+							"description" => "external link url"
+						],
+						"icon" => [
+							"type" => "string-image",
+							"description" => "display image"
+						]
+					]
+				],
+				"twitter" => [
+					"type" => "array-object",
+					"description" => "twitter data",
+					"fields" => [
+						"uri" => [
+							"type" => "string",
+							"description" => "external link url"
+						],
+						"icon" => [
+							"type" => "string-image",
+							"description" => "display image"
+						]
+					]
+				],
+				"instagram" => [
+					"type" => "array-object",
+					"description" => "instagram data",
+					"fields" => [
+						"uri" => [
+							"type" => "string",
+							"description" => "external link url"
+						],
+						"icon" => [
+							"type" => "string-image",
+							"description" => "display image"
+						]
+					]
+				],
+				"tumblr" => [
+					"type" => "array-object",
+					"description" => "tumblr data",
+					"fields" => [
+						"uri" => [
+							"type" => "string",
+							"description" => "external link url"
+						],
+						"icon" => [
+							"type" => "string-image",
+							"description" => "display image"
+						]
+					]
+				],
+				"email" => [
+					"type" => "array-object",
+					"description" => "email data",
+					"fields" => [
+						"uri" => [
+							"type" => "string",
+							"description" => "external link url"
+						],
+						"icon" => [
+							"type" => "string-image",
+							"description" => "display image"
+						]
+					]
+				],
+			]
+		]
+	);
+
 	giau_insert_languagization($langEng,"PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_BODY_TEXT","\"These commandments I give you today are to be upon your hearts. Impress them on your children. Talk about them when you sit at home and when you walk along the road, when you are down and when you get up.\"");
 	giau_insert_languagization($langEng,"PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_TITLE_TEXT","Deuteronomy 6:6-7");
 	giau_insert_languagization($langEng,"PAGE_HOME_QUOTE_PURPOSE_BODY_TEXT","Through worship, bible study & accountability, we strive to provide an environment for our children and youth to experience the grace of God. In addition, we aim to serve parents and entire families as well. More than just a children and youth ministry, our Christian Education department is a family ministry.");
@@ -416,92 +561,149 @@ function giau_data_default_insert_into_database(){
 		$section_category_prefix = "./wp-content/themes/giau/img/departments/";
 	$section_id_category_listing_departments = giau_insert_section($widget_id_category_listing,
 		[
-				"categories" => [
-					[
-						"image" => $section_category_prefix."category_nursery.png",
-						"name" => "Nursery",
-						"uri" => "./?page=departments&sp=nursery"
-					],
-					[
-						"image" => $section_category_prefix."category_kindergarten.png",
-						"name" => "Kindergarten",
-						"uri" => "./?page=departments&sp=kindergarten"
-					],
-					[
-						"image" => $section_category_prefix."category_elementary.png",
-						"name" => "Elementary",
-						"uri" => "./?page=departments&sp=elementary"
-					],
-					[
-						"image" => $section_category_prefix."category_junior_high.png",
-						"name" => "Junior High",
-						"uri" => "./?page=departments&sp=juniorhigh"
-					],
-					[
-						"image" => $section_category_prefix."category_high_school.png",
-						"name" => "High School",
-						"uri" => "./?page=departments&sp=highschool"
-					],
-					[
-						"image" => $section_category_prefix."category_korean_school.png",
-						"name" => "Korean School",
-						"uri" => "http://www.google.com"
-					]
+			"categories" => [
+				[
+					"image" => $section_category_prefix."category_nursery.png",
+					"name" => "Nursery",
+					"uri" => "./?page=departments&sp=nursery"
 				],
-				"class_image" => "",
-				"class_text" => "",
-				"rounded" => "true"
+				[
+					"image" => $section_category_prefix."category_kindergarten.png",
+					"name" => "Kindergarten",
+					"uri" => "./?page=departments&sp=kindergarten"
+				],
+				[
+					"image" => $section_category_prefix."category_elementary.png",
+					"name" => "Elementary",
+					"uri" => "./?page=departments&sp=elementary"
+				],
+				[
+					"image" => $section_category_prefix."category_junior_high.png",
+					"name" => "Junior High",
+					"uri" => "./?page=departments&sp=juniorhigh"
+				],
+				[
+					"image" => $section_category_prefix."category_high_school.png",
+					"name" => "High School",
+					"uri" => "./?page=departments&sp=highschool"
+				],
+				[
+					"image" => $section_category_prefix."category_korean_school.png",
+					"name" => "Korean School",
+					"uri" => "http://www.google.com"
+				]
+			],
+			"class_image" => "",
+			"class_text" => "",
+			"rounded" => "true"
 		]
 	, []);
 
+		$section_image_gallery_prefix = "./wp-content/themes/giau/img/featured/";
+	$section_id_gallery_home_page_primary = giau_insert_section($widget_id_image_gallery,
+		[
+			"autoplay" => "10000",
+			"display_navigation" => "false",
+			"images" => [
+				$section_image_gallery_prefix."featured_01_opt.png",
+				$section_image_gallery_prefix."featured_02_opt.png",
+				$section_image_gallery_prefix."featured_03_opt.png",
+				$section_image_gallery_prefix."featured_04_opt.png",
+				$section_image_gallery_prefix."featured_05_opt.png",
+				$section_image_gallery_prefix."featured_06_opt.png",
+			],
+			"style" => "",
+			"class" => ""
+		]
+	, []);
+	$section_id_image_gallery_home_secondary = giau_insert_section($widget_id_image_gallery,
+		[
+			"autoplay" => "10000",
+			"display_navigation" => "true",
+			"images" => [
+				$section_image_gallery_prefix."featured_01_opt.png",
+				$section_image_gallery_prefix."featured_02_opt.png",
+				$section_image_gallery_prefix."featured_03_opt.png",
+				$section_image_gallery_prefix."featured_04_opt.png",
+				$section_image_gallery_prefix."featured_05_opt.png",
+				$section_image_gallery_prefix."featured_06_opt.png",
+			],
+			"style" => "position:relative; width:100%; height:400px;",
+			"class" => ""
+		]
+	, []);
+
+
 	$section_id_text_home_page_deuteronomy_title = giau_insert_section($widget_id_text_display,
 		[
-				"text" => "PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_TITLE_TEXT",
-				"class" => "centeredText importantText focusedCenterpieceWidth",
+			"text" => "PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_TITLE_TEXT",
+			"class" => "centeredText importantText focusedCenterpieceWidth",
 		]
 	, []);
 	$section_id_text_home_page_deuteronomy_body = giau_insert_section($widget_id_text_display,
 		[
-				"text" => "PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_BODY_TEXT",
-				"class" => "centeredText standardText narrow50Text",
+			"text" => "PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_BODY_TEXT",
+			"class" => "centeredText standardText narrow50Text",
 		]
 	, []);
 	$section_id_text_home_page_deuteronomy_spacer = giau_insert_section($widget_id_text_display,
 		[
-				"text" => "",
-				"class" => "dividerText",
+			"text" => "",
+			"class" => "dividerText",
 		]
 	, []);
 	$section_id_text_home_page_purpose_body = giau_insert_section($widget_id_text_display,
 		[
-				"text" => "PAGE_HOME_QUOTE_PURPOSE_BODY_TEXT",
-				"class" => "centeredText standardText narrow50Text",
+			"text" => "PAGE_HOME_QUOTE_PURPOSE_BODY_TEXT",
+			"class" => "centeredText standardText narrow50Text",
 		]
 	, []);
 
 	$section_id_divider_with_bar = giau_insert_section($widget_id_vertical_divider,
 		[
-				"show_bar" => "true",
-				"height" => "8",
+			"show_bar" => "true",
+			"height" => "8",
 		]
 	, []);
 
-	// section 
-	$section_id_gallery_home_page_top = giau_insert_section($widget_id_image_gallery,
+
+	$section_id_social_apps = giau_insert_section($widget_id_social_apps,
 		[
-			"name" => "home page top image gallery",
-			"configuration" => 
-			[
-				"autoplay" => "10000",
-				"display_navigation" => "true",
-				"style" => "position:relative; width:100%; height:400px;",
-				"images" => [
-					"featured_01_opt.png",
-					"featured_02_opt.png"
-				]
-			]
+			"facebook" => [
+				"uri" => "https://www.facebook.com/thefathershouse.lacpc",
+				"icon" => "social/icon_footer_facebook.png"
+			],
+			"twitter" => [
+				"uri" => "https://twitter.com/thefathersh0use?lang=en",
+				"icon" => "social/icon_footer_twitter.png"
+			],
+			"instagram" => [
+				"uri" => "",
+				"icon" => "social/icon_footer_instagram.png"
+			],
+			"email" => [
+				"uri" => "mailto:ce@lacpc.org",
+				"icon" => "social/icon_footer_email.png"
+			],
 		]
- 	, []);
+	, []);
+	
+	$section_id_footer_all = giau_insert_section($widget_id_footer,
+		[
+				//
+		]
+	, [$section_id_social_apps]);
+
+	$section_id_calendar_listing_home = giau_insert_section($widget_id_calendar_listing,
+		[
+			"tags" => [$calendar_tag_front_page],
+			"range_start" => "".(-10*24*60*60*1000), // 7 days ago
+			"range_end" => "".(60*24*60*60*1000), // 60 days into future
+			"relative" => "true",
+			"order_recent_first" => "true"
+		]
+	, []);
+
 
 	// PAGES 
 	
@@ -509,18 +711,23 @@ function giau_data_default_insert_into_database(){
 	// PAGE - MAIN
 	$page_id_front_page = giau_insert_page("home_page",
 		[
+			$section_id_gallery_home_page_primary,
+
 			$section_id_category_listing_departments,
 
 			$section_id_divider_with_bar,
 
 			$section_id_text_home_page_purpose_body,
 
-			$section_id_gallery_home_page_top,
+			$section_id_gallery_home_page_secondary,
+
 			$section_id_text_home_page_deuteronomy_title,
 			$section_id_text_home_page_deuteronomy_spacer,
-			$section_id_text_home_page_deuteronomy_body
+			$section_id_text_home_page_deuteronomy_body,
 
-			
+			$section_id_calendar_listing_home,
+
+			$section_id_footer_all
 		],
 		"".$PAGE_TAG_LIVE.""
 	);

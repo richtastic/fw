@@ -46,7 +46,7 @@ giau.prototype.initialize = function(){
 	// CALENDARS
 	var calendarListings = $(".giauCalendarList");
 	calendarListings.each(function(index, element){
-		var listing = new giau.CalendarView(element);
+		var listing = new giau.CalendarListView(element);
 	});
 
 	// BIOGRAPHIES
@@ -1509,7 +1509,7 @@ giau.ImageGallery.prototype._updateLayout = function(index){
 }
 
 
-giau.CalendarView = function(element){
+giau.CalendarListView = function(element){
 	this._container = element;
 	var eventList = [];
 	var i, div;
@@ -1679,7 +1679,7 @@ giau.CalendarView = function(element){
 //Code.getTimeMilliseconds();
 //Code.getTimeZone = function(){
 }
-giau.CalendarView.prototype.formatTimeHumanReadable = function(timestamp, duration){
+giau.CalendarListView.prototype.formatTimeHumanReadable = function(timestamp, duration){
 	var date1 = new Date(timestamp);
 		var month1 = this._calendarMonthsLong[date1.getMonth()];
 		var day1 = date1.getDate();
