@@ -243,7 +243,7 @@ function create_page(){
 function fillOutPageFromID($pageID){
 	$page = giau_get_page_id($pageID);
 	if($page!=null){
-		fillOutFromSectionList($page["sectionList"])
+		fillOutFromSectionList($page["sectionList"]);
 	}else{
 		error_log("NO PAGE");
 	}
@@ -447,6 +447,7 @@ function handle_widget_calendar_listing($widget,$section){
 	fillOutFromSectionList($section["sectionList"]);
 			?>
 	</div>
+	<?php
 }
 /*
 function include_widget_calendar_events(){

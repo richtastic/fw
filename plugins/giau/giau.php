@@ -225,7 +225,7 @@ function include_widget_calendar_events(){
 				$operationOffset = 0;
 				$operationCount = 100;
 				$operationOrder = [ ["start_date",1], ["duration",1], ["id",0] ];
-				$results = giau_calendar_paginated($operationOffset,$operationCount,$operationOrder, $startDate,$endDate);
+				$results = giau_calendar_paginated($operationOffset,$operationCount,$operationOrder, $startDate,$endDate, null);
 				$length = count($results);
 				$index = 0;
 				foreach($results as $row){
@@ -1004,7 +1004,7 @@ function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,
 		$startDate = esc_sql($startDate);
 		$endDate = esc_sql($endDate);
 		$dateFormat = "%Y-%m-%d %k:%i:%s.%f";
-		array_push($criteria, "STR_TO_DATE(start_date,\"".$dateFormat."\") BETWEEN STR_TO_DATE(\"".$startDate."\",\"".$dateFormat."\") AND STR_TO_DATE(\"".$endDate."\",\"".$dateFormat."\") ";
+		array_push($criteria, "STR_TO_DATE(start_date,\"".$dateFormat."\") BETWEEN STR_TO_DATE(\"".$startDate."\",\"".$dateFormat."\") AND STR_TO_DATE(\"".$endDate."\",\"".$dateFormat."\") ");
 	}
 	if($tags!=null && count($tags)>0 ){
 		foreach($tags as $tag){
@@ -1015,7 +1015,7 @@ function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,
 		}
 	}
 	if(count($criteria)>0){
-		$criteria = "WHERE ".(implode(" AND ", pieces))
+		$criteria = "WHERE ".(implode(" AND ", $criteria));
 	}
 
 	$querystr = "

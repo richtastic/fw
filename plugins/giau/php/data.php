@@ -458,11 +458,11 @@ function giau_data_default_insert_into_database(){
 				"order_recent_first" => [
 					"type" => "boolean",
 					"description" => "order by earlier to later"
-				]
+				],
 				"min_count" => [
 					"type" => "number",
 					"description" => "minimum number of items to display"
-				]
+				],
 				"max_count" => [
 					"type" => "number",
 					"description" => "maximum number of items to display"
