@@ -259,7 +259,7 @@ function fillOutFromSectionList($sectionList){
 }
 
 function fillOutSectionFromID($sectionID){
-	error_log("fillOutSectionFromID: ".$sectionID);
+	//error_log("fillOutSectionFromID: ".$sectionID);
 	$section = giau_get_section_id($sectionID);
 	if($section!=null){
 		$widgetID = $section["widget"];
@@ -354,19 +354,23 @@ function handle_widget_category_listing($widget,$section){
 
 
 function handle_widget_image_gallery($widget,$section){
+	error_log("handle_widget_image_gallery: ".$section);
 	$widgetJSON = decodeWidget($widget);
 	$sectionJSON = decodeSection($section);
 	$autoPlay = section_get_value_widget_number_int($widgetJSON,$sectionJSON,"autoplay");
 	$displayNavigation = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"display_navigation") ? "true" : "false";
+
 	$imageList = section_get_value_widget_array($widgetJSON,$sectionJSON,"images");
+
 	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
 	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 	// position:relative; width:100%; height:400px;
 	?>
-		<div class="giauImageGallery <?php echo $klass; ?>" data-autoplay="<?php echo autoPlay; ?>" data-navigation="<?php echo displayNavigation; ?>" style="<?php echo style; ?>">
+		<div class="giauImageGallery <?php echo $klass; ?>" data-autoplay="<?php echo $autoPlay; ?>" data-navigation="<?php echo $displayNavigation; ?>" style="<?php echo $style; ?> position:relative; width:100%; height:400px;">
 		<?php
 			$i;
-			$len = sizeof($imageList);
+			$len = count($imageList);
+			error_log("autoPlay: ".$autoPlay);
 			for($i=0; $i<$len; ++$i){
 				$image = $imageList[$i];
 				?>
@@ -378,6 +382,34 @@ function handle_widget_image_gallery($widget,$section){
 		?>
 		</div>
 	<?php
+	/*
+			<!-- PHOTO GALLERY -->
+	<div class="limitedWidth"  style="background-color: rgba(255,255,255,1.0);">
+		<div class="giauImageGallery giauImageGalleryShowNavigation" data-autoplay="10000" style="position:relative; width:100%; height:400px;">
+			<?php 
+				$galleryImageContainer = $departmentPageData["image_gallery"];
+				if($galleryImageContainer){
+					$galleryPrefix = $galleryImageContainer["prefix"];
+					if(!$galleryPrefix){
+						$galleryPrefix = "";
+					}
+					$galleryImages = $galleryImageContainer["images"];
+					if($galleryImages){
+						$i;
+						$len = sizeof($galleryImages);
+						for($i=0; $i<$len; ++$i){
+							$image = $galleryImages[$i];
+							?>
+							<div data-source="<?php echo $galleryPrefix.$image; ?>" style="display:none;"></div>
+							<?php
+						}
+					}
+				}
+			?>
+		</div>
+	</div>
+
+	*/
 }
 
 function handle_widget_bottom_footer($widget,$section){
@@ -398,8 +430,8 @@ function handle_widget_calendar_listing($widget,$section){
 	$sectionJSON = decodeSection($section);
 	$tagList = section_get_value_widget_array($widgetJSON,$sectionJSON,"tags");
 	$orderRecentFirst = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"order_recent_first");
-	$rangeStart = section_get_value_widget_int($widgetJSON,$sectionJSON,"range_start");
-	$rangeEnd = section_get_value_widget_int($widgetJSON,$sectionJSON,"range_end");
+	$rangeStart = section_get_value_widget_number_int($widgetJSON,$sectionJSON,"range_start");
+	$rangeEnd = section_get_value_widget_number_int($widgetJSON,$sectionJSON,"range_end");
 	$isRelative = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"relative");
 	$minCount = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"min_count");
 	$maxCount = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"max_count");
@@ -409,8 +441,8 @@ function handle_widget_calendar_listing($widget,$section){
 		data-months-long="<?php echo(implode(",",getCookieMonthsOfYearLong())); ?>"
 		data-days-short="<?php echo(implode(",",getCookieDaysOfWeekShort())); ?>"
 		data-days-long="<?php echo(implode(",",getCookieDaysOfWeekLong())); ?>"
-		data-min-count="<?php echo(minCount); ?>"
-		data-max-count="<?php echo(maxCount); ?>"
+		data-min-count="<?php echo($minCount); ?>"
+		data-max-count="<?php echo($maxCount); ?>"
 		>
 			<?php
 				$startDate;
@@ -425,7 +457,8 @@ function handle_widget_calendar_listing($widget,$section){
 					$startDate = stringFromDate($rangeStart/1000);
 					$endDate = stringFromDate($rangeEnd/1000);
 				}
-				$orderDateNumber = orderRecentFirst ? 1 : 0;
+				$orderDateNumber = $orderRecentFirst ? 1 : 0;
+				error_log("now: ".$dateNow);
 				error_log("start: ".$startDate);
 				error_log("  end: ".$endDate);
 				$operationOffset = 0;
@@ -508,7 +541,7 @@ function section_get_value_widget_boolean($widget,$section,$field){
 function section_get_value_widget_number_int($widget,$section,$field){
 	$value = section_get_value_widget_any($widget,$section,$field);
 	if($value!=null){
-		return intval($sectionValue);
+		return intval($value);
 	}
 	return 0;
 }
@@ -530,9 +563,11 @@ function section_get_value_widget_string($widget,$section,$field){
 function section_get_value_widget_array($widget,$section,$field){
 	$value = section_get_value_widget_any($widget,$section,$field);
 	if($value!=null){
+		error_log("value exists");
 		// ARRAY CHECK
 		return $value;
 	}
+	error_log("value DNE ".$field);
 	return [];
 }
 function section_get_value_widget_object($widget,$section,$field){

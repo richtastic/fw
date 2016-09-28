@@ -599,7 +599,7 @@ function giau_data_default_insert_into_database(){
 		]
 	, []);
 
-		$section_image_gallery_prefix = "./wp-content/themes/giau/img/featured/";
+		$section_image_gallery_prefix = "./wp-content/themes/giau/img/gallery_featured/";
 	$section_id_gallery_home_page_primary = giau_insert_section($widget_id_image_gallery,
 		[
 			"autoplay" => "10000",
@@ -618,7 +618,7 @@ function giau_data_default_insert_into_database(){
 	, []);
 	$section_id_image_gallery_home_secondary = giau_insert_section($widget_id_image_gallery,
 		[
-			"autoplay" => "10000",
+			"autoplay" => "20000",
 			"display_navigation" => "true",
 			"images" => [
 				$section_image_gallery_prefix."featured_01_opt.png",
@@ -698,8 +698,8 @@ function giau_data_default_insert_into_database(){
 		[
 			"tags" => [$calendar_tag_front_page],
 			"range_start" => "".(-10*24*60*60*1000), // 7 days ago
-			"range_end" => "".(60*24*60*60*1000), // 60 days into future
-			"relative" => "true",
+			"range_end" => "".(120*24*60*60*1000), // 4 months into future
+			"relative" => "true", // treat numbers as milliseconds around date |OR| as absolute unix epoc times
 			"order_recent_first" => "true"
 		]
 	, []);
@@ -718,12 +718,14 @@ function giau_data_default_insert_into_database(){
 			$section_id_divider_with_bar,
 
 			$section_id_text_home_page_purpose_body,
-
-			$section_id_gallery_home_page_secondary,
+			
+			$section_id_image_gallery_home_secondary,
 
 			$section_id_text_home_page_deuteronomy_title,
 			$section_id_text_home_page_deuteronomy_spacer,
 			$section_id_text_home_page_deuteronomy_body,
+
+			$section_id_divider_with_bar,
 
 			$section_id_calendar_listing_home,
 

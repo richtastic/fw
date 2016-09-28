@@ -1009,9 +1009,7 @@ function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,
 	if($tags!=null && count($tags)>0 ){
 		foreach($tags as $tag){
 			$tag = esc_sql($tag);
-			//array_push($criteria, " tags LIKE '%".$tag."%' "); // TODO: "cat" will get BOTH  "the_cat" and "a_cat"
-			// [^,]TAG[,$]
-			array_push($criteria, " tags REGEXP \"[^,]".$tag."[,$]\" "); 
+			array_push($criteria, " tags REGEXP \"(^|,)".$tag."(,|$)\" "); 
 		}
 	}
 	if(count($criteria)>0){

@@ -581,7 +581,6 @@ giau.CategoryListing = function(element){
 	var i;
 	for(i=0; i<Code.numChildren(this._container); ++i){
 		var div = Code.getChild(this._container,i);
-		console.log(div);
 		if(Code.hasProperty(div,propertyData)){
 			var title = Code.getPropertyOrDefault(div,propertyTitle, null);
 			var image = Code.getProperty(div,propertyImage, null);
@@ -1338,6 +1337,7 @@ giau.ImageGallery.ANIMATION_DIRECTION_FADE_IN = 3;
 giau.ImageGallery.ANIMATION_DIRECTION_FADE_OUT = 4;
 
 giau.ImageGallery.prototype._animateToNewImage = function(prevIndex,nextIndex,isRight){
+	console.log("anim")
 	this._transitionIndexPrevious = prevIndex;
 	this._transitionIndexNext = nextIndex;
 	this._currentIndex = this._transitionIndexNext;
