@@ -286,12 +286,26 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_CONTACT_TEXT","Contact");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_LACPC_TEXT","LACPC");
 
-	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_HOME_TEXT","home");
-	// giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION__TEXT","");
-	// giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION__TEXT","");
-	// giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION__TEXT","");
-	// giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION__TEXT","");
-	// giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION__TEXT","");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_HOME_TEXT","Home");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPARTMENTS_TEXT","Departments");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_STAFF_TEXT","Staff");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_FORMS_TEXT","Forms");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_CONTACT_TEXT","Contact Us");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_LACPC_TEXT","LACPC");
+	
+
+	giau_insert_languagization($langEng,"LANGUAGE_SWITCH_ENGLISH_TEXT","EN");
+	giau_insert_languagization($langEng,"LANGUAGE_SWITCH_KOREAN_TEXT","KO");
+
+	giau_insert_languagization($langEng,"FOOTER_TITLE_TEXT","THE FATHER'S HOUSE");
+	giau_insert_languagization($langEng,"FOOTER_ADDRESS_1_TEXT","Los Angeles Presbyterian Church");
+	giau_insert_languagization($langEng,"FOOTER_ADDRESS_2_TEXT","2241 N. Eastern Ave.");
+	giau_insert_languagization($langEng,"FOOTER_ADDRESS_3_TEXT","Los Angeles, CA 90032");
+	giau_insert_languagization($langEng,"FOOTER_COPYRIGHT_TEXT","LACPC Christian Education © 2016");
+
+	giau_insert_languagization($langEng,"PAGE_HOME_OVERLAY_TITLE_1_TEXT","THE FATHER'S HOUSE");
+	giau_insert_languagization($langEng,"PAGE_HOME_OVERLAY_TITLE_2_TEXT","JOIN US FOR WORSHIP");
+	giau_insert_languagization($langEng,"PAGE_HOME_OVERLAY_TITLE_3_TEXT","Sunday at 11:00 a.m.");
 
 
 	// WIDGET
@@ -310,6 +324,101 @@ function giau_data_default_insert_into_database(){
 	
 */
 	// preset defined list of widgets
+
+	// => EMPTY CONTAINER
+	$widget_id_content_container = giau_insert_widget("content_container",
+		[
+			"alias" => "content_container",
+			"name" => "Giau Empty",
+			"cssClass" => "",
+			"jsClass" => "",
+			"fields" => [
+				"class" => [
+					"type" => "string"
+				],
+				"style" => [
+					"type" => "string"
+				],
+			]
+		]
+	);
+
+	// => NAVIGATION
+	$widget_id_navigation_list = giau_insert_widget("navigation_list",
+		[
+			"alias" => "navigation_list",
+			"name" => "Giau Navigation",
+			"cssClass" => "giauNavigationItemList",
+			"jsClass" => "giau.NavigationList",
+			"fields" => [
+				"components" => [
+					"type" => "array-object",
+					"description" => "navigation item",
+					"fields" => [
+						"display_text" => [
+							"type" => "string",
+							"description" => "displayed text"
+						],
+						"uri" => [
+							"type" => "string",
+							"description" => "location destination"
+						]
+					]
+				],
+				"class" => [
+					"type" => "string"
+				],
+				"style" => [
+					"type" => "string"
+				],
+			]
+		]
+	);
+
+	// => LANGUAGE TOGGLE SWITCH
+	$widget_id_language_switch = giau_insert_widget("language_switch",
+		[
+			"alias" => "language_switch",
+			"name" => "Giau Language Toggle",
+			"cssClass" => "giauLanguageToggleSwitch",
+			"jsClass" => "giau.LanguageToggle",
+			"fields" => [
+				"languages" => [
+					"type" => "array-object",
+					"description" => "list of language switches",
+					"fields" => [
+						"display_text" => [
+							"type" => "string",
+							"description" => "displayed text"
+						],
+						"language_name" => [
+							"type" => "string",
+							"description" => "language type, eg: en, en-US, ko, ko-KP"
+						],
+					]
+				]
+			]
+		]
+	);
+
+	// => DISPLAY OVERLAY
+	$widget_id_display_overlay = giau_insert_widget("display_overlay",
+		[
+			"alias" => "display_overlay",
+			"name" => "Giau Display Overlay",
+			"cssClass" => "giauInfoOverlay",
+			"jsClass" => "giau.InfoOverlay",
+			"fields" => [
+				//
+			]
+		]
+	);
+
+	// => HALLMARK EMBLEM
+	$widget_id_hallmark_emblem = giau_insert_widget("hallmark_emblem",
+		[
+		]
+	);
 
 	// => TEXT DISPLAY
 	$widget_id_text_display = giau_insert_widget("text_display",
@@ -479,79 +588,161 @@ function giau_data_default_insert_into_database(){
 			"cssClass" => "",
 			"jsClass" => "",
 			"fields" => [
-				"facebook" => [
-					"type" => "array-object",
-					"description" => "facebook data",
+				"social" => [
+					"type" => "object",
+					"description" => "social items",
 					"fields" => [
-						"uri" => [
-							"type" => "string",
-							"description" => "external link url"
+						"facebook" => [
+							"type" => "array-object",
+							"description" => "facebook data",
+							"fields" => [
+								"uri" => [
+									"type" => "string",
+									"description" => "external link url"
+								],
+								"icon" => [
+									"type" => "string-image",
+									"description" => "display image"
+								]
+							]
 						],
-						"icon" => [
-							"type" => "string-image",
-							"description" => "display image"
+						"twitter" => [
+							"type" => "array-object",
+							"description" => "twitter data",
+							"fields" => [
+								"uri" => [
+									"type" => "string",
+									"description" => "external link url"
+								],
+								"icon" => [
+									"type" => "string-image",
+									"description" => "display image"
+								]
+							]
+						],
+						"instagram" => [
+							"type" => "array-object",
+							"description" => "instagram data",
+							"fields" => [
+								"uri" => [
+									"type" => "string",
+									"description" => "external link url"
+								],
+								"icon" => [
+									"type" => "string-image",
+									"description" => "display image"
+								]
+							]
+						],
+						"tumblr" => [
+							"type" => "array-object",
+							"description" => "tumblr data",
+							"fields" => [
+								"uri" => [
+									"type" => "string",
+									"description" => "external link url"
+								],
+								"icon" => [
+									"type" => "string-image",
+									"description" => "display image"
+								]
+							]
+						],
+						"email" => [
+							"type" => "array-object",
+							"description" => "email data",
+							"fields" => [
+								"uri" => [
+									"type" => "string",
+									"description" => "external link url"
+								],
+								"icon" => [
+									"type" => "string-image",
+									"description" => "display image"
+								]
+							]
 						]
 					]
 				],
-				"twitter" => [
-					"type" => "array-object",
-					"description" => "twitter data",
-					"fields" => [
-						"uri" => [
-							"type" => "string",
-							"description" => "external link url"
-						],
-						"icon" => [
-							"type" => "string-image",
-							"description" => "display image"
-						]
-					]
-				],
-				"instagram" => [
-					"type" => "array-object",
-					"description" => "instagram data",
-					"fields" => [
-						"uri" => [
-							"type" => "string",
-							"description" => "external link url"
-						],
-						"icon" => [
-							"type" => "string-image",
-							"description" => "display image"
-						]
-					]
-				],
-				"tumblr" => [
-					"type" => "array-object",
-					"description" => "tumblr data",
-					"fields" => [
-						"uri" => [
-							"type" => "string",
-							"description" => "external link url"
-						],
-						"icon" => [
-							"type" => "string-image",
-							"description" => "display image"
-						]
-					]
-				],
-				"email" => [
-					"type" => "array-object",
-					"description" => "email data",
-					"fields" => [
-						"uri" => [
-							"type" => "string",
-							"description" => "external link url"
-						],
-						"icon" => [
-							"type" => "string-image",
-							"description" => "display image"
-						]
-					]
+				"class" => [
+					"type" => "string"
 				],
 			]
 		]
 	);
+
+	
+	$section_id_navigation_main = giau_insert_section($widget_id_navigation_list,
+		[
+			"components" => [ // return $root."?page=".$pageName."&sp=".($subpage ? $subpage : "");
+				[
+					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_HOME_TEXT",
+					"uri" => "./?page=home&sp="
+				],
+				[
+					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPARTMENTS_TEXT",
+					"uri" => "./?page=departments&sp="
+				],
+				[
+					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_STAFF_TEXT",
+					"uri" => "./?page=staff&sp="
+				],
+				[
+					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_FORMS_TEXT",
+					"uri" => "./?page=forms&sp="
+				],
+				[
+					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_CONTACT_TEXT",
+					"uri" => "./?page=contact&sp="
+				],
+				[
+					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_LACPC_TEXT",
+					"uri" => "http://www.lacpc.org"
+				]
+			]
+		]
+	, []);
+
+	$section_id_language_switch = giau_insert_section($widget_id_language_switch,
+		[
+			"languages" => [
+				[
+					"display_text" => "LANGUAGE_SWITCH_ENGLISH_TEXT",
+					"language_name" => "en"
+				],
+				[
+					"display_text" => "LANGUAGE_SWITCH_KOREAN_TEXT",
+					"language_name" => "ko"
+				]
+			]
+		]
+	, []);
+
+
+	$section_id_text_overlay_1 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_HOME_OVERLAY_TITLE_1_TEXT",
+			"class" => "featureInfoOverlayHeading",
+		]
+	, []);
+	$section_id_text_overlay_2 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_HOME_OVERLAY_TITLE_2_TEXT",
+			"class" => "featureInfoOverlayTitle",
+		]
+	, []);
+	$section_id_text_overlay_3 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_HOME_OVERLAY_TITLE_3_TEXT",
+			"class" => "featureInfoOverlaySubtitle",
+		]
+	, []);
+
+	$section_id_home_gallery_overlay = giau_insert_section($widget_id_display_overlay,
+		[
+			//
+		]
+	, [$section_id_text_overlay_1,$section_id_text_overlay_2,$section_id_text_overlay_3]);
 
 	giau_insert_languagization($langEng,"PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_BODY_TEXT","\"These commandments I give you today are to be upon your hearts. Impress them on your children. Talk about them when you sit at home and when you walk along the road, when you are down and when you get up.\"");
 	giau_insert_languagization($langEng,"PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_TITLE_TEXT","Deuteronomy 6:6-7");
@@ -598,24 +789,33 @@ function giau_data_default_insert_into_database(){
 			"rounded" => "true"
 		]
 	, []);
-
+	
 		$section_image_gallery_prefix = "./wp-content/themes/giau/img/gallery_featured/";
 	$section_id_gallery_home_page_primary = giau_insert_section($widget_id_image_gallery,
 		[
 			"autoplay" => "10000",
 			"display_navigation" => "false",
 			"images" => [
+				$section_image_gallery_prefix."featured_06_opt.png",
 				$section_image_gallery_prefix."featured_01_opt.png",
 				$section_image_gallery_prefix."featured_02_opt.png",
 				$section_image_gallery_prefix."featured_03_opt.png",
 				$section_image_gallery_prefix."featured_04_opt.png",
 				$section_image_gallery_prefix."featured_05_opt.png",
-				$section_image_gallery_prefix."featured_06_opt.png",
 			],
 			"style" => "",
 			"class" => ""
 		]
-	, []);
+	, [$section_id_navigation_main, $section_id_language_switch, $section_id_home_gallery_overlay]);
+
+	// $section_id_home_page_top = giau_insert_section($widget_id_content_container,
+	// 	[
+	// 		"style" => "",
+	// 		"class" => ""
+	// 	]
+	// , []);
+
+
 	$section_id_image_gallery_home_secondary = giau_insert_section($widget_id_image_gallery,
 		[
 			"autoplay" => "20000",
@@ -667,24 +867,69 @@ function giau_data_default_insert_into_database(){
 	, []);
 
 
+	$section_id_text_footer_title = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "FOOTER_TITLE_TEXT",
+			"class" => "footerElementTitle",
+		]
+	, []);
+
+	$section_id_text_footer_address_1 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "FOOTER_ADDRESS_1_TEXT",
+			"class" => "footerElementTextLine",
+		]
+	, []);
+
+	$section_id_text_footer_address_2 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "FOOTER_ADDRESS_2_TEXT",
+			"class" => "footerElementTextLine",
+		]
+	, []);
+
+	$section_id_text_footer_address_3 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "FOOTER_ADDRESS_3_TEXT",
+			"class" => "footerElementTextLine",
+		]
+	, []);
+
+	$section_id_text_footer_copyright = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "FOOTER_COPYRIGHT_TEXT",
+			"class" => "footerElementTextCopyright",
+		]
+	, []);
+
+	$section_id_text_footer_bottom_empty = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "",
+			"class" => "footerElementBottom",
+		]
+	, []);
+
 	$section_id_social_apps = giau_insert_section($widget_id_social_apps,
 		[
-			"facebook" => [
-				"uri" => "https://www.facebook.com/thefathershouse.lacpc",
-				"icon" => "social/icon_footer_facebook.png"
+			"social" => [
+				"facebook" => [
+					"uri" => "https://www.facebook.com/thefathershouse.lacpc",
+					"icon" => "./wp-content/themes/giau/img/social/icon_footer_facebook.png"
+				],
+				"twitter" => [
+					"uri" => "https://twitter.com/thefathersh0use?lang=en",
+					"icon" => "./wp-content/themes/giau/img/social/icon_footer_twitter.png"
+				],
+				"instagram" => [
+					"uri" => "",
+					"icon" => "./wp-content/themes/giau/img/social/icon_footer_instagram.png"
+				],
+				"email" => [
+					"uri" => "mailto:ce@lacpc.org",
+					"icon" => "./wp-content/themes/giau/img/social/icon_footer_email.png"
+				],
 			],
-			"twitter" => [
-				"uri" => "https://twitter.com/thefathersh0use?lang=en",
-				"icon" => "social/icon_footer_twitter.png"
-			],
-			"instagram" => [
-				"uri" => "",
-				"icon" => "social/icon_footer_instagram.png"
-			],
-			"email" => [
-				"uri" => "mailto:ce@lacpc.org",
-				"icon" => "social/icon_footer_email.png"
-			],
+			"class" => "footerElementSocialItem"
 		]
 	, []);
 	
@@ -692,7 +937,7 @@ function giau_data_default_insert_into_database(){
 		[
 				//
 		]
-	, [$section_id_social_apps]);
+	, [$section_id_text_footer_title, $section_id_social_apps, $section_id_text_footer_address_1, $section_id_text_footer_address_2 , $section_id_text_footer_address_3 , $section_id_text_footer_copyright, $section_id_text_footer_bottom_empty]);
 
 	$section_id_calendar_listing_home = giau_insert_section($widget_id_calendar_listing,
 		[
@@ -711,6 +956,7 @@ function giau_data_default_insert_into_database(){
 	// PAGE - MAIN
 	$page_id_front_page = giau_insert_page("home_page",
 		[
+			//$section_id_home_page_top,
 			$section_id_gallery_home_page_primary,
 
 			$section_id_category_listing_departments,

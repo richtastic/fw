@@ -24,9 +24,11 @@ define( 'GIAU_PLUGIN_URL', plugin_basename(__FILE__) );
 
 $GIAU_ROOT_PATH = dirname(__FILE__);
 error_log("GIAU_ROOT_PATH: ".$GIAU_ROOT_PATH);
+require_once($GIAU_ROOT_PATH.'/php/widgets.php');
 require_once($GIAU_ROOT_PATH.'/php/functions.php');
-require_once($GIAU_ROOT_PATH.'/php/data.php');
 require_once($GIAU_ROOT_PATH.'/php/tables.php');
+require_once($GIAU_ROOT_PATH.'/php/data.php');
+
 
 
 

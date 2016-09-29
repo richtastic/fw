@@ -903,6 +903,7 @@ giau.LanguageToggle.prototype.updateLayout = function(){
 
 giau.NavigationList = function(element){
 	this._container = element;
+	//return;
 
 	// LISTENERS
 	this._jsDispatch = new JSDispatch();
@@ -1132,6 +1133,8 @@ giau.ImageGallery = function(element){
 	Code.setStyleOverflow(this._container,"hidden"); // overflow: hidden;
 
 	var showNavigation = Code.getProperty(this._container,"data-navigation");
+	showNavigation = showNavigation=="true";
+	
 	
 	// CREATE HIERARCHY
 	this._functionalityContainer = Code.newDiv();

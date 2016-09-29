@@ -498,8 +498,15 @@ ul {
 .giauCategoryListing {
 	
 }
+/* widget : footer */
+.giauFooterContainer {
+	background-color: #111E2F;
+}
 
-
+/* widget : language switch */
+.giauLanguageToggleSwitch {
+	color: #FFF;
+}
 
 
 table {
