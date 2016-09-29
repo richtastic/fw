@@ -737,12 +737,18 @@ function giau_data_default_insert_into_database(){
 			"class" => "featureInfoOverlaySubtitle",
 		]
 	, []);
+	$section_id_text_overlay_spacer = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "",
+			"class" => "",
+		]
+	, []);
 
 	$section_id_home_gallery_overlay = giau_insert_section($widget_id_display_overlay,
 		[
 			//
 		]
-	, [$section_id_text_overlay_1,$section_id_text_overlay_2,$section_id_text_overlay_3]);
+	, [$section_id_text_overlay_1,$section_id_text_overlay_spacer,$section_id_text_overlay_2,$section_id_text_overlay_spacer,$section_id_text_overlay_3,$section_id_text_overlay_spacer]);
 
 	giau_insert_languagization($langEng,"PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_BODY_TEXT","\"These commandments I give you today are to be upon your hearts. Impress them on your children. Talk about them when you sit at home and when you walk along the road, when you are down and when you get up.\"");
 	giau_insert_languagization($langEng,"PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_TITLE_TEXT","Deuteronomy 6:6-7");
@@ -789,7 +795,23 @@ function giau_data_default_insert_into_database(){
 			"rounded" => "true"
 		]
 	, []);
-	
+
+	$section_id_navigation_main_shadow = giau_insert_section($widget_id_content_container,
+		[
+			"style" => "position:absolute; display:inline-block; left:0; right:0; top:0; height:50px; background-repeat:repeat-x; background-image:url('./wp-content/themes/giau/img/shadow_fade_top.png');",
+			"class" => ""
+		]
+	, []);
+
+
+	$section_id_navigation_main_container = giau_insert_section($widget_id_content_container,
+		[
+			"style" => "position:absolute; display:inline-block; text-align:center;  width:100%;",
+			"class" => "headerNavigationContainer"
+		]
+	, [$section_id_navigation_main_shadow, $section_id_language_switch, $section_id_navigation_main]);
+
+
 		$section_image_gallery_prefix = "./wp-content/themes/giau/img/gallery_featured/";
 	$section_id_gallery_home_page_primary = giau_insert_section($widget_id_image_gallery,
 		[
@@ -804,9 +826,9 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_prefix."featured_05_opt.png",
 			],
 			"style" => "",
-			"class" => ""
+			"class" => "featurePresentationContainer"
 		]
-	, [$section_id_navigation_main, $section_id_language_switch, $section_id_home_gallery_overlay]);
+	, [$section_id_home_gallery_overlay, $section_id_navigation_main_container]);
 
 	// $section_id_home_page_top = giau_insert_section($widget_id_content_container,
 	// 	[

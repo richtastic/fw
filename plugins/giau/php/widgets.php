@@ -64,17 +64,6 @@ function handle_widget_display_overlay($widget,$section){
 	?>
 	<div class="featureInfoOverlay giauInfoOverlay" style="">
 	<?php
-	/*
-			<div class="featureInfoOverlayHeading">THE FATHER'S HOUSE</div>
-			<div></div>
-			<div class="featureInfoOverlayTitle" style="">JOIN US FOR WORSHIP</div>
-			<div></div>
-			<div class="featureInfoOverlaySubtitle">Sunday at 11:00 a.m.</div>
-			<div></div>
-			<!-- <a href="http://www.google.com"> -->
-			<!-- <div class="featureInfoOverlayButton" style="" >Directions</div> -->
-			<!-- </a> -->
-			*/
 		// sub sections
 		fillOutFromSectionList($section["sectionList"]);
 	?>

@@ -1,15 +1,6 @@
 <?php
 // functions.php
 
-// WTF?
-/*
-$FILE_PATH = dirname(__FILE__);
-require_once($FILE_PATH.'/../../../plugins/giau/php/functions.php');
-require_once($FILE_PATH.'/../../../plugins/giau/php/tables.php');
-require_once($FILE_PATH.'/../../../plugins/giau/php/widgets.php');
-require_once($FILE_PATH.'/../../../plugins/giau/php/data.php');
-*/
-
 /*
 
 $_SERVER['HTTP_USER_AGENT']
@@ -248,58 +239,10 @@ function create_page(){
 
 
 <?php
+if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 
 fillOutPageFromID(1);
 
-?>
-
-
-
-<?php
-if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
-?>
-	<!-- FEATURE IMAGE -->
-	<div class="featurePresentationContainer giauImageGallery" data-autoplay="10000"  style="">
-		<?php
-			$galleryPrefix = relativePathIMG()."gallery_featured/";
-			$imageList = ["featured_06_opt.png","featured_02_opt.png","featured_03_opt.png","featured_04_opt.png","featured_05_opt.png","featured_01_opt.png"];
-			$i;
-			$len = sizeof($imageList);
-			for($i=0; $i<$len; ++$i){
-				$image = $imageList[$i];
-				?>
-				<div data-source="<?php echo $galleryPrefix.$image; ?>" style="display:none;"></div>
-				<?php
-			}
-		?>
-
-		<!-- FEATURE INFO OVERLAY -->
-		<div class="featureInfoOverlay giauInfoOverlay" style="">
-			<div class="featureInfoOverlayHeading">THE FATHER'S HOUSE</div>
-			<div></div>
-			<div class="featureInfoOverlayTitle" style="">JOIN US FOR WORSHIP</div>
-			<div></div>
-			<div class="featureInfoOverlaySubtitle">Sunday at 11:00 a.m.</div>
-			<div></div>
-			<!-- <a href="http://www.google.com"> -->
-			<!-- <div class="featureInfoOverlayButton" style="" >Directions</div> -->
-			<!-- </a> -->
-		</div>
-		<!-- HEADER -->
-		<div class="headerNavigationContainer" style="position:absolute; display:inline-block; text-align:center;">
-		<div class="" style="position:absolute; display:inline-block; left:0; right:0; top:0; height:50px; background-repeat:repeat-x; background-image:url('<?php echo relativePathIMG()."/shadow_fade_top.png"; ?>');"></div>
-			<!-- LOGO -->
-			<!-- <div class="organizationLogoContainer" style="display:inline-block; float:left; left:0; top:0; "><img class="navigationMenuLogo" src="<?php echo relativePathIMG()."logo_fathers_house.png" ?>" /></div> -->
-			<!-- LANGUAGE SWITCH -->
-			<!-- <div class="languageSwitchContainer" style="display:inline-block; float:right; padding:10px;">EN | 한국어</div> -->
-			<div class="languageSwitchContainer" style="display:inline-block; position:absolute; right:0; top:0; padding-right:10px;"><?php create_language_switch("","data-color=\"0xFFFFFFFF\""); ?></div>
-			<!-- NAVIGATION -->
-			<?php create_navigation($pageList, $pageRequest, null, "padding: 10px;", "data-darkmode=\"true\""); ?>
-			
-		</div>
-	</div>
-
-<?php
 }else{
  // ...
 ?>
