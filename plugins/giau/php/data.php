@@ -789,7 +789,7 @@ function giau_data_default_insert_into_database(){
 				[
 					"image" => $section_category_prefix."category_korean_school.png",
 					"name" => "Korean School",
-					"uri" => "http://www.google.com"
+					"uri" => "http://lacpc.org/church/"
 				]
 			],
 			"class_image" => "",
