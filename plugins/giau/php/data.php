@@ -307,6 +307,8 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"PAGE_HOME_OVERLAY_TITLE_2_TEXT","JOIN US FOR WORSHIP");
 	giau_insert_languagization($langEng,"PAGE_HOME_OVERLAY_TITLE_3_TEXT","Sunday at 11:00 a.m.");
 
+	giau_insert_languagization($langEng,"HEADING_HOME_CALENDAR_SCHEDULE_TEXT","Schedule of Events");
+
 
 	// WIDGET
 	/*
@@ -792,7 +794,9 @@ function giau_data_default_insert_into_database(){
 			],
 			"class_image" => "",
 			"class_text" => "",
-			"rounded" => "true"
+			"rounded" => "true",
+			"class" => "customCategoryDepartments",
+			"style" => ""
 		]
 	, []);
 
@@ -851,7 +855,7 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_prefix."featured_06_opt.png",
 			],
 			"style" => "position:relative; width:100%; height:400px;",
-			"class" => ""
+			"class" => "limitedWidth"
 		]
 	, []);
 
@@ -859,13 +863,13 @@ function giau_data_default_insert_into_database(){
 	$section_id_text_home_page_deuteronomy_title = giau_insert_section($widget_id_text_display,
 		[
 			"text" => "PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_TITLE_TEXT",
-			"class" => "centeredText importantText focusedCenterpieceWidth",
+			"class" => "centeredText importantText focusedCenterpieceWidth customHeadingQuoteTitle",
 		]
 	, []);
 	$section_id_text_home_page_deuteronomy_body = giau_insert_section($widget_id_text_display,
 		[
 			"text" => "PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_BODY_TEXT",
-			"class" => "centeredText standardText narrow50Text",
+			"class" => "centeredText standardText narrow50Text customHeadingQuoteBody",
 		]
 	, []);
 	$section_id_text_home_page_deuteronomy_spacer = giau_insert_section($widget_id_text_display,
@@ -877,7 +881,7 @@ function giau_data_default_insert_into_database(){
 	$section_id_text_home_page_purpose_body = giau_insert_section($widget_id_text_display,
 		[
 			"text" => "PAGE_HOME_QUOTE_PURPOSE_BODY_TEXT",
-			"class" => "centeredText standardText narrow50Text",
+			"class" => "centeredText standardText narrow50Text customHeadingQuoteBody",
 		]
 	, []);
 
@@ -931,6 +935,13 @@ function giau_data_default_insert_into_database(){
 		]
 	, []);
 
+	$section_id_text_calendar_heading = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "HEADING_HOME_CALENDAR_SCHEDULE_TEXT",
+			"class" => "customHeadingCalendarSchedule limitedWidth",
+		]
+	, []);
+
 	$section_id_social_apps = giau_insert_section($widget_id_social_apps,
 		[
 			"social" => [
@@ -967,7 +978,8 @@ function giau_data_default_insert_into_database(){
 			"range_start" => "".(-10*24*60*60*1000), // 7 days ago
 			"range_end" => "".(120*24*60*60*1000), // 4 months into future
 			"relative" => "true", // treat numbers as milliseconds around date |OR| as absolute unix epoc times
-			"order_recent_first" => "true"
+			"order_recent_first" => "true",
+			"class" => "limitedWidth"
 		]
 	, []);
 
@@ -984,16 +996,17 @@ function giau_data_default_insert_into_database(){
 			$section_id_category_listing_departments,
 
 			$section_id_divider_with_bar,
-
 			$section_id_text_home_page_purpose_body,
+			$section_id_text_home_page_deuteronomy_spacer,
 			
 			$section_id_image_gallery_home_secondary,
 
 			$section_id_text_home_page_deuteronomy_title,
-			$section_id_text_home_page_deuteronomy_spacer,
 			$section_id_text_home_page_deuteronomy_body,
 
 			$section_id_divider_with_bar,
+
+			$section_id_text_calendar_heading,
 
 			$section_id_calendar_listing_home,
 

@@ -170,8 +170,10 @@ function handle_widget_category_listing($widget,$section){
 	$categoryList = $sectionJSON["categories"];
 	$categoryLength = count($categoryList);
 	$rounded = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"rounded") ? "true" :  "false";
+	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
+	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 	?>
-	<div class="giauCategoryListingContainer limitedWidth" style="">
+	<div class="giauCategoryListingContainer limitedWidth <?php echo $klass; ?>" style="<?php echo $style; ?>">
 		<div class="giauCategoryListing">
 			<?php
 			$i;
@@ -256,9 +258,14 @@ function handle_widget_social_apps($widget,$section){
 			if($uri==""){
 				$style2 = "opacity: 0.25;";
 			}
-			?>
-			<a href="<?php echo $uri; ?>"><img class="<?php echo $klass; ?>" style=" <?php echo $style2; ?>" src="<?php echo $icon; ?>" /></a>
-			<?php
+			if($uri){
+				echo '<a href="'.$uri.'">';
+			}
+				echo '<img class="'.$klass.'" style="'.$style2.'" src="'.$icon.'" />';
+			if($uri){
+				echo '</a>';
+			}
+			
 		}
 	}
 	?>
@@ -286,8 +293,11 @@ function handle_widget_calendar_listing($widget,$section){
 	$isRelative = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"relative");
 	$minCount = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"min_count");
 	$maxCount = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"max_count");
+	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
+	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 	?>
-	<div class="giauCalendarList"
+	
+	<div class="giauCalendarList <?php echo $klass; ?>" style="<?php echo $style; ?>"
 		data-months-short="<?php echo(implode(",",getCookieMonthsOfYearShort())); ?>"
 		data-months-long="<?php echo(implode(",",getCookieMonthsOfYearLong())); ?>"
 		data-days-short="<?php echo(implode(",",getCookieDaysOfWeekShort())); ?>"
@@ -330,7 +340,9 @@ function handle_widget_calendar_listing($widget,$section){
 	// sub sections
 	fillOutFromSectionList($section["sectionList"]);
 			?>
+	
 	</div>
+	<div class="" style="padding-top:32px;"></div>
 	<?php
 }
 
@@ -376,11 +388,9 @@ function section_get_value_widget_string($widget,$section,$field){
 function section_get_value_widget_array($widget,$section,$field){
 	$value = section_get_value_widget_any($widget,$section,$field);
 	if($value!=null){
-		error_log("value exists");
 		// ARRAY CHECK
 		return $value;
 	}
-	error_log("value DNE ".$field);
 	return [];
 }
 function section_get_value_widget_object($widget,$section,$field){

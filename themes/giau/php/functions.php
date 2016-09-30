@@ -758,14 +758,12 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 		<div class="footerSectionMain"></div>
 	</div>
 
-
 <?php
 }else if($pageRequest==$PAGE_REQUEST_TYPE_STAFF){
 ?>
 	<!-- STAFF BIOGRAPHIES -->
 	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
-		<div class="headerSectionMain">MEET THE STAFF</div>
-			<div class="giauBiographyList"></div>
+		<div class="giauBiographyList"></div>
 		<div class="footerSectionMain"></div>
 	</div>
 <?php
@@ -831,6 +829,15 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	</div>
 <?php
 }
+
+
+
+
+// TEMPORARY FOOTER
+if($pageRequest!=$PAGE_REQUEST_TYPE_HOME){
+ create_footer();
+}
+
 ?>
 	</body>
 </html>
@@ -855,7 +862,7 @@ pages = {
 }
 
 */
-function create_language_switch($overrideCSS,$additionalHTML){
+function create_language_switch($overrideCSS,$additionalHTML=null){
 	$additionalHTML = $additionalHTML ? $additionalHTML : "";
 	?>
 			<div class="languageSwitchContainer giauLanguageToggleSwitch" style="display:table-cell; padding:10px; vertical-align:middle; text-align:right;"  data-storage="<?php echo KEY_COOKIE_PARAM_LANGUAGE(); ?>"  <?php echo $additionalHTML; ?> >
@@ -864,7 +871,7 @@ function create_language_switch($overrideCSS,$additionalHTML){
 			</div>
 <?php
 }
-function create_navigation($pageList, $currentPageName, $currentSubPageName, $additional, $additionalData){
+function create_navigation($pageList, $currentPageName, $currentSubPageName, $additional=null, $additionalData=null){
 	$isTable = true;
 	$displayType = null;
 	if($additional){
@@ -915,24 +922,14 @@ function create_navigation($pageList, $currentPageName, $currentSubPageName, $ad
 	<?php
 }
 
+
+
 function create_footer(){
-	?>
-	<footer>
-	<div class="footerContainer">
-		<div class="footerLogo"></div>
-		<div class="footerSocialMedia"></div>
-		<div class="footerContact">
-			Los Angeles Presbyterian Church
-			2241 N. Eastern Ave.
-			Los Angeles, CA 90032
-		</div>
-	</div>
-	</footer>
-	<?php
+	// for($i=0;$i<=26;++$i){
+ //       fillOutSectionFromID($i); // select id,widget from wp_giau_section;
+	// }
+	fillOutSectionFromID(26);
 }
-
-
-
 
 
 ?>

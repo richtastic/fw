@@ -407,12 +407,13 @@ Code.setStylePosition(this._container,"relative");
 			Code.setStyleDisplay(outerElement,"table-cell");
 			Code.setStylePosition(outerElement,"relative");
 		var containerElement = Code.newDiv();
-			Code.setStyleBackground(containerElement,"#EEE");
+			Code.setStyleBackground(containerElement,"#FFF");
 			Code.setStyleDisplay(containerElement,"inline-block"); // fit height
 			Code.setStylePosition(containerElement,"relative");
 			Code.setStyleVerticalAlign(containerElement,"top");
 			Code.setStyleHeight(containerElement,"100%");
 			Code.setStyleMinHeight(containerElement,"100px");
+
 		var imageIconElement = Code.newImage();
 			var imageURL = person["image_url"];
 			if(!imageURL || imageURL==""){
@@ -500,10 +501,10 @@ giau.BioView.prototype._handleWindowResizedFxn = function(){
 
 giau.BioView.prototype.updateLayout = function(){
 	var listings = this._galleryList;
-
+console.log("0")
 	var maximumColumnCount = 3;
 	var elementMinWidth = 300;
-	var elementMaxWidth = 400; // to next row size
+	var elementMaxWidth = 350; // to next row size
 	var widthContainer = $(this._container).width();
 	var heightContainer = $(this._container).height();
 
@@ -513,6 +514,7 @@ giau.BioView.prototype.updateLayout = function(){
 	if(widthContainer<elementMinWidth){
 		columns = 1;
 	}
+	columns = Math.max(1,columns);
 	var colWidth = Math.floor(widthContainer/columns);
 
 	var personnelList = this._personnelList;
@@ -527,7 +529,6 @@ var row;
 			Code.setStyleWidth(row,widthContainer+"px");
 			//Code.setStyleHeight(row,"");
 		}
-
 		var person = personnelList[i];
 		var outerElement = person["element"];
 		var innerElement = person["container"];
@@ -541,6 +542,18 @@ var row;
 		Code.setStyleWidth(innerElement,innerWidth);
 		Code.setStylePadding(innerElement,innerPadding+"px");
 
+			if(i<len-columns){
+				var div = outerElement;
+				Code.setStyleBorderColor(div,"#EEE");
+				Code.setStyleBorder(div,"solid");
+				Code.setStyleBorderWidthTop(div,"0px");
+				Code.setStyleBorderWidthLeft(div,"0px");
+				Code.setStyleBorderWidthRight(div,"0px");
+				Code.setStyleBorderWidthBottom(div,"1px");
+			}else{
+				var div = outerElement;
+				Code.setStyleBorder(div,"none");
+			}
 		/*
 		var outerElement = Code.newDiv();
 			Code.setStyleDisplay(outerElement,"table-cell");
@@ -556,7 +569,6 @@ var row;
 		*/
 		Code.addChild(this._container, row);
 		Code.addChild(row, outerElement);
-		
 	}
 }
 
@@ -1590,14 +1602,16 @@ giau.CalendarListView = function(element){
 		var timeCutOff = todayNowMilliseconds - 30*24*60*60*1000; // 1 week previous
 		var titleColor = "#000000";
 		var descriptionColor = "#333";
-		var backgroundColor = "#EEEEEE";
+		//var backgroundColor = "#EEEEEE";
+		var backgroundColor = "#FFFFFF";
 
 		if(end<timeCutOff){
 			continue;
 		}
 
 		if(end<yesterdayNowMilliseconds){
-			backgroundColor = "#F5F5F5";
+			//backgroundColor = "#F5F5F5";
+			backgroundColor = "#FFFFFF";
 			titleColor = "#999";
 			descriptionColor = "#999";
 		}
@@ -1614,17 +1628,25 @@ giau.CalendarListView = function(element){
 			Code.setStyleMargin(div,"0");
 			Code.setStyleDisplay(div,"block");
 			Code.setStyleTextAlign(div,"center");
-			Code.setStylePadding(div,"20px 10px 20px 10px");
+			Code.setStylePadding(div,"20px 2px 20px 2px");
 			Code.setStyleBackground(div,backgroundColor);
 			Code.setStyleMargin(div,"0px 0px 12px 0px");
 			Code.addChild(container,div);
+			if(i<len-1){
+				Code.setStyleBorderColor(div,"#EEE");
+				Code.setStyleBorder(div,"solid");
+				Code.setStyleBorderWidthTop(div,"0px");
+				Code.setStyleBorderWidthLeft(div,"0px");
+				Code.setStyleBorderWidthRight(div,"0px");
+				Code.setStyleBorderWidthBottom(div,"1px");
+			}
 		var cont = div;
 		// LEFT
 		div = Code.newDiv();
 			Code.setContent(div, displayTitle);
 			Code.setStyleDisplay(div,"inline-block");
-			Code.setStyleWidth(div,"30%");
-			Code.setStyleFontSize(div,"18px");
+			Code.setStyleWidth(div,"60%");
+			//Code.setStyleFontSize(div,"18px");
 			Code.setStyleTextAlign(div,"left");
 			//Code.setStyleFontWeight(div,"bold");
 			Code.addClass(div,"calendarEventListItemTitle");
@@ -1632,6 +1654,7 @@ giau.CalendarListView = function(element){
 			Code.setStyleVerticalAlign(div,"top");
 			//Code.setStyleWidth(div,"30%");
 			Code.addChild(cont,div);
+		/*
 		// DIV
 			div = Code.newDiv();
 			Code.setStyleDisplay(div,"inline-block");
@@ -1653,15 +1676,16 @@ giau.CalendarListView = function(element){
 			Code.setStyleDisplay(div,"inline-block");
 			Code.setStyleWidth(div,"5%");
 			Code.addChild(cont,div);
+			*/
 		// RIGHT
 		div = Code.newDiv();
 			Code.setContent(div, displayDate);
 			Code.setStyleDisplay(div,"inline-block");
-			Code.setStyleWidth(div,"30%");
-			Code.setStyleFontSize(div,"12px");
+			Code.setStyleWidth(div,"40%");
+			//Code.setStyleFontSize(div,"14px");
 			Code.setStyleTextAlign(div,"right");
 			Code.addClass(div,"calendarEventListItemDate");
-			Code.setStyleColor(div,descriptionColor);
+//			Code.setStyleColor(div,descriptionColor);
 			Code.setStyleVerticalAlign(div,"top");
 			Code.addChild(cont,div);
 	}
@@ -1674,7 +1698,7 @@ giau.CalendarListView = function(element){
 			Code.setStyleFontStyleItalic(div);
 			Code.setStyleTextAlign(div,"center");
 			// Code.addClass(div,"calendarEventListItemDate");
-			Code.setStyleColor(div,noEventsTextColor);
+//			Code.setStyleColor(div,noEventsTextColor);
 			// Code.setStyleVerticalAlign(div,"top");
 			Code.addChild(container,div);
 	}
