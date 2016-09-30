@@ -24,9 +24,11 @@ define( 'GIAU_PLUGIN_URL', plugin_basename(__FILE__) );
 
 $GIAU_ROOT_PATH = dirname(__FILE__);
 error_log("GIAU_ROOT_PATH: ".$GIAU_ROOT_PATH);
+require_once($GIAU_ROOT_PATH.'/php/widgets.php');
 require_once($GIAU_ROOT_PATH.'/php/functions.php');
-require_once($GIAU_ROOT_PATH.'/php/data.php');
 require_once($GIAU_ROOT_PATH.'/php/tables.php');
+require_once($GIAU_ROOT_PATH.'/php/data.php');
+
 
 
 
@@ -1038,9 +1040,7 @@ function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,
 	if($tags!=null && count($tags)>0 ){
 		foreach($tags as $tag){
 			$tag = esc_sql($tag);
-			//array_push($criteria, " tags LIKE '%".$tag."%' "); // TODO: "cat" will get BOTH  "the_cat" and "a_cat"
-			// [^,]TAG[,$]
-			array_push($criteria, " tags REGEXP \"[^,]".$tag."[,$]\" "); 
+			array_push($criteria, " tags REGEXP \"(^|,)".$tag."(,|$)\" "); 
 		}
 	}
 	if(count($criteria)>0){

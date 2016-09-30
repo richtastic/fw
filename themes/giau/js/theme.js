@@ -97,6 +97,7 @@ giau.ButtonToggle = function(element){ //
 giau.ContactView = function(element){ //
 	this._container = element;
 
+	var use2Colums = false;
 	// LISTENERS
 	this._jsDispatch = new JSDispatch();
 	//this._jsDispatch.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
@@ -106,25 +107,26 @@ giau.ContactView = function(element){ //
 	// this._jsDispatch.addJSEventListener(element, Code.JS_EVENT_TOUCH_TAP, this._handleSubmitTappedFxn, this);
 
 	var contactTitle = "CONTACT US";
-	var contactInfo = "For more information, you can contact:<br/><br/>Joseph Kim (Director of Christian Education<br/>Phone: (213) 200-6092<br/>Email: thefathershouse.lacpc@gmail.com";
+	//var contactInfo = "For more information, you can contact:<br/><br/>Joseph Kim (Director of Christian Education<br/>Phone: (213) 200-6092<br/>Email: thefathershouse.lacpc@gmail.com";
 	
 	var otherTitle = "GET SOCIAL";
-	var otherInfo = "We have a ton of social meda links you can follow";
+	//var otherInfo = "We have a ton of social meda links you can follow";
 
 	var messageTitle = "SEND A MESSAGE";
-	var messageInfo = "Got more questions? Write us a note, and we'll get back to you.";
-	var nameFieldDefault = "Name";
-	var emailFieldDefault = "Email";
-	var bodyFieldDefault = "Comment";
+	//var messageInfo = "Got more questions? Write us a note, and we'll get back to you.";
+	var nameFieldDefault = "Name*";
+	var emailFieldDefault = "Email*";
+	var phoneFieldDefault = "Phone Number (optional)";
+	var bodyFieldDefault = "Message*";
 
 	var botCheckText = "Check here if you are a human.";
-	var sendMessageButtonText = "SendMessage";
-
-		var divInfo = Code.newDiv(messageInfo);
-			Code.setStyleFontFamily(divInfo,"'siteThemeLight'");
-			Code.setStyleDisplay(divInfo,"inline-block");
-			Code.setStyleFontSize(divInfo,"14px");
-			Code.setStyleColor(divInfo,"#333");
+	var sendMessageButtonText = "Submit";
+var inputTextColor = "#000";
+		// var divInfo = Code.newDiv(messageInfo);
+		// 	Code.setStyleFontFamily(divInfo,"'siteThemeLight'");
+		// 	Code.setStyleDisplay(divInfo,"inline-block");
+		// 	Code.setStyleFontSize(divInfo,"14px");
+		// 	Code.setStyleColor(divInfo,"#333");
 		//var divName = Code.newDiv(nameFieldDefault);
 			var divName = Code.newInputText();
 			Code.setTextPlaceholder(divName,nameFieldDefault);
@@ -133,7 +135,8 @@ giau.ContactView = function(element){ //
 			Code.setStyleTextAlign(divName,"left");
 			Code.setStyleBorder(divName,"solid");
 			Code.setStyleBorderWidth(divName,"1px");
-			Code.setStyleBorderColor(divName,"#333");
+			Code.setStyleBorderColor(divName,"#FFF");
+			Code.setStyleColor(divName,inputTextColor);
 				Code.setStyleHeight(divName,"24px");
 				
 		var divEmail = Code.newInputText();
@@ -143,15 +146,26 @@ giau.ContactView = function(element){ //
 			Code.setStyleTextAlign(divEmail,"left");
 			Code.setStyleBorder(divEmail,"solid");
 			Code.setStyleBorderWidth(divEmail,"1px");
-			Code.setStyleBorderColor(divEmail,"#333");
+			Code.setStyleBorderColor(divEmail,"#FFF");
+			Code.setStyleColor(divEmail,inputTextColor);
 				Code.setStyleHeight(divEmail,"24px");
 			// Code.setStyleFontFamily(divEmail,"'siteThemeLight'");
 			// Code.setStyleDisplay(divEmail,"inline-block");
 			// Code.setStyleFontSize(divEmail,"14px");
 			// Code.setStyleColor(divEmail,"#333");
+		var divPhone = Code.newInputText();
+			Code.setTextPlaceholder(divPhone,phoneFieldDefault);
+			Code.setStyleWidth(divPhone,"100%");
+			Code.setStyleDisplay(divPhone,"block");
+			Code.setStyleTextAlign(divPhone,"left");
+			Code.setStyleBorder(divPhone,"solid");
+			Code.setStyleBorderWidth(divPhone,"1px");
+			Code.setStyleBorderColor(divPhone,"#FFF");
+			Code.setStyleColor(divPhone,inputTextColor);
+				Code.setStyleHeight(divPhone,"24px");
 
 		var divDivs = [];
-		for(var i=0; i<5; ++i){
+		for(var i=0; i<6; ++i){
 			var divDiv1 = Code.newDiv();
 				Code.setStyleWidth(divDiv1,"100%");
 				Code.setStyleHeight(divDiv1,"10px");
@@ -169,7 +183,8 @@ giau.ContactView = function(element){ //
 			Code.setStyleTextAlign(divComment,"left");
 			Code.setStyleBorder(divComment,"solid");
 			Code.setStyleBorderWidth(divComment,"1px");
-			Code.setStyleBorderColor(divComment,"#333");
+			Code.setStyleBorderColor(divComment,"#FFF");
+			Code.setStyleColor(divComment,inputTextColor);
 				Code.setStyleHeight(divComment,"80px");
 
 		//var divBot = Code.newDiv();
@@ -178,47 +193,57 @@ giau.ContactView = function(element){ //
 				Code.setStyleTextAlign(divBot,"left");
 				Code.setStyleVerticalAlign(divBot,"middle");
 
-				var divBotCheck = Code.newInputCheckbox("isUserHuman","yes");
-					Code.setStyleDisplay(divBotCheck,"inline-block");
+				// var divBotCheck = Code.newInputCheckbox("isUserHuman","yes");
+				// 	Code.setStyleDisplay(divBotCheck,"inline-block");
 				
-				var divBotText = Code.newDiv(botCheckText);
-					Code.setStyleFontFamily(divBotText,"'siteThemeLight'");
-					Code.setStyleDisplay(divBotText,"inline-block");
-					Code.setStyleFontSize(divBotText,"14px");
-					Code.setStyleColor(divBotText,"#333");
-					Code.setStylePadding(divBotText,"0px 0px 0px 10px");
+				// var divBotText = Code.newDiv(botCheckText);
+				// 	Code.setStyleFontFamily(divBotText,"'siteThemeLight'");
+				// 	Code.setStyleDisplay(divBotText,"inline-block");
+				// 	Code.setStyleFontSize(divBotText,"14px");
+				// 	Code.setStyleColor(divBotText,"#333");
+				// 	Code.setStylePadding(divBotText,"0px 0px 0px 10px");
 
-				Code.addChild(divBot, divBotCheck);
-				Code.addChild(divBot, divBotText);
-
+				// Code.addChild(divBot, divBotCheck);
+				// Code.addChild(divBot, divBotText);
+var submitColor = "#4966D0";
+var submitColorDark = "#4055CC";
 
 		//var divSend = Code.newDiv();
 			var divSend = Code.newInputSubmit(sendMessageButtonText);
 			Code.setStyleDisplay(divSend,"block");
-			Code.setStyleTextAlign(divSend,"left");
+			Code.setStyleTextAlign(divSend,"center");
 			Code.setStyleBorder(divSend,"solid");
 			Code.setStyleBorderWidth(divSend,"1px");
-			Code.setStyleBorderColor(divSend,"#333");
-			Code.setStylePadding(divSend,"4px");
-			Code.setStyleBackground(divSend,"#FFF");
-				Code.setStyleFontFamily(divSend,"'siteThemeRegular");
+			Code.setStyleBorderColor(divSend,submitColorDark);
+			Code.setStylePaddingLeft(divSend,"24px");
+			Code.setStylePaddingRight(divSend,"24px");
+			Code.setStylePaddingTop(divSend,"8px");
+			Code.setStylePaddingBottom(divSend,"8px");
+			Code.setStyleBackground(divSend,submitColor);
+			Code.setStyleMargin(divSend,"0 auto");
+				Code.setStyleFontFamily(divSend,"'siteThemeLight'");
 				//Code.setStyleDisplay(divInfo,"inline-block");
-				Code.setStyleFontSize(divSend,"14px");
-				Code.setStyleColor(divSend,"#333");
+					//Code.setStyleWidth(divSend,"50%");
+				Code.setStyleFontSize(divSend,"12px");
+				Code.setStyleColor(divSend,"#FFF");
 				//Code.setStyleHeight(divSend,"24px");
 			//Code.setContent(divSend, sendMessageButtonText);
 			this._jsDispatch.addJSEventListener(divSend, Code.JS_EVENT_CLICK, this._handleSubmitClickedFxn, this);
 			this._jsDispatch.addJSEventListener(divSend, Code.JS_EVENT_TOUCH_TAP, this._handleSubmitTappedFxn, this);
 
+this._formElementName = divName;
+this._formElementEmail = divEmail;
+this._formElementPhone = divPhone;
+this._formElementComment = divComment;
 
 	var containerElement = this._container;
 	var rows = [];
-		rows.push({ "leftContent": contactTitle,
-					"rightContent": contactInfo});
-		rows.push({ "leftContent": otherTitle,
-					"rightContent": otherInfo});
+		// rows.push({ "leftContent": contactTitle,
+		// 			"rightContent": contactInfo});
+		// rows.push({ "leftContent": otherTitle,
+		// 			"rightContent": otherInfo});
 		rows.push({ "leftContent": messageTitle,
-					"rightElements":[divInfo, divDivs[0], divName, divDivs[1], divEmail, divDivs[2], divComment, divDivs[3], divBot, divDivs[4], divSend],
+					"rightElements":[divDivs[0], divName, divDivs[1], divEmail, divDivs[2], divPhone, divDivs[3], divComment, divDivs[4], divBot, divDivs[5], divSend],
 					"rightContent": null});
 	var i, j, len = rows.length;
 	for(i=0;i<len;++i){
@@ -230,9 +255,7 @@ giau.ContactView = function(element){ //
 		var leftContent = row["leftContent"];
 		var rightContent = row["rightContent"];
 		var rightElements = row["rightElements"];
-
-		Code.setContent(leftColElement, leftContent);
-
+		
 		if(rightContent){
 			Code.setContent(rightColElement, rightContent);
 		}else if(rightElements && rightElements.length>0){
@@ -242,17 +265,24 @@ giau.ContactView = function(element){ //
 			}
 		}
 		Code.addChild(containerElement, rowElement);
-		Code.addChild(rowElement,leftColElement);
+		var widthLeft = "0%";
+		var widthRight = "100%";
+		if(use2Colums){
+			Code.setContent(leftColElement, leftContent);
+			Code.addChild(rowElement,leftColElement);
+			widthLeft = "50%";
+			widthRight = "50%";
+		}
 		Code.addChild(rowElement,rightColElement);
 		
 
 		Code.setStyleDisplay(rowElement,"block");
 		//Code.setStyleBackground(rowElement,"#00F");
-		Code.setStylePadding(rowElement,"10px");
+		//Code.setStylePadding(rowElement,"10px");
 
 		Code.setStyleVerticalAlign(rowElement,"top");
 
-		Code.setStyleWidth(leftColElement,"50%");
+		Code.setStyleWidth(leftColElement,widthLeft);
 			Code.setStyleFontFamily(leftColElement,"'siteThemeRegular'");
 			Code.setStyleFontSize(leftColElement,"20px");
 			Code.setStyleDisplay(leftColElement,"inline-block");
@@ -263,7 +293,7 @@ giau.ContactView = function(element){ //
 			Code.setStyleColor(leftColElement,"#000");
 			//Code.setStyleBackground(leftColElement,"#0F0");
 			
-		Code.setStyleWidth(rightColElement,"50%");
+		Code.setStyleWidth(rightColElement,widthRight);
 			Code.setStyleFontFamily(rightColElement,"'siteThemeLight'");
 			Code.setStyleDisplay(rightColElement,"inline-block");
 			Code.setStyleFontSize(rightColElement,"14px");
@@ -278,7 +308,7 @@ giau.ContactView = function(element){ //
 			// Code.setStyleHeight(containerElement,"100%");
 			// Code.setStyleMinHeight(containerElement,"100px");
 	}
-	Code.setStylePadding(containerElement,"10px");
+	//Code.setStylePadding(containerElement,"10px");
 		
 }
 giau.ContactView.prototype._handleSubmitClickedFxn = function(e){
@@ -310,6 +340,10 @@ giau.ContactView.prototype._submitFormData = function(){
 	});
 
 	alert("form sent successfully");
+	Code.setInputTextValue(this._formElementName,"");
+	Code.setInputTextValue(this._formElementEmail,"");
+	Code.setInputTextValue(this._formElementPhone,"");
+	Code.setTextAreaValue(this._formElementComment,"");
 }
 
 giau.BioView = function(element){ //
@@ -407,12 +441,13 @@ Code.setStylePosition(this._container,"relative");
 			Code.setStyleDisplay(outerElement,"table-cell");
 			Code.setStylePosition(outerElement,"relative");
 		var containerElement = Code.newDiv();
-			Code.setStyleBackground(containerElement,"#EEE");
+			Code.setStyleBackground(containerElement,"#FFF");
 			Code.setStyleDisplay(containerElement,"inline-block"); // fit height
 			Code.setStylePosition(containerElement,"relative");
 			Code.setStyleVerticalAlign(containerElement,"top");
 			Code.setStyleHeight(containerElement,"100%");
 			Code.setStyleMinHeight(containerElement,"100px");
+
 		var imageIconElement = Code.newImage();
 			var imageURL = person["image_url"];
 			if(!imageURL || imageURL==""){
@@ -500,10 +535,10 @@ giau.BioView.prototype._handleWindowResizedFxn = function(){
 
 giau.BioView.prototype.updateLayout = function(){
 	var listings = this._galleryList;
-
+console.log("0")
 	var maximumColumnCount = 3;
 	var elementMinWidth = 300;
-	var elementMaxWidth = 400; // to next row size
+	var elementMaxWidth = 350; // to next row size
 	var widthContainer = $(this._container).width();
 	var heightContainer = $(this._container).height();
 
@@ -513,6 +548,7 @@ giau.BioView.prototype.updateLayout = function(){
 	if(widthContainer<elementMinWidth){
 		columns = 1;
 	}
+	columns = Math.max(1,columns);
 	var colWidth = Math.floor(widthContainer/columns);
 
 	var personnelList = this._personnelList;
@@ -527,7 +563,6 @@ var row;
 			Code.setStyleWidth(row,widthContainer+"px");
 			//Code.setStyleHeight(row,"");
 		}
-
 		var person = personnelList[i];
 		var outerElement = person["element"];
 		var innerElement = person["container"];
@@ -541,6 +576,18 @@ var row;
 		Code.setStyleWidth(innerElement,innerWidth);
 		Code.setStylePadding(innerElement,innerPadding+"px");
 
+			if(i<len-columns){
+				var div = outerElement;
+				Code.setStyleBorderColor(div,"#EEE");
+				Code.setStyleBorder(div,"solid");
+				Code.setStyleBorderWidthTop(div,"0px");
+				Code.setStyleBorderWidthLeft(div,"0px");
+				Code.setStyleBorderWidthRight(div,"0px");
+				Code.setStyleBorderWidthBottom(div,"1px");
+			}else{
+				var div = outerElement;
+				Code.setStyleBorder(div,"none");
+			}
 		/*
 		var outerElement = Code.newDiv();
 			Code.setStyleDisplay(outerElement,"table-cell");
@@ -556,7 +603,6 @@ var row;
 		*/
 		Code.addChild(this._container, row);
 		Code.addChild(row, outerElement);
-		
 	}
 }
 
@@ -581,7 +627,6 @@ giau.CategoryListing = function(element){
 	var i;
 	for(i=0; i<Code.numChildren(this._container); ++i){
 		var div = Code.getChild(this._container,i);
-		console.log(div);
 		if(Code.hasProperty(div,propertyData)){
 			var title = Code.getPropertyOrDefault(div,propertyTitle, null);
 			var image = Code.getProperty(div,propertyImage, null);
@@ -904,6 +949,7 @@ giau.LanguageToggle.prototype.updateLayout = function(){
 
 giau.NavigationList = function(element){
 	this._container = element;
+	//return;
 
 	// LISTENERS
 	this._jsDispatch = new JSDispatch();
@@ -1133,6 +1179,8 @@ giau.ImageGallery = function(element){
 	Code.setStyleOverflow(this._container,"hidden"); // overflow: hidden;
 
 	var showNavigation = Code.getProperty(this._container,"data-navigation");
+	showNavigation = showNavigation=="true";
+	
 	
 	// CREATE HIERARCHY
 	this._functionalityContainer = Code.newDiv();
@@ -1338,6 +1386,7 @@ giau.ImageGallery.ANIMATION_DIRECTION_FADE_IN = 3;
 giau.ImageGallery.ANIMATION_DIRECTION_FADE_OUT = 4;
 
 giau.ImageGallery.prototype._animateToNewImage = function(prevIndex,nextIndex,isRight){
+	console.log("anim")
 	this._transitionIndexPrevious = prevIndex;
 	this._transitionIndexNext = nextIndex;
 	this._currentIndex = this._transitionIndexNext;
@@ -1587,14 +1636,16 @@ giau.CalendarListView = function(element){
 		var timeCutOff = todayNowMilliseconds - 30*24*60*60*1000; // 1 week previous
 		var titleColor = "#000000";
 		var descriptionColor = "#333";
-		var backgroundColor = "#EEEEEE";
+		//var backgroundColor = "#EEEEEE";
+		var backgroundColor = "#FFFFFF";
 
 		if(end<timeCutOff){
 			continue;
 		}
 
 		if(end<yesterdayNowMilliseconds){
-			backgroundColor = "#F5F5F5";
+			//backgroundColor = "#F5F5F5";
+			backgroundColor = "#FFFFFF";
 			titleColor = "#999";
 			descriptionColor = "#999";
 		}
@@ -1611,17 +1662,25 @@ giau.CalendarListView = function(element){
 			Code.setStyleMargin(div,"0");
 			Code.setStyleDisplay(div,"block");
 			Code.setStyleTextAlign(div,"center");
-			Code.setStylePadding(div,"20px 10px 20px 10px");
+			Code.setStylePadding(div,"20px 2px 20px 2px");
 			Code.setStyleBackground(div,backgroundColor);
 			Code.setStyleMargin(div,"0px 0px 12px 0px");
 			Code.addChild(container,div);
+			if(i<len-1){
+				Code.setStyleBorderColor(div,"#EEE");
+				Code.setStyleBorder(div,"solid");
+				Code.setStyleBorderWidthTop(div,"0px");
+				Code.setStyleBorderWidthLeft(div,"0px");
+				Code.setStyleBorderWidthRight(div,"0px");
+				Code.setStyleBorderWidthBottom(div,"1px");
+			}
 		var cont = div;
 		// LEFT
 		div = Code.newDiv();
 			Code.setContent(div, displayTitle);
 			Code.setStyleDisplay(div,"inline-block");
-			Code.setStyleWidth(div,"30%");
-			Code.setStyleFontSize(div,"18px");
+			Code.setStyleWidth(div,"60%");
+			//Code.setStyleFontSize(div,"18px");
 			Code.setStyleTextAlign(div,"left");
 			//Code.setStyleFontWeight(div,"bold");
 			Code.addClass(div,"calendarEventListItemTitle");
@@ -1629,6 +1688,7 @@ giau.CalendarListView = function(element){
 			Code.setStyleVerticalAlign(div,"top");
 			//Code.setStyleWidth(div,"30%");
 			Code.addChild(cont,div);
+		/*
 		// DIV
 			div = Code.newDiv();
 			Code.setStyleDisplay(div,"inline-block");
@@ -1650,15 +1710,16 @@ giau.CalendarListView = function(element){
 			Code.setStyleDisplay(div,"inline-block");
 			Code.setStyleWidth(div,"5%");
 			Code.addChild(cont,div);
+			*/
 		// RIGHT
 		div = Code.newDiv();
 			Code.setContent(div, displayDate);
 			Code.setStyleDisplay(div,"inline-block");
-			Code.setStyleWidth(div,"30%");
-			Code.setStyleFontSize(div,"12px");
+			Code.setStyleWidth(div,"40%");
+			//Code.setStyleFontSize(div,"14px");
 			Code.setStyleTextAlign(div,"right");
 			Code.addClass(div,"calendarEventListItemDate");
-			Code.setStyleColor(div,descriptionColor);
+//			Code.setStyleColor(div,descriptionColor);
 			Code.setStyleVerticalAlign(div,"top");
 			Code.addChild(cont,div);
 	}
@@ -1671,7 +1732,7 @@ giau.CalendarListView = function(element){
 			Code.setStyleFontStyleItalic(div);
 			Code.setStyleTextAlign(div,"center");
 			// Code.addClass(div,"calendarEventListItemDate");
-			Code.setStyleColor(div,noEventsTextColor);
+//			Code.setStyleColor(div,noEventsTextColor);
 			// Code.setStyleVerticalAlign(div,"top");
 			Code.addChild(container,div);
 	}

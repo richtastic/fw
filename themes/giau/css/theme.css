@@ -72,7 +72,7 @@ ul {
 	color: #1D2129;
 }
 .footerSectionMain {
-	padding: 10px;
+	padding-bottom: 32px;
 }
 
 /* TITLES */
@@ -91,7 +91,7 @@ ul {
 .mainNavigationBarTitle {
 	display: block;
 	font-family: 'siteThemeRegular', 'Arial Black', 'Arial Bold', sans-serif;
-	font-size: 10px;
+	font-size: 11px;
 	color: #1D2129;
 	margin: 0 auto;
 	text-align: left;
@@ -101,7 +101,7 @@ ul {
 .mainNavigationBarHeading {
 	display: block;
 	font-family: 'siteThemeBold', 'Arial Black', 'Arial Bold', sans-serif;
-	font-size: 20px;
+	font-size: 24px;
 	color: #1D2129;
 	margin: 0 auto;
 	text-align: left;
@@ -298,7 +298,7 @@ ul {
 	font-family: 'siteThemeRegular', 'Arial', sans-serif;
 	font-size: 16px;
 	color: #FFF;
-	padding-top: 20px;
+	padding-top: 32px;
 	padding-bottom: 10px;
 }
 .footerElementLogo {
@@ -329,10 +329,11 @@ ul {
 .footerElementTextCopyright {
 	text-align: center;
 	font-family: 'siteThemeLight', 'Arial', sans-serif;
-	font-size: 12px;
+	font-size: 10px;
 	color: #90949C;
 	padding: 1px;
-	padding-top: 10px;
+	padding-top: 18px;
+	padding-bottom: 32px;
 	letter-spacing: 1px;
 }
 .footerElementBottom {
@@ -444,13 +445,34 @@ ul {
 }
 
 .calendarEventListItemTitle {
-	font-family: 'siteThemeRegular';
+	font-family: 'siteThemeLight';
+	font-size: 18px;
 }
 .calendarEventListItemDescription {
 	font-family: 'siteThemeLight';
 }
 .calendarEventListItemDate {
 	font-family: 'siteThemeLight';
+	font-size: 14px;
+	color: #666;
+}
+.customHeadingCalendarSchedule {
+	font-family: 'siteThemeRegular';
+	font-size: 24px;
+	color: #000;
+	text-align: left;
+	padding-top: 10px;
+	padding-left: 16px;
+	padding-right: 16px;
+	padding-bottom: 4px;
+	
+}
+
+.customCategoryDepartments {
+	padding-top: 6%;
+	padding-left: 6%;
+	padding-right: 6%;
+	padding-bottom: 10px;
 }
 
 /* directions */
@@ -479,9 +501,10 @@ ul {
 /* widget : vertical divider */
 .giauVerticalDividerContainer {
 	padding: 10px;
-	width: 100%;
 	display: inline-block;
 	text-align: center;
+	position: relative; display: block;
+	margin:0 auto;
 }
 .giauVerticalDividerBar {
 	height: 6px;
@@ -489,18 +512,76 @@ ul {
 	background-color: #000;
 	margin: 0 auto;
 	display: inline-block;
+	margin-top: 32px;
+	margin-bottom: 32px;
+}
+.customHeadingQuoteTitle {
+	padding-top:32px;
+	padding-bottom:0px;
+}
+.customHeadingQuoteBody {
+	padding-top: 20px;
+	padding-bottom: 20px;
 }
 
 /* widget : category listing */
 .giauCategoryListingContainer {
-	padding: 10px;
+	
 }
 .giauCategoryListing {
 	
 }
+/* widget : footer */
+.giauFooterContainer {
+	background-color: #111E2F;
+}
 
+/* widget : language switch */
+.giauLanguageToggleSwitch {
+	color: #FFF;
+}
 
+.giauCalendarList{
+	padding:16px;
+}
 
+.customContactInfo {
+	width: 49%; /* ? */
+	display: inline-block;
+	padding: 0px;
+	border: 0px;
+	margin:0px;
+	vertical-align: top;
+}
+.giauContactForm {
+	width: 49%; /* ? */
+	display: inline-block;
+	padding: 0px;
+	border: 0px;
+	margin:0px;
+	
+}
+
+.customContactBioHeading {
+	font-family: 'siteThemeRegular';
+	font-size: 16px;
+	color: #000;
+}
+.customContactBioTitle {
+	font-family: 'siteThemeLight';
+	font-size: 16px;
+	color: #999;
+}
+.customContactBioEmail {
+	font-family: 'siteThemeLight';
+	font-size: 16px;
+	color: #889;
+}
+.customContactBioPhone {
+	font-family: 'siteThemeLight';
+	font-size: 16px;
+	color: #999;
+}
 
 table {
 	border-collapse: collapse;

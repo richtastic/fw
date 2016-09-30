@@ -154,10 +154,10 @@ cd /www/ce/wp-content/themes/
 chmod -R 755 giau/
 
 
-# ---- 2:
+# ---- 2: THEMES
 # GOTO
 cd www/ce/wp-content/themes
-lcd ~/universe/repo/fw/themes/
+lcd ~/universe/repo/fw/themes
 # COPY GIAU
 rm -rf ./giau
 mirror -R giau giau
@@ -170,6 +170,17 @@ mirror -R code code
 cd /www/ce/wp-content/themes/
 chmod -R 755 giau/
 
+# ---- 3: PLUGIN
+# GOTO
+cd www/ce/wp-content/pugins
+lcd ~/universe/repo/fw/plugins
+# COPY GIAU
+rm -rf ./giau
+mirror -R giau giau
+# CODE ... ?
+# CHMOD READ ACCESS:
+cd /www/ce/wp-content/plugins/
+chmod -R 755 giau/
 
 ```
 

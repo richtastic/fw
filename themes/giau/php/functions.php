@@ -1,7 +1,6 @@
 <?php
 // functions.php
 
-
 /*
 
 $_SERVER['HTTP_USER_AGENT']
@@ -238,430 +237,13 @@ function create_page(){
 	</head>
 	<body style="bgColor:#F00; margin: 0 auto;">
 
-<?php
-
-function fillOutPageFromID($pageID){
-	$page = giau_get_page_id($pageID);
-	if($page!=null){
-		fillOutFromSectionList($page["sectionList"]);
-	}else{
-		error_log("NO PAGE");
-	}
-}
-
-function fillOutFromSectionList($sectionList){
-	if($sectionList){
-		$sectionList = explode(",",$sectionList);
-		foreach($sectionList as $sectionID){
-			fillOutSectionFromID($sectionID);
-		}
-	}
-}
-
-function fillOutSectionFromID($sectionID){
-	error_log("fillOutSectionFromID: ".$sectionID);
-	$section = giau_get_section_id($sectionID);
-	if($section!=null){
-		$widgetID = $section["widget"];
-		$widget = giau_get_widget_id($widgetID);
-		if($widget!==null){
-			fillOutSectionFromWidget($widget,$section);
-		}
-	}else{
-		error_log("NO SECTION");
-	}
-}
-function fillOutSectionFromWidget($widget,$section){
-	$widgetName = $widget["name"];
-	$lookup = [];
-	// lookup table
-	$lookup["text_display"] = handle_widget_text_display;
-	$lookup["vertical_divider"] = handle_widget_vertical_divider;
-	$lookup["category_listing"] = handle_widget_category_listing;
-	$lookup["image_gallery"] = handle_widget_image_gallery;
-	$lookup["bottom_footer"] = handle_widget_bottom_footer;
-	$lookup["calendar_listing"] = handle_widget_calendar_listing;
-	$lookup["social_apps;"] = handle_widget_social_apps;
-
-	$fxn = $lookup[$widgetName];
-	if($fxn!=null){
-		$fxn($widget,$section);
-	}
-}
-
-function handle_widget_text_display($widget,$section){
-	$sectionJSON = json_decode($section["configuration"],true);
-	$text = $sectionJSON["text"];
-		$text = giau_languagization_substitution($text,null);
-	$class = $sectionJSON["class"];
-	?>
-	<div class="<?php echo $class; ?>"><?php echo $text; ?></div>
-	<?php
-	// sub sections
-	fillOutFromSectionList($section["sectionList"]);
-}
-
-function handle_widget_vertical_divider($widget,$section){
-	$widgetJSON = decodeWidget($widget);
-	$sectionJSON = decodeSection($section);
-	$show_bar = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"show_bar");
-	// <div class="sectionContainerDividerSmall limitedWidth"  style="">
-	?>
-	
-	<div class="giauVerticalDividerContainer limitedWidth"  style="">
-	<?php
-	if($show_bar){
-		?>
-		<div class="giauVerticalDividerBar"  style=""></div>
-		<?php
-	}
-	?>
-	</div>
-	<?php
-	// sub sections
-	fillOutFromSectionList($section["sectionList"]);
-}
-
-function handle_widget_category_listing($widget,$section){
-	$widgetJSON = decodeWidget($widget);
-	$sectionJSON = decodeSection($section);
-	$categoryList = $sectionJSON["categories"];
-	$categoryLength = count($categoryList);
-	$rounded = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"rounded") ? "true" :  "false";
-	?>
-	<div class="giauCategoryListingContainer limitedWidth" style="">
-		<div class="giauCategoryListing">
-			<?php
-			$i;
-			for($i=0;$i<$categoryLength;++$i){
-				$category = $categoryList[$i];
-				$image = $category["image"];
-				$name = $category["name"];
-				$uri = $category["uri"];
-				$shading = "";
-				$cover = "";
-				?>
-				<div style="display:none;" data-data="true" data-rounded="<?php echo $rounded; ?>" data-title="<?php echo $name; ?>" data-image="<?php echo $image; ?>" data-url="<?php echo $uri; ?>" data-cover="<?php echo $cover; ?>"  data-shading="<?php echo $shading; ?>" ?>" ></div>
-				<?php
-			}
-			?>
-		</div>
-	</div>
-	<?php
-	// sub sections
-	fillOutFromSectionList($section["sectionList"]);
-}
-
-
-function handle_widget_image_gallery($widget,$section){
-	$widgetJSON = decodeWidget($widget);
-	$sectionJSON = decodeSection($section);
-	$autoPlay = section_get_value_widget_number_int($widgetJSON,$sectionJSON,"autoplay");
-	$displayNavigation = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"display_navigation") ? "true" : "false";
-	$imageList = section_get_value_widget_array($widgetJSON,$sectionJSON,"images");
-	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
-	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
-	// position:relative; width:100%; height:400px;
-	?>
-		<div class="giauImageGallery <?php echo $klass; ?>" data-autoplay="<?php echo autoPlay; ?>" data-navigation="<?php echo displayNavigation; ?>" style="<?php echo style; ?>">
-		<?php
-			$i;
-			$len = sizeof($imageList);
-			for($i=0; $i<$len; ++$i){
-				$image = $imageList[$i];
-				?>
-				<div data-source="<?php echo $image; ?>" style="display:none;"></div>
-				<?php
-			}
-		// sub sections
-		fillOutFromSectionList($section["sectionList"]);
-		?>
-		</div>
-	<?php
-}
-
-function handle_widget_bottom_footer($widget,$section){
-	//
-	// sub sections
-	fillOutFromSectionList($section["sectionList"]);
-}
-
-function handle_widget_social_apps($widget,$section){
-	//
-	// sub sections
-	fillOutFromSectionList($section["sectionList"]);
-}
-
-function handle_widget_calendar_listing($widget,$section){
-	error_log("handle_widget_calendar_listing");
-	$widgetJSON = decodeWidget($widget);
-	$sectionJSON = decodeSection($section);
-	$tagList = section_get_value_widget_array($widgetJSON,$sectionJSON,"tags");
-	$orderRecentFirst = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"order_recent_first");
-	$rangeStart = section_get_value_widget_int($widgetJSON,$sectionJSON,"range_start");
-	$rangeEnd = section_get_value_widget_int($widgetJSON,$sectionJSON,"range_end");
-	$isRelative = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"relative");
-	$minCount = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"min_count");
-	$maxCount = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"max_count");
-	?>
-	<div class="giauCalendarList"
-		data-months-short="<?php echo(implode(",",getCookieMonthsOfYearShort())); ?>"
-		data-months-long="<?php echo(implode(",",getCookieMonthsOfYearLong())); ?>"
-		data-days-short="<?php echo(implode(",",getCookieDaysOfWeekShort())); ?>"
-		data-days-long="<?php echo(implode(",",getCookieDaysOfWeekLong())); ?>"
-		data-min-count="<?php echo(minCount); ?>"
-		data-max-count="<?php echo(maxCount); ?>"
-		>
-			<?php
-				$startDate;
-				$endDate;
-				if($isRelative){
-					$dateNow = getDateNow();
-					$dateLimit = addTimeToSeconds($dateNow, 0,0,0, 0,0,$rangeStart/1000, 0);
-					$startDate = stringFromDate($dateNow);
-					$dateLimit = addTimeToSeconds($dateNow, 0,0,0, 0,0,$rangeEnd/1000, 0);
-					$endDate = stringFromDate($dateLimit);
-				}else{ // absolute
-					$startDate = stringFromDate($rangeStart/1000);
-					$endDate = stringFromDate($rangeEnd/1000);
-				}
-				$orderDateNumber = orderRecentFirst ? 1 : 0;
-				error_log("start: ".$startDate);
-				error_log("  end: ".$endDate);
-				$operationOffset = 0;
-				$operationCount = 100;
-				$operationOrder = [ ["start_date",$orderDateNumber], ["duration",1], ["id",0] ];
-				$results = giau_calendar_paginated($operationOffset,$operationCount,$operationOrder, $startDate,$endDate, $tagList);
-				$length = count($results);
-				$index = 0;
-				foreach($results as $row){
-					$row["$__"] = $index;
-					$included = ["$__","title","description","start_date","duration"];
-					$labels = ["data-index","data-title","data-description","data-start-date","data-duration"];
-					$extra = "";
-					$div = divWithDatasValuesLabelsExtras($row, $included, $labels, $extra);
-					echo $div;
-					++$index;
-				}
-	// sub sections
-	fillOutFromSectionList($section["sectionList"]);
-			?>
-	</div>
-	<?php
-}
-/*
-function include_widget_calendar_events(){
-?>
-	<div class="giauCalendarList"
-		data-months-short="<?php echo(implode(",",getCookieMonthsOfYearShort())); ?>"
-		data-months-long="<?php echo(implode(",",getCookieMonthsOfYearLong())); ?>"
-		data-days-short="<?php echo(implode(",",getCookieDaysOfWeekShort())); ?>"
-		data-days-long="<?php echo(implode(",",getCookieDaysOfWeekLong())); ?>"
-		>
-			<?php
-				$daysInTheFuture = 6*30; // 6 months
-				$dateNow = getDateNow();
-				$dateLimit = addTimeToSeconds($dateNow, 0,0,$daysInTheFuture, 0,0,0, 0);
-				$startDate = stringFromDate($dateNow);
-				$endDate = stringFromDate($dateLimit);
-				// error_log("start: ".$startDate);
-				// error_log("  end: ".$endDate);
-				$operationOffset = 0;
-				$operationCount = 100;
-				$operationOrder = [ ["start_date",1], ["duration",1], ["id",0] ];
-				$results = giau_calendar_paginated($operationOffset,$operationCount,$operationOrder, $startDate,$endDate);
-				$length = count($results);
-				$index = 0;
-				foreach($results as $row){
-					$row["$__"] = $index;
-					$included = ["$__","title","description","start_date","duration"];
-					$labels = ["data-index","data-title","data-description","data-start-date","data-duration"];
-					$extra = "";
-					$div = divWithDatasValuesLabelsExtras($row, $included, $labels, $extra);
-					//error_log($div);
-					echo $div;
-					++$index;
-				}
-				// function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,$endDate)
-				//$calendarResults = 
-			?>
-		</div>
-<?php
-}
-*/
-
-function decodeSection($section){
-	return json_decode($section["configuration"],true);
-}
-function decodeWidget($widget){
-	return json_decode($widget["configuration"],true);
-}
-function section_get_value_widget_boolean($widget,$section,$field){
-	$value = section_get_value_widget_any($widget,$section,$field);
-	if($value!=null){
-		if($value=="true"){
-			return true;
-		}
-	}
-	return false;
-}
-function section_get_value_widget_number_int($widget,$section,$field){
-	$value = section_get_value_widget_any($widget,$section,$field);
-	if($value!=null){
-		return intval($sectionValue);
-	}
-	return 0;
-}
-function section_get_value_widget_number_float($widget,$section,$field){
-	$value = section_get_value_widget_any($widget,$section,$field);
-	if($value!=null){
-		return floatval($value);
-	}
-	return 0;
-}
-function section_get_value_widget_string($widget,$section,$field){
-	$value = section_get_value_widget_any($widget,$section,$field);
-	if($value!=null){
-		// STRING CHECK
-		return $value;
-	}
-	return "";
-}
-function section_get_value_widget_array($widget,$section,$field){
-	$value = section_get_value_widget_any($widget,$section,$field);
-	if($value!=null){
-		// ARRAY CHECK
-		return $value;
-	}
-	return [];
-}
-function section_get_value_widget_object($widget,$section,$field){
-	$value = section_get_value_widget_any($widget,$section,$field);
-	if($value!=null){
-		// OBJECT CHECK
-		return $value;
-	}
-	return [];
-}
-function section_get_value_widget_any($widget,$section,$field){
-	if(!$section || !$widget){
-		return null;
-	}
-	$sectionValue = $section[$field]; // value
-	$widgetInfo = $widget[$field]; // info
-	if($sectionValue!=null){
-		return $sectionValue;
-	}
-	return null;
-}
-
-?>
-
-
-<?php
-
-fillOutPageFromID(1);
-//fillOutSectionFromID(1);
-
-?>
-
-
 
 <?php
 if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
-?>
-	<!-- FEATURE IMAGE -->
-	<div class="featurePresentationContainer giauImageGallery" data-autoplay="10000"  style="">
-		<?php
-			$galleryPrefix = relativePathIMG()."gallery_featured/";
-			$imageList = ["featured_06_opt.png","featured_02_opt.png","featured_03_opt.png","featured_04_opt.png","featured_05_opt.png","featured_01_opt.png"];
-			$i;
-			$len = sizeof($imageList);
-			for($i=0; $i<$len; ++$i){
-				$image = $imageList[$i];
-				?>
-				<div data-source="<?php echo $galleryPrefix.$image; ?>" style="display:none;"></div>
-				<?php
-			}
-		?>
 
-		<!-- FEATURE INFO OVERLAY -->
-		<div class="featureInfoOverlay giauInfoOverlay" style="">
-			<div class="featureInfoOverlayHeading">THE FATHER'S HOUSE</div>
-			<div></div>
-			<div class="featureInfoOverlayTitle" style="">JOIN US FOR WORSHIP</div>
-			<div></div>
-			<div class="featureInfoOverlaySubtitle">Sunday at 11:00 a.m.</div>
-			<div></div>
-			<!-- <a href="http://www.google.com"> -->
-			<!-- <div class="featureInfoOverlayButton" style="" >Directions</div> -->
-			<!-- </a> -->
-		</div>
-		<!-- HEADER -->
-		<div class="headerNavigationContainer" style="position:absolute; display:inline-block; text-align:center;">
-		<div class="" style="position:absolute; display:inline-block; left:0; right:0; top:0; height:50px; background-repeat:repeat-x; background-image:url('<?php echo relativePathIMG()."/shadow_fade_top.png"; ?>');"></div>
-			<!-- LOGO -->
-			<!-- <div class="organizationLogoContainer" style="display:inline-block; float:left; left:0; top:0; "><img class="navigationMenuLogo" src="<?php echo relativePathIMG()."logo_fathers_house.png" ?>" /></div> -->
-			<!-- LANGUAGE SWITCH -->
-			<!-- <div class="languageSwitchContainer" style="display:inline-block; float:right; padding:10px;">EN | 한국어</div> -->
-			<div class="languageSwitchContainer" style="display:inline-block; position:absolute; right:0; top:0; padding-right:10px;"><?php create_language_switch("","data-color=\"0xFFFFFFFF\""); ?></div> 
-			<!-- NAVIGATION -->
-			<?php create_navigation($pageList, $pageRequest, null, "padding: 10px;", "data-darkmode=\"true\""); ?>
-			
-		</div>
-	</div>
+fillOutPageFromID(1);
 
-	<!-- DEPARTMENTS -->
-	<!--<div class="sectionContainerDepartments limitedWidth" style="">
-		<div class="departmentInternalContainer">
-			<div class="giauCategoryListing"></div>
-		</div>
-		<div class="footerSectionMain"></div>
-	</div>
-	-->
-<?php
-/*
-	<!-- PHOTO GALLERY -->
-	<div class="limitedWidth"  style="background-color: rgba(255,255,255,1.0);">
-		<div class="headerSectionMain">PHOTOS</div>
-		<div class="giauImageGallery" data-autoplay="10000" data-navigation="true" style="position:relative; width:100%; height:400px;">
-		<?php
-			$galleryPrefix = relativePathIMG()."gallery_featured/";
-			$imageList = ["featured_01_opt.png","featured_02_opt.png","featured_03_opt.png","featured_04_opt.png","featured_05_opt.png","featured_06_opt.png"];
-			$i;
-			$len = sizeof($imageList);
-			for($i=0; $i<$len; ++$i){
-				$image = $imageList[$i];
-				?>
-				<div data-source="<?php echo $galleryPrefix.$image; ?>" style="display:none;"></div>
-				<?php
-			}
-		?>
-		</div>
-	</div>
-*/
-?>
-	<!-- CALENDAR EVENTS -->
-	<div class="sectionContainerDepartments limitedWidth" style="background-color: rgba(255,255,255,1.0);">
-		<div class="headerSectionMain">UPCOMING EVENTS</div>
-		<div class="departmentInternalContainer">
-			<?php
-			include_widget_calendar_events();
-			?>
-		</div>
-		<div class="footerSectionMain"></div>
-	</div>
-
-	<!-- QUOTE GALLERY -->
-<!--
-	<div class=""  style="height:400px; background-color: rgba(0,255,255,0.5);">
-		<div class="">quotes</div>
-	</div>
--->
-<?php
 }else{
-?>
-<?php
  // ...
 ?>
 
@@ -1176,14 +758,12 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 		<div class="footerSectionMain"></div>
 	</div>
 
-
 <?php
 }else if($pageRequest==$PAGE_REQUEST_TYPE_STAFF){
 ?>
 	<!-- STAFF BIOGRAPHIES -->
 	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
-		<div class="headerSectionMain">MEET THE STAFF</div>
-			<div class="giauBiographyList"></div>
+		<div class="giauBiographyList"></div>
 		<div class="footerSectionMain"></div>
 	</div>
 <?php
@@ -1215,10 +795,10 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 ?>
 
 	<!-- ADDRESS -->
-	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
-		<div class="addressSectionTitle">Los Angeles Presbyterian Church</div>
+	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0); padding-top:32px;">
+		<!-- <div class="addressSectionTitle">Los Angeles Presbyterian Church</div>
 		<div class="addressSectionDescription">2241 N. Eastern Ave. Los Angeles, CA 90032</div>
-		<div class="addressSectionDivider"></div>
+		<div class="addressSectionDivider"></div> -->
 	</div>
 	
 	<!-- GOOGLE MAP -->
@@ -1236,8 +816,37 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 
 	
 	<!-- CONTACT -->
-	<div class="limitedWidth" style="">
+	<div class="limitedWidth" style="display:block; padding:10px;">
+		<div class="customContactContainer" style="width:100%;">
+		<div class="customContactInfo">
+			<div class="" style="">Contact Info</div>
+			<div class="" style="">Los Angeles Presbyterian Church</div>
+			<div class="" style="">2241 N. Eastern Ave.</div>
+			<div class="" style="">Los Angeles, CA 90032</div>
+			<?php 
+			$bioDefault = [
+				"heading" => "CE",
+				"title" => "Reverend Joseph Kim",
+				"email" => "jmkim75@gmail.com",
+				"phone" => "(213) 200-6092",
+			];
+			$bioList = [$bioDefault];//,$bioDefault,$bioDefault,$bioDefault,$bioDefault,$bioDefault];
+				foreach ($bioList as $bio) {
+					$heading = $bio["heading"];
+					$title = $bio["title"];
+					$email = $bio["email"];
+					$phone = $bio["phone"];
+			?>
+				<div class="customContactBioHeading" style=""><?php echo $heading; ?></div>
+				<div class="customContactBioTitle" style=""><?php echo $title; ?></div>
+				<div class="customContactBioEmail" style=""><?php echo $email; ?></div>
+				<div class="customContactBioPhone" style=""><?php echo $phone; ?></div>
+			<?php
+				}
+			?>
+		</div>
 		<div class="giauContactForm"></div>
+		</div>
 	</div>
 
 <?php
@@ -1249,29 +858,16 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	</div>
 <?php
 }
+
+
+
+
+// TEMPORARY FOOTER
+if($pageRequest!=$PAGE_REQUEST_TYPE_HOME){
+ create_footer();
+}
+
 ?>
-
-	<!-- DEBUGGING -->
-	<!-- <?php echo $pageRequest; ?> -->
-
-	<!-- FOOTER -->
-	<div class="sectionContainerFooter" style="background-color: #<?php echo getColorHexFooter(); ?>;">
-		<div class="footerElementTitle">THE FATHER'S HOUSE</div>
-		<div class="footerElementSocialGrouping">
-		<a href="https://www.facebook.com/thefathershouse.lacpc"><img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_facebook.png" ?>" /></a>
-		<a href="https://twitter.com/thefathersh0use?lang=en"><img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_twitter.png" ?>" /></a>
-			<img class="footerElementSocialItem" style="opacity: 0.25;" src="<?php echo relativePathIMG()."social/icon_footer_instagram.png" ?>" />
-			<a href="mailto:ce@lacpc.org"><img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_email.png" ?>" /></a>
-		</div>
-		<div class="footerElementTextLine">Los Angeles Presbyterian Church</div>
-		<div class="footerElementTextLine">2241 N. Eastern Ave.</div>
-		<div class="footerElementTextLine">Los Angeles, CA 90032</div>
-		<div class="footerElementTextLine">&nbsp;</div>
-		<div class="footerElementTextCopyright">LACPC Christian Education &copy; 2016</div>
-		<div class="footerElementBottom"></div>
-	</div>
-	<!-- <?php create_footer(); ?> -->
-	
 	</body>
 </html>
 <?php
@@ -1295,7 +891,7 @@ pages = {
 }
 
 */
-function create_language_switch($overrideCSS,$additionalHTML){
+function create_language_switch($overrideCSS,$additionalHTML=null){
 	$additionalHTML = $additionalHTML ? $additionalHTML : "";
 	?>
 			<div class="languageSwitchContainer giauLanguageToggleSwitch" style="display:table-cell; padding:10px; vertical-align:middle; text-align:right;"  data-storage="<?php echo KEY_COOKIE_PARAM_LANGUAGE(); ?>"  <?php echo $additionalHTML; ?> >
@@ -1304,7 +900,7 @@ function create_language_switch($overrideCSS,$additionalHTML){
 			</div>
 <?php
 }
-function create_navigation($pageList, $currentPageName, $currentSubPageName, $additional, $additionalData){
+function create_navigation($pageList, $currentPageName, $currentSubPageName, $additional=null, $additionalData=null){
 	$isTable = true;
 	$displayType = null;
 	if($additional){
@@ -1355,24 +951,14 @@ function create_navigation($pageList, $currentPageName, $currentSubPageName, $ad
 	<?php
 }
 
+
+
 function create_footer(){
-	?>
-	<footer>
-	<div class="footerContainer">
-		<div class="footerLogo"></div>
-		<div class="footerSocialMedia"></div>
-		<div class="footerContact">
-			Los Angeles Presbyterian Church
-			2241 N. Eastern Ave.
-			Los Angeles, CA 90032
-		</div>
-	</div>
-	</footer>
-	<?php
+	// for($i=0;$i<=26;++$i){
+ //       fillOutSectionFromID($i); // select id,widget from wp_giau_section;
+	// }
+	fillOutSectionFromID(26);
 }
-
-
-
 
 
 ?>
