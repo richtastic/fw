@@ -795,10 +795,10 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 ?>
 
 	<!-- ADDRESS -->
-	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
-		<div class="addressSectionTitle">Los Angeles Presbyterian Church</div>
+	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0); padding-top:32px;">
+		<!-- <div class="addressSectionTitle">Los Angeles Presbyterian Church</div>
 		<div class="addressSectionDescription">2241 N. Eastern Ave. Los Angeles, CA 90032</div>
-		<div class="addressSectionDivider"></div>
+		<div class="addressSectionDivider"></div> -->
 	</div>
 	
 	<!-- GOOGLE MAP -->
@@ -816,8 +816,37 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 
 	
 	<!-- CONTACT -->
-	<div class="limitedWidth" style="">
+	<div class="limitedWidth" style="display:block; padding:10px;">
+		<div class="customContactContainer" style="width:100%;">
+		<div class="customContactInfo">
+			<div class="" style="">Contact Info</div>
+			<div class="" style="">Los Angeles Presbyterian Church</div>
+			<div class="" style="">2241 N. Eastern Ave.</div>
+			<div class="" style="">Los Angeles, CA 90032</div>
+			<?php 
+			$bioDefault = [
+				"heading" => "CE",
+				"title" => "Reverend Joseph Kim",
+				"email" => "jmkim75@gmail.com",
+				"phone" => "(213) 200-6092",
+			];
+			$bioList = [$bioDefault];//,$bioDefault,$bioDefault,$bioDefault,$bioDefault,$bioDefault];
+				foreach ($bioList as $bio) {
+					$heading = $bio["heading"];
+					$title = $bio["title"];
+					$email = $bio["email"];
+					$phone = $bio["phone"];
+			?>
+				<div class="customContactBioHeading" style=""><?php echo $heading; ?></div>
+				<div class="customContactBioTitle" style=""><?php echo $title; ?></div>
+				<div class="customContactBioEmail" style=""><?php echo $email; ?></div>
+				<div class="customContactBioPhone" style=""><?php echo $phone; ?></div>
+			<?php
+				}
+			?>
+		</div>
 		<div class="giauContactForm"></div>
+		</div>
 	</div>
 
 <?php

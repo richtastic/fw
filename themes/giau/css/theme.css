@@ -91,7 +91,7 @@ ul {
 .mainNavigationBarTitle {
 	display: block;
 	font-family: 'siteThemeRegular', 'Arial Black', 'Arial Bold', sans-serif;
-	font-size: 10px;
+	font-size: 11px;
 	color: #1D2129;
 	margin: 0 auto;
 	text-align: left;
@@ -101,7 +101,7 @@ ul {
 .mainNavigationBarHeading {
 	display: block;
 	font-family: 'siteThemeBold', 'Arial Black', 'Arial Bold', sans-serif;
-	font-size: 20px;
+	font-size: 24px;
 	color: #1D2129;
 	margin: 0 auto;
 	text-align: left;
@@ -545,6 +545,43 @@ ul {
 	padding:16px;
 }
 
+.customContactInfo {
+	width: 49%; /* ? */
+	display: inline-block;
+	padding: 0px;
+	border: 0px;
+	margin:0px;
+	vertical-align: top;
+}
+.giauContactForm {
+	width: 49%; /* ? */
+	display: inline-block;
+	padding: 0px;
+	border: 0px;
+	margin:0px;
+	
+}
+
+.customContactBioHeading {
+	font-family: 'siteThemeRegular';
+	font-size: 16px;
+	color: #000;
+}
+.customContactBioTitle {
+	font-family: 'siteThemeLight';
+	font-size: 16px;
+	color: #999;
+}
+.customContactBioEmail {
+	font-family: 'siteThemeLight';
+	font-size: 16px;
+	color: #889;
+}
+.customContactBioPhone {
+	font-family: 'siteThemeLight';
+	font-size: 16px;
+	color: #999;
+}
 
 table {
 	border-collapse: collapse;
