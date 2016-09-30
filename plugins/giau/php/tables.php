@@ -224,7 +224,7 @@ function giau_create_database(){
 		) $charset_collate
 	;";
 	dbDelta( $sql );
-
+	
 }
 
 // DROP

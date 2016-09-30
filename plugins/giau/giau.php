@@ -758,6 +758,35 @@ if( isset($_POST) && isset($_POST['form_id']) ){
 		<li>calendars</li>
 		<li>bios</li>
 	</ul>
+
+
+	<div>
+			file upload
+			<?php
+				$UPLOAD_FILE_DIRECTORY = ".plugins/giau/files";
+				// git contents of directory  
+				/*
+				array scandir ( string $directory [, int $sorting_order = SCANDIR_SORT_ASCENDING [, resource $context ]] )
+				http://php.net/manual/en/function.scandir.php
+				http://php.net/manual/en/function.readdir.php
+
+
+				https://codex.wordpress.org/Function_Reference/wp_handle_upload
+				https://codex.wordpress.org/Function_Reference/media_handle_upload
+
+				https://premium.wpmudev.org/blog/upload-file-functions/?nct=b&utm_expid=3606929-85.mSQ3nlVLSHShaT4smJ6ikw.1&utm_referrer=https%3A%2F%2Fwww.google.com%2F
+				enctype="multipart/form-data">
+				<input type='file'
+	
+
+				javascript ajax "multipart/form-data" file
+
+				http://stackoverflow.com/questions/21044798/how-to-use-formdata-for-ajax-file-upload
+				https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
+
+				*/
+			?>
+	</div>
 <?php
 }
 
