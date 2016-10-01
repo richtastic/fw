@@ -307,7 +307,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 					"title" => "Korean School",
 					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
 					"sp" => $SUBPAGE_REQUEST_TYPE_KOREANSCHOOL,
-					"url" => "http://www.google.com"
+					"url" => "http://www.lacpcks.org"
 				],
 				];
 			?>
@@ -802,11 +802,9 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	</div>
 	
 	<!-- GOOGLE MAP -->
-	<div class="limitedWidth"  style="background-color: rgba(255,255,255,0.0); text-align:center; width:100%;">
-	<?php
-	
-	?>
-		<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3304.9435064350605!2d-118.18318181958668!3d34.07096242428407!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c5b8f66d4e9d%3A0xa798b42cbfdca248!2sLos+Angeles+Christian+Presbyterian!5e0!3m2!1sen!2sus!4v1475290571183" frameborder="0" style="overflow:hidden;height:400px;width:100%; display:inline-block; margin: 0 auto;" allowfullscreen>
+	<div class="giauMobileLimted limitedWidth"  style="background-color: rgba(255,255,255,0.0); text-align:center; width:100%; height:400px;" data-limited-width-activation="" data-limited-height="300px" data-limited-interaction="true">
+	<!-- if the height of the item is greater than the viewable page, interaction is disabled to allow mobile devices to scroll -->
+		<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3304.9435064350605!2d-118.18318181958668!3d34.07096242428407!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c5b8f66d4e9d%3A0xa798b42cbfdca248!2sLos+Angeles+Christian+Presbyterian!5e0!3m2!1sen!2sus!4v1475290571183" frameborder="0" style="overflow:hidden;height:100%;width:100%; display:inline-block; margin: 0 auto;" allowfullscreen>
 		</iframe>
 	</div>
 
@@ -815,28 +813,100 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	<div class="limitedWidth" style="display:block; padding:10px;">
 		<div class="customContactContainer" style="width:100%;">
 		<div class="customContactInfo">
-			<div class="" style="">Contact Info</div>
-			<div class="" style="">Los Angeles Presbyterian Church</div>
-			<div class="" style="">2241 N. Eastern Ave.</div>
-			<div class="" style="">Los Angeles, CA 90032</div>
+			<div class="customContactTitle" style="">Contact Info</div>
+			<div class="customContactAddress" style="">2241 N. Eastern Ave.</div>
+			<div class="customContactAddress" style="">Los Angeles, CA 90032</div>
 			<?php 
-			$bioDefault = [
-				"heading" => "CE",
-				"title" => "Reverend Joseph Kim",
-				"email" => "jmkim75@gmail.com",
-				"phone" => "(213) 200-6092",
+			// $bioDefault = [
+			// 	"heading" => "CE",
+			// 	"title" => "Reverend Joseph Kim",
+			// 	"email" => "jmkim75@gmail.com",
+			// 	"phone" => "(213) 200-6092",
+			// ];
+			// $bioList = [$bioDefault];//,$bioDefault,$bioDefault,$bioDefault,$bioDefault,$bioDefault];
+			$offset = null;
+			$count = null;
+			$sortIndexDirection = null;
+			$tags = ["contact"];
+			$bios = giau_bio_paginated($offset,$count,$sortIndexDirection,$tags);
+			$bioCount = count($bios);
+
+			$bioOrdering = [
+				[
+					"index" => 0,
+					"title" => "CE",
+				],
+				[
+					"index" => 3,
+					"title" => "Elementary",
+				],
+				[
+					"index" => 5,
+					"title" => "Nursery",
+				],
+				[
+					"index" => 2,
+					"title" => "High School",
+				],
+				[
+					"index" => 4,
+					"title" => "Kindergarten",
+				],
+				[
+					"index" => 1,
+					"title" => "Korean School",
+				]
 			];
-			$bioList = [$bioDefault];//,$bioDefault,$bioDefault,$bioDefault,$bioDefault,$bioDefault];
+			$orderCount = count($bioOrdering);
+
+			$bioList = [];
+
+			for($i=0; $i<$bioCount; ++$i){
+				$title = null;
+				$bio = null;
+				if($orderCount>$i){
+					$lookup = $bioOrdering[$i];
+					$index = $lookup["index"];
+					if($index!==null){
+						$bio = $bios[$index];
+					}
+					$title = $lookup["title"];
+				}else{
+					$bio = $bios[$i];
+					
+				}
+				if(!$title){
+					$title = $bio["position"];
+				}
+				
+					$title = giau_languagization_substitution($title);
+				$name = $bio["display_name"];
+					$name = giau_languagization_substitution($name);
+				$email = $bio["email"];
+					$email = giau_languagization_substitution($email);
+				$phone = $bio["phone"];
+					$phone = giau_languagization_substitution($phone);
+					$phone = getHumanReadablePhone($phone);
+				$item = [
+					"heading" => $title,
+					"title" => $name,
+					"email" => $email,
+					"phone" => $phone
+				];
+				$bioList[] = $item;
+			}
 				foreach ($bioList as $bio) {
 					$heading = $bio["heading"];
 					$title = $bio["title"];
 					$email = $bio["email"];
 					$phone = $bio["phone"];
 			?>
+			<div class="customContactBioContainer" style="">
 				<div class="customContactBioHeading" style=""><?php echo $heading; ?></div>
 				<div class="customContactBioTitle" style=""><?php echo $title; ?></div>
 				<div class="customContactBioEmail" style=""><?php echo $email; ?></div>
 				<div class="customContactBioPhone" style=""><?php echo $phone; ?></div>
+			</div>
 			<?php
 				}
 			?>

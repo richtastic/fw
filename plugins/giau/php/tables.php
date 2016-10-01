@@ -210,15 +210,15 @@ function giau_create_database(){
 		id int NOT NULL AUTO_INCREMENT,
 		created VARCHAR(32) NOT NULL,
 		modified VARCHAR(32) NOT NULL,
-		first_name VARCHAR(32) NOT NULL,
-		last_name VARCHAR(32) NOT NULL,
-		display_name VARCHAR(64) NOT NULL,
+		first_name VARCHAR(255) NOT NULL,
+		last_name VARCHAR(255) NOT NULL,
+		display_name VARCHAR(255) NOT NULL,
 		position VARCHAR(255) NOT NULL,
 		email VARCHAR(255) NOT NULL,
 		phone VARCHAR(255) NOT NULL,
 		description VARCHAR(65535) NOT NULL,
-		uri VARCHAR(256) NOT NULL,
-		image_url VARCHAR(256) NOT NULL,
+		uri VARCHAR(255) NOT NULL,
+		image_url VARCHAR(255) NOT NULL,
 		tags VARCHAR(255) NOT NULL,
 		UNIQUE KEY id (id)
 		) $charset_collate
@@ -294,7 +294,7 @@ function giau_insert_languagization($language,$hash,$phrase){
 }
 
 function giau_insert_bio($firstName,$lastName,$displayName,$position,$email,$phone,$description,$uri,$imageURL,$tags){
-	$phone = getOnlyNumbersFromString($phone);
+	//$phone = getOnlyNumbersFromString($phone); // this is a text field
 	$tags = commaSeparatedStringFromString($tags, 255);
 	$timestampNow = stringFromDate( getDateNow() );
 	global $wpdb;
@@ -304,6 +304,7 @@ function giau_insert_bio($firstName,$lastName,$displayName,$position,$email,$pho
 			"modified" => $timestampNow,
 			"first_name" => $firstName,
 			"last_name" => $lastName,
+			"display_name" => $displayName,
 			"position" => $position,
 			"email" => $email,
 			"phone" => $phone,

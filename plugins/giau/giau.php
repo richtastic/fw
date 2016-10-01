@@ -1037,10 +1037,10 @@ function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,
 		$dateFormat = "%Y-%m-%d %k:%i:%s.%f";
 		array_push($criteria, "STR_TO_DATE(start_date,\"".$dateFormat."\") BETWEEN STR_TO_DATE(\"".$startDate."\",\"".$dateFormat."\") AND STR_TO_DATE(\"".$endDate."\",\"".$dateFormat."\") ");
 	}
-	if($tags!=null && count($tags)>0 ){
-		foreach($tags as $tag){
-			$tag = esc_sql($tag);
-			array_push($criteria, " tags REGEXP \"(^|,)".$tag."(,|$)\" "); 
+	$tags = tagsCriteriaFromTagList($tags);
+	if($tags){
+		foreach($tags as $tagCriteria){
+			$criteria[] = $tagCriteria;
 		}
 	}
 	if(count($criteria)>0){
@@ -1057,6 +1057,18 @@ function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,
 	$results = $wpdb->get_results($querystr, ARRAY_A);
 	$results = filterRowsLanguagization($results,["title","description"]);
 	return $results;
+}
+
+function tagsCriteriaFromTagList($tags,$index="tags") {
+	$criteria = null;
+	if($tags!=null && count($tags)>0 ){
+		$criteria = [];
+		foreach($tags as $tag){
+			$tag = esc_sql($tag);
+			array_push($criteria, " ".$index." REGEXP \"(^|,)".$tag."(,|$)\" "); 
+		}
+	}
+	return $criteria;
 }
 
 function giau_get_page_id($pageID){
@@ -1091,18 +1103,20 @@ function giau_get_table_row_from_col($table,$column,$value){
 	return null;
 }
 
-function giau_bio_paginated($offset,$count,$sortIndexDirection, $tags){
+function giau_bio_paginated($offset,$count,$sortIndexDirection, $tags=null){
+	$DEFAULT_PAGE = 100;
 	// offset must be positive
 	if(!$offset || $offset < 0){
 		$offset = 0;
 	}
 	// count must be positive
-	if(!$count || $count < 0){
-		$count = 0;
+	if(!$count){
+		$count = $DEFAULT_PAGE; // default count
 	}
-	if($count == 0){ // no results
+	if($count <= 0){ // no results
 		return [];
 	}
+	$count = min($count,$DEFAULT_PAGE);
 
 	$limit = $offset + $count - 1;
 	// ordering
@@ -1112,20 +1126,10 @@ function giau_bio_paginated($offset,$count,$sortIndexDirection, $tags){
 	global $wpdb;
 	$table = GIAU_FULL_TABLE_NAME_BIO();
 	$criteria = "";
+	$tags = tagsCriteriaFromTagList($tags);
 	if($tags){
-		$tagCriteria = [];
-		foreach($tags as $tag){
-			$tag = esc_sql($tags);
-			array_push($tagCriteria, $tag);
-		}
-		if(count($tagCriteria)>0){
-			$criteria = " WHERE 1 ";
-			foreach($tagCriteria as $tag){
-				$criteria = $criteria." AND tags LIKE '%".$searchValue."%' ";
-			}
-		}
+		$criteria = "WHERE ".(implode(" AND ", $tags));
 	}
-error_log("SEARCHING FOR BIO LIKE: ".$criteria);
 	$querystr = "
 	    SELECT ".$table.".* 
 	    FROM ".$table."
@@ -1156,7 +1160,7 @@ function filterRowsLanguagization($rows,$fields){
 	return $rows;
 }
 
-function giau_languagization_substitution($hash_index, $language){
+function giau_languagization_substitution($hash_index, $language=null){
 	$DEFAULT_LANGUAGE = LANGUAGE_EN_US();
 	// hash_index must be non-null and non-zero length
 	if(!$hash_index || strlen($hash_index)==0 ){
@@ -1218,6 +1222,36 @@ function giau_default_fill_database(){
 function getOnlyNumbersFromString($original){
 	return preg_replace('/[^0-9]/s', '', $original);
 }
+
+function getOnlyAsNumbers($phone){
+	$i; $ch; $re; $result = ""; $len = strlen($phone);
+	for($i=0;$i<$len;++$i){
+		$ch = substr($phone,$i,1);
+		$re = preg_replace('/[0-9]/',"",$ch);
+		if($re==""){
+			$result = $result."".$ch;
+		}
+	}
+	return $result;
+}
+function getHumanReadablePhone($phone){
+	if(!$phone){
+		return "";
+	}
+	$phone = getOnlyAsNumbers($phone);
+	$phoneLength = strlen($phone);
+	if($phoneLength==7){ // XXX-XXXX
+		return substr($phone, 0,3)."-".substr($phone, 3,4);
+	}
+	if($phoneLength==10){ // (XXX) XXX-XXXX
+		return "(".substr($phone, 0,3).")"." ".substr($phone, 3,3)."-".substr($phone, 6,4);
+	}
+	if($phoneLength==11){ // X-XXX-XXX-XXXX
+		return substr($phone, 0,1)."(".substr($phone, 1,3).")"." ".substr($phone, 4,3)."-".substr($phone, 7,4);
+	}
+	return $phone;
+}
+
 function commaSeparatedStringFromString($input, $limitCount){
 	if(!$input){
 		return "";

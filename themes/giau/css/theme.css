@@ -562,6 +562,35 @@ ul {
 	
 }
 
+
+
+.customContactTitle {
+	font-family: 'siteThemeRegular';
+	font-size: 20px;
+	color: #000;
+	text-align: center;
+	padding-top: 32px;
+	padding-bottom: 24px;
+}
+.customContactAddress {
+	font-family: 'siteThemeLight';
+	font-size: 14px;
+	color: #000;
+	text-align: center;
+}
+
+
+.customContactBioContainer {
+	width: 49%;
+	display: inline-block;
+	padding: 0;
+	border: 0;
+	margin: 0;
+	vertical-align:top;
+	text-align: center;
+	padding-top: 20px;
+	padding-bottom: 12px;
+}
 .customContactBioHeading {
 	font-family: 'siteThemeRegular';
 	font-size: 16px;
@@ -569,17 +598,17 @@ ul {
 }
 .customContactBioTitle {
 	font-family: 'siteThemeLight';
-	font-size: 16px;
+	font-size: 14px;
 	color: #999;
 }
 .customContactBioEmail {
 	font-family: 'siteThemeLight';
-	font-size: 16px;
-	color: #889;
+	font-size: 14px;
+	color: #67A;
 }
 .customContactBioPhone {
 	font-family: 'siteThemeLight';
-	font-size: 16px;
+	font-size: 14px;
 	color: #999;
 }
 
