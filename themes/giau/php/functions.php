@@ -628,7 +628,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 		$departmentPageData = $departmentPageDataPageHighSchool;
 	}
 	?>
-	<div class="limitedWidth" style="display:block; background-color:<?php echo $departmentPageData["statement_color_bg"]; ?>; text-align:center; position:relative; border-style:solid; border-width:2px 0px 2px 0px; border-top-color:<?php echo $departmentPageData["statement_color_top"]; ?>; border-bottom-color:<?php echo $departmentPageData["statement_color_bot"]; ?>;">
+	<div class="" style="display:block; background-color:<?php echo $departmentPageData["statement_color_bg"]; ?>; text-align:center; position:relative; border-style:solid; border-width:2px 0px 2px 0px; border-top-color:<?php echo $departmentPageData["statement_color_top"]; ?>; border-bottom-color:<?php echo $departmentPageData["statement_color_bot"]; ?>;">
 		<div class="departmentStatementContainer" style="">
 			<div class="departmentStatementTitle" style=""><?php echo $departmentPageData["statement_title"]; ?></div>
 			<div class="departmentStatementBody" style=""><?php echo $departmentPageData["statement_body"]; ?></div>
@@ -642,8 +642,8 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	</div> -->
 
 		<!-- PHOTO GALLERY -->
-	<div class="limitedWidth"  style="background-color: rgba(255,255,255,1.0);">
-		<div class="giauImageGallery giauImageGalleryShowNavigation" data-autoplay="10000" style="position:relative; width:100%; height:400px;">
+	<div class=""  style="background-color: rgba(255,255,255,1.0);">
+		<div class="giauImageGallery" data-autoplay="10000" style="position:relative; width:100%; height:400px;">
 			<?php 
 				$galleryImageContainer = $departmentPageData["image_gallery"];
 				if($galleryImageContainer){
@@ -803,15 +803,11 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	
 	<!-- GOOGLE MAP -->
 	<div class="limitedWidth"  style="background-color: rgba(255,255,255,0.0); text-align:center; width:100%;">
-	<script src='https://maps.googleapis.com/maps/api/js?v=3.exp'></script>
-	<div style='overflow:hidden;height:400px;width:100%; display:inline-block; margin: 0 auto;'>
-		<div id='gmap_canvas' style='height:400px;width:100%;'></div>
-<!-- 		<div><small><a href="http://embedgooglemaps.com">embed google maps</a></small></div>
-		<div><small><a href="http://www.proxysitereviews.com/lime-proxies">lime proxies</a></small></div> -->
-		<style>#gmap_canvas img{max-width:none!important;background:none!important}</style></div>
-		<script type='text/javascript'>
-		function init_map(){var myOptions = {zoom:10,center:new google.maps.LatLng(34.0709617,-118.1812235),mapTypeId: google.maps.MapTypeId.ROADMAP};map = new google.maps.Map(document.getElementById('gmap_canvas'), myOptions);marker = new google.maps.Marker({map: map,position: new google.maps.LatLng(34.0709617,-118.18122349999999)});infowindow = new google.maps.InfoWindow({content:'<strong>The Father\'s House</strong><br>2241 N Eastern Ave<br/>Los Angeles, CA 90032<br/>'});google.maps.event.addListener(marker, 'click', function(){infowindow.open(map,marker);});infowindow.open(map,marker);}google.maps.event.addDomListener(window, 'load', init_map);
-		</script>
+	<?php
+	
+	?>
+		<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3304.9435064350605!2d-118.18318181958668!3d34.07096242428407!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c5b8f66d4e9d%3A0xa798b42cbfdca248!2sLos+Angeles+Christian+Presbyterian!5e0!3m2!1sen!2sus!4v1475290571183" frameborder="0" style="overflow:hidden;height:400px;width:100%; display:inline-block; margin: 0 auto;" allowfullscreen>
+		</iframe>
 	</div>
 
 	

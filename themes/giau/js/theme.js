@@ -957,9 +957,9 @@ giau.NavigationList = function(element){
 
 	var styleMenuColor = 0xFF000000; // FFF
 	var styleMenuShadow = null; // 0xFF000000
-	var styleBorderMenuColorBottom = 0xFFEEF0EF;
-	var styleBorderMenuColorTop = 0xFFDDE3DD;
-	var styleBGMenuColor = 0xFFEFF1F0;
+	var styleBorderMenuColorBottom = null;//0xFFEEF0EF;
+	var styleBorderMenuColorTop = null;//0xFFDDE3DD;
+	var styleBGMenuColor = 0xFFFFFFFF;//0xFFEFF1F0;
 	var styleFontTextColor = 0xFF333333;
 	var styleFontTextSize = 12;
 

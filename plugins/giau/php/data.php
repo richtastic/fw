@@ -699,7 +699,7 @@ function giau_data_default_insert_into_database(){
 				],
 				[
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_LACPC_TEXT",
-					"uri" => "http://www.lacpc.org"
+					"uri" => "www.lacpcks.org"
 				]
 			]
 		]
@@ -789,7 +789,7 @@ function giau_data_default_insert_into_database(){
 				[
 					"image" => $section_category_prefix."category_korean_school.png",
 					"name" => "Korean School",
-					"uri" => "http://lacpc.org/church/"
+					"uri" => "www.lacpcks.org"
 				]
 			],
 			"class_image" => "",
