@@ -763,7 +763,10 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 ?>
 	<!-- STAFF BIOGRAPHIES -->
 	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
-		<div class="giauBiographyList"></div>
+		<!-- <div class="giauBiographyList"></div> -->
+		<?php
+			fillOutSectionFromID("28");
+		?>
 		<div class="footerSectionMain"></div>
 	</div>
 <?php
@@ -879,13 +882,9 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 					$title = $bio["position"];
 				}
 				
-					$title = giau_languagization_substitution($title);
 				$name = $bio["display_name"];
-					$name = giau_languagization_substitution($name);
 				$email = $bio["email"];
-					$email = giau_languagization_substitution($email);
 				$phone = $bio["phone"];
-					$phone = giau_languagization_substitution($phone);
 					$phone = getHumanReadablePhone($phone);
 				$item = [
 					"heading" => $title,
@@ -904,7 +903,13 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 			<div class="customContactBioContainer" style="">
 				<div class="customContactBioHeading" style=""><?php echo $heading; ?></div>
 				<div class="customContactBioTitle" style=""><?php echo $title; ?></div>
-				<div class="customContactBioEmail" style=""><?php echo $email; ?></div>
+				<?php
+				if($email!==null && strlen($email)>0){
+				?>
+					<div style=""><a class="customContactBioEmail" href="mailto:<?php echo $email; ?>"><?php echo $email; ?></a></div>
+				<?php
+				}
+				?>
 				<div class="customContactBioPhone" style=""><?php echo $phone; ?></div>
 			</div>
 			<?php

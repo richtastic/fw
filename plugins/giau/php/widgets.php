@@ -51,6 +51,7 @@ function fillOutSectionFromWidget($widget,$section){
 	$lookup["social_apps"] = handle_widget_social_apps;
 	$lookup["language_switch"] = handle_widget_language_switch;
 	$lookup["display_overlay"] = handle_widget_display_overlay;
+	$lookup["bio_listing"] = handle_widget_bio_listing;
 
 	$fxn = $lookup[$widgetName];
 	if($fxn!=null){
@@ -344,6 +345,62 @@ function handle_widget_calendar_listing($widget,$section){
 	</div>
 	<div class="" style="padding-top:32px;"></div>
 	<?php
+}
+
+function handle_widget_bio_listing($widget,$section){
+	$widgetJSON = decodeWidget($widget);
+	$sectionJSON = decodeSection($section);
+
+	$imagePrefx = "./wp-content/themes/giau/img/personnel/";
+	$defaultImage = $imagePrefx."anonymous.png";
+	$defaultBio = "Bio forthcoming.";
+
+	$offset = null;
+	$count = null;
+	$sortIndexDirection = null;
+	$tags = section_get_value_widget_string($widgetJSON,$sectionJSON,"tags"); // get_value_array($sectionJSON,"class");
+
+	$bios = giau_bio_paginated($offset,$count,$sortIndexDirection,$tags);
+	$bioCount = count($bios);
+	error_log("BIO COUNT:".$bioCount." = ".$defaultImage);
+
+	?>
+	<div class="giauBiographyList" data-default-image="<?php echo $defaultImage; ?>" data-default-description="<?php echo $defaultBio; ?>">
+	<?php
+		$i;
+		for($i=0; $i<$bioCount; ++$i){
+			$bio = $bios[$i];
+			$firstName = $bio["first_name"];
+			$lastName = $bio["last_name"];
+			$displayName = $bio["display_name"];
+			$position = $bio["position"];
+			$email = $bio["email"];
+			$phone = $bio["phone"];
+			$description = $bio["description"];
+			$uri = $bio["uri"];
+			$image = $bio["image_url"];
+			if($image!=""){
+				$image = $imagePrefx."".$image;
+			}
+			?>
+			<div style="display:none;" data-data="true"
+			data-first-name="<?php echo $firstName; ?>"
+			data-last-name="<?php echo $lastName;?>"
+			data-display-name="<?php echo $displayName; ?>"
+			data-title="<?php echo $position; ?>"
+			data-email="<?php echo $email; ?>"
+			data-phone="<?php echo $phone; ?>"
+			data-description="<?php echo $description; ?>"
+			data-image="<?php echo $image; ?>"
+			data-uri="<?php echo $uri; ?>"></div>
+			<?php
+		}
+	?>
+	</div>
+	<?php
+
+	
+	
 }
 
 

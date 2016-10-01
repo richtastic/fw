@@ -666,12 +666,37 @@ function giau_data_default_insert_into_database(){
 						]
 					]
 				],
+				"style" => [
+					"type" => "string"
+				],
 				"class" => [
 					"type" => "string"
 				],
 			]
 		]
 	);
+
+	// => BIOGRAPHIES
+	$widget_id_bio_listing = giau_insert_widget("bio_listing",
+		[
+			"alias" => "bio_listing",
+			"name" => "Giau Biography Listing",
+			"cssClass" => "",
+			"jsClass" => "",
+			"fields" => [
+				"tags" => [
+					"type" => "array-string"
+				],
+				"style" => [
+					"type" => "string"
+				],
+				"class" => [
+					"type" => "string"
+				],
+			]
+		]
+	);
+
 
 	
 	$section_id_navigation_main = giau_insert_section($widget_id_navigation_list,
@@ -982,6 +1007,13 @@ function giau_data_default_insert_into_database(){
 			"class" => "limitedWidth"
 		]
 	, []);
+
+	$section_id_bio_listing_bio = giau_insert_section($widget_id_bio_listing,
+		[
+			"tags" => ["bio"]
+		]
+	, []);
+	error_log("section_id_bio_listing_bio: ".$section_id_bio_listing_bio);
 
 
 	// PAGES 

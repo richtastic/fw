@@ -1138,7 +1138,7 @@ function giau_bio_paginated($offset,$count,$sortIndexDirection, $tags=null){
 	    LIMIT ".$offset.",".$limit."
 	";
 	$results = $wpdb->get_results($querystr, ARRAY_A);
-	$results = filterRowsLanguagization($results,["title","description"]);
+	$results = filterRowsLanguagization($results,["first_name","last_name","display_name","phone","email","position","title","description"]);
 	return $results;
 }
 
@@ -1186,7 +1186,6 @@ function giau_languagization_substitution($hash_index, $language=null){
 	    ORDER BY id DESC
 	";
 	// see if exact match exists, else default to 
-	$didFindMatch = false;
 	$matchFirst = null;
 	$matchSecond = null;
 	$matchThird = null;
@@ -1204,11 +1203,11 @@ function giau_languagization_substitution($hash_index, $language=null){
 			$matchThird = $row_phrase_value;
 		}
 	}
-	if($matchFirst){
+	if($matchFirst!==null){
 		return $matchFirst;
-	}else if($matchSecond){
+	}else if($matchSecond!==null){
 		return $matchSecond;
-	}else if($matchThird){
+	}else if($matchThird!==null){
 		return $matchThird;
 	} // default return original phrase
 	return $hash_index;

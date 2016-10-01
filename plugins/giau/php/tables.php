@@ -275,8 +275,8 @@ function giau_insert_languagization($language,$hash,$phrase){
 		return;
 	}
 	// phrase must be non-null
-	if(!$phrase){
-		return;
+	if($phrase===null){
+		$phrase = "";
 	}
 	//
 	$timestampNow = stringFromDate( getDateNow() );

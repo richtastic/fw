@@ -348,83 +348,52 @@ giau.ContactView.prototype._submitFormData = function(){
 
 giau.BioView = function(element){ //
 	this._container = element;
-	this.personnelImagePrefix = "./wp-content/themes/giau/img/personnel/";
-	this._default_bio_description = "Bio forthcoming.";
-	this._default_bio_image = "anonymous.png";
+
+	var propertyDefaultImage = "data-default-image"
+	var propertyDefultDescription = "data-default-description";
+
+	this._default_bio_description = Code.getPropertyOrDefault(this._container,propertyDefultDescription, "");
+	this._default_bio_image = Code.getPropertyOrDefault(this._container,propertyDefaultImage, "");
+	console.log(this._default_bio_image);
+
+	var propertyData = "data-data";
+	var propertyFirstName = "data-first-name";
+	var propertyLastName = "data-last-name";
+	var propertyDisplayName = "data-display-name";
+	var propertyTitle = "data-title";
+	var propertyEmail = "data-email";
+	var propertyPhone = "data-phone";
+	var propertyDescription = "data-description";
+	var propertyImage = "data-image";
+	var propertyURL = "data-uri";
+
+	var i;
 	var personnelList = [];
-	personnelList.push({
-		"first_name": "",
-		"last_name": "",
-		"display_name": "Joseph Kim",
-		"title": "Director of Christian Education, Interim Junior High Pastor", // position
-		"description": "Joseph is happily married to Joyce, the woman of his dreams. He has a bachelor’s degree in civil engineering and a Master of Divinity degree and was called into vocational ministry in 2004. He began serving at LACPC as a high school pastor in December 2006 and by God’s grace is currently serving as the director of Christian Education.",
-		"image_url": "ce-joe.png",
-		"uri": "",
-	});
-	// 
-	personnelList.push({
-		"first_name": "",
-		"last_name": "",
-		"display_name": "Tony Park",
-		"title": "Elder of Christian Education",
-		"description": "",
-		"image_url": "",
-		"uri": "",
-	});
-	personnelList.push({
-		"first_name": "",
-		"last_name": "",
-		"display_name": "Kurt Kim",
-		"title": "Secretary",
-		"description":"Bio forthcoming.",
-		"image_url": "",
-		"uri": "",
-	});
-	personnelList.push({
-		"first_name": "",
-		"last_name": "",
-		"display_name": "Sebastian Lee",
-		"title": "Finance Deacon",
-		"description": "Bio forthcoming.",
-		"image_url": "",
-		"uri": "",
-	});
-	personnelList.push({
-		"first_name": "",
-		"last_name": "",
-		"display_name": "Andrew Lim",
-		"title": "High School Pastor",
-		"description": "Andrew has been attending LACPC ever since he was a high school freshman. He got his bachelor’s degree from UC Irvine and a Masters in Pastoral Studies from Azusa Pacific University. He has been serving as the high school pastor since May of last year and also works full time as a high school English teacher.",
-		"image_url": "ce-andy.png",
-		"uri": "",
-	});
-	personnelList.push({
-		"first_name": "",
-		"last_name": "",
-		"display_name": "Boram Lee",
-		"title": "Elementary Pastor",
-		"description": "Born and raised in Los Angeles, Boram has a BA in cognitive psychology, a multiple subjects credential, and a master’s degree in teaching. She began seminary in January 2013 at Azusa Pacific University where she is studying to obtain an MA in pastoral studies with an emphasis is youth and family ministry. Her passion is to serve and train young children so that they can develop a solid relationship with God.",
-		"image_url": "ce-boram.png",
-		"uri": "",
-	});
-	personnelList.push({
-		"first_name": "",
-		"last_name": "",
-		"display_name": "Sheen Hong",
-		"title": "Kindergarten Pastor",
-		"description": "Sheen Hong is a loving mother of two children, Karis and Jin-Sung, and happy wife of Joshua, husband and a Chaplain. She has a bachelor’s degree in Christian education and Master of Arts degree in Christian Education. She was called into Children’s ministry in 2009. She began serving at LACPC as a Kindergarten pastor in December 2015.",
-		"image_url": "ce-hong.png",
-		"uri": "",
-	});
-	personnelList.push({
-		"first_name": "",
-		"last_name": "",
-		"display_name": "Jessica Won",
-		"title": "Nursery Pastor",
-		"description": "Jessica Won is married to Peter Won and has twin boys and a girl. She has a degree of Child Development from Patten University and currently working on M.Div. from Azusa University. She loves to share gospel to children and now oversees the nursery department.",
-		"image_url": "ce-jessica.png",
-		"uri": "",
-	});
+	for(i=0; i<Code.numChildren(this._container); ++i){
+		var div = Code.getChild(this._container,i);
+		if(Code.hasProperty(div,propertyData)){
+			var firstName = Code.getProperty(div,propertyFirstName, null);
+			var lastName = Code.getProperty(div,propertyLastName, null);
+			var displayName = Code.getProperty(div,propertyDisplayName, null);
+			var title = Code.getPropertyOrDefault(div,propertyTitle, null);
+			var email = Code.getProperty(div,propertyEmail, null);
+			var phone = Code.getProperty(div,propertyPhone, null);
+			var description = Code.getPropertyOrDefault(div,propertyDescription, null);
+			var image = Code.getProperty(div,propertyImage, null);
+			var url = Code.getPropertyOrDefault(div,propertyURL, null);
+
+			var departmentImagePrefix = "./wp-content/themes/giau/img/departments/";
+			personnelList.push({
+				"first_name": firstName,
+				"last_name": lastName,
+				"display_name": displayName,
+				"title": title,
+				"description": description,
+				"image_url": image,
+				"uri": url
+			});
+		}
+	}
 
 	this._personnelList = personnelList;
 
@@ -453,7 +422,6 @@ Code.setStylePosition(this._container,"relative");
 			if(!imageURL || imageURL==""){
 				imageURL = this._default_bio_image;
 			}
-			imageURL = this.personnelImagePrefix + "" + imageURL;
 			Code.setSrc(imageIconElement, imageURL);
 			Code.setStyleWidth(imageIconElement,"100%");
 			Code.setStyleBorderRadius(imageIconElement,"100%;");
@@ -949,7 +917,6 @@ giau.LanguageToggle.prototype.updateLayout = function(){
 
 giau.NavigationList = function(element){
 	this._container = element;
-	//return;
 
 	// LISTENERS
 	this._jsDispatch = new JSDispatch();
@@ -1009,6 +976,7 @@ giau.NavigationList = function(element){
 			var dataURL = "data-url";
 			var dataSelected = "data-selected";
 			title = Code.getPropertyOrDefault(child,dataDisplay,title);
+title = title + " &#x25BE;";
 			url = Code.getPropertyOrDefault(child,dataURL,url);
 			if(Code.hasProperty(child,dataSelected)){
 				foundSelectedIndex = i;

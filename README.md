@@ -139,7 +139,7 @@ open -u USERNAME,PASSWORD  ftp.lacpc.org
 
 # ---- 1:
 # GOTO
-cd www/ce/wp-content/themes
+cd /www/ce/wp-content/themes
 lcd /media/sf_zirbr001/dev/extRepos/fw/themes/
 # COPY GIAU
 rm -rf ./giau
@@ -156,7 +156,7 @@ chmod -R 755 giau/
 
 # ---- 2: THEMES
 # GOTO
-cd www/ce/wp-content/themes
+cd /www/ce/wp-content/themes
 lcd ~/universe/repo/fw/themes
 # COPY GIAU
 rm -rf ./giau
@@ -172,7 +172,7 @@ chmod -R 755 giau/
 
 # ---- 3: PLUGIN
 # GOTO
-cd www/ce/wp-content/pugins
+cd /www/ce/wp-content/pugins
 lcd ~/universe/repo/fw/plugins
 # COPY GIAU
 rm -rf ./giau
