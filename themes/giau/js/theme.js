@@ -1899,7 +1899,8 @@ giau.AutoComplete = function(element){
 	// this._jsDispatch.addJSEventListener(this._container, "onchange", this._handleA, this);
 	this._container.change = function(e){
 		console.log("nside");
-		console.log(e.target.value);
+		var target = Code.getTargetFromEvent(e);
+		console.log(target.value);
 	}
 
 	// Code.JS_EVENT_CHANGE
@@ -2105,6 +2106,12 @@ giau.FileBrowser = function(element){
 		Code.addChild(this._container,this._elementUploadContainer);
 		this._elementUploadDropTarget = Code.newDiv();
 			Code.addChild(this._elementUploadContainer,this._elementUploadDropTarget);
+		this._elementCreateDirectory = Code.newDiv();
+			Code.addChild(this._elementUploadContainer,this._elementCreateDirectory);
+		this._elementUpDirectory = Code.newDiv();
+			Code.addChild(this._elementUploadContainer,this._elementUpDirectory);
+		this._elementDelete = Code.newDiv();
+			Code.addChild(this._elementUploadContainer,this._elementDelete);
 
 	// container:
 	div = this._container;
@@ -2115,7 +2122,7 @@ giau.FileBrowser = function(element){
 	// path:
 	div = this._elementPath;
 	Code.setStyleWidth(div,"100%");
-	Code.setContent(div,"Path: / ...");
+	Code.setContent(div,"");
 	Code.setStyleBackground(div,"#FF0");
 
 	// file scroller
@@ -2132,12 +2139,6 @@ giau.FileBrowser = function(element){
 	//Code.setStyleHeight(div,"400px");
 	Code.setStyleBackground(div,"#999");
 
-	// add files:
-	for(i=0; i<100; ++i){
-		var element = this.elementFromFile({});
-		Code.addChild(this._elementFileList,element);
-	}
-
 	// additional types:
 		// up a directory
 		// +create directory
@@ -2148,9 +2149,37 @@ giau.FileBrowser = function(element){
 		Code.setStyleWidth(div,"100px");
 		Code.setStyleHeight(div,"100px");
 		Code.setStyleBackground(div,"#F00");
+		Code.setStyleDisplay(div,"inline-block");
 		Code.setStyleTextAlign(div,"center")
 		Code.setStyleVerticalAlign(div,"middle")
 		Code.setContent(div,"drag file here to upload");
+	// create directory
+		div = this._elementCreateDirectory;
+		Code.setStyleWidth(div,"100px");
+		Code.setStyleHeight(div,"100px");
+		Code.setStyleBackground(div,"#990");
+		Code.setStyleDisplay(div,"inline-block");
+		Code.setStyleTextAlign(div,"center")
+		Code.setStyleVerticalAlign(div,"middle")
+		Code.setContent(div,"create new directory here");
+	// up a directory
+		div = this._elementUpDirectory;
+		Code.setStyleWidth(div,"100px");
+		Code.setStyleHeight(div,"100px");
+		Code.setStyleBackground(div,"#0FF");
+		Code.setStyleDisplay(div,"inline-block");
+		Code.setStyleTextAlign(div,"center")
+		Code.setStyleVerticalAlign(div,"middle")
+		Code.setContent(div,"go up a directory");
+	// delete
+		div = this._elementDelete;
+		Code.setStyleWidth(div,"100px");
+		Code.setStyleHeight(div,"100px");
+		Code.setStyleBackground(div,"#F0F");
+		Code.setStyleDisplay(div,"inline-block");
+		Code.setStyleTextAlign(div,"center")
+		Code.setStyleVerticalAlign(div,"middle")
+		Code.setContent(div,"delete selected item");
 	
 
 	//this._dragTarget = div;
@@ -2158,13 +2187,26 @@ giau.FileBrowser = function(element){
 
 	// LISTNERS
 	this._jsDispatch = new JSDispatch();
-	this._jsDispatch.addJSEventListener(this._elementUploadDropTarget, Code.JS_EVENT_DRAG_OVER, this._handleDragOverFxn, this);
-	this._jsDispatch.addJSEventListener(this._elementUploadDropTarget, Code.JS_EVENT_DRAG_DROP, this._handleDragDropFxn, this);
+	// UPLOAD
+	this._jsDispatch.addJSEventListener(this._elementUploadDropTarget, Code.JS_EVENT_DRAG_OVER, this._handleDragOverUploadFxn, this);
+	this._jsDispatch.addJSEventListener(this._elementUploadDropTarget, Code.JS_EVENT_DRAG_DROP, this._handleDragDropUploadFxn, this);
+	// CREATE DIR
+	this._jsDispatch.addJSEventListener(this._elementCreateDirectory, Code.JS_EVENT_CLICK, this._handleClickCreateDirectoryFxn, this);
+	this._jsDispatch.addJSEventListener(this._elementCreateDirectory, Code.JS_EVENT_TOUCH_TAP, this._handleClickCreateDirectoryFxn, this);
+	// UP DIR
+	this._jsDispatch.addJSEventListener(this._elementUpDirectory, Code.JS_EVENT_CLICK, this._handleNavigateUpDirectoryFxn, this);
+	this._jsDispatch.addJSEventListener(this._elementUpDirectory, Code.JS_EVENT_TOUCH_TAP, this._handleNavigateUpDirectoryFxn, this);
+	// DELETE DIR
+	this._jsDispatch.addJSEventListener(this._elementDelete, Code.JS_EVENT_CLICK, this._handleDeleteDirectoryFxn, this);
+	this._jsDispatch.addJSEventListener(this._elementDelete, Code.JS_EVENT_TOUCH_TAP, this._handleDeleteDirectoryFxn, this);
+	//
 
 	// START AT ROOT
+	this._selectedIndex = -1;
 	this._path = [];
+	this._contents = [];
 	// INIT
-	this.listFiles( this.currentFullPath() );
+	this.refreshBrowser();
 	//this._updateLayout();
 	//this.createDirectory("test");
 	//this.removeFile("giau_settings_icon.png");
@@ -2172,9 +2214,25 @@ giau.FileBrowser = function(element){
 	//this.removeFile("/");
 	//this.removeFile("");
 }
-giau.FileBrowser.prototype.elementFromFile = function(file){
-	var title = "very long file name goes here.png";
-	title = Code.clipStringToMaxChars(title,20,"...");
+giau.FileBrowser.prototype.refreshBrowser = function(){
+	this.setSelectedIndex(-1);
+	this.listFiles( this.currentFullPath() );
+}
+giau.FileBrowser.prototype.releaseFileElements = function(){
+	for(var i=0; i<Code.numChildren(this._elementFileList); ++i){
+		var div = Code.getChild(this._elementFileList,i);
+		var cover = Code.getChild(div,2);
+		this._jsDispatch.removeAllListeners(cover);
+	}
+	Code.removeAllChildren(this._elementFileList);
+}
+giau.FileBrowser.prototype.elementFromFile = function(file, index){
+	var title = Code.getValueOrDefault(file, "name", "?");
+	var mimetype = Code.getValueOrDefault(file, "mimetype", "");
+	var url = Code.getValueOrDefault(file, "url", "?");
+	title = Code.clipStringToMaxChars(title,18,"...");
+
+
 
 	//
 	var div = Code.newDiv();
@@ -2184,26 +2242,159 @@ giau.FileBrowser.prototype.elementFromFile = function(file){
 		Code.setStyleBorderWidth(div,"1px");
 		Code.setStylePadding(div,"10px");
 		Code.setStyleWidth(div,"100px");
+		Code.setStylePosition(div,"relative");
 		//Code.setStyleHeight(div,"50px");
 		Code.setStyleTextAlign(div,"center");
-	var img = Code.newImage();
-		img.src = "http://localhost/wp/wp-content/themes/giau/img/file_browser/icon_fb_blank.png";
-		Code.setStyleWidth(img,"32px");
-		Code.setStyleHeight(img,"32px");
+	var img = this.iconFromFileType(mimetype, url);
 	var label = Code.newDiv();
-		Code.setStyleFontSize(label,"12px");
+		Code.setStyleFontSize(label,"11px");
 		Code.setStyleColor(label,"#000000");
 		Code.setContent(label,title);
+		Code.setStyleOverflow(label,"hidden");
+	var cover = Code.newDiv();
+		Code.setStyleLeft(cover,"0px");
+		Code.setStyleTop(cover,"0px");
+		Code.setStyleWidth(cover,"100%");
+		Code.setStyleHeight(cover,"100%");
+		Code.setStyleBackground(cover,"rgba(255,0,0, 0.0");
+		Code.setStylePosition(cover,"absolute");
 	
 	Code.addChild(div,img);
 	Code.addChild(div,label);
+	Code.addChild(div,cover);
+
+	Code.setProperty(cover,"data-index",index+"");
+	this._jsDispatch.addJSEventListener(cover, Code.JS_EVENT_CLICK, this._handleClickFileElement, this);
+	this._jsDispatch.addJSEventListener(cover, Code.JS_EVENT_TOUCH_TAP, this._handleClickFileElement, this);
+	this._jsDispatch.addJSEventListener(cover, Code.JS_EVENT_DOUBLE_CLICK, this._handleDoubleClickFileElement, this);
+
 	return div;
+}
+
+giau.FileBrowser.prototype.highlightFileElement = function(element){
+	console.log("highlightFileElement");
+	//var div = Code.getChild(element,1);
+	var div = element;
+	Code.setStyleBackground(div,"rgba(255,0,0, 1.0");
+}
+giau.FileBrowser.prototype.unhighlightFileElement = function(element){
+	console.log("unhighlightFileElement");
+	var div = element;
+	Code.setStyleBackground(div,"inherit");
+}
+giau.FileBrowser.prototype._handleNavigateUpDirectoryFxn = function(e){
+	this.navigateDirectory();
+	this.refreshBrowser();
+}
+giau.FileBrowser.prototype._handleDeleteDirectoryFxn = function(e){
+	var file = this.getSelectedFile();
+	if(file){
+		var name = file["name"];
+		var path = file["path"];
+		//var fullPath = this.currentFullPath()+"/"+name;
+		//this.removeFile("test");
+		var isDirectory = file["isDirectory"];
+		var result = confirm("are you sure you want to delete\n"+name+" ?");
+		if(result){
+			if(isDirectory){
+				result = confirm(""+name+" is a directory.\ndo you want to delete all contents?");
+				if(result){
+					this.removeFile(path);
+				}
+			}else{
+				this.removeFile(path);
+			}
+		}
+
+	}
+	//this.navigateDirectory();
+	//this.refreshBrowser();
+}
+giau.FileBrowser.prototype._handleClickFileElement = function(e){
+	var file = this.fileElementFromEvent(e);
+	if(file){
+		console.log(file);
+		var name = file["name"];
+		var index = file["index"];
+		//console.log("highlight: "+name);
+		this.setSelectedIndex(index);
+	}
+}
+giau.FileBrowser.prototype.getSelectedFile = function(){
+	var index = this._selectedIndex;
+	if(index<this._contents.length){
+		var file = this._contents[index];
+		return file;
+	}
+	return null;
+}
+giau.FileBrowser.prototype.setSelectedIndex = function(index){
+	var prevIndex = this._selectedIndex;
+	var div;
+	if(prevIndex>=0){
+		console.log("prev: "+prevIndex);
+		div = Code.getChild(this._elementFileList,prevIndex);
+		if(div){
+			this.unhighlightFileElement(div);
+		}
+	}
+	if(index<this._contents.length){
+		console.log("next: "+index);
+		this._selectedIndex = index;
+		div = Code.getChild(this._elementFileList,index);
+		console.log(div);
+		if(div){
+			this.highlightFileElement(div);
+		}
+	}
+}
+giau.FileBrowser.prototype._handleDoubleClickFileElement = function(e){
+	var file = this.fileElementFromEvent(e);
+	if(file){
+		var name = file["name"];
+		if(file["isDirectory"]){ // goto location
+			this.navigateDirectory(name);
+			this.refreshBrowser();
+		}else{ // goto item
+			var url = file["url"];
+			window.open(url,"_blank")
+		}
+	}
+}
+giau.FileBrowser.prototype.navigateDirectory = function(name){
+	if(name){ // sub directory
+		this._path.push(name);
+	}else{ // up directory
+		this._path.pop();
+	}
+}
+giau.FileBrowser.prototype.fileElementFromEvent = function(e){
+	e.stopPropagation();
+	e.preventDefault();
+	var target = Code.getTargetFromEvent(e);
+	var index = Code.getProperty(target,"data-index");
+	if(index!==null && index.length>0){
+		index = Number(index);
+		var file = this._contents[index];
+		return file;
+	}
+	return null;
+}
+giau.FileBrowser.prototype._handleClickCreateDirectoryFxn = function(e){
+	e.stopPropagation();
+	e.preventDefault();
+	var result = window.prompt("create new directory","");
+	if(result!==null && result.length>0){
+		var fullPath = this.currentFullPath();
+		fullPath = fullPath+"/"+result;
+		this.createDirectory(fullPath);
+	}
 }
 
 giau.FileBrowser.prototype.currentFullPath = function(){
 	return "/"+this._path.join("/");
 }
-giau.FileBrowser.prototype._handleDragOverFxn = function(e){
+giau.FileBrowser.prototype._handleDragOverUploadFxn = function(e){
 	//console.log("over");
 	e.stopPropagation();
 	e.preventDefault();
@@ -2211,13 +2402,22 @@ giau.FileBrowser.prototype._handleDragOverFxn = function(e){
 }
 giau.FileBrowser.prototype._updateLayout = function(e){
 	console.log("update layout");
+	// remove old
+	this.releaseFileElements();
+	// set path
+	Code.setContent(this._elementPath,"Path: "+this.currentFullPath());
+	// add files:
+	var i;
+	var len = this._contents.length;
+	for(i=0; i<len; ++i){
+		var file = this._contents[i];
+		var element = this.elementFromFile(file, i);
+		Code.addChild(this._elementFileList,element);
+	}
 }
-giau.FileBrowser.prototype._handleDragDropFxn = function(e){
+giau.FileBrowser.prototype._handleDragDropUploadFxn = function(e){
 	console.log("drop");
-
 	var directory = this.currentFullPath();
-console.log(directory);
-	var directory = "test";
 console.log(directory);
 	e.stopPropagation();
 	e.preventDefault();
@@ -2236,7 +2436,8 @@ console.log(directory);
 			fileReader.onload = function(event){
 				console.log(event);
 				console.log("loaded file: "+filename);
-				var result = event.target.result;
+				var target = Code.getTargetFromEvent(evemt);
+				var result = target.result;
 				self.uploadFile(file, filename);
 			}
 			fileReader.readAsDataURL(file);
@@ -2245,8 +2446,26 @@ console.log(directory);
 	}
 
 }
-giau.FileBrowser.prototype.iconFromFileType = function(filetype){
-	// mime_content_type
+giau.FileBrowser.prototype.iconFromFileType = function(filetype, url){
+	var source = "./wp-content/themes/giau/img/file_browser/icon_fb_blank.png";
+	if(filetype){
+		if(filetype == "directory"){ // directory
+			source = "./wp-content/themes/giau/img/file_browser/icon_fb_folder.png";
+		}else if( filetype.match("image\/.*") ){  // any image
+			source = url;
+		}
+		
+		// if other type, use iconography
+		// mime_content_type
+		var lookupTable = {
+			"image/png" : null
+		};
+	}
+	var img = Code.newImage();
+		img.src = source;
+		Code.setStyleWidth(img,"32px");
+		Code.setStyleHeight(img,"32px");
+	return img;
 }
 
 giau.FileBrowser.prototype.fileTypeAcceptable = function(type){
@@ -2274,6 +2493,7 @@ giau.FileBrowser.prototype.removeFile = function(relative){
 	ajax.callback(function(d){
 		var obj = Code.parseJSON(d);
 		console.log(obj);
+		this.refreshBrowser();
 	});
 	ajax.send();
 }
@@ -2291,6 +2511,7 @@ giau.FileBrowser.prototype.createDirectory = function(relative){
 	ajax.callback(function(d){
 		var obj = Code.parseJSON(d);
 		console.log(obj);
+		this.refreshBrowser();
 	});
 	ajax.send();
 }
@@ -2308,8 +2529,38 @@ giau.FileBrowser.prototype.listFiles = function(relative){
 	ajax.callback(function(d){
 		var obj = Code.parseJSON(d);
 		console.log(obj);
+		var itemList = obj["data"];
+		var currentPath = obj["path"];
+		if(itemList){
+			this._contents = itemList;
+		}else{
+			this._contents = [];
+		}
+		this.sortContents();
+		this._updateLayout();
 	});
 	ajax.send();
+}
+giau.FileBrowser.prototype.sortContents = function(){
+	this._contents.sort( function(a,b){
+		var filenameA = a["name"];
+		var isDirectoryA = a["isDirectory"];
+		var filenameB = b["name"];
+		var isDirectoryB = b["isDirectory"];
+		if(isDirectoryA && isDirectoryB){
+			return filenameA < filenameB ? -1 : 1;
+		}else if(isDirectoryA){
+			return -1;
+		}else if(isDirectoryB){
+			return 1;
+		} // else both files
+		return filenameA < filenameB ? -1 : 1;
+	});
+	var i, len = this._contents.length;
+	for(i=0; i<len; ++i){
+		var file = this._contents[i];
+		file["index"] = i;
+	}
 }
 giau.FileBrowser.prototype.uploadFile = function(file,filename,directory){
 	var url = "./";
@@ -2325,6 +2576,7 @@ giau.FileBrowser.prototype.uploadFile = function(file,filename,directory){
 	ajax.callback(function(d){
 		var obj = Code.parseJSON(d);
 		console.log(obj);
+		this.refreshBrowser();
 	});
 	ajax.send();
 }

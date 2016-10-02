@@ -33,8 +33,11 @@ require_once($GIAU_ROOT_PATH.'/php/files.php');
 function plugin_directory_root(){
 	return GIAU_PLUGIN_DIR;
 }
-function plugin_upload_root(){
+function plugin_upload_root_dir(){
 	return plugin_directory_root()."uploads";
+}
+function plugin_upload_root_url(){
+	return plugins_url()."/giau"."/uploads";
 }
 
 class YC_AdminTools {
@@ -254,10 +257,6 @@ function include_widget_calendar_events(){
 function wordpress_data_service(){
 	 // http://localhost/wp/wp-content/themes/giau/img/file_browser/icon_fb_blank.png
 	// $location = "/media/giau/universe/universe/repo/fw/plugins/giau";
-	$location = "/media/giau/universe/universe/repo/fw/themes/giau/img/file_browser/icon_fb_blank.png";
-	error_log("LOCATION: ".$location);
-	$location = site_url($location);
-	error_log("LOCATION: ".$location);
 	/*
 	[Sun Oct 02 00:19:23.082943 2016] [:error] [pid 1334] [client ::1:57324] LOCATION: /media/giau/universe/universe/repo/fw/themes/giau/img/file_browser/icon_fb_blank.png
 	[Sun Oct 02 00:19:23.083090 2016] [:error] [pid 1334] [client ::1:57324] LOCATION: http://localhost/wp/media/giau/universe/universe/repo/fw/themes/giau/img/file_browser/icon_fb_blank.png
@@ -358,7 +357,7 @@ function wordpress_data_service(){
 			if($file){
 				$uploadDirectory = plugin_directory_root()."";
 				$location = $file['tmp_name'];
-				$success = moveTempFileToLocation( plugin_upload_root(), $location, $relative, $filename, true);
+				$success = moveTempFileToLocation( plugin_upload_root_dir(), $location, $relative, $filename, true);
 				if($success){
 					$response["result"] = "success";
 				}
@@ -369,16 +368,15 @@ function wordpress_data_service(){
 			$listing = [];
 			$limit = $recursive ? 2 : 1;
 			error_log("file listing: ".$relative." | ".$recursive." | ".$limit);
-			$directory = plugin_upload_root();
-			$directory = relativePathToAbsolutePath($directory, $relative);
-			getDirectoryListingRecursive($directory,$listing, $limit, $directory, operateOnFileListingEntry);
-			//appendURLToDirectoryListing($listing);
+			$uploadDirectory = plugin_upload_root_dir();
+			$directory = relativePathToAbsolutePath($uploadDirectory, $relative);
+			getDirectoryListingRecursive($directory,$listing, $limit, $uploadDirectory, operateOnFileListingEntry);
 			$response["data"] = $listing;
 			$response["result"] = "success";
 		}else if($operationType=="file_create_directory"){
 			error_log("add directory");
 			$relative = $_POST['path'];
-			$directory = plugin_upload_root();
+			$directory = plugin_upload_root_dir();
 			$directory = relativePathToAbsolutePath($directory, $relative);
 			$created = createDirectoryAtLocation($directory);
 			if($created){
@@ -387,7 +385,7 @@ function wordpress_data_service(){
 		}else if($operationType=="file_remove_file"){
 			error_log("file delete");
 			$relative = $_POST['path'];
-			$root = plugin_upload_root();
+			$root = plugin_upload_root_dir();
 			$directory = relativePathToAbsolutePath($root, $relative);
 			$realPathA = realpath($root);
 			$realPathB = realpath($directory);
@@ -407,8 +405,6 @@ function wordpress_data_service(){
 			$result = exec('whoami');
 			error_log("who am i: ".$result);
 			error_log("other operation: ".$operationTyupe);
-			// $fileData = $_POST['file_data'];
-			// error_log("fileData: ".$fileData);
 			//$response["result"] = "success";
 		}
 		wp_send_json( $response );
@@ -416,7 +412,14 @@ function wordpress_data_service(){
 }
 
 function operateOnFileListingEntry(&$entry){
-	$entry["url"] = site_url($entry["path"]);
+	// $entry["url"] = site_url($entry["path"]); // trash
+	$dirPluginUpload = plugin_upload_root_dir();
+	$urlPluginUpload = plugin_upload_root_url();
+	error_log($dirPluginUpload." | ".$urlPluginUpload);
+	$path = $entry["path"];
+		$pattern = "#^".preg_quote($dirPluginUpload)."?#";
+	$url = preg_replace($pattern, $urlPluginUpload, $path);
+	$entry["url"] = $url;
 	unset($entry);
 }
 

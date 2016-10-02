@@ -47,9 +47,11 @@ function moveFileToRelativeLocation($root, $relativeSource, $relativeDestination
 function createDirectoryAtLocation($absolutePath){
 	$parentPath = dirname($absolutePath,1);
 	if(file_exists($parentPath)){
-		$didMakeDirectory = mkdir($absolutePath, 0755, false); // 0644
-		if($didMakeDirectory){
-			return true;
+		if(!file_exists($absolutePath)){ // already exists
+			$didMakeDirectory = mkdir($absolutePath, 0755, false); // 0644
+			if($didMakeDirectory){
+				return true;
+			}
 		}
 	}
 	return false;
@@ -101,6 +103,8 @@ function removeFileAtLocation($absolutePath, $deleteIfDir=true){
 
 
 function getDirectoryListingRecursive($directory,&$array,$limit=null, $trim=null, $fxn=null){
+	// $directory = $directory."/"; // end with slash
+	// $directory = preg_replace('/(\/)+/', '/', $directory);
 	// directory nonempty
 	if(!$directory){
 		return;
@@ -120,10 +124,11 @@ function getDirectoryListingRecursive($directory,&$array,$limit=null, $trim=null
 			continue;
 		}
 		$path = $item;
-		$path = realpath($directory."/".$path);
+		$path = realpath($directory."/".$path); // ($directory."".$path);//
+		error_log("PATH: ".$path."       ==========");
 		$size = filesize($path);
 		$isDir = is_dir($path);
-		$mimetype = $isDir ? "" : mime_content_type($path);
+		$mimetype = $isDir ? "directory" : mime_content_type($path);
 		$arr  = [];
 		$entry = [];
 		$entry["name"] = $item; // end
@@ -138,7 +143,7 @@ function getDirectoryListingRecursive($directory,&$array,$limit=null, $trim=null
 		if($trim){ // remove prefix
 			$trim2 = $trim; // str_replace("/", "\/", $trim);
 			$pattern = preg_quote("".$trim2."");
-			$path = preg_replace("#".$pattern."#", "/", $path);
+			$path = preg_replace("#^".$pattern."?#", "", $path);
 			// redo
 			$entry["path"] = $path; // relative
 		}
