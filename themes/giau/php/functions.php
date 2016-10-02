@@ -748,7 +748,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 
 
 	<!-- CALENDAR EVENTS -->
-	<div class="sectionContainerDepartments limitedWidth" style="background-color: rgba(255,255,255,1.0);">
+	<div class="sectionContainerDepartments limitedWidth" style="">
 		<div class="headerSectionMain">Schedule of Events</div>
 		<div class="departmentInternalContainer">
 			<?php
@@ -762,7 +762,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 }else if($pageRequest==$PAGE_REQUEST_TYPE_STAFF){
 ?>
 	<!-- STAFF BIOGRAPHIES -->
-	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
+	<div class="sectionContainerBiographies limitedWidth" style="">
 		<!-- <div class="giauBiographyList"></div> -->
 		<?php
 			fillOutSectionFromID("28");
@@ -774,7 +774,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 ?>
 	
 	<!-- DOWNLOADS -->
-	<div class="sectionContainerBiographies limitedWidth" style="background-color: rgba(255,255,255,1.0);">
+	<div class="limitedWidth" style="">
 		<!-- <div class="headerSectionMain">FORMS</div> -->
 		<div class="titleSectionMain">Download forms and documentation here:</div>
 		<div class="formItemDownload">
@@ -784,6 +784,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 			<a href="<?php echo relativePathUploads()."/photograph_release_form.pdf"; ?>">LACPC Photograph Release Form (pdf)</a>
 		</div>
 	</div>
+	<div class="giauFileBrowser limitedWidth" style=""></div>
 <?php
 }else if($pageRequest==$PAGE_REQUEST_TYPE_INFO){
 ?>

@@ -186,6 +186,20 @@ chmod -R 755 giau/
 
 
 
+/*
+sudo chown -R www-data:www-data /media/giau/universe/universe/repo/fw/plugins/giau/uploads
+sudo chmod 755 /media/giau/universe/universe/repo/fw/plugins/giau/uploads
+
+
+sudo vi /etc/php/7.0/apache2/php.ini 
+sys_temp_dir = "/tmp/php"
+
+sudo chown -R www-data:www-data /tmp/php
+sudo chmod 755 /tmp/php
+
+*/
+
+
 
 
 

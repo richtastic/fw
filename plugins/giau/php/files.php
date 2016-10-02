@@ -1,0 +1,156 @@
+<?php
+// files.php
+
+
+
+function moveTempFileToLocation($root, $source, $relativeDestination=null, $filename=null, $overwrite=true){
+	if(file_exists($root)){
+		error_log("A: ".$root." - ".$source." : ".$relativeDestination." - ".$filename);
+		if(file_exists($source)){
+			error_log("B");
+			$absoluteDestination = null;
+			if($relativeDestination!==null){
+				$absoluteDestination = relativePathToAbsolutePath($root,$relativeDestination);
+				error_log("C   ".$absoluteDestination);
+			}else{
+				error_log("D");
+				$absoluteDestination = $root;
+			}
+			if($filename===null || strlen($filename)==0){
+				error_log("E");
+				$filename = "FILE_".uniqid();// tempnam($absoluteDestination,"FILE_");
+			}
+			error_log("F: ".$filename);
+			$absoluteDestination = relativePathToAbsolutePath($absoluteDestination, $filename);
+			error_log("G: ".$absoluteDestination);
+			$destinationAlreadyExists = file_exists($absoluteDestination);
+			if($destinationAlreadyExists && !$overwrite){
+				error_log("G");
+				return false;
+			}
+			error_log("G: ".$source." -> ".$absoluteDestination);
+			$moved = move_uploaded_file($source, $absoluteDestination);
+			if($moved){
+				setFilePermissionsReadOnly($absoluteDestination);
+				return true;
+			}
+		}
+		//
+	}
+	return false;
+}
+
+function moveFileToRelativeLocation($root, $relativeSource, $relativeDestination){
+
+}
+
+function createDirectoryAtLocation($absolutePath){
+	$parentPath = dirname($absolutePath,1);
+	if(file_exists($parentPath)){
+		$didMakeDirectory = mkdir($absolutePath, 0755, false); // 0644
+		if($didMakeDirectory){
+			return true;
+		}
+	}
+	return false;
+}
+
+function relativePathToAbsolutePath($root, $relative){
+	//$relative = preg_replace('/\/\.\.\//', '/', $relative);
+	$absolutePath = $root."/".$relative;
+	//$absolutePath = realpath($absolutePath); // returns FALSE for future files
+	$absolutePath = preg_replace('/\/\.\.\//', '/', $absolutePath); // remove up-directories
+	$absolutePath = preg_replace('/(\/)+/', '/', $absolutePath); // collapse multiple slashes
+	return $absolutePath;
+}
+
+
+function setFilePermissionsReadOnly($path){
+	chmod($path,0644); // rw- | r-- | r--
+}
+
+
+function removeFileAtLocation($absolutePath, $deleteIfDir=true){
+	if(file_exists($absolutePath)){
+		$isDir = is_dir($absolutePath);
+		if($isDir && $deleteIfDir){
+			// RECURSIVELY REMOVE FILE CONTENTS IF NOT EMPTY
+			$fileList = scandir($absolutePath);
+			foreach ($fileList as $index => $file){
+				if($file!=="." && $file!==".."){
+					$path = realpath($absolutePath."/".$file);
+					removeFileAtLocation($path, $deleteIfDir);
+				}
+			}
+			// REMOVE SELF
+			$didRemoveDirectory = rmdir($absolutePath);
+			if($didRemoveDirectory){
+				return true;
+			}
+		}else{
+			$didRemoveFile = unlink($absolutePath);
+			if($didRemoveFile){
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+
+
+
+function getDirectoryListingRecursive($directory,&$array,$limit=null, $trim=null, $fxn=null){
+	// directory nonempty
+	if(!$directory){
+		return;
+	}
+	if($limit==null){
+		$limit = 10;
+	}
+	if($limit<=0){
+		return;
+	}
+	$list = scandir($directory);
+	$i;
+	$len = count($list);
+	for($i=0; $i<$len; ++$i){
+		$item = $list[$i];
+		if($item == "." || $item == ".."){
+			continue;
+		}
+		$path = $item;
+		$path = realpath($directory."/".$path);
+		$size = filesize($path);
+		$isDir = is_dir($path);
+		$mimetype = $isDir ? "" : mime_content_type($path);
+		$arr  = [];
+		$entry = [];
+		$entry["name"] = $item; // end
+		$entry["path"] = $path; // absolute
+		$entry["size"] = $size; // bytes
+		$entry["isDirectory"] = $isDir ? true : false;
+		$entry["mimetype"] = $mimetype;
+		$entry["contents"] =& $arr;// : null;
+		if($fxn!=null){
+			$fxn($entry);
+		}
+		if($trim){ // remove prefix
+			$trim2 = $trim; // str_replace("/", "\/", $trim);
+			$pattern = preg_quote("".$trim2."");
+			$path = preg_replace("#".$pattern."#", "/", $path);
+			// redo
+			$entry["path"] = $path; // relative
+		}
+		array_push($array, $entry);
+		// if($isDir){
+		// 	getDirectoryListingRecursive($entry["path"], $arr, $limit-1, $trim);
+		// }
+		unset($entry);
+		unset($arr);
+	}
+}
+
+
+
+?>
