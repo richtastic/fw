@@ -410,15 +410,23 @@ function wordpress_data_service(){
 		wp_send_json( $response );
 	}
 }
-
+function getRelativeURLFromAbsoluteURL($url){
+	$rootURL = get_site_url();
+	$pattern = "#^".preg_quote($rootURL)."?#";
+	$urlRelative = preg_replace($pattern, ".", $url);
+	return $urlRelative;
+}
 function operateOnFileListingEntry(&$entry){
 	// $entry["url"] = site_url($entry["path"]); // trash
+	$rootURL = get_site_url();
 	$dirPluginUpload = plugin_upload_root_dir();
 	$urlPluginUpload = plugin_upload_root_url();
-	error_log($dirPluginUpload." | ".$urlPluginUpload);
+	error_log($rootURL." | ".$dirPluginUpload." | ".$urlPluginUpload);
 	$path = $entry["path"];
 		$pattern = "#^".preg_quote($dirPluginUpload)."?#";
 	$url = preg_replace($pattern, $urlPluginUpload, $path);
+	$urlRelative = getRelativeURLFromAbsoluteURL($url);
+	$entry["url_relative"] = $urlRelative;
 	$entry["url"] = $url;
 	unset($entry);
 }

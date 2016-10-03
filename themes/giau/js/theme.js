@@ -82,6 +82,12 @@ giau.prototype.initialize = function(){
 		var fileBrowser = new giau.FileBrowser(element);
 	});
 
+	// OBJECT COMPOSITION
+	var objectComposerLists = $(".giauObjectComposer");
+	objectComposerLists.each(function(index, element){
+		var objectComposer = new giau.ObjectComposer(element);
+	});
+
 	// AUTO COMPLETE
 	var autoCompleteLists = $(".giauAutoComplete");
 	autoCompleteLists.each(function(index, element){
@@ -2094,8 +2100,12 @@ giau.AutoComplete.prototype._handleSelectElementClickFxn = function(e){
 giau.FileBrowser = function(element){
 	this._container = element;
 
-	this._elementPath = Code.newDiv();
-		Code.addChild(this._container,this._elementPath);
+	this._elementPathContainer = Code.newDiv();
+		Code.addChild(this._container,this._elementPathContainer);
+		this._elementPath = Code.newDiv();
+			Code.addChild(this._elementPathContainer,this._elementPath);
+		this._elementRelative = Code.newDiv();
+			Code.addChild(this._elementPathContainer,this._elementRelative);
 	this._elementFileContainer = Code.newDiv();
 		Code.addChild(this._container,this._elementFileContainer);
 		this._elementFileList = Code.newDiv();
@@ -2119,17 +2129,36 @@ giau.FileBrowser = function(element){
 	//Code.setStyleHeight(div,"");
 	Code.setStyleBackground(div,"#0F0");
 
+	// path container:
+	div = this._elementPathContainer;
+	Code.setStyleWidth(div,"100%");
+	Code.setStyleBackground(div,"#FF0");
+
 	// path:
 	div = this._elementPath;
-	Code.setStyleWidth(div,"100%");
+	Code.setStyleWidth(div,"50%");
+	Code.setStyleDisplay(div,"inline-block");
+	Code.setStyleMargin(div,"0");
+	Code.setStylePadding(div,"0");
+	Code.setStyleBorderWidth(div,"0");
 	Code.setContent(div,"");
 	Code.setStyleBackground(div,"#FF0");
+
+	// relative:
+	div = this._elementRelative;
+	Code.setStyleWidth(div,"50%");
+	Code.setStyleDisplay(div,"inline-block");
+	Code.setStyleMargin(div,"0");
+	Code.setStylePadding(div,"0");
+	Code.setStyleBorderWidth(div,"0");
+	Code.setContent(div,"");
+	Code.setStyleBackground(div,"#0FF");
 
 	// file scroller
 	div = this._elementFileContainer;
 	Code.setStyleWidth(div,"100%");
 	Code.setStyleHeight(div,"400px");
-	Code.setStyleBackground(div,"#CCC");
+	Code.setStyleBackground(div,"#FFF");
 	Code.setStyleOverflow(div,"scroll");
 	Code.setStyleOverflowX(div,"hidden");
 
@@ -2137,7 +2166,7 @@ giau.FileBrowser = function(element){
 	div = this._elementFileList;
 	Code.setStyleWidth(div,"100%");
 	//Code.setStyleHeight(div,"400px");
-	Code.setStyleBackground(div,"#999");
+	Code.setStyleBackground(div,"#FFF");
 
 	// additional types:
 		// up a directory
@@ -2230,57 +2259,64 @@ giau.FileBrowser.prototype.elementFromFile = function(file, index){
 	var title = Code.getValueOrDefault(file, "name", "?");
 	var mimetype = Code.getValueOrDefault(file, "mimetype", "");
 	var url = Code.getValueOrDefault(file, "url", "?");
-	title = Code.clipStringToMaxChars(title,18,"...");
+	var relativeURL = Code.getValueOrDefault(file, "url_relative", "?");
+	title = Code.clipStringToMaxChars(title,24,"...");
 
 
 
 	//
 	var div = Code.newDiv();
-		Code.setStyleDisplay(div,"inline-block");
+	//Code.setStyleDisplay(div,"inline-block");
+		Code.setStyleDisplay(div,"table-cell");
 		Code.setStyleBorder(div,"solid");
-		Code.setStyleBorderColor(div,"#F00");
 		Code.setStyleBorderWidth(div,"1px");
 		Code.setStylePadding(div,"10px");
-		Code.setStyleWidth(div,"100px");
+//Code.setStyleWidth(div,"60px");
 		Code.setStylePosition(div,"relative");
-		//Code.setStyleHeight(div,"50px");
+		//Code.setStyleVerticalAlign(div,"middle");
+		Code.setStyleVerticalAlign(div,"top");
 		Code.setStyleTextAlign(div,"center");
-	var img = this.iconFromFileType(mimetype, url);
+	var img = this.iconFromFileType(mimetype, relativeURL);
 	var label = Code.newDiv();
 		Code.setStyleFontSize(label,"11px");
 		Code.setStyleColor(label,"#000000");
 		Code.setContent(label,title);
-		Code.setStyleOverflow(label,"hidden");
+Code.setStyleWidth(label,"60px");
+		Code.setStyleWordWrap(label,"break-word");
 	var cover = Code.newDiv();
 		Code.setStyleLeft(cover,"0px");
 		Code.setStyleTop(cover,"0px");
 		Code.setStyleWidth(cover,"100%");
 		Code.setStyleHeight(cover,"100%");
-		Code.setStyleBackground(cover,"rgba(255,0,0, 0.0");
+		Code.setStyleBackground(cover,"rgba(255,0,0, 0.0)");
 		Code.setStylePosition(cover,"absolute");
 	
 	Code.addChild(div,img);
 	Code.addChild(div,label);
 	Code.addChild(div,cover);
 
+	this.unhighlightFileElement(div);
+
 	Code.setProperty(cover,"data-index",index+"");
 	this._jsDispatch.addJSEventListener(cover, Code.JS_EVENT_CLICK, this._handleClickFileElement, this);
 	this._jsDispatch.addJSEventListener(cover, Code.JS_EVENT_TOUCH_TAP, this._handleClickFileElement, this);
 	this._jsDispatch.addJSEventListener(cover, Code.JS_EVENT_DOUBLE_CLICK, this._handleDoubleClickFileElement, this);
+	//var gest = new FF.Gesticulator();
+	//gest.attachElement(cover);
+	//this._jsDispatch.addJSEventListener(cover, Code.JS_EVENT_DOUBLE_CLICK, this._handleDoubleClickFileElement, this);
 
 	return div;
 }
 
 giau.FileBrowser.prototype.highlightFileElement = function(element){
-	console.log("highlightFileElement");
-	//var div = Code.getChild(element,1);
 	var div = element;
-	Code.setStyleBackground(div,"rgba(255,0,0, 1.0");
+	Code.setStyleBackgroundColor(div,"rgba(0,0,255, 0.25)");
+		Code.setStyleBorderColor(div,"rgba(0,0,222, 0.25)");
 }
 giau.FileBrowser.prototype.unhighlightFileElement = function(element){
-	console.log("unhighlightFileElement");
 	var div = element;
-	Code.setStyleBackground(div,"inherit");
+	Code.setStyleBackgroundColor(div,"inherit");
+	Code.setStyleBorderColor(div,"rgba(0,0,0, 0.0)");
 }
 giau.FileBrowser.prototype._handleNavigateUpDirectoryFxn = function(e){
 	this.navigateDirectory();
@@ -2313,10 +2349,8 @@ giau.FileBrowser.prototype._handleDeleteDirectoryFxn = function(e){
 giau.FileBrowser.prototype._handleClickFileElement = function(e){
 	var file = this.fileElementFromEvent(e);
 	if(file){
-		console.log(file);
 		var name = file["name"];
 		var index = file["index"];
-		//console.log("highlight: "+name);
 		this.setSelectedIndex(index);
 	}
 }
@@ -2332,19 +2366,21 @@ giau.FileBrowser.prototype.setSelectedIndex = function(index){
 	var prevIndex = this._selectedIndex;
 	var div;
 	if(prevIndex>=0){
-		console.log("prev: "+prevIndex);
 		div = Code.getChild(this._elementFileList,prevIndex);
 		if(div){
 			this.unhighlightFileElement(div);
 		}
 	}
 	if(index<this._contents.length){
-		console.log("next: "+index);
 		this._selectedIndex = index;
 		div = Code.getChild(this._elementFileList,index);
-		console.log(div);
 		if(div){
 			this.highlightFileElement(div);
+		}
+		file = this._contents[index];
+		if(file){
+			div = this._elementRelative;
+			Code.setContent(div,file["url_relative"]);
 		}
 	}
 }
@@ -2401,7 +2437,6 @@ giau.FileBrowser.prototype._handleDragOverUploadFxn = function(e){
 	//console.log(e);
 }
 giau.FileBrowser.prototype._updateLayout = function(e){
-	console.log("update layout");
 	// remove old
 	this.releaseFileElements();
 	// set path
@@ -2416,16 +2451,13 @@ giau.FileBrowser.prototype._updateLayout = function(e){
 	}
 }
 giau.FileBrowser.prototype._handleDragDropUploadFxn = function(e){
-	console.log("drop");
 	var directory = this.currentFullPath();
-console.log(directory);
 	e.stopPropagation();
 	e.preventDefault();
 	var fileList = e.dataTransfer.files;
 	var i, len = fileList.length;
 	for(i=0; i<len; ++i){
 		var file = fileList[i];
-		console.log(file);
 		var filename = file.name;
 		var filetype = file.type;
 		if(this.fileTypeAcceptable(filetype)){
@@ -2436,7 +2468,7 @@ console.log(directory);
 			fileReader.onload = function(event){
 				console.log(event);
 				console.log("loaded file: "+filename);
-				var target = Code.getTargetFromEvent(evemt);
+				var target = Code.getTargetFromEvent(event);
 				var result = target.result;
 				self.uploadFile(file, filename);
 			}
@@ -2581,10 +2613,217 @@ giau.FileBrowser.prototype.uploadFile = function(file,filename,directory){
 	ajax.send();
 }
 
+
+
+// giau.ObjectDesigner Constructor  Composer Layout
+giau.ObjectComposer = function(element){
+	this._container = element;
+
+	var propertyDataModel = "data-model";
+	var propertyDataObject = "data-object";
+	this._dataModel = {};
+	this._dataInstance = {};
+
+	var i;
+	for(i=0; i<Code.numChildren(this._container); ++i){
+		var ele = Code.getChild(this._container,i);
+		if( Code.hasProperty(ele,propertyDataModel) ){
+				var objectString = Code.getContent(ele);
+				var object = Code.parseJSON(objectString);
+				this._dataModel = object;
+			Code.removeChild(this._container,ele);
+			--i;
+		}else if( Code.hasProperty(ele,propertyDataObject) ){
+				var objectString = Code.getContent(ele);
+				var object = Code.parseJSON(objectString);
+				this._dataInstance = object;
+			Code.removeChild(this._container,ele);
+			--i;
+		}
+	}
+
+	this._jsDispatch = new JSDispatch();
+	
+	console.log("model:",this._dataModel);
+	console.log("insta:",this._dataInstance);
+
+	this.initialize();
+
+	var div = Code.newInputButton("SUBMIT");
+		Code.setStyleBackgroundColor(div,"#FCC");
+	this._submitButton = div;
+	this._jsDispatch.addJSEventListener(this._submitButton, Code.JS_EVENT_CLICK, this._handleSubmitClickFxn, this);
+
+	Code.addChild(this._container,this._submitButton);
+}
+giau.ObjectComposer.prototype._handleSubmitClickFxn = function(e){
+	this.prepareObjectForSubmission();
+}
+giau.ObjectComposer.prototype.initialize = function(){
+	var modelObject = this._dataModel;
+	var instanceObject = this._dataInstance;
+	if(!modelObject){
+		return;
+	}
+	this.fillOutModelFromElement(this._container, modelObject, instanceObject);
+}
+giau.ObjectComposer.prototype.prepareObjectForSubmission = function(){
+	// go thru object and set values from fields
+}
+giau.ObjectComposer.prototype._handleNewArrayObject = function(e,d){
+	var target = Code.getTargetFromEvent(e);
+	var modelObject = d["model"];
+	var instanceObject = d["instance"];
+	var element = d["element"];
+	var field = d["field"];
+	console.log("handle new array object");
+	console.log(modelObject);
+	console.log(instanceObject);
+	console.log(element);
+	this.fillOutModelFromElement(element, modelObject, instanceObject, field);
+	
+}
+giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelObject,instanceObject, newField){
+	if( Code.hasKey(modelObject,"fields") ){
+		modelObject = modelObject["fields"];
+	}
+	console.log("++++++++++++++++++++++++++> "+newField);
+	console.log(modelObject);
+	console.log(instanceObject);
+	var keys = Code.keys(modelObject);
+if(newField){
+	keys = [newField];
+}
+	var i, j, key, field, type, val, obj;
+	var div, content;
+	var len = keys.length;
+	for(i=0; i<len; ++i){
+		key = keys[i];
+		field = modelObject[key];
+		console.log(field);
+		type = null;
+		if(Code.hasKey(field,"type")){
+			type = field["type"];
+		}
+		name = key;
+		if(Code.hasKey(field,"name")){
+			name = field["name"];
+		}
+		content = null;
+			div = Code.newDiv();
+				Code.setStylePaddingTop(div,"0px");
+				Code.setStylePaddingBottom(div,"0px");
+				Code.setStylePaddingRight(div,"0px");
+				Code.setStylePaddingLeft(div,"10px");
+			Code.addChild(element,div);
+		if(type){
+			if(type=="string" || type=="string-url" || type=="string-image"){
+				content = Code.newDiv();
+					var label = Code.newDiv();
+						Code.setContent(label,""+key+": ");
+						Code.setStyleBackgroundColor(label,"#FCC");
+						Code.setStyleDisplay(label,"inline-block");
+					var input = Code.newInputText();
+						Code.setStyleBackgroundColor(input,"#CCF");
+						Code.setStyleDisplay(input,"inline-block");
+				Code.addChild(content,label);
+				Code.addChild(content,input);
+				Code.addChild(div,content);
+				// SETTING
+				val = instanceObject[key];
+				if(val){
+					Code.setInputTextValue(input,val);
+				}else{
+					instanceObject[key] = ""; // init to empty
+				}
+				field["input"] = input;
+				/*
+				this._jsDispatch.addJSEventListener(divSend, Code.JS_EVENT_TOUCH_TAP, this._handleSubmitTappedFxn, this);
+				*/
+			}else if(type=="object"){
+				console.log("TODO - OBJECT");
+			}else if(type=="array-string"){
+				console.log("TODO - STRING ARRAY");
+			}else if(type=="array-object"){
+				if(newField){
+					console.log("IS NEW");
+					val = instanceObject[key];
+					obj = {};
+					val.push(obj);
+					console.log("GO FILL IN");
+					this.fillOutModelFromElement(element, field,obj, null);
+				}else{
+					content = Code.newDiv();
+						var label = Code.newDiv();
+								Code.setContent(label,""+key+": ");
+								Code.setStyleBackgroundColor(label,"#FCC");
+								Code.setStyleDisplay(label,"inline-block");
+						var button = Code.newInputButton("NEW ARRAY OBJECT");
+							//Code.setContent(label,"NEW ARRAY OBJECT");
+								Code.setStyleBackgroundColor(button,"#FCC");
+								Code.setStyleDisplay(button,"inline-block");
+						val = instanceObject[key];
+					Code.addChild(content,label);
+					Code.addChild(content,button);
+					Code.addChild(div,content);
+
+					console.log("in",key,val);
+					if(val){ // FILL IN
+						for(j=0; j<val.length; ++j){
+							obj = val[j];
+							this.fillOutModelFromElement(content, field,obj, null);
+						}
+					}else{ // SET DEFAULT - EMPTY
+						val = [];
+						instanceObject[key] = val;
+					}
+					var data = {"model":modelObject, "instance":instanceObject, "element":content, "field":key};
+					this._jsDispatch.addJSEventListener(button, Code.JS_EVENT_CLICK, this._handleNewArrayObject, this, data);
+				}
+
+				//content = "array-object";
+				//this.fillOutModelFromElement(div, field, instance);
+			}
+		}
+		if(content){
+			
+			//Code.setContent(div,content);
+			//Code.addChild(div,content);
+		}
+	}
+}
 /*
-
-http://stackoverflow.com/questions/10261989/html5-javascript-drag-and-drop-file-from-external-window-windows-explorer
-
+	// => NAVIGATION
+	$widget_id_navigation_list = giau_insert_widget("navigation_list",
+		[
+			"alias" => "navigation_list",
+			"name" => "Giau Navigation",
+			"cssClass" => "giauNavigationItemList",
+			"jsClass" => "giau.NavigationList",
+			"fields" => [
+				"components" => [
+					"type" => "array-object",
+					"description" => "navigation item",
+					"fields" => [
+						"display_text" => [
+							"type" => "string",
+							"description" => "displayed text"
+						],
+						"uri" => [
+							"type" => "string",
+							"description" => "location destination"
+						]
+					]
+				],
+				"class" => [
+					"type" => "string"
+				],
+				"style" => [
+					"type" => "string"
+				],
+			]
+		]
+	);
 */
 
 

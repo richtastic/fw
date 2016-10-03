@@ -227,7 +227,9 @@ function create_page(){
 				});
 		</script>
 		<?php
-			$FAV_ICON_LOCATION =  get_stylesheet_directory_uri()."/img/favicon.ico";
+			//$FAV_ICON_LOCATION =  get_stylesheet_directory_uri()."/img/favicon.ico";
+			$FAV_ICON_LOCATION = get_stylesheet_directory_uri()."/img/favicon.ico";
+			$FAV_ICON_LOCATION = getRelativeURLFromAbsoluteURL($FAV_ICON_LOCATION);
 		?>
 		<meta name="viewport" content="width=device-width, initial-scale=1" maximum-scale=1>
 		<!-- FAV ICON -->
@@ -784,8 +786,39 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 			<a href="<?php echo relativePathUploads()."/photograph_release_form.pdf"; ?>">LACPC Photograph Release Form (pdf)</a>
 		</div>
 	</div>
-	<div class="giauFileBrowser limitedWidth" style=""></div>
+	<!-- <div class="giauFileBrowser limitedWidth" style=""></div> -->
+	<div class="giauObjectComposer limitedWidth" style="">
+	<?php
+	/*
+		<div style="display:none;"  data-model="true"><?php
+		$widget = giau_get_widget_id(2);
+		if($widget){
+			echo $widget["configuration"];
+		}
+		?></div>
+	*/
+	?>
+	<?php
+// WHAT TO DO ABOUT SECTION SUB ITEM LIST ?
+		//$section = giau_get_section_id(1);
+		//$section = giau_get_section_id(8);
+		$section = giau_get_section_id(25);
+		if($section){
+			$widgetID = $section["widget"];
+			if($widgetID){
+				$widget = giau_get_widget_id($widgetID);
+				if($widget){
+					echo '<div style="display:none;" data-object="true">'. $section["configuration"].'</div>';
+					echo '<div style="display:none;"  data-model="true">' . $widget["configuration"].'</div>';
+				}
+			}
+		}
+		?>
+	</div>
 <?php
+// <script>
+// 	var definition = {"widget":"name"}
+// </script>
 }else if($pageRequest==$PAGE_REQUEST_TYPE_INFO){
 ?>
 	<!-- DIRECTIONS -->
