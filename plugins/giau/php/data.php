@@ -484,6 +484,10 @@ function giau_data_default_insert_into_database(){
 						"name" => [
 							"type" => "string",
 							"description" => "name for item"
+						],
+						"uri" => [
+							"type" => "string",
+							"description" => "url for item"
 						]
 					]
 				],
@@ -519,7 +523,7 @@ function giau_data_default_insert_into_database(){
 					"type" => "string"
 				],
 				"images" => [
-					"type" => "array-image",
+					"type" => "array-string-image",
 					"description" => "list of images for gallery"
 				]
 			]
@@ -595,7 +599,7 @@ function giau_data_default_insert_into_database(){
 					"description" => "social items",
 					"fields" => [
 						"facebook" => [
-							"type" => "array-object",
+							"type" => "object",
 							"description" => "facebook data",
 							"fields" => [
 								"uri" => [
@@ -609,7 +613,7 @@ function giau_data_default_insert_into_database(){
 							]
 						],
 						"twitter" => [
-							"type" => "array-object",
+							"type" => "object",
 							"description" => "twitter data",
 							"fields" => [
 								"uri" => [
@@ -623,7 +627,7 @@ function giau_data_default_insert_into_database(){
 							]
 						],
 						"instagram" => [
-							"type" => "array-object",
+							"type" => "object",
 							"description" => "instagram data",
 							"fields" => [
 								"uri" => [
@@ -637,7 +641,7 @@ function giau_data_default_insert_into_database(){
 							]
 						],
 						"tumblr" => [
-							"type" => "array-object",
+							"type" => "object",
 							"description" => "tumblr data",
 							"fields" => [
 								"uri" => [
@@ -651,7 +655,7 @@ function giau_data_default_insert_into_database(){
 							]
 						],
 						"email" => [
-							"type" => "array-object",
+							"type" => "object",
 							"description" => "email data",
 							"fields" => [
 								"uri" => [

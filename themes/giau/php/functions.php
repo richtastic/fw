@@ -801,8 +801,8 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	<?php
 // WHAT TO DO ABOUT SECTION SUB ITEM LIST ?
 		//$section = giau_get_section_id(1);
-		//$section = giau_get_section_id(8);
-		$section = giau_get_section_id(25);
+		$section = giau_get_section_id(8);
+		//$section = giau_get_section_id(25);
 		if($section){
 			$widgetID = $section["widget"];
 			if($widgetID){

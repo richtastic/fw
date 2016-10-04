@@ -2643,6 +2643,7 @@ giau.ObjectComposer = function(element){
 	}
 
 	this._jsDispatch = new JSDispatch();
+	this._dataNonce = {"reference":"reference"};
 	
 	console.log("model:",this._dataModel);
 	console.log("insta:",this._dataInstance);
@@ -2652,9 +2653,11 @@ giau.ObjectComposer = function(element){
 	var div = Code.newInputButton("SUBMIT");
 		Code.setStyleBackgroundColor(div,"#FCC");
 	this._submitButton = div;
+	Code.addChild(this._container,this._submitButton);
+
 	this._jsDispatch.addJSEventListener(this._submitButton, Code.JS_EVENT_CLICK, this._handleSubmitClickFxn, this);
 
-	Code.addChild(this._container,this._submitButton);
+	console.log("insta FIN:",this._dataInstance);
 }
 giau.ObjectComposer.prototype._handleSubmitClickFxn = function(e){
 	this.prepareObjectForSubmission();
@@ -2669,6 +2672,36 @@ giau.ObjectComposer.prototype.initialize = function(){
 }
 giau.ObjectComposer.prototype.prepareObjectForSubmission = function(){
 	// go thru object and set values from fields
+	console.log(this._dataInstance);
+	var jsObject = {};
+	this.fillOutObjectFromElements(this._dataInstance,jsObject);
+	console.log(jsObject);
+}
+giau.ObjectComposer.prototype.fillOutObjectFromElements = function(inObject, jsObject){
+	var isArray = Code.isArray(jsObject);
+	var keys = null;
+	if(!isArray){
+		keys = Code.keys(inObject);
+	}
+	var i, key, val, input;
+	var len = isArray ? jsObject.length : keys.length;
+	for(i=0; i<len; ++i){
+		key = isArray ? i : keys[i];
+		val = inObject[key];
+		if(val && val["nonce"] == this._dataNonce){ // primitive
+			input = val["input"];
+			value = Code.getInputTextValue(input);
+			jsObject[key] = value;
+		}else{ // is non-primitive
+			if(Code.isArray(val)){ // array
+				value = [];
+			}else{ // object
+				value = {};
+			}
+			jsObject[key] = value;
+			this.fillOutObjectFromElements(val, value);
+		}
+	}
 }
 giau.ObjectComposer.prototype._handleNewArrayObject = function(e,d){
 	var target = Code.getTargetFromEvent(e);
@@ -2683,6 +2716,70 @@ giau.ObjectComposer.prototype._handleNewArrayObject = function(e,d){
 	this.fillOutModelFromElement(element, modelObject, instanceObject, field);
 	
 }
+giau.ObjectComposer.prototype._handleDeleteArrayObject = function(e,d){
+	var target = Code.getTargetFromEvent(e);
+	var modelObject = d["model"];
+	var instanceObject = d["instance"];
+	var element = d["element"];
+	var field = d["field"];
+	var index = d["index"];
+	console.log("handle delete array object");
+	console.log(modelObject);
+	console.log(instanceObject);
+	console.log(element);
+	console.log(field);
+	console.log(index);
+	if(index!==undefined){ // array
+		var array = instanceObject[field];
+		console.log(array);
+		Code.removeElementAt(array,index);
+		Code.removeFromParent(element);
+	}else{
+		// objects don't get deleted ?
+	}
+	//this.fillOutModelFromElement(element, modelObject, instanceObject, field);
+	
+}
+giau.ObjectComposer.prototype.defaultInputRowObject = function(element){
+	div = Code.newDiv();
+	Code.setStylePaddingTop(div,"0px");
+	Code.setStylePaddingBottom(div,"0px");
+	Code.setStylePaddingRight(div,"0px");
+	Code.setStylePaddingLeft(div,"10px");
+	if(element){
+		Code.addChild(element,div);
+	}
+	return div;
+}
+
+
+// is there any way to have an array of arrays ?
+
+/*
+
+		[
+			"fields" => [
+				"array_objs" => [
+					"type" => "array-object",
+					"fields" => [
+						"image" => [
+							"type" => "string",
+						]
+					]
+				],
+				"array_string" => [
+					"type" => "array-string"
+				],
+				"array_list" => [
+					"type" => "array-array",
+
+					???
+				}
+			]
+		]
+
+*/
+
 giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelObject,instanceObject, newField){
 	if( Code.hasKey(modelObject,"fields") ){
 		modelObject = modelObject["fields"];
@@ -2690,14 +2787,18 @@ giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelOb
 	console.log("++++++++++++++++++++++++++> "+newField);
 	console.log(modelObject);
 	console.log(instanceObject);
-	var keys = Code.keys(modelObject);
-if(newField){
-	keys = [newField];
-}
+	var keys = null; 
+	if(newField){
+		keys = [newField];
+	}else{
+		keys = Code.keys(modelObject);
+	}
 	var i, j, key, field, type, val, obj;
 	var div, content;
 	var len = keys.length;
+var regexArray = new RegExp('^array-','i');
 	for(i=0; i<len; ++i){
+// k could be an index 
 		key = keys[i];
 		field = modelObject[key];
 		console.log(field);
@@ -2710,14 +2811,76 @@ if(newField){
 			name = field["name"];
 		}
 		content = null;
-			div = Code.newDiv();
-				Code.setStylePaddingTop(div,"0px");
-				Code.setStylePaddingBottom(div,"0px");
-				Code.setStylePaddingRight(div,"0px");
-				Code.setStylePaddingLeft(div,"10px");
-			Code.addChild(element,div);
+			div = this.defaultInputRowObject(element);
+console.log(" >>>> "+key);
 		if(type){
-			if(type=="string" || type=="string-url" || type=="string-image"){
+			var isArray = type.match(regexArray);
+			if(isArray){
+				var subType = type.replace(regexArray,"");
+				console.log("SUB TYPE: "+subType);
+				if(newField){
+					console.log("IS NEW");
+					val = instanceObject[key];
+					obj = {};
+					val.push(obj);
+					this.fillOutModelFromElement(element, field,obj, null);
+				}else{
+					content = Code.newDiv();
+						var label = Code.newDiv();
+								Code.setContent(label,""+key+": ");
+								Code.setStyleBackgroundColor(label,"#FCC");
+								Code.setStyleDisplay(label,"inline-block");
+						var button = Code.newInputButton("NEW ARRAY OBJECT");
+							//Code.setContent(label,"NEW ARRAY OBJECT");
+								Code.setStyleBackgroundColor(button,"#FCC");
+								Code.setStyleDisplay(button,"inline-block");
+						val = instanceObject[key];
+					Code.addChild(content,label);
+					Code.addChild(content,button);
+					Code.addChild(div,content);
+
+					console.log("in",key,val);
+					subContainer = this.defaultInputRowObject(div);
+//subContainer = content;
+					if(val){ // FILL IN
+						for(j=0; j<val.length; ++j){
+							obj = val[j];
+subContainer = this.defaultInputRowObject(content);
+var del = Code.newInputButton("DELETE");
+Code.addChild(subContainer,del);
+var data = {"model":modelObject, "instance":instanceObject, "element":subContainer, "field":key, "index":j};
+this._jsDispatch.addJSEventListener(del, Code.JS_EVENT_CLICK, this._handleDeleteArrayObject, this, data);
+							this.fillOutModelFromElement(subContainer, field,obj, null);
+						}
+					}else{ // SET DEFAULT - EMPTY
+						val = [];
+						instanceObject[key] = val;
+					}
+					var data = {"model":modelObject, "instance":instanceObject, "element":content, "field":key};
+					this._jsDispatch.addJSEventListener(button, Code.JS_EVENT_CLICK, this._handleNewArrayObject, this, data);
+				}
+			}else if(type=="object"){
+				console.log("OBJECT");
+				val = instanceObject[key];
+					if(!val){ // not exist, set to default
+						val = {};
+						instanceObject[key] = val;
+					}
+					var label = Code.newDiv();
+						Code.setContent(label,""+key+": ");
+						Code.setStyleBackgroundColor(label,"#FCC");
+						Code.setStyleDisplay(label,"inline-block");
+						Code.addChild(div,label);
+
+// subContainer = this.defaultInputRowObject(div);
+// var del = Code.newInputButton("DELETE");
+// Code.addChild(subContainer,del);
+// console.log("OBJECT HERE ..........");
+// var data = {"model":modelObject, "instance":instanceObject, "element":subContainer, "field":key, "index":j};
+// this._jsDispatch.addJSEventListener(del, Code.JS_EVENT_CLICK, this._handleDeleteArrayObject, this, data);
+
+				this.fillOutModelFromElement(div, field,val, null);
+			}else if(type=="string" || type=="string-url" || type=="string-image" || type=="string-date" || type=="boolean" || type=="number"){ // primitive
 				content = Code.newDiv();
 					var label = Code.newDiv();
 						Code.setContent(label,""+key+": ");
@@ -2736,57 +2899,17 @@ if(newField){
 				}else{
 					instanceObject[key] = ""; // init to empty
 				}
-				field["input"] = input;
+				//field["input"] = input;
+				instanceObject[key] = {"type":"string", "input":input, "nonce":this._dataNonce};
 				/*
 				this._jsDispatch.addJSEventListener(divSend, Code.JS_EVENT_TOUCH_TAP, this._handleSubmitTappedFxn, this);
 				*/
-			}else if(type=="object"){
-				console.log("TODO - OBJECT");
-			}else if(type=="array-string"){
-				console.log("TODO - STRING ARRAY");
-			}else if(type=="array-object"){
-				if(newField){
-					console.log("IS NEW");
-					val = instanceObject[key];
-					obj = {};
-					val.push(obj);
-					console.log("GO FILL IN");
-					this.fillOutModelFromElement(element, field,obj, null);
-				}else{
-					content = Code.newDiv();
-						var label = Code.newDiv();
-								Code.setContent(label,""+key+": ");
-								Code.setStyleBackgroundColor(label,"#FCC");
-								Code.setStyleDisplay(label,"inline-block");
-						var button = Code.newInputButton("NEW ARRAY OBJECT");
-							//Code.setContent(label,"NEW ARRAY OBJECT");
-								Code.setStyleBackgroundColor(button,"#FCC");
-								Code.setStyleDisplay(button,"inline-block");
-						val = instanceObject[key];
-					Code.addChild(content,label);
-					Code.addChild(content,button);
-					Code.addChild(div,content);
-
-					console.log("in",key,val);
-					if(val){ // FILL IN
-						for(j=0; j<val.length; ++j){
-							obj = val[j];
-							this.fillOutModelFromElement(content, field,obj, null);
-						}
-					}else{ // SET DEFAULT - EMPTY
-						val = [];
-						instanceObject[key] = val;
-					}
-					var data = {"model":modelObject, "instance":instanceObject, "element":content, "field":key};
-					this._jsDispatch.addJSEventListener(button, Code.JS_EVENT_CLICK, this._handleNewArrayObject, this, data);
-				}
-
-				//content = "array-object";
-				//this.fillOutModelFromElement(div, field, instance);
+			}else{
+				console.log("unknown type: "+type);
 			}
+
 		}
 		if(content){
-			
 			//Code.setContent(div,content);
 			//Code.addChild(div,content);
 		}
