@@ -2713,7 +2713,7 @@ giau.ObjectComposer.prototype._handleNewArrayObject = function(e,d){
 	console.log(modelObject);
 	console.log(instanceObject);
 	console.log(element);
-	this.fillOutModelFromElement(element, modelObject, instanceObject, field);
+	this.fillOutModelFromElement(element, modelObject["fields"], instanceObject, field);
 	
 }
 giau.ObjectComposer.prototype._handleDeleteArrayObject = function(e,d){
@@ -2771,19 +2771,34 @@ giau.ObjectComposer.prototype.defaultInputRowObject = function(element){
 					"type" => "array-string"
 				],
 				"array_list" => [
-					"type" => "array-array",
-
-					???
+					"type" => "array-array",	// array of arrays
+					"fields" => [
+						"type" => "array-array",	// array of arrays
+						"fields" => [
+							"type" => "array-string" // array of strings
+						]
+					]
 				}
 			]
 		]
+	
+	// an ARRAY 
+		// of an ARRAY
+			// of an ARRAY
+				// of STRING
 
+	[]
 */
 
 giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelObject,instanceObject, newField){
-	if( Code.hasKey(modelObject,"fields") ){
-		modelObject = modelObject["fields"];
+	var isInstanceArray = Code.isArray(instanceObject);
+	if(isInstanceArray){
+		// array
 	}
+	var regexArrayPrefix = new RegExp('^array-','i');
+	// if( Code.hasKey(modelObject,"fields") ){
+	// 	modelObject = modelObject["fields"];
+	// }
 	console.log("++++++++++++++++++++++++++> "+newField);
 	console.log(modelObject);
 	console.log(instanceObject);
@@ -2796,7 +2811,7 @@ giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelOb
 	var i, j, key, field, type, val, obj;
 	var div, content;
 	var len = keys.length;
-var regexArray = new RegExp('^array-','i');
+
 	for(i=0; i<len; ++i){
 // k could be an index 
 		key = keys[i];
@@ -2810,35 +2825,35 @@ var regexArray = new RegExp('^array-','i');
 		if(Code.hasKey(field,"name")){
 			name = field["name"];
 		}
+console.log(name,key);
 		content = null;
 			div = this.defaultInputRowObject(element);
-console.log(" >>>> "+key);
 		if(type){
-			var isArray = type.match(regexArray);
+			var isArray = type.match(regexArrayPrefix);
 			if(isArray){
-				var subType = type.replace(regexArray,"");
+				var subType = type.replace(regexArrayPrefix,"");
 				console.log("SUB TYPE: "+subType);
 				if(newField){
 					console.log("IS NEW");
 					val = instanceObject[key];
 					obj = {};
 					val.push(obj);
-					this.fillOutModelFromElement(element, field,obj, null);
+					this.fillOutModelFromElement(element, field["fields"],obj, null);
 				}else{
+					// VISUALS CONTAINER
 					content = Code.newDiv();
-						var label = Code.newDiv();
-								Code.setContent(label,""+key+": ");
-								Code.setStyleBackgroundColor(label,"#FCC");
-								Code.setStyleDisplay(label,"inline-block");
-						var button = Code.newInputButton("NEW ARRAY OBJECT");
-							//Code.setContent(label,"NEW ARRAY OBJECT");
-								Code.setStyleBackgroundColor(button,"#FCC");
-								Code.setStyleDisplay(button,"inline-block");
-						val = instanceObject[key];
+					var label = Code.newDiv();
+							Code.setContent(label,""+key+": ");
+							Code.setStyleBackgroundColor(label,"#FCC");
+							Code.setStyleDisplay(label,"inline-block");
+					var button = Code.newInputButton("NEW ARRAY OBJECT");
+							Code.setStyleBackgroundColor(button,"#FCC");
+							Code.setStyleDisplay(button,"inline-block");
 					Code.addChild(content,label);
 					Code.addChild(content,button);
 					Code.addChild(div,content);
-
+					// DATA
+					val = instanceObject[key];
 					console.log("in",key,val);
 					subContainer = this.defaultInputRowObject(div);
 //subContainer = content;
@@ -2850,7 +2865,7 @@ var del = Code.newInputButton("DELETE");
 Code.addChild(subContainer,del);
 var data = {"model":modelObject, "instance":instanceObject, "element":subContainer, "field":key, "index":j};
 this._jsDispatch.addJSEventListener(del, Code.JS_EVENT_CLICK, this._handleDeleteArrayObject, this, data);
-							this.fillOutModelFromElement(subContainer, field,obj, null);
+							this.fillOutModelFromElement(subContainer, field["fields"],obj, null);
 						}
 					}else{ // SET DEFAULT - EMPTY
 						val = [];
@@ -2899,11 +2914,7 @@ this._jsDispatch.addJSEventListener(del, Code.JS_EVENT_CLICK, this._handleDelete
 				}else{
 					instanceObject[key] = ""; // init to empty
 				}
-				//field["input"] = input;
 				instanceObject[key] = {"type":"string", "input":input, "nonce":this._dataNonce};
-				/*
-				this._jsDispatch.addJSEventListener(divSend, Code.JS_EVENT_TOUCH_TAP, this._handleSubmitTappedFxn, this);
-				*/
 			}else{
 				console.log("unknown type: "+type);
 			}

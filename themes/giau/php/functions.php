@@ -799,6 +799,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	*/
 	?>
 	<?php
+		/*
 // WHAT TO DO ABOUT SECTION SUB ITEM LIST ?
 		//$section = giau_get_section_id(1);
 		$section = giau_get_section_id(8);
@@ -813,6 +814,32 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 				}
 			}
 		}
+		*/
+			$widgetConfig = [
+				"name" => "Giau Test",
+				"fields" => [
+					[
+						"name" => "Number"
+						"type" => "number"
+					],
+					[
+						"name" => "String"
+						"type" => "string"
+					]
+				]
+			];
+			$sectionConfig = [
+				"number" => "3.141",
+				"string" => "pi",
+				"array_strings" => [
+					"string0",
+					"string1"
+				]
+				... HERE
+			];
+
+				echo '<div style="display:none;" data-object="true">'. $sectionConfig.'</div>';
+				echo '<div style="display:none;"  data-model="true">' . $widgetConfig'</div>';
 		?>
 	</div>
 <?php
