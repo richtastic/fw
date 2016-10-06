@@ -819,15 +819,17 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 			NAME:
 				name : object field key index (for objects only, not for arrays)
 			TYPES:
+				boolean
 				number
 				string
 				string-number : (expects a number: float or integet or scientific notation)
 				string-url : (expects a URL)
 				string-image : (expects a URL to an image)
 				string-date : (expects a date in format: YYYY-MM-DD hh:mm:ss.nnnn)
+				string-color : (expects a color in the format: 0xAARRGGBB)
 				object
 				array-number
-				array-string-*
+				array-string(-*)
 				array-object
 				array-array
 			ATTRIBUTES:
@@ -841,38 +843,49 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 			$widgetConfig = [
 				"name" => "Giau Test",
 				"fields" => [
-					[
-						"name" => "number",
+					"boolean" => [
+						"type" => "boolean",
+						"defaut-value" => "false"
+					],
+					"number" => [
 						"type" => "number",
-						"defaut-value" => "_"
+						"defaut-value" => "3141"
 					],
-					[
-						"name" => "string",
-						"type" => "string"
+					"string" => [
+						"type" => "string",
+						"defaut-value" => ' < unknown>', // wtf php
 					],
-					[
-						"name" => "array_strings",
+					"object" => [
+						"type" => "object",
+						"fields" => [
+							"fieldA" => [
+								"type" => "string"
+							],
+							"fieldB" => [
+								"type" => "string"
+							]
+						]
+					],
+					"array_strings" => [
 						"type" => "array-string"
 					],
-					[
-						"name" => "array_objects",
+					"array_objects" => [
 						"type" => "array-object",
 						"fields" => [
 							"type" => "object",
 							"fields" => [
 								[
-									"name":"fieldA",
-									"type":"string"
+									"name" => "fieldA",
+									"type" => "string"
 								],
 								[
-									"name":"fieldB",
-									"type":"string"
+									"name" => "fieldB",
+									"type" => "string"
 								]
 							]
 						]
 					],
-					[
-						"name" => "array_list",
+					"array_list" => [
 						"type" => "array-array",			// array of arrays
 						"fields" => [
 							"type" => "array-array",		// array of arrays
@@ -884,17 +897,40 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 				]
 			];
 			$sectionConfig = [
+				"boolean" => "true",
 				"number" => "3.141",
 				"string" => "pi",
+				"object" => [
+					"fieldA" => "value A",
+					"fieldB" => "value B",
+				],
 				"array_strings" => [
 					"string0",
 					"string1"
 				],
+				"array_objects" => [
+					[
+						"fieldA" => "valueA",
+						"fieldB" => "valueB",
+					]
+				],
+				"array_list" => [
+					[
+						[
+							"string0",
+							"string1",
+							"string2"
+						]
+					]
+				]
 
 			];
 
-				echo '<div style="display:none;" data-object="true">'. $sectionConfig.'</div>';
-				echo '<div style="display:none;"  data-model="true">' . $widgetConfig'</div>';
+			$sectionConfig = json_encode($sectionConfig);
+			$widgetConfig = json_encode($widgetConfig);
+
+			echo '<div style="display:none;" data-object="true">'. $sectionConfig .'</div>';
+			echo '<div style="display:none;"  data-model="true">' . $widgetConfig . '</div>';
 		?>
 	</div>
 <?php

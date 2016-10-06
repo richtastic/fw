@@ -519,13 +519,23 @@ function giau_data_default_insert_into_database(){
 					"type" => "boolean",
 					"description" => "show the left and right navigation arrows"
 				],
-				"style" => [
-					"type" => "string"
-				],
 				"images" => [
 					"type" => "array-string-image",
 					"description" => "list of images for gallery"
-				]
+				],
+				"overlay_color" => [
+					"type" => "string-color",
+					"description" => "color covering image gallery"
+				],
+				"class" => [
+					"type" => "string"
+				],
+				"style" => [
+					"type" => "string"
+				],
+				"height" => [
+					"type" => "string"
+				],
 			]
 		]
 	);
@@ -858,6 +868,8 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_prefix."featured_04_opt.png",
 				$section_image_gallery_prefix."featured_05_opt.png",
 			],
+			"overlay_color" => "0x66000000",
+			"height" => "500px",
 			"style" => "",
 			"class" => "featurePresentationContainer"
 		]
@@ -883,6 +895,8 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_prefix."featured_05_opt.png",
 				$section_image_gallery_prefix."featured_06_opt.png",
 			],
+			"overlay_color" => "0x66000000",
+			"height" => "500px",
 			"style" => "position:relative; width:100%; height:400px;",
 			"class" => "limitedWidth"
 		]
@@ -898,7 +912,7 @@ function giau_data_default_insert_into_database(){
 	$section_id_text_home_page_deuteronomy_body = giau_insert_section($widget_id_text_display,
 		[
 			"text" => "PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_BODY_TEXT",
-			"class" => "centeredText standardText narrow50Text customHeadingQuoteBody",
+			"class" => "centeredText standardText narrow35Text customHeadingQuoteBody",
 		]
 	, []);
 	$section_id_text_home_page_deuteronomy_spacer = giau_insert_section($widget_id_text_display,
@@ -910,7 +924,7 @@ function giau_data_default_insert_into_database(){
 	$section_id_text_home_page_purpose_body = giau_insert_section($widget_id_text_display,
 		[
 			"text" => "PAGE_HOME_QUOTE_PURPOSE_BODY_TEXT",
-			"class" => "centeredText standardText narrow50Text customHeadingQuoteBody",
+			"class" => "centeredText standardText narrow35Text customHeadingQuoteBody",
 		]
 	, []);
 

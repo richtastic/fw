@@ -76,7 +76,7 @@ function handle_widget_navigation_list($widget,$section){
 	$sectionJSON = decodeSection($section);
 	$navigationList = get_value_array($sectionJSON,"components");
 	?>
-	<div class="giauNavigationItemList navigationContainer" style="		display:inline-block; position:relative; text-align: center; padding:6px; text-align:center;padding: 10px; z-index:100;" data-darkmode="true">
+	<div class="giauNavigationItemList navigationContainer" style="display:inline-block; position:relative; text-align: center; padding:6px; text-align:center;padding: 10px; z-index:100;" data-darkmode="true">
 		<ul>
 		<?php
 		foreach($navigationList as $item){
@@ -207,11 +207,17 @@ function handle_widget_image_gallery($widget,$section){
 
 	$imageList = section_get_value_widget_array($widgetJSON,$sectionJSON,"images");
 
+	$overlayColor = section_get_value_widget_string($widgetJSON,$sectionJSON,"overlay_color");
+	$divHeight = section_get_value_widget_string($widgetJSON,$sectionJSON,"height");
+	if(!$divHeight){
+		$divHeight = "500px";
+	}
+	error_log("HEIGHT: ".$divHeight);
 	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
 	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 	// position:relative; width:100%; height:400px;
 	?>
-		<div class="giauImageGallery <?php echo $klass; ?>" data-autoplay="<?php echo $autoPlay; ?>" data-navigation="<?php echo $displayNavigation; ?>" style="<?php echo $style; ?> position:relative; width:100%; height:400px;">
+		<div class="giauImageGallery <?php echo $klass; ?>" data-ovarlay-color="<?php echo $overlayColor; ?>" data-autoplay="<?php echo $autoPlay; ?>" data-navigation="<?php echo $displayNavigation; ?>" style="<?php echo $style; ?> position:relative; width:100%; height:<?php echo $divHeight; ?>;">
 		<?php
 			$i;
 			$len = count($imageList);

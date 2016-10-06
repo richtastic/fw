@@ -746,11 +746,18 @@ console.log("layout")
 
 //	console.log(widthContainer+"x"+heightContainer+" = colCount "+colCount)
 	
+var padAllSides = true;
 	var lm1 = len-1;
-	var spacingX = colCount<=1 ? 0.0 : (widthContainer - (elementWidth*colCount))/(colCount-1);
-	var spacingY = 60;//spacingX;
 	var currentX = 0;
 	var currentY = 0;
+	var spacingX = (widthContainer - (elementWidth*colCount))/(colCount-1);
+	if(padAllSides){
+		spacingX =  (widthContainer - (elementWidth*colCount))/colCount;
+		currentX += spacingX*0.5;
+	}
+	spacingX = colCount<=1 ? 0.0 : spacingX;
+	var spacingY = 60;
+	
 	var row = 0;
 	var rowHeight = elementHeight + spacingY;
 	var colWidth = elementWidth + spacingX;
@@ -803,6 +810,9 @@ console.log("layout")
 
 			j = 0;
 			currentX = 0;
+			if(padAllSides){
+				currentX += spacingX*0.5;
+			}
 			if(i<lm1){
 				currentY += rowHeight;
 			}
@@ -1151,13 +1161,19 @@ giau.InfoOverlay.prototype.updateLayout = function(){
 }
 
 giau.ImageGallery = function(element){
-	//giau.ImageGallery._.constructor.call(this);
 	this._jsDispatch = new JSDispatch();
 	this.optimalImageWidthToHeight = 1920.0/1080.0;
 
 	// SET ROOT ELEMENT
 	this._container = element;
 	Code.setStyleOverflow(this._container,"hidden"); // overflow: hidden;
+
+	var propertyOverlayColor = "data-ovarlay-color";
+	var overlayColor = Code.getPropertyOrDefault(this._container, propertyOverlayColor, "0x00000000");
+	overlayColor = Number(overlayColor);
+	overlayColor = Code.getJSColorFromARGB(overlayColor);
+
+
 
 	var showNavigation = Code.getProperty(this._container,"data-navigation");
 	showNavigation = showNavigation=="true";
@@ -1178,6 +1194,7 @@ giau.ImageGallery = function(element){
 			this._overlayBorderRight = Code.newDiv();
 		}
 		var overlayBorderColor = 0x99000000;
+		Code.setStyleBackgroundColor(this._coverContainer,overlayColor);
 		// A
 	this._primaryImageContainer = Code.newDiv();
 		Code.setStyleLeft(this._primaryImageContainer,0+"px");
@@ -2629,6 +2646,7 @@ giau.ObjectComposer = function(element){
 		var ele = Code.getChild(this._container,i);
 		if( Code.hasProperty(ele,propertyDataModel) ){
 				var objectString = Code.getContent(ele);
+				console.log(objectString)
 				var object = Code.parseJSON(objectString);
 				this._dataModel = object;
 			Code.removeChild(this._container,ele);
@@ -2668,7 +2686,7 @@ giau.ObjectComposer.prototype.initialize = function(){
 	if(!modelObject){
 		return;
 	}
-	this.fillOutModelFromElement(this._container, modelObject, instanceObject);
+	this.fillOutModelFromElement(this._container, modelObject["fields"], instanceObject);
 }
 giau.ObjectComposer.prototype.prepareObjectForSubmission = function(){
 	// go thru object and set values from fields
@@ -2752,50 +2770,87 @@ giau.ObjectComposer.prototype.defaultInputRowObject = function(element){
 	return div;
 }
 
-
-// is there any way to have an array of arrays ?
-
-/*
-
-		[
-			"fields" => [
-				"array_objs" => [
-					"type" => "array-object",
-					"fields" => [
-						"image" => [
-							"type" => "string",
-						]
-					]
-				],
-				"array_string" => [
-					"type" => "array-string"
-				],
-				"array_list" => [
-					"type" => "array-array",	// array of arrays
-					"fields" => [
-						"type" => "array-array",	// array of arrays
-						"fields" => [
-							"type" => "array-string" // array of strings
-						]
-					]
-				]
-			]
-		]
-	
-	// an ARRAY 
-		// of an ARRAY
-			// of an ARRAY
-				// of STRING
-
-	[]
-*/
-
 giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelObject,instanceObject, newField){
+	console.log("++++++++++++++++++++++++++++++++++++++");
+	console.log(modelObject);
+	console.log(instanceObject);
 	var isInstanceArray = Code.isArray(instanceObject);
 	if(isInstanceArray){
-		// array
+		console.log("is array");
+	}else{
+		console.log("is object");
 	}
 	var regexArrayPrefix = new RegExp('^array-','i');
+	var modelKeys = Code.keys(modelObject);
+	var i, modelFieldName, modelFieldType, modelFieldInfo;
+	for(i=0; i<modelKeys.length; ++i){
+		modelFieldName = modelKeys[i];
+		modelFieldInfo = modelObject[modelFieldName];
+		modelFieldType = modelFieldInfo["type"];
+		console.log(modelFieldName+" = "+modelFieldType);
+		if(modelFieldType){
+			var isArray = modelFieldType.match(regexArrayPrefix);
+			if(isArray){
+				var modelSubType = modelFieldType.replace(regexArrayPrefix,"");
+				var array = instanceObject[modelFieldName];
+				console.log("\t=> array of "+modelSubType);
+				if(modelSubType=="array"){
+					console.log("\t=>array [array]");
+					//fillOutModelFromElement();
+				}else if(modelSubType=="object"){
+					console.log("\t=>object [array]");
+					//fillOutModelFromElement();
+				}else{
+					this._fillOutWithPrimitiveType(modelObject,array, modelFieldName,modelSubType, true);
+				}
+			}else{
+				if(modelFieldType=="object"){
+					console.log("\t=>object");
+					var object = instanceObject[modelFieldName];
+					this.fillOutModelFromElement(element,modelFieldInfo["fields"],object, false);
+				}else{
+					this._fillOutWithPrimitiveType(modelObject,instanceObject, modelFieldName,modelFieldType, false);
+				}
+			}
+		}else{
+			console.log("NO TYPE ... => ARRAY?");
+		}
+	}
+}
+giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(modelObject,instanceObject, modelFieldName,modelFieldType, isArray){
+	//console.log(modelObject,instanceObject)
+	var regexStringPrefix = new RegExp('^string-','i');
+	var isString = modelFieldType=="string" || modelFieldType.match(regexStringPrefix);
+	var found = false;
+	if(isString){
+		var stringSubType = modelFieldType.replace(regexStringPrefix,"");
+		console.log("\t=>primitive = string");
+		found = true;
+	}else if(modelFieldType=="boolean"){
+		console.log("\t=>primitive = boolean");
+		found = true;
+	}else if(modelFieldType=="number"){
+		console.log("\t=>primitive = number");
+		found = true;
+	}
+	if(found){
+		console.log("A");
+		var primitive = null;
+		if(isArray){
+			var i, len = instanceObject.length;
+			for(i=0;i<len;++i){
+				primitive = instanceObject[i];
+				console.log("\t\t => "+i+" = "+primitive);
+			}
+		}else{
+			primitive = instanceObject[modelFieldName];
+			console.log("\t\t => "+primitive);
+
+		}
+	}
+}
+/*
+	
 	// if( Code.hasKey(modelObject,"fields") ){
 	// 	modelObject = modelObject["fields"];
 	// }
@@ -2803,15 +2858,17 @@ giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelOb
 	console.log(modelObject);
 	console.log(instanceObject);
 	var keys = null; 
-	if(newField){
-		keys = [newField];
-	}else{
-		keys = Code.keys(modelObject);
+	if(!isInstanceArray){
+		if(newField){
+			keys = [newField];
+		}else{
+			keys = Code.keys(modelObject);
+		}
 	}
 	var i, j, key, field, type, val, obj;
 	var div, content;
-	var len = keys.length;
-
+	var len = isInstanceArray ? instanceObject.length : keys.length;
+console.log("start");
 	for(i=0; i<len; ++i){
 // k could be an index 
 		key = keys[i];
@@ -2925,7 +2982,8 @@ this._jsDispatch.addJSEventListener(del, Code.JS_EVENT_CLICK, this._handleDelete
 			//Code.addChild(div,content);
 		}
 	}
-}
+	*/
+
 /*
 	// => NAVIGATION
 	$widget_id_navigation_list = giau_insert_widget("navigation_list",
