@@ -815,16 +815,71 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 			}
 		}
 		*/
+		/*
+			NAME:
+				name : object field key index (for objects only, not for arrays)
+			TYPES:
+				number
+				string
+				string-number : (expects a number: float or integet or scientific notation)
+				string-url : (expects a URL)
+				string-image : (expects a URL to an image)
+				string-date : (expects a date in format: YYYY-MM-DD hh:mm:ss.nnnn)
+				object
+				array-number
+				array-string-*
+				array-object
+				array-array
+			ATTRIBUTES:
+				hint : text to display 
+				default-value : assigned value when creating a new primitive
+				description: detailed feedback on purpose of value
+				languagization: boolean on whether the field should pass through a language substitution-filter
+			SUBTYPES:
+				fields : specify parameters for objects, contained-types for arrays
+		*/
 			$widgetConfig = [
 				"name" => "Giau Test",
 				"fields" => [
 					[
-						"name" => "Number"
-						"type" => "number"
+						"name" => "number",
+						"type" => "number",
+						"defaut-value" => "_"
 					],
 					[
-						"name" => "String"
+						"name" => "string",
 						"type" => "string"
+					],
+					[
+						"name" => "array_strings",
+						"type" => "array-string"
+					],
+					[
+						"name" => "array_objects",
+						"type" => "array-object",
+						"fields" => [
+							"type" => "object",
+							"fields" => [
+								[
+									"name":"fieldA",
+									"type":"string"
+								],
+								[
+									"name":"fieldB",
+									"type":"string"
+								]
+							]
+						]
+					],
+					[
+						"name" => "array_list",
+						"type" => "array-array",			// array of arrays
+						"fields" => [
+							"type" => "array-array",		// array of arrays
+							"fields" => [
+								"type" => "array-string"	// array of strings
+							]
+						]
 					]
 				]
 			];
@@ -834,8 +889,8 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 				"array_strings" => [
 					"string0",
 					"string1"
-				]
-				... HERE
+				],
+
 			];
 
 				echo '<div style="display:none;" data-object="true">'. $sectionConfig.'</div>';

@@ -2778,7 +2778,7 @@ giau.ObjectComposer.prototype.defaultInputRowObject = function(element){
 							"type" => "array-string" // array of strings
 						]
 					]
-				}
+				]
 			]
 		]
 	
