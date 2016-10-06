@@ -874,12 +874,10 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 						"fields" => [
 							"type" => "object",
 							"fields" => [
-								[
-									"name" => "fieldA",
+								"fieldA" => [
 									"type" => "string"
 								],
-								[
-									"name" => "fieldB",
+								"fieldB" => [
 									"type" => "string"
 								]
 							]

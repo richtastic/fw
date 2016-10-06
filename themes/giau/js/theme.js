@@ -2780,6 +2780,10 @@ giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelOb
 	}else{
 		console.log("is object");
 	}
+/*
+and object has a list of indexed fields
+an array has an array of fields
+*/
 	var regexArrayPrefix = new RegExp('^array-','i');
 	var modelKeys = Code.keys(modelObject);
 	var i, modelFieldName, modelFieldType, modelFieldInfo;
@@ -2787,7 +2791,7 @@ giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelOb
 		modelFieldName = modelKeys[i];
 		modelFieldInfo = modelObject[modelFieldName];
 		modelFieldType = modelFieldInfo["type"];
-		console.log(modelFieldName+" = "+modelFieldType);
+		console.log(i,modelFieldName+" = "+modelFieldType,modelFieldInfo);
 		if(modelFieldType){
 			var isArray = modelFieldType.match(regexArrayPrefix);
 			if(isArray){
@@ -2795,11 +2799,33 @@ giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelOb
 				var array = instanceObject[modelFieldName];
 				console.log("\t=> array of "+modelSubType);
 				if(modelSubType=="array"){
+					/*
 					console.log("\t=>array [array]");
 					//fillOutModelFromElement();
+					var objectModel = modelFieldInfo["fields"];//["fields"];
+						//var objectType = modelFieldInfo["type"];
+						//var isArray = modelFieldType.match(regexArrayPrefix);
+						console.log(modelFieldInfo,modelFieldInfo["fields"],modelFieldInfo["fields"]["fields"]);
+					console.log(objectModel);
+					///if()
+					*/
+					console.log(array);
+					for(j=0; j<array.length; ++j){
+						this.fillOutModelFromElement(element,modelFieldInfo["fields"],array[j], false);
+					}
 				}else if(modelSubType=="object"){
 					console.log("\t=>object [array]");
-					//fillOutModelFromElement();
+					//console.log(modelFieldInfo);
+					//for(j=0; j<array.length; ++j){
+//						console.log(array[j],objectModel);
+//					this.fillOutModelFromElement(element,objectModel,array[j], false);
+//this.fillOutModelFromElement(element,modelFieldInfo["fields"],array, false);
+					var j;
+					var objectModel = modelFieldInfo["fields"]["fields"];
+					for(j=0; j<array.length; ++j){
+//						console.log(array[j],objectModel);
+						this.fillOutModelFromElement(element,objectModel,array[j], false);
+					}
 				}else{
 					this._fillOutWithPrimitiveType(modelObject,array, modelFieldName,modelSubType, true);
 				}
@@ -2814,6 +2840,10 @@ giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelOb
 			}
 		}else{
 			console.log("NO TYPE ... => ARRAY?");
+			//modelObject["fields"]
+			if(isInstanceArray){
+				console.log(modelObject);
+			}
 		}
 	}
 }
