@@ -118,12 +118,15 @@ function giau_create_database(){
 	// short_name = ?
 	// title = display title
 	// configuration = overriding json configuration
+	// extends = section this extends from (uses as default but overrides specified criteria)
+	// sectionList = list of additional sections to process, contained inside sectionList
 	$sql = "CREATE TABLE ".GIAU_FULL_TABLE_NAME_SECTION()." (
 		id int NOT NULL AUTO_INCREMENT,
 		created VARCHAR(32) NOT NULL,
 		modified VARCHAR(32) NOT NULL,
 		widget int NOT NULL,
 		configuration TEXT NOT NULL,
+		extends id int,
 		sectionList VARCHAR(65535) NOT NULL,
 		UNIQUE KEY id (id)
 		) $charset_collate

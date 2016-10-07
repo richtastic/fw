@@ -286,12 +286,12 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_CONTACT_TEXT","Contact");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_LACPC_TEXT","LACPC");
 
-	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_HOME_TEXT","Home");
-	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPARTMENTS_TEXT","Departments");
-	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_STAFF_TEXT","Staff");
-	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_FORMS_TEXT","Forms");
-	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_CONTACT_TEXT","Contact Us");
-	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_LACPC_TEXT","LACPC");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPT_NURSERY_TEXT","Nursery");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPT_KINDERGARTEN_TEXT","Kindergarten");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPT_ELEMENTARY_TEXT","Elementary");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPT_JUNIOR_HIGH_TEXT","Junior High");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPT_HIGH_SCHOOL_TEXT","High School");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPT_KOREAN_SCHOOL_TEXT","Korean School");
 	
 
 	giau_insert_languagization($langEng,"LANGUAGE_SWITCH_ENGLISH_TEXT","EN");
@@ -366,6 +366,14 @@ function giau_data_default_insert_into_database(){
 							"description" => "location destination"
 						]
 					]
+				],
+				"animates_down" => [
+					"type" => "string"
+					"description" => "name of event to listen to"
+				],
+				"animates_up" => [
+					"type" => "string"
+					"description" => "name of event to listen to"
 				],
 				"class" => [
 					"type" => "string"
@@ -717,32 +725,114 @@ function giau_data_default_insert_into_database(){
 		[
 			"components" => [ // return $root."?page=".$pageName."&sp=".($subpage ? $subpage : "");
 				[
+					"name" => "nav_home",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_HOME_TEXT",
 					"uri" => "./?page=home&sp="
 				],
 				[
+					"name" => "nav_departments",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPARTMENTS_TEXT",
 					"uri" => "./?page=departments&sp="
 				],
 				[
+					"name" => "nav_staff",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_STAFF_TEXT",
 					"uri" => "./?page=staff&sp="
 				],
 				[
+					"name" => "nav_forms",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_FORMS_TEXT",
 					"uri" => "./?page=forms&sp="
 				],
 				[
+					"name" => "nav_contact",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_CONTACT_TEXT",
 					"uri" => "./?page=contact&sp="
 				],
 				[
+					"name" => "nav_lacpc",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_LACPC_TEXT",
 					"uri" => "http://www.lacpcks.org"
 				]
 			]
 		]
 	, []);
+
+	$section_id_navigation_departments = giau_insert_section($widget_id_navigation_list,
+		[
+			"components" => [ // return $root."?page=".$pageName."&sp=".($subpage ? $subpage : "");
+				[
+					"name" => "nav_nursery",
+					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPT_NURSERY_TEXT",
+					"uri" => "./?page=home&sp="
+				],
+				[
+					"name" => "nav_kindergarten",
+					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPT_KINDERGARTEN_TEXT",
+					"uri" => "./?page=departments&sp="
+				],
+				[
+					"name" => "nav_elementary",
+					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPT_ELEMENTARY_TEXT",
+					"uri" => "./?page=staff&sp="
+				],
+				[
+					"name" => "nav_junior_high",
+					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPT_JUNIOR_HIGH_TEXT",
+					"uri" => "./?page=forms&sp="
+				],
+				[
+					"name" => "nav_high_school",
+					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPT_HIGH_SCHOOL_TEXT",
+					"uri" => "./?page=contact&sp="
+				],
+				[
+					"name" => "nav_korean_school",
+					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPT_KOREAN_SCHOOL_TEXT",
+					"uri" => "http://www.lacpcks.org"
+				]
+			],
+			"animates_down" => "nav_departments",
+			"animates_up" => "",
+		]
+	, []);
+	/*
+					$pageListSubmenu = [
+				[
+					"title" => "Nursery",
+					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
+					"sp" => $SUBPAGE_REQUEST_TYPE_NURSERY
+				],
+				[
+					"title" => "Kindergarten",
+					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
+					"sp" => $SUBPAGE_REQUEST_TYPE_KINDERGARTEN
+				],
+				[
+					"title" => "Elementary",
+					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
+					"sp" => $SUBPAGE_REQUEST_TYPE_ELEMENTARY
+				],
+				[
+					"title" => "Junior High",
+					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
+					"sp" => $SUBPAGE_REQUEST_TYPE_JUNIORHIGH
+				],
+				[
+					"title" => "High School",
+					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
+					"sp" => $SUBPAGE_REQUEST_TYPE_HIGHSCHOOL
+				],
+				[
+					"title" => "Korean School",
+					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
+					"sp" => $SUBPAGE_REQUEST_TYPE_KOREANSCHOOL,
+					"url" => "http://www.lacpcks.org"
+				],
+				];
+	*/
+
+
 
 	$section_id_language_switch = giau_insert_section($widget_id_language_switch,
 		[

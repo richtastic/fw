@@ -12,6 +12,8 @@ function giau(){
 giau.prototype.initialize = function(){
 	
 	// GLOBAL EVENTS
+	var bus = giau.MessageBus().defaultBus();
+
 
 	// NAVIGATION
 	var navigationLists = $(".giauNavigationItemList");
@@ -60,7 +62,6 @@ giau.prototype.initialize = function(){
 	contactListings.each(function(index, element){
 		var contact = new giau.ContactView(element);
 	});
-	
 
 	// INFO FLOATERS
 	var imageGalleries = $(".giauElementFloater");
@@ -105,6 +106,15 @@ giau.Navigation = function(element){ //
 giau.ButtonToggle = function(element){ //
 }
 
+
+giau.MessageBus = function(){
+	this._bus = MessageBus().defaultBus();
+}
+giau.MessageBus.EVENT_NAVIGATION_SELECT = "navigate_select_";
+giau.MessageBus.EVENT_OTHER = "other_";
+giau.MessageBus.defaultBus = function(){
+	return this._bus;
+}
 
 
 giau.ContactView = function(element){ //
@@ -937,9 +947,38 @@ giau.LanguageToggle.prototype.updateLayout = function(){
 };
 
 
+giau.NavigationList.prototype._handleNavigationBusEventDown = function(e){
+	console.log("down event ");
+}
+giau.NavigationList.prototype._handleNavigationBusEventUp = function(e){
+	console.log("down event ");
+}
 
 giau.NavigationList = function(element){
 	this._container = element;
+
+	var propertyAnimatesDown = "data-animates-down";
+	var propertyAnimatesUp = "data-animates-up";
+
+	// MESSAGE BUS
+	this._busEventAnimateDown = null;
+	this._busEventAnimateUp = null;
+	var bus = giau.MessageBus().defaultBus();
+	if(Code.hasProperty(div,propertyAnimatesDown)){
+		var listenEventName = Code.getProperty(div,propertyAnimatesDown);
+		listenEventName = giau.MessageBus.EVENT_NAVIGATION_SELECT+""+listenEventName;
+		bus.addFunction(listenEventName, this._handleNavigationBusEventDown, this);
+		//this._busEventAnimateDown = listenEventName;
+	}
+	if(Code.hasProperty(div,propertyAnimatesUp)){
+		var listenEventName = Code.getProperty(div,propertyAnimatesUp);
+		listenEventName = giau.MessageBus.EVENT_NAVIGATION_SELECT+""+listenEventName;
+		bus.addFunction(listenEventName, this._handleNavigationBusEventUp, this);
+		//this._busEventAnimateUp = listenEventName;
+	}
+	
+	
+	
 
 	// LISTENERS
 	this._jsDispatch = new JSDispatch();
@@ -2769,6 +2808,34 @@ giau.ObjectComposer.prototype.defaultInputRowObject = function(element){
 	}
 	return div;
 }
+/*
+what if array is root element ?
+	=> an only accept an OBJECT at the root element
+*/
+
+giau.ObjectComposer.prototype.fillOutModelFromElementArray = function(element,modelFieldInfo,array){
+	var regexArrayPrefix = new RegExp('^array-','i');
+	var modelFieldType = modelFieldInfo["type"];
+	var modelSubType = modelFieldType.replace(regexArrayPrefix,"");
+	console.log("\t=> array of "+modelSubType);
+	if(modelSubType=="array"){
+		console.log("\t=>array [array]");
+		//var objectModel = modelFieldInfo["fields"]["fields"];
+		var objectModel = modelFieldInfo["fields"];
+		for(var i=0; i<array.length; ++i){
+			fillOutModelFromElementArray(element,objectModel,array[i]);
+		}
+	}else if(modelSubType=="object"){
+		console.log("\t=>object [array]");
+		var objectModel = modelFieldInfo["fields"]["fields"];
+		for(var i=0; i<array.length; ++i){
+			this.fillOutModelFromElement(element,objectModel,array[i], false);
+		}
+	}else{
+		console.log("\t=>primitive [array]");
+		this._fillOutWithPrimitiveType(modelObject,array, modelFieldName,modelSubType, true);
+	}
+}
 
 giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelObject,instanceObject, newField){
 	console.log("++++++++++++++++++++++++++++++++++++++");
@@ -2795,40 +2862,7 @@ an array has an array of fields
 		if(modelFieldType){
 			var isArray = modelFieldType.match(regexArrayPrefix);
 			if(isArray){
-				var modelSubType = modelFieldType.replace(regexArrayPrefix,"");
-				var array = instanceObject[modelFieldName];
-				console.log("\t=> array of "+modelSubType);
-				if(modelSubType=="array"){
-					/*
-					console.log("\t=>array [array]");
-					//fillOutModelFromElement();
-					var objectModel = modelFieldInfo["fields"];//["fields"];
-						//var objectType = modelFieldInfo["type"];
-						//var isArray = modelFieldType.match(regexArrayPrefix);
-						console.log(modelFieldInfo,modelFieldInfo["fields"],modelFieldInfo["fields"]["fields"]);
-					console.log(objectModel);
-					///if()
-					*/
-					console.log(array);
-					for(j=0; j<array.length; ++j){
-						this.fillOutModelFromElement(element,modelFieldInfo["fields"],array[j], false);
-					}
-				}else if(modelSubType=="object"){
-					console.log("\t=>object [array]");
-					//console.log(modelFieldInfo);
-					//for(j=0; j<array.length; ++j){
-//						console.log(array[j],objectModel);
-//					this.fillOutModelFromElement(element,objectModel,array[j], false);
-//this.fillOutModelFromElement(element,modelFieldInfo["fields"],array, false);
-					var j;
-					var objectModel = modelFieldInfo["fields"]["fields"];
-					for(j=0; j<array.length; ++j){
-//						console.log(array[j],objectModel);
-						this.fillOutModelFromElement(element,objectModel,array[j], false);
-					}
-				}else{
-					this._fillOutWithPrimitiveType(modelObject,array, modelFieldName,modelSubType, true);
-				}
+				this.fillOutModelFromElementArray(element, modelFieldInfo, instanceObject);
 			}else{
 				if(modelFieldType=="object"){
 					console.log("\t=>object");

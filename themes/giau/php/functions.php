@@ -279,6 +279,8 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 	<!-- SUB0MENU NAV -->
 	<div class="headerSubNavigationContainer" style="width:100%; display:table; text-align:center; vertical-align:middle;">
 	<?php
+	/*
+	<?php
 				$pageListSubmenu = [
 				[
 					"title" => "Nursery",
@@ -314,6 +316,8 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 				];
 			?>
 		<?php create_navigation($pageListSubmenu, $pageRequest, $subpageRequest) ?> 
+		*/
+		?>
 		<!-- "display:inline-block;  vertical-align:middle;");  -->
 	</div>
 	<?php
@@ -819,8 +823,8 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 			NAME:
 				name : object field key index (for objects only, not for arrays)
 			TYPES:
-				boolean
-				number
+				boolean : (stored as string)
+				number : (stored as string)
 				string
 				string-number : (expects a number: float or integet or scientific notation)
 				string-url : (expects a URL)
@@ -837,6 +841,8 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 				default-value : assigned value when creating a new primitive
 				description: detailed feedback on purpose of value
 				languagization: boolean on whether the field should pass through a language substitution-filter
+				depends: another field that must exist with non-empty object/array/primitive
+					depends-value: <regex> depends specific value for string/boolean/number
 			SUBTYPES:
 				fields : specify parameters for objects, contained-types for arrays
 		*/

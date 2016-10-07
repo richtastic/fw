@@ -75,8 +75,19 @@ function handle_widget_navigation_list($widget,$section){
 	$widgetJSON = decodeWidget($widget);
 	$sectionJSON = decodeSection($section);
 	$navigationList = get_value_array($sectionJSON,"components");
+	$animatesUp = section_get_value_widget_string($widgetJSON,$sectionJSON,"animates_up");
+	$animatesDown = section_get_value_widget_string($widgetJSON,$sectionJSON,"animates_down");
+	$propertyAnimatesDown = "data-animates-down";
+	$propertyAnimatesUp = "data-animates-up";
 	?>
-	<div class="giauNavigationItemList navigationContainer" style="display:inline-block; position:relative; text-align: center; padding:6px; text-align:center;padding: 10px; z-index:100;" data-darkmode="true">
+	<div class="giauNavigationItemList navigationContainer" style="display:inline-block; position:relative; text-align: center; padding:6px; text-align:center;padding: 10px; z-index:100;" data-darkmode="true" <?php
+		if($animatesDown && strlen($animatesDown)>0){
+			echo ' '.propertyAnimatesDown.'="'.$animatesDown.'" ';
+		}
+		if($animatesUp && strlen($animatesUp)>0){
+			echo ' '.propertyAnimatesUp.'="'.$animatesUp.'" ';
+		}
+	?>
 		<ul>
 		<?php
 		foreach($navigationList as $item){
