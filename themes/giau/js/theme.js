@@ -13,6 +13,7 @@ giau.prototype.initialize = function(){
 	
 	// GLOBAL EVENTS
 	var bus = giau.MessageBus().defaultBus();
+	console.log(bus)
 
 
 	// NAVIGATION
@@ -107,14 +108,22 @@ giau.ButtonToggle = function(element){ //
 }
 
 
-giau.MessageBus = function(){
-	this._bus = MessageBus().defaultBus();
+giau.MessageBus = function () {
+	if(!giau.MessageBus._bus){
+		giau.MessageBus._bus = new MessageBus();
+	}
+	return giau.MessageBus._bus;
 }
+giau.MessageBus._bus;
 giau.MessageBus.EVENT_NAVIGATION_SELECT = "navigate_select_";
 giau.MessageBus.EVENT_OTHER = "other_";
-giau.MessageBus.defaultBus = function(){
-	return this._bus;
-}
+// giau.MessageBus.defaultBus = function(){
+// 	console.log("mu");
+// 	// if(!giau.MessageBus._bus){
+// 	// 	giau.MessageBus._bus = 
+// 	// }
+// 	return this._bus;
+// }
 
 
 giau.ContactView = function(element){ //
@@ -947,12 +956,6 @@ giau.LanguageToggle.prototype.updateLayout = function(){
 };
 
 
-giau.NavigationList.prototype._handleNavigationBusEventDown = function(e){
-	console.log("down event ");
-}
-giau.NavigationList.prototype._handleNavigationBusEventUp = function(e){
-	console.log("down event ");
-}
 
 giau.NavigationList = function(element){
 	this._container = element;
@@ -964,6 +967,8 @@ giau.NavigationList = function(element){
 	this._busEventAnimateDown = null;
 	this._busEventAnimateUp = null;
 	var bus = giau.MessageBus().defaultBus();
+	console.log(bus)
+	var div = this._container;
 	if(Code.hasProperty(div,propertyAnimatesDown)){
 		var listenEventName = Code.getProperty(div,propertyAnimatesDown);
 		listenEventName = giau.MessageBus.EVENT_NAVIGATION_SELECT+""+listenEventName;
@@ -976,8 +981,6 @@ giau.NavigationList = function(element){
 		bus.addFunction(listenEventName, this._handleNavigationBusEventUp, this);
 		//this._busEventAnimateUp = listenEventName;
 	}
-	
-	
 	
 
 	// LISTENERS
@@ -1125,6 +1128,13 @@ title = title + " &#x25BE;";
 
 	// SET INITIAL LAYOUT
 	this.updateLayout();
+}
+
+giau.NavigationList.prototype._handleNavigationBusEventDown = function(e){
+	console.log("down event ");
+}
+giau.NavigationList.prototype._handleNavigationBusEventUp = function(e){
+	console.log("down event ");
 }
 giau.NavigationList.prototype._handleContentClickedFxn = function(e){
 	var target = Code.getTargetFromMouseEvent(e);
@@ -2833,7 +2843,8 @@ giau.ObjectComposer.prototype.fillOutModelFromElementArray = function(element,mo
 		}
 	}else{
 		console.log("\t=>primitive [array]");
-		this._fillOutWithPrimitiveType(modelObject,array, modelFieldName,modelSubType, true);
+		console.log();
+		this._fillOutWithPrimitiveType(element,array, null,modelSubType, true);
 	}
 }
 

@@ -368,11 +368,11 @@ function giau_data_default_insert_into_database(){
 					]
 				],
 				"animates_down" => [
-					"type" => "string"
+					"type" => "string",
 					"description" => "name of event to listen to"
 				],
 				"animates_up" => [
-					"type" => "string"
+					"type" => "string",
 					"description" => "name of event to listen to"
 				],
 				"class" => [
