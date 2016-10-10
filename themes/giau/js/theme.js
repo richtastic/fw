@@ -12,9 +12,7 @@ function giau(){
 giau.prototype.initialize = function(){
 	
 	// GLOBAL EVENTS
-	var bus = giau.MessageBus().defaultBus();
-	console.log(bus)
-
+	var bus = giau.MessageBus();
 
 	// NAVIGATION
 	var navigationLists = $(".giauNavigationItemList");
@@ -114,16 +112,10 @@ giau.MessageBus = function () {
 	}
 	return giau.MessageBus._bus;
 }
-giau.MessageBus._bus;
+giau.MessageBus._bus = null;
 giau.MessageBus.EVENT_NAVIGATION_SELECT = "navigate_select_";
 giau.MessageBus.EVENT_OTHER = "other_";
-// giau.MessageBus.defaultBus = function(){
-// 	console.log("mu");
-// 	// if(!giau.MessageBus._bus){
-// 	// 	giau.MessageBus._bus = 
-// 	// }
-// 	return this._bus;
-// }
+
 
 
 giau.ContactView = function(element){ //
@@ -966,7 +958,7 @@ giau.NavigationList = function(element){
 	// MESSAGE BUS
 	this._busEventAnimateDown = null;
 	this._busEventAnimateUp = null;
-	var bus = giau.MessageBus().defaultBus();
+	var bus = giau.MessageBus();
 	console.log(bus)
 	var div = this._container;
 	if(Code.hasProperty(div,propertyAnimatesDown)){
@@ -2679,7 +2671,7 @@ giau.FileBrowser.prototype.uploadFile = function(file,filename,directory){
 	ajax.send();
 }
 
-
+0
 
 // giau.ObjectDesigner Constructor  Composer Layout
 giau.ObjectComposer = function(element){
@@ -2770,6 +2762,7 @@ giau.ObjectComposer.prototype.fillOutObjectFromElements = function(inObject, jsO
 		}
 	}
 }
+/*
 giau.ObjectComposer.prototype._handleNewArrayObject = function(e,d){
 	var target = Code.getTargetFromEvent(e);
 	var modelObject = d["model"];
@@ -2807,6 +2800,33 @@ giau.ObjectComposer.prototype._handleDeleteArrayObject = function(e,d){
 	//this.fillOutModelFromElement(element, modelObject, instanceObject, field);
 	
 }
+*/
+giau.ObjectComposer.prototype._handleNewArrayItem = function(e,d){
+	var target = Code.getTargetFromEvent(e);
+	var model = d["model"];
+	var array = d["array"];
+	var element = d["element"];
+	var field = d["field"];
+	console.log("handle new array object");
+	console.log(model);
+	console.log(array);
+	console.log(element);
+	console.log(field);
+	// console.log("handle new array object");
+	// console.log(modelObject);
+	// console.log(instanceObject);
+	// console.log(element);
+	//this.fillOutModelFromElementArray(element, model, array, field);
+	/*
+	push on a new item to array:
+		- string
+		- object
+		- array
+	perform i(th) iteration of array
+	*/
+	this.fillOutModelFromElementArray(element, model["fields"], array, field);
+	
+}
 giau.ObjectComposer.prototype.defaultInputRowObject = function(element){
 	div = Code.newDiv();
 	Code.setStylePaddingTop(div,"0px");
@@ -2816,6 +2836,7 @@ giau.ObjectComposer.prototype.defaultInputRowObject = function(element){
 	if(element){
 		Code.addChild(element,div);
 	}
+	//Code.setContent(div,"?");
 	return div;
 }
 /*
@@ -2823,17 +2844,16 @@ what if array is root element ?
 	=> an only accept an OBJECT at the root element
 */
 
-giau.ObjectComposer.prototype.fillOutModelFromElementArray = function(element,modelFieldInfo,array){
+giau.ObjectComposer.prototype.fillOutModelFromElementArray = function(element,modelFieldInfo,array, field){
 	var regexArrayPrefix = new RegExp('^array-','i');
 	var modelFieldType = modelFieldInfo["type"];
 	var modelSubType = modelFieldType.replace(regexArrayPrefix,"");
 	console.log("\t=> array of "+modelSubType);
 	if(modelSubType=="array"){
 		console.log("\t=>array [array]");
-		//var objectModel = modelFieldInfo["fields"]["fields"];
 		var objectModel = modelFieldInfo["fields"];
 		for(var i=0; i<array.length; ++i){
-			fillOutModelFromElementArray(element,objectModel,array[i]);
+			this.fillOutModelFromElementArray(element,objectModel,array[i], field);
 		}
 	}else if(modelSubType=="object"){
 		console.log("\t=>object [array]");
@@ -2843,25 +2863,28 @@ giau.ObjectComposer.prototype.fillOutModelFromElementArray = function(element,mo
 		}
 	}else{
 		console.log("\t=>primitive [array]");
-		console.log();
-		this._fillOutWithPrimitiveType(element,array, null,modelSubType, true);
+		console.log(modelFieldInfo,array);
+		//                         (element, modelObject,instanceObject, modelFieldName,modelFieldType, isArray)
+		this._fillOutWithPrimitiveType(element,modelFieldInfo,    array, null,modelSubType, true);
 	}
+	var button = Code.newInputButton("NEW ARRAY OBJECT");
+			Code.setStyleBackgroundColor(button,"#FCC");
+			Code.setStyleDisplay(button,"inline-block");
+		Code.addChild(element, button);
+	var data = {"model":modelFieldInfo, "array":array, "element":element, "field":"?"}; // modelFieldInfo
+	this._jsDispatch.addJSEventListener(button, Code.JS_EVENT_CLICK, this._handleNewArrayItem, this, data);
 }
 
 giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelObject,instanceObject, newField){
 	console.log("++++++++++++++++++++++++++++++++++++++");
 	console.log(modelObject);
 	console.log(instanceObject);
-	var isInstanceArray = Code.isArray(instanceObject);
-	if(isInstanceArray){
-		console.log("is array");
-	}else{
-		console.log("is object");
-	}
-/*
-and object has a list of indexed fields
-an array has an array of fields
-*/
+	//var isInstanceArray = Code.isArray(instanceObject);
+	// if(isInstanceArray){
+	// 	console.log("fillOutModelFromElement : is array");
+	// }else{
+	// 	console.log("fillOutModelFromElement : is object");
+	// }
 	var regexArrayPrefix = new RegExp('^array-','i');
 	var modelKeys = Code.keys(modelObject);
 	var i, modelFieldName, modelFieldType, modelFieldInfo;
@@ -2873,27 +2896,63 @@ an array has an array of fields
 		if(modelFieldType){
 			var isArray = modelFieldType.match(regexArrayPrefix);
 			if(isArray){
-				this.fillOutModelFromElementArray(element, modelFieldInfo, instanceObject);
+				console.log(" ---> is array: ",instanceObject,instanceObject[modelFieldName]);
+				var subElement = this.newSubElement(element,"array", instanceObject, modelFieldName);
+				this.fillOutModelFromElementArray(subElement, modelFieldInfo, instanceObject[modelFieldName], modelFieldName);
 			}else{
 				if(modelFieldType=="object"){
 					console.log("\t=>object");
 					var object = instanceObject[modelFieldName];
-					this.fillOutModelFromElement(element,modelFieldInfo["fields"],object, false);
+					var subElement = this.newSubElement(element,"object", instanceObject, modelFieldName);
+					this.fillOutModelFromElement(subElement,modelFieldInfo["fields"],object, false);
 				}else{
-					this._fillOutWithPrimitiveType(modelObject,instanceObject, modelFieldName,modelFieldType, false);
+					this._fillOutWithPrimitiveType(element, modelObject,instanceObject, modelFieldName,modelFieldType, false);
 				}
 			}
 		}else{
-			console.log("NO TYPE ... => ARRAY?");
-			//modelObject["fields"]
-			if(isInstanceArray){
-				console.log(modelObject);
-			}
+			console.log("NO TYPE -- SKIP");
 		}
 	}
 }
-giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(modelObject,instanceObject, modelFieldName,modelFieldType, isArray){
-	//console.log(modelObject,instanceObject)
+giau.ObjectComposer.prototype.newSubElement = function(element,type, container, field){
+	var div = this.defaultInputRowObject(element);
+	var color = Code.getColARGB( 0xFF, Code.randomInt(0,0xFF), Code.randomInt(0,0xFF), Code.randomInt(0,0xFF) );
+	color = Code.getJSColorFromARGB(color);
+	Code.setStyleBackgroundColor(div,color);
+	if(type=="array"){
+		Code.setContent(div, "array: "+field);
+	}else if(type=="object"){
+		Code.setContent(div, "object: "+field);
+	}else if(type=="primitive"){
+		var value = container[field]
+		if(Code.isArray(container)){
+			//Code.setContent(div, field+" "+": "+);
+		}else{
+			//Code.setContent(div, field+" "+": "+container[field]);
+		}
+		this._inputTextField(div,field, value);
+	}
+	return div;
+}
+giau.ObjectComposer.prototype._inputTextField = function(element, key,value){
+	var div = element;
+	var content = Code.newDiv();
+	var label = Code.newDiv();
+			Code.setContent(label,""+key+": ");
+			Code.setStyleBackgroundColor(label,"#FCC");
+			Code.setStyleDisplay(label,"inline-block");
+	var input = Code.newInputText();
+			Code.setStyleBackgroundColor(input,"#CCF");
+			Code.setStyleDisplay(input,"inline-block");
+	Code.addChild(content,label);
+	Code.addChild(content,input);
+	Code.addChild(div,content);
+	if(value){
+		Code.setInputTextValue(input,value);
+	}
+	return null;
+}
+giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(element, modelObject,instanceObject, modelFieldName,modelFieldType, isArray){
 	var regexStringPrefix = new RegExp('^string-','i');
 	var isString = modelFieldType=="string" || modelFieldType.match(regexStringPrefix);
 	var found = false;
@@ -2909,18 +2968,19 @@ giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(modelObject,i
 		found = true;
 	}
 	if(found){
-		console.log("A");
 		var primitive = null;
 		if(isArray){
+			console.log("isArray:",instanceObject);
 			var i, len = instanceObject.length;
 			for(i=0;i<len;++i){
 				primitive = instanceObject[i];
 				console.log("\t\t => "+i+" = "+primitive);
+				var subElement = this.newSubElement(element,"primitive", instanceObject,i);
 			}
 		}else{
 			primitive = instanceObject[modelFieldName];
 			console.log("\t\t => "+primitive);
-
+			var subElement = this.newSubElement(element,"primitive", instanceObject,modelFieldName);
 		}
 	}
 }

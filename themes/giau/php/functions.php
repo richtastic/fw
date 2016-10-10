@@ -248,8 +248,8 @@ fillOutPageFromID(1);
 }else{
  // ...
 ?>
-
-	
+<?php
+/*
 	<!-- FEATURE TITLE -->
 	<div class="headerTitleContainer" style="display:block;">
 		<div class="headerNavigationContainer" style="display:table;">
@@ -265,6 +265,8 @@ fillOutPageFromID(1);
 
 		</div>
 	</div>
+*/
+?>
 <?php
 }
 ?>
@@ -778,7 +780,8 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 <?php
 }else if($pageRequest==$PAGE_REQUEST_TYPE_FORMS){
 ?>
-	
+<?php
+/*
 	<!-- DOWNLOADS -->
 	<div class="limitedWidth" style="">
 		<!-- <div class="headerSectionMain">FORMS</div> -->
@@ -790,6 +793,8 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 			<a href="<?php echo relativePathUploads()."/photograph_release_form.pdf"; ?>">LACPC Photograph Release Form (pdf)</a>
 		</div>
 	</div>
+*/
+	?>
 	<!-- <div class="giauFileBrowser limitedWidth" style=""></div> -->
 	<div class="giauObjectComposer limitedWidth" style="">
 	<?php
@@ -855,7 +860,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 					],
 					"number" => [
 						"type" => "number",
-						"defaut-value" => "3141"
+						"defaut-value" => "0.0"
 					],
 					"string" => [
 						"type" => "string",
