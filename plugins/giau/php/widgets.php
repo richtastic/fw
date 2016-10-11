@@ -77,26 +77,33 @@ function handle_widget_navigation_list($widget,$section){
 	$navigationList = get_value_array($sectionJSON,"components");
 	$animatesUp = section_get_value_widget_string($widgetJSON,$sectionJSON,"animates_up");
 	$animatesDown = section_get_value_widget_string($widgetJSON,$sectionJSON,"animates_down");
+	$startsHidden = section_get_value_widget_string($widgetJSON,$sectionJSON,"start_hidden");
 	$propertyAnimatesDown = "data-animates-down";
 	$propertyAnimatesUp = "data-animates-up";
+	$propertyStartHidden = "data-start-hidden";
 	?>
 	<div class="giauNavigationItemList navigationContainer" style="display:inline-block; position:relative; text-align: center; padding:6px; text-align:center;padding: 10px; z-index:100;" data-darkmode="true" <?php
 		if($animatesDown && strlen($animatesDown)>0){
-			echo ' '.propertyAnimatesDown.'="'.$animatesDown.'" ';
+			echo ' '.$propertyAnimatesDown.'="'.$animatesDown.'" ';
 		}
 		if($animatesUp && strlen($animatesUp)>0){
-			echo ' '.propertyAnimatesUp.'="'.$animatesUp.'" ';
+			echo ' '.$propertyAnimatesUp.'="'.$animatesUp.'" ';
+		}
+		if($startsHidden && $startsHidden=="true"){
+			echo ' '.$propertyStartHidden.'="'."true".'" ';
 		}
 	?>
 		<ul>
 		<?php
 		foreach($navigationList as $item){
+			$name = $item["name"];
+			error_log("NAME: ".$name);
 			$uri = $item["uri"];
 			$display = $item["display_text"];
 			$display = giau_languagization_substitution($display,null);
 			//  data-selected="selected"
 		?>
-		<div class="navigationMenuItem" data-display="<?php echo $display; ?>" data-url="<?php echo $uri; ?>"></div>
+		<div class="navigationMenuItem" data-display="<?php echo $display; ?>" data-url="<?php echo $uri; ?>" data-name="<?php echo $name; ?>"></div>
 		<?php
 		}
 		?>

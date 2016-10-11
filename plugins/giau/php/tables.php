@@ -126,7 +126,7 @@ function giau_create_database(){
 		modified VARCHAR(32) NOT NULL,
 		widget int NOT NULL,
 		configuration TEXT NOT NULL,
-		extends id int,
+		extend int,
 		sectionList VARCHAR(65535) NOT NULL,
 		UNIQUE KEY id (id)
 		) $charset_collate

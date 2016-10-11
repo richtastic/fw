@@ -279,12 +279,12 @@ function giau_data_default_insert_into_database(){
 
 
 	// NAV-WIDGET
-	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_HOME_TEXT","Home");
-	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_DEPARTMENTS_TEXT","Departments");
-	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_STAFF_TEXT","Staff");
-	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_FORMS_TEXT","Forms");
-	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_CONTACT_TEXT","Contact");
-	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_DISPLAY_LACPC_TEXT","LACPC");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_HOME_TEXT","Home");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPARTMENTS_TEXT","Departments");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_STAFF_TEXT","Staff");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_FORMS_TEXT","Forms");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_CONTACT_TEXT","Contact");
+	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_LACPC_TEXT","LACPC");
 
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPT_NURSERY_TEXT","Nursery");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPT_KINDERGARTEN_TEXT","Kindergarten");
@@ -732,7 +732,7 @@ function giau_data_default_insert_into_database(){
 				[
 					"name" => "nav_departments",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPARTMENTS_TEXT",
-					"uri" => "./?page=departments&sp="
+					//"uri" => "./?page=departments&sp="
 				],
 				[
 					"name" => "nav_staff",
@@ -792,46 +792,11 @@ function giau_data_default_insert_into_database(){
 					"uri" => "http://www.lacpcks.org"
 				]
 			],
+			"start_hidden" => "true",
 			"animates_down" => "nav_departments",
 			"animates_up" => "",
 		]
 	, []);
-	/*
-					$pageListSubmenu = [
-				[
-					"title" => "Nursery",
-					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
-					"sp" => $SUBPAGE_REQUEST_TYPE_NURSERY
-				],
-				[
-					"title" => "Kindergarten",
-					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
-					"sp" => $SUBPAGE_REQUEST_TYPE_KINDERGARTEN
-				],
-				[
-					"title" => "Elementary",
-					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
-					"sp" => $SUBPAGE_REQUEST_TYPE_ELEMENTARY
-				],
-				[
-					"title" => "Junior High",
-					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
-					"sp" => $SUBPAGE_REQUEST_TYPE_JUNIORHIGH
-				],
-				[
-					"title" => "High School",
-					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
-					"sp" => $SUBPAGE_REQUEST_TYPE_HIGHSCHOOL
-				],
-				[
-					"title" => "Korean School",
-					"page" => $PAGE_REQUEST_TYPE_DEPARTMENTS,
-					"sp" => $SUBPAGE_REQUEST_TYPE_KOREANSCHOOL,
-					"url" => "http://www.lacpcks.org"
-				],
-				];
-	*/
-
 
 
 	$section_id_language_switch = giau_insert_section($widget_id_language_switch,
@@ -939,10 +904,17 @@ function giau_data_default_insert_into_database(){
 
 	$section_id_navigation_main_container = giau_insert_section($widget_id_content_container,
 		[
-			"style" => "position:absolute; display:inline-block; text-align:center;  width:100%;",
+			"style" => "position:relative; top:0px; display:inline-block; text-align:center;  width:100%;",
 			"class" => "headerNavigationContainer"
 		]
 	, [$section_id_navigation_main_shadow, $section_id_language_switch, $section_id_navigation_main]);
+
+	$section_id_navigation_secondary_container = giau_insert_section($widget_id_content_container,
+		[
+			"style" => "position:relative; display:inline-block; text-align:center;  width:100%;",
+			"class" => ""
+		]
+	, [$section_id_navigation_departments]);
 
 
 		$section_image_gallery_prefix = "./wp-content/themes/giau/img/gallery_featured/";
@@ -963,7 +935,7 @@ function giau_data_default_insert_into_database(){
 			"style" => "",
 			"class" => "featurePresentationContainer"
 		]
-	, [$section_id_home_gallery_overlay, $section_id_navigation_main_container]);
+	, [$section_id_home_gallery_overlay, $section_id_navigation_main_container, $section_id_navigation_secondary_container]);
 
 	// $section_id_home_page_top = giau_insert_section($widget_id_content_container,
 	// 	[

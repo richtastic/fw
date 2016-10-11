@@ -951,9 +951,10 @@ giau.LanguageToggle.prototype.updateLayout = function(){
 
 giau.NavigationList = function(element){
 	this._container = element;
-
+	console.log(element)
 	var propertyAnimatesDown = "data-animates-down";
 	var propertyAnimatesUp = "data-animates-up";
+	var propertyStartHidden = "data-start-hidden";
 
 	// MESSAGE BUS
 	this._busEventAnimateDown = null;
@@ -973,7 +974,9 @@ giau.NavigationList = function(element){
 		bus.addFunction(listenEventName, this._handleNavigationBusEventUp, this);
 		//this._busEventAnimateUp = listenEventName;
 	}
-	
+	if(Code.hasProperty(div,propertyStartHidden)){
+		Code.setStyleDisplay(div,"none");
+	}
 
 	// LISTENERS
 	this._jsDispatch = new JSDispatch();
@@ -1020,7 +1023,7 @@ giau.NavigationList = function(element){
 	}
 
 	var i, len;
-	var listElement = Code.getChild(element,0);
+	var listElement = element;//Code.getChild(element,0);
 	var menuItems = [];
 	var foundSelectedIndex = 0;
 	if(listElement){
@@ -1031,15 +1034,20 @@ giau.NavigationList = function(element){
 			var url = "";
 			var dataDisplay = "data-display";
 			var dataURL = "data-url";
+			var dataName = "data-name";
 			var dataSelected = "data-selected";
-			title = Code.getPropertyOrDefault(child,dataDisplay,title);
-title = title + " &#x25BE;";
-			url = Code.getPropertyOrDefault(child,dataURL,url);
+			var title = Code.getPropertyOrDefault(child,dataDisplay,title);
+			var url = Code.getPropertyOrDefault(child,dataURL,url);
+			var name = Code.getPropertyOrDefault(child,dataName,name);
+if(!url || url==""){ // 
+	title = title + " &#x25BE;";
+}
 			if(Code.hasProperty(child,dataSelected)){
 				foundSelectedIndex = i;
 			}
 			Code.emptyDom(child);
-			menuItems.push( {"title":title, "url":url} );
+
+			menuItems.push( {"title":title, "url":url, "name":name} );
 		}
 	}
 	Code.emptyDom(listElement);
@@ -1051,6 +1059,7 @@ title = title + " &#x25BE;";
 		div = Code.newDiv();
 		var title = menuItems[i]["title"];
 		var url = menuItems[i]["url"];
+		var name = menuItems[i]["name"];
 		Code.setContent(div,title);
 		Code.setStyleDisplay(div,"inline-block");
 		Code.setStylePadding(div,"6px 10px 4px 10px");
@@ -1070,7 +1079,7 @@ title = title + " &#x25BE;";
 		Code.setStyleColor(div, Code.getJSColorFromARGB(styleFontTextColor) );
 		Code.setStyleFontSize(div, styleFontTextSize+"px" );
 		Code.addChild(this._container,div);
-		optionElementList.push({"element":div,"url":url});
+		optionElementList.push({"element":div,"url":url,"name":name});
 		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_CLICK, this._handleContentClickedFxn, this);
 		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_TOUCH_TAP, this._handleContentTappedxn, this);
 	}
@@ -1124,9 +1133,11 @@ title = title + " &#x25BE;";
 
 giau.NavigationList.prototype._handleNavigationBusEventDown = function(e){
 	console.log("down event ");
+	Code.setStyleDisplay(this._container,"inline-block");
 }
 giau.NavigationList.prototype._handleNavigationBusEventUp = function(e){
-	console.log("down event ");
+	console.log("up event ");
+	Code.setStyleDisplay(this._container,"none");
 }
 giau.NavigationList.prototype._handleContentClickedFxn = function(e){
 	var target = Code.getTargetFromMouseEvent(e);
@@ -1144,8 +1155,19 @@ giau.NavigationList.prototype._handleWindowResizedFxn = function(){
 }
 giau.NavigationList.prototype.selectedIndex = function(index){
 	var selected = this._optionElementList[index];
+	console.log(selected)
 	var url = selected["url"];
-	document.location.href = url;
+	if(url && url!=""){
+		document.location.href = url;
+	}
+	var bus = giau.MessageBus();
+	console.log(bus)
+	var name = selected["name"];
+	console.log(name)
+
+	var listenEventName = giau.MessageBus.EVENT_NAVIGATION_SELECT+""+name;
+	console.log(listenEventName)
+	bus.alertAll(listenEventName, this);
 }
 giau.NavigationList.prototype.updateLayout = function(){
 	//console.log("UPDATE LAYOUT")
