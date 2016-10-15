@@ -233,6 +233,8 @@ https://codex.wordpress.org/Creating_Options_Pages
 # VBOX
 cp /media/sf_zirbr001/dev/extRepos/fw/themes/giau/js/theme.js /var/www/html/wordpress/wp-content/themes/giau/js/theme.js 
 chmod -R 777 /var/www/html/wordpress/wp-content/themes/giau
+### SINGLE LINE
+cp /media/sf_zirbr001/dev/extRepos/fw/themes/giau/js/theme.js  /var/www/html/wordpress/wp-content/themes/giau/js/theme.js ; chmod -R 777 /var/www/html/wordpress/wp-content/themes/giau
 
 rm -r /repos/ff
 cp -r /media/sf_zirbr001/dev/extRepos/ff /repos

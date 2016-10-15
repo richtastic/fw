@@ -2829,6 +2829,7 @@ giau.ObjectComposer.prototype._handleNewArrayItem = function(e,d){
 	var array = d["array"];
 	var element = d["element"];
 	var field = d["field"];
+		var type = model["type"];
 	console.log("handle new array object");
 	console.log(model);
 	console.log(array);
@@ -2839,6 +2840,7 @@ giau.ObjectComposer.prototype._handleNewArrayItem = function(e,d){
 	// console.log(instanceObject);
 	// console.log(element);
 	//this.fillOutModelFromElementArray(element, model, array, field);
+
 	/*
 	push on a new item to array:
 		- string
@@ -2846,8 +2848,27 @@ giau.ObjectComposer.prototype._handleNewArrayItem = function(e,d){
 		- array
 	perform i(th) iteration of array
 	*/
-	this.fillOutModelFromElementArray(element, model["fields"], array, field);
-	
+
+	var regexArrayPrefix = giau.ObjectComposer.regexArrayPrefix;
+	var subType = type.replace(regexArrayPrefix,"");
+	console.log("type: "+type);
+	console.log("subtype: "+subType);
+	if(subType=="array"){
+		console.log("empty array");
+		array.push([]);
+	}else if(subType=="object"){
+		console.log("new object");
+		array.push({});
+	}else{
+		console.log("primitive?");
+		array.push("");
+	}
+	var container = Code.getParent(element);
+	// remove old contents
+	Code.removeAllChildren(element);
+	// insert new contents
+	this.fillOutModelFromElementArray(element, model, array, field);
+	//this.fillOutModelFromElementArray(element, model["fields"], array, field);
 }
 giau.ObjectComposer.prototype.defaultInputRowObject = function(element){
 	div = Code.newDiv();
@@ -2866,8 +2887,11 @@ what if array is root element ?
 	=> an only accept an OBJECT at the root element
 */
 
+giau.ObjectComposer.regexArrayPrefix = new RegExp('^array-','i');
+
 giau.ObjectComposer.prototype.fillOutModelFromElementArray = function(element,modelFieldInfo,array, field){
 	var regexArrayPrefix = new RegExp('^array-','i');
+	console.log(modelFieldInfo)
 	var modelFieldType = modelFieldInfo["type"];
 	var modelSubType = modelFieldType.replace(regexArrayPrefix,"");
 	console.log("\t=> array of "+modelSubType);
