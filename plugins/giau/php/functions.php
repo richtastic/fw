@@ -39,6 +39,59 @@ function getDateNow(){
 	return dateFromString( date("Y-m-d H:i:s.0000") );
 }
 
+function colorHTMLFromColorString($color){
+	error_log("WAS: ".$color);
+	$color = preg_replace('/^(0x|#)/', '', $color);
+	$color = strtoupper($color);
+	$len = strlen($color);
+	if($len==3){ // 0xRGB
+		$r = substr($color,0,1);
+		$g = substr($color,1,1);
+		$b = substr($color,2,1);
+		return "#".$r.$r.$g.$g.$b.$b;
+	}else if($len==4){ // 0xARGB
+		$a = substr($color,0,1);
+		$r = substr($color,1,1);
+		$g = substr($color,2,1);
+		$b = substr($color,3,1);
+		$a = $a.$a;
+		$r = $r.$r;
+		$g = $g.$g;
+		$b = $b.$b;
+		$a = intval($a,16);
+		$f = intval($r,16);
+		$g = intval($g,16);
+		$b = intval($b,16);
+		$a = $a/255.0;
+		return "rgba(".$r.",".$g.",".$b.",".$a.")";
+	}else if($len==6){ // 0xRRGGBB
+		$r = substr($color,0,2);
+		$g = substr($color,2,2);
+		$b = substr($color,4,2);
+		return "#".$r.$g.$b;
+	}else if($len==8){ // 0xAARRGGBB
+		$a = substr($color,0,2);
+		$r = substr($color,2,2);
+		$g = substr($color,4,2);
+		$b = substr($color,6,2);
+		$a = intval($a,16);
+		$f = intval($r,16);
+		$g = intval($g,16);
+		$b = intval($b,16);
+		$a = $a/255.0;
+		return "rgba(".$r.",".$g.",".$b.",".$a.")";
+	}
+	return "#000000";
+}
+function substituteLiteralNewlinesToHTMLBreaks($editorString){
+	$htmlString = preg_replace('/\\n/', '<br/>', $editorString);
+	return $htmlString;
+}
+function substituteHTMLBreaksToLiteralNewlines($htmlString){
+	$editorString = preg_replace('/<( )*br( )*(/)*( )*>/', '\\n', $htmlString);
+	return $editorString;
+}
+
 function addTimeToSeconds($seconds,$yea,$mon,$day,$hou,$min,$sec,$nano){
 	$oH = intval(date("H",$seconds));
 	$oN = intval(date("i",$seconds));

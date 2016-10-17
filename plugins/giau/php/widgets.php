@@ -53,11 +53,123 @@ function fillOutSectionFromWidget($widget,$section){
 	$lookup["display_overlay"] = handle_widget_display_overlay;
 	$lookup["bio_listing"] = handle_widget_bio_listing;
 
+	$lookup["medal_banner"] = handle_widget_medal_banner;
+	$lookup["service_listing"] = handle_widget_service_listing;
+	$lookup["personnel_coverage"] = handle_widget_personnel_coverage;
+
 	$fxn = $lookup[$widgetName];
 	if($fxn!=null){
 		$fxn($widget,$section);
 	}
 }
+
+function handle_widget_medal_banner($widget,$section){
+	$widgetJSON = decodeWidget($widget);
+	$sectionJSON = decodeSection($section);
+	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
+	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
+
+	$title = section_get_value_widget_string($widgetJSON,$sectionJSON,"title");
+		$title = giau_languagization_substitution($title,null);
+		$title = substituteLiteralNewlinesToHTMLBreaks($title);
+	$body = section_get_value_widget_string($widgetJSON,$sectionJSON,"message");
+		$body = giau_languagization_substitution($body,null);
+		$body = substituteLiteralNewlinesToHTMLBreaks($body);
+	$icon = section_get_value_widget_string($widgetJSON,$sectionJSON,"icon");
+
+	$colorBase = section_get_value_widget_string($widgetJSON,$sectionJSON,"color_base");
+	$colorLight = section_get_value_widget_string($widgetJSON,$sectionJSON,"color_light");
+	$colorDark = section_get_value_widget_string($widgetJSON,$sectionJSON,"color_dark");
+	
+
+	$colorBase = colorHTMLFromColorString($colorBase);
+	$colorLight = colorHTMLFromColorString($colorLight);
+	$colorDark = colorHTMLFromColorString($colorDark);
+	?>
+	<div class="" style="display:block; background-color:<?php echo $colorBase; ?>; text-align:center; position:relative; border-style:solid; border-width:2px 0px 2px 0px; border-top-color:<?php echo $colorLight; ?>; border-bottom-color:<?php echo $colorDark; ?>;">
+		<div class="departmentStatementContainer" style="">
+			<div class="departmentStatementTitle" style=""><?php echo $title; ?></div>
+			<div class="departmentStatementBody" style=""><?php echo $body; ?></div>
+		</div>
+		<div class="departmentStatementLogoContainer" style="">
+			<img src="<?php echo $icon; ?>" class="departmentStatementLogo" style="" />
+		</div>
+	</div>
+	<?php
+}
+function handle_widget_service_listing($widget,$section){
+	$widgetJSON = decodeWidget($widget);
+	$sectionJSON = decodeSection($section);
+	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
+	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
+	$servicesList = section_get_value_widget_string($widgetJSON,$sectionJSON,"services");
+	?>
+	<div class="limitedWidth" style="display:block; background-color:#FFF; padding:20px;">
+		<div class="" style="display:table; width: 100%; text-align:center;">
+			<div class="" style="display:table-row; text-align:center;">
+			<?php
+				if($servicesList && sizeof($servicesList)>0 ){
+					$len = sizeof($servicesList);
+					$i;
+					for($i=0; $i<$len; ++$i){
+						$service = $servicesList[$i];
+						$title = $service["title"];
+							$title = giau_languagization_substitution($title,null);
+							$title = substituteLiteralNewlinesToHTMLBreaks($title);
+						$body = $service["description"];
+							$body = giau_languagization_substitution($body,null);
+							$body = substituteLiteralNewlinesToHTMLBreaks($body);
+			?>
+				<div class="departmentScheduleItemContainer" style="">
+					<div class="departmentScheduleItemTitle"><?php echo $title; ?></div>
+					<div class="departmentScheduleItemInfo"><?php echo $body; ?></div>
+				</div>
+			<?php
+					}
+				}
+			?>
+			</div>
+		</div>
+	</div>
+	<?php
+}
+function handle_widget_personnel_coverage($widget,$section){
+	$widgetJSON = decodeWidget($widget);
+	$sectionJSON = decodeSection($section);
+	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
+	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
+
+	$offset = null;
+	$count = null;
+	$sortIndexDirection = null;
+	$tags = section_get_value_widget_array($widgetJSON,$sectionJSON,"tags");
+	$bios = giau_bio_paginated($offset,$count,$sortIndexDirection,$tags);
+
+	$bios = giau_bio_paginated($offset,$count,$sortIndexDirection,$tags);
+	$bioCount = count($bios);
+	
+	$imagePrefx = "./wp-content/themes/giau/img/personnel/";
+	$i;
+	for($i=0; $i<$bioCount; ++$i){
+		$bio = $bios[$i];
+		if($image!=""){
+			$image = $imagePrefx."".$image;
+		}
+		$image = $bio["image_url"];
+		$name = $bio["display_name"];
+		$email = $bio["email"];
+		$phone = $bio["phone"];
+			$phone = getHumanReadablePhone($phone);
+		?>
+	<img class="departmentInstructorDescription" src="./wp-content/themes/giau/img/personnel/<?php echo $image; ?>" style="width:100px; border-radius: 50%; display:inline-block;">
+	<div class="departmentInstructorDescriptionTitle"><?php echo $name; ?></div>
+	<div class="departmentInstructorDescriptionInfo"><?php echo $email; ?></div>
+	<div class="departmentInstructorDescriptionInfo"><?php echo $phone; ?></div>
+	<?php
+	}
+}
+
+
 function handle_widget_display_overlay($widget,$section){
 	error_log("handle_widget_navigation_list");
 	$widgetJSON = decodeWidget($widget);
@@ -400,6 +512,7 @@ function handle_widget_bio_listing($widget,$section){
 			$position = $bio["position"];
 			$email = $bio["email"];
 			$phone = $bio["phone"];
+				$phone = getHumanReadablePhone($phone);
 			$description = $bio["description"];
 			$uri = $bio["uri"];
 			$image = $bio["image_url"];

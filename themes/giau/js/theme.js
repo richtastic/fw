@@ -2899,13 +2899,15 @@ giau.ObjectComposer.prototype.fillOutModelFromElementArray = function(element,mo
 		console.log("\t=>array [array]");
 		var objectModel = modelFieldInfo["fields"];
 		for(var i=0; i<array.length; ++i){
-			this.fillOutModelFromElementArray(element,objectModel,array[i], field);
+var subElement = this.newSubElement(element,"array", array[i], field);
+			this.fillOutModelFromElementArray(subElement,objectModel,array[i], field);
 		}
 	}else if(modelSubType=="object"){
 		console.log("\t=>object [array]");
 		var objectModel = modelFieldInfo["fields"]["fields"];
 		for(var i=0; i<array.length; ++i){
-			this.fillOutModelFromElement(element,objectModel,array[i], false);
+var subElement = this.newSubElement(element,"object", array[i], field);
+			this.fillOutModelFromElement(subElement,objectModel,array[i], false);
 		}
 	}else{
 		console.log("\t=>primitive [array]");

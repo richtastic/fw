@@ -190,7 +190,7 @@ function giau_data_default_insert_into_database(){
 			'BIO_DESCRIPTION_JOSEPH_KIM_TEXT',
 			'BIO_URI_JOSEPH_KIM_URI_TEXT',
 			'ce-joe.png',
-			'ce,bio,contact'
+			'bio,contact,juniorhigh'
 	);
 	giau_insert_bio(
 			'BIO_FIRST_NAME_TONY_PARK_TEXT',
@@ -238,7 +238,7 @@ function giau_data_default_insert_into_database(){
 			'BIO_DESCRIPTION_ANDREW_LIM_TEXT',
 			'BIO_URI_ANDREW_LIM_URI_TEXT',
 			'ce-andy.png',
-			'highschool,bio,contact'
+			'bio,contact,highschool'
 	);
 	giau_insert_bio(
 			'BIO_FIRST_NAME_BORAM_LEE_TEXT',
@@ -250,7 +250,7 @@ function giau_data_default_insert_into_database(){
 			'BIO_DESCRIPTION_BORAM_LEE_TEXT',
 			'BIO_URI_BORAM_LEE_URI_TEXT',
 			'ce-boram.png',
-			'elementary,bio,contact'
+			'bio,contact,elementary'
 	);
 	giau_insert_bio(
 			'BIO_FIRST_NAME_SHEEN_HONG_TEXT',
@@ -262,7 +262,7 @@ function giau_data_default_insert_into_database(){
 			'BIO_DESCRIPTION_SHEEN_HONG_TEXT',
 			'BIO_URI_SHEEN_HONG_URI_TEXT',
 			'ce-hong.png',
-			'kindergarten,bio,contact'
+			'bio,contact,kindergarten'
 	);
 	giau_insert_bio(
 			'BIO_FIRST_NAME_JESSICA_WON_TEXT',
@@ -274,24 +274,33 @@ function giau_data_default_insert_into_database(){
 			'BIO_DESCRIPTION_JESSICA_WON_TEXT',
 			'BIO_URI_JESSICA_WON_URI_TEXT',
 			'ce-jessica.png',
-			'bio,contact'
+			'bio,contact,nursery'
 	);
 
 
 	// NAV-WIDGET
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_HOME_TEXT","Home");
+		giau_insert_languagization($langKor,"NAV_ITEM_PAGE_NAVIGATION_HOME_TEXT","홈");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPARTMENTS_TEXT","Departments");
+		giau_insert_languagization($langKor,"NAV_ITEM_PAGE_NAVIGATION_DEPARTMENTS_TEXT","부서");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_STAFF_TEXT","Staff");
+		giau_insert_languagization($langKor,"NAV_ITEM_PAGE_NAVIGATION_STAFF_TEXT","직원들");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_FORMS_TEXT","Forms");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_CONTACT_TEXT","Contact");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_LACPC_TEXT","LACPC");
 
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPT_NURSERY_TEXT","Nursery");
+		giau_insert_languagization($langKor,"NAV_ITEM_PAGE_NAVIGATION_DEPT_NURSERY_TEXT","유아실");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPT_KINDERGARTEN_TEXT","Kindergarten");
+		giau_insert_languagization($langKor,"NAV_ITEM_PAGE_NAVIGATION_DEPT_KINDERGARTEN_TEXT","유치부");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPT_ELEMENTARY_TEXT","Elementary");
+		giau_insert_languagization($langKor,"NAV_ITEM_PAGE_NAVIGATION_DEPT_ELEMENTARY_TEXT","초등부");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPT_JUNIOR_HIGH_TEXT","Junior High");
+		giau_insert_languagization($langKor,"NAV_ITEM_PAGE_NAVIGATION_DEPT_JUNIOR_HIGH_TEXT","중등부");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPT_HIGH_SCHOOL_TEXT","High School");
+		giau_insert_languagization($langKor,"NAV_ITEM_PAGE_NAVIGATION_DEPT_HIGH_SCHOOL_TEXT","고등부");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPT_KOREAN_SCHOOL_TEXT","Korean School");
+		giau_insert_languagization($langKor,"NAV_ITEM_PAGE_NAVIGATION_DEPT_KOREAN_SCHOOL_TEXT","한국어 학교");
 	
 
 	giau_insert_languagization($langEng,"LANGUAGE_SWITCH_ENGLISH_TEXT","EN");
@@ -305,9 +314,12 @@ function giau_data_default_insert_into_database(){
 
 	giau_insert_languagization($langEng,"PAGE_HOME_OVERLAY_TITLE_1_TEXT","THE FATHER'S HOUSE");
 	giau_insert_languagization($langEng,"PAGE_HOME_OVERLAY_TITLE_2_TEXT","JOIN US FOR WORSHIP");
+		giau_insert_languagization($langKor,"PAGE_HOME_OVERLAY_TITLE_2_TEXT","매주 일요일 오전11시에");
 	giau_insert_languagization($langEng,"PAGE_HOME_OVERLAY_TITLE_3_TEXT","Sunday at 11:00 a.m.");
+		giau_insert_languagization($langKor,"PAGE_HOME_OVERLAY_TITLE_3_TEXT","저희와 함깨 예배드리러 오세요");
 
 	giau_insert_languagization($langEng,"HEADING_HOME_CALENDAR_SCHEDULE_TEXT","Schedule of Events");
+		giau_insert_languagization($langKor,"HEADING_HOME_CALENDAR_SCHEDULE_TEXT","일정");
 
 
 	// WIDGET
@@ -698,6 +710,117 @@ function giau_data_default_insert_into_database(){
 		]
 	);
 
+
+	// => BANNER HEADER
+	$widget_id_banner_medal = giau_insert_widget("medal_banner",
+		[
+			"alias" => "medal_banner",
+			"name" => "Giau Medal Banner",
+			"cssClass" => "",
+			"jsClass" => "",
+			"fields" => [
+				"title" => [
+					"type" => "string"
+				],
+				"message" => [
+					"type" => "string"
+				],
+				"icon" => [
+					"type" => "string-image"
+				],
+				"color_base" => [
+					"type" => "string-color"
+				],
+				"color_light" => [
+					"type" => "string-color"
+				],
+				"color_dark" => [
+					"type" => "string-color"
+				],
+				"style" => [
+					"type" => "string"
+				],
+				"class" => [
+					"type" => "string"
+				],
+			]
+		]
+	);
+
+
+
+	// => SERVICE LIST
+	$widget_id_service_listing = giau_insert_widget("service_listing",
+		[
+			"alias" => "social_apps",
+			"name" => "Giau Social Apps",
+			"cssClass" => "",
+			"jsClass" => "",
+			"fields" => [
+				"services" => [
+					"type" => "array-object",
+					"fields" => [
+						"title" => [
+							"type" => "string"
+						],
+						"description" => [
+							"type" => "string"
+						],
+					]
+				],
+				"style" => [
+					"type" => "string"
+				],
+				"class" => [
+					"type" => "string"
+				],
+			]
+		]
+	);
+
+	// => PERSONNEL COVERAGE
+	$widget_id_personnel_coverage = giau_insert_widget("personnel_coverage",
+		[
+			"alias" => "social_apps",
+			"name" => "Giau Social Apps",
+			"cssClass" => "",
+			"jsClass" => "",
+			"fields" => [
+				"bio_tags" => [
+					"type" => "array-string",
+					"description" => "list of tags to filter on for listing"
+				],
+				"style" => [
+					"type" => "string"
+				],
+				"class" => [
+					"type" => "string"
+				],
+			]
+		]
+	);
+	/*
+	$widget_id_social_apps = giau_insert_widget("social_apps",
+		[
+			"alias" => "social_apps",
+			"name" => "Giau Social Apps",
+			"cssClass" => "",
+			"jsClass" => "",
+			"fields" => [
+				"" => [
+					//
+				],
+				"style" => [
+					"type" => "string"
+				],
+				"class" => [
+					"type" => "string"
+				],
+			]
+		]
+	);
+	*/
+
 	// => BIOGRAPHIES
 	$widget_id_bio_listing = giau_insert_widget("bio_listing",
 		[
@@ -774,7 +897,7 @@ function giau_data_default_insert_into_database(){
 				[
 					"name" => "nav_elementary",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPT_ELEMENTARY_TEXT",
-					"uri" => "./?page=staff&sp="
+					"uri" => "./?page=elementary&sp="
 				],
 				[
 					"name" => "nav_junior_high",
@@ -849,6 +972,7 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_BODY_TEXT","\"These commandments I give you today are to be upon your hearts. Impress them on your children. Talk about them when you sit at home and when you walk along the road, when you are down and when you get up.\"");
 	giau_insert_languagization($langEng,"PAGE_HOME_QUOTE_DEUTERONOMY_6_6_7_TITLE_TEXT","Deuteronomy 6:6-7");
 	giau_insert_languagization($langEng,"PAGE_HOME_QUOTE_PURPOSE_BODY_TEXT","Through worship, bible study & accountability, we strive to provide an environment for our children and youth to experience the grace of God. In addition, we aim to serve parents and entire families as well. More than just a children and youth ministry, our Christian Education department is a family ministry.");
+		giau_insert_languagization($langKor,"PAGE_HOME_QUOTE_PURPOSE_BODY_TEXT","어린이들과 청소년들이 가족들과 함께 예배와 성경공부를 통해 하나님의 은혜를 경험할수있는 환경을 제공하겠습니다. 우리는 부모와 가족 전체뿐만 아니라 서비스를 제공하는 것을 목표로하고 있습니다. 저희 교회의 교육부서는 어린이들과 청소년을 포함한, 가족을위한 XX (Ministry) 입니다.");
 
 
 		$section_category_prefix = "./wp-content/themes/giau/img/departments/";
@@ -1077,6 +1201,8 @@ function giau_data_default_insert_into_database(){
 		]
 	, [$section_id_text_footer_title, $section_id_social_apps, $section_id_text_footer_address_1, $section_id_text_footer_address_2 , $section_id_text_footer_address_3 , $section_id_text_footer_copyright, $section_id_text_footer_bottom_empty]);
 
+	error_log("section_id_footer_all: ".$section_id_footer_all);
+
 	$section_id_calendar_listing_home = giau_insert_section($widget_id_calendar_listing,
 		[
 			"tags" => [$calendar_tag_front_page],
@@ -1137,103 +1263,787 @@ function giau_data_default_insert_into_database(){
 
 	// PAGE DEPARTMENT - NURSURY
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_TITLE_TEXT","NURSERY");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SUBTITLE_TEXT","");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_STATEMENT_TITLE_TEXT","Nursery of Overflowing Love");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_BANNER_TITLE","Nursery of Overflowing Love");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_BANNER_MESSAGE","And now these three remain: fath, hope and love, but the greatest of these is love. - 1 Corinthians 13:13");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_TITLE_1","Sunday Worship\n1st Service");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_NURSERY_SERVICE_TITLE_1","주일예배 (첫예배)");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_1","9:00 AM\n@ Nursery Worship Room\n(in Nursery Building)");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_1","9:00 AM\n@ 유아 예배실\n(유아실 건물)");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_TITLE_2","Sunday Worship\n2nd Service");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_2","11:00 AM\n@ Nursery Worship Room\n(in Nursery Building)");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_1","11:00 AM\n@ 유아 예배실\n(유아실 건물)");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_TITLE_3","Friday Night\nFellowship");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_3","8:00 PM\n@ Nursery Building");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SECTION_1","The Nursery department at LACPC envisions a children's ministry that follows the overarching theme of the education department, \"Father's House.\" Through nursery department's worship, gudance, and nuturing, we hope to restablish the following:");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SECTION_2","1");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SECTION_3","Family worships and communication with families that will enrich the spiritual lives of our young children.");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SECTION_4","2");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SECTION_5","Family visitations that will enhance the love of God.");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SECTION_6","3");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SECTION_7","Revival and acceptance of multicultural children and families.");
 
-
-
-
-	/*
-	$departmentPageDataPageNursery = [
-		"heading" => "NURSERY",
-		"statement_title" => "Nursery of Overflowing Love",
-		"statement_body" => "And now these three remain: fath, hope and love, but the greatest of these is love. - 1 Corinthians 13:13",
-		"statement_image_suffix" => "featured_nursery.png",
-		"statement_color_bg" => "#CBC42D",
-		"statement_color_top" => "#BBBB22",
-		"statement_color_bot" => "#BBBB22",
-		"services" => [
-			[
-				"title" => "Sunday Worship<br/>1st Service",
-				"body" => "9:00 AM<br/>@ Nursery Worship Room<br/>(in Nursery Building)"
-			],
-			[
-				"title" => "Sunday Worship<br/>2nd Service",
-				"body" => "11:00 AM<br/>@ Nursery Worship Room<br/>(in Nursery Building)"
-			],
-			[
-				"title" => "Friday Night<br/>Fellowship",
-				"body" => "8:00 PM<br/>@ Nursery Building"
-			]
-		],
-		"personnel" => [
-			[
-				"display_name" => "Jessica Won",
-				"display_email" => "jcb4jessica@gmail.com",
-				"display_phone" => "(323) 203-4044",
-				"image_relative_path" => "ce-jessica.png"
-			]
-		],
-		"breakdown" => [
-			[
-				"type" => "bold",
-				"display" => "The Nursery department at LACPC envisions a children's ministry that follows the overarching theme of the education department, \"Father's House.\" Through nursery department's worship, gudance, and nuturing, we hope to restablish the following:"
-			],
-			[
-				"type" => "featured",
-				"display" => "1"
-			],
-			[
-				"type" => "info",
-				"display" => "Family worships and communication with families that will enrich the spiritual lives of our young children."
-			],
-			[
-				"type" => "featured",
-				"display" => "2"
-			],
-			[
-				"type" => "info",
-				"display" => "Family visitations that will enhance the love of God."
-			],
-			[
-				"type" => "featured",
-				"display" => "3"
-			],
-			[
-				"type" => "info",
-				"display" => "Revival and acceptance of multicultural children and families."
-			],
-		],
-		"image_gallery" => [ // TODO : NURSERY IMAGES
-			"prefix" => relativePathIMG()."departments/galleries/"."elementary/",
-			"images" => [
-				"gallery_01.png",
-				"gallery_02.png",
-				"gallery_03.png",
-				"gallery_04.png",
-				"gallery_05.png",
-				"gallery_06.png",
-				"gallery_07.png",
-				"gallery_08.png",
-				"gallery_09.png"
-			]
+	$section_id_banner_nursery = giau_insert_section($widget_id_banner_medal,
+		[
+			"title" => "PAGE_DEPARTMENT_NURSERY_BANNER_TITLE",
+			"message" => "PAGE_DEPARTMENT_NURSERY_BANNER_MESSAGE",
+			"icon" => "./wp-content/themes/giau/img/departments/featured_nursery.png",
+			"color_base" => "0xCBC42D",
+			"color_light" => "0xBBBB22",
+			"color_dark" => "0xBBBB22",
+			"class" => "",
+			"style" => "",
 		]
-	];
-	*/
-/*
-	ALL TYPES: -- all literals are strings later parsed into actual primitive types in JS as needed
-		boolean = boolean
-		number = int, float
-		string = string
-		image = string, expecting an image URL
-			-> sub attribute languagization
-		array-<sub-type>
-				{
-					"name": "title",
-					"type": "string"
-					"languagization" => "true"
-				}
-	*/
+	, []);
+
+	$section_id_services_nursery = giau_insert_section($widget_id_service_listing,
+		[
+			"services" => [
+				[
+					"title" => "PAGE_DEPARTMENT_NURSERY_SERVICE_TITLE_1",
+					"description" => "PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_1",
+				],
+				[
+					"title" => "PAGE_DEPARTMENT_NURSERY_SERVICE_TITLE_2",
+					"description" => "PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_2",
+				],
+				[
+					"title" => "PAGE_DEPARTMENT_NURSERY_SERVICE_TITLE_3",
+					"description" => "PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_3",
+				],
+			],
+			"class" => "",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_personnel_nursery = giau_insert_section($widget_id_personnel_coverage,
+		[
+			"tags" => [
+				"nursery"
+			],
+			"class" => "",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_text_nursery_1 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_NURSERY_SECTION_1",
+			"class" => "departmentDescriptionItemBold",
+			"style" => "",
+		]
+	, []);
+	$section_id_text_nursery_2 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_NURSERY_SECTION_2",
+			"class" => "departmentDescriptionItemFeatured",
+			"style" => "",
+		]
+	, []);
+	$section_id_text_nursery_3 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_NURSERY_SECTION_3",
+			"class" => "departmentDescriptionItemInfo",
+			"style" => "",
+		]
+	, []);
+	$section_id_text_nursery_4 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_NURSERY_SECTION_4",
+			"class" => "departmentDescriptionItemFeatured",
+			"style" => "",
+		]
+	, []);
+	$section_id_text_nursery_5 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_NURSERY_SECTION_5",
+			"class" => "departmentDescriptionItemInfo",
+			"style" => "",
+		]
+	, []);
+	$section_id_text_nursery_6 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_NURSERY_SECTION_6",
+			"class" => "departmentDescriptionItemFeatured",
+			"style" => "",
+		]
+	, []);
+	$section_id_text_nursery_7 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_NURSERY_SECTION_7",
+			"class" => "departmentDescriptionItemInfo",
+			"style" => "",
+		]
+	, []);
+
+		$section_image_gallery_elementary_prefix = "./wp-content/themes/giau/img/departments/galleries/"."elementary/";
+	$section_id_gallery_nursery = giau_insert_section($widget_id_image_gallery,
+		[
+			"autoplay" => "10000",
+			"display_navigation" => "false",
+			"images" => [
+				$section_image_gallery_elementary_prefix."gallery_01.png",
+				$section_image_gallery_elementary_prefix."gallery_02.png",
+				$section_image_gallery_elementary_prefix."gallery_03.png",
+				$section_image_gallery_elementary_prefix."gallery_04.png",
+				$section_image_gallery_elementary_prefix."gallery_05.png",
+				$section_image_gallery_elementary_prefix."gallery_06.png",
+				$section_image_gallery_elementary_prefix."gallery_07.png",
+				$section_image_gallery_elementary_prefix."gallery_08.png",
+				$section_image_gallery_elementary_prefix."gallery_09.png",
+			],
+			"height" => "400px",
+			"style" => "",
+			"class" => ""
+		]
+	, []);
+	
+
+	$section_id_text_nursery_left = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:table-cell; width:40%; vertical-align:top; text-align:center;",
+		]
+	, [$section_id_personnel_nursery]);
+	$section_id_text_nursery_right = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:table-cell; width:60%; vertical-align:top; text-align:center; padding:0px 20px 0px 20px;",
+		]
+	, [	$section_id_text_nursery_1,
+		$section_id_text_nursery_2,
+		$section_id_text_nursery_3,
+		$section_id_text_nursery_4,
+		$section_id_text_nursery_5,
+		$section_id_text_nursery_6,
+		$section_id_text_nursery_7]);
+
+	$section_id_text_nursery_container = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:block; background-color:#FFF; padding:20px;",
+		]
+	, [$section_id_text_nursery_left,$section_id_text_nursery_right]);
+
+	$PAGE_TAG_DEPARTMENTS_NURSERY = "nursery";
+	// PAGE - NURSERY
+	$page_id_nursery = giau_insert_page("page_nursery",
+		[
+			// NAV
+			$section_id_navigation_main_container,
+			$section_id_navigation_secondary_container,
+			//
+			$section_id_banner_nursery,
+			$section_id_gallery_nursery,
+			$section_id_services_nursery,
+			$section_id_text_nursery_container,
+			// TODO -- make specific nursery gallery
+			$section_id_text_calendar_heading,
+			$section_id_calendar_listing_home,
+
+		],
+		"".$PAGE_TAG_DEPARTMENTS_NURSERY.""
+	);
+	error_log("page_id_nursery: ".$page_id_nursery);
+
+
+
+
+
+	// PAGE DEPARTMENT - KINDERGARTEN
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_TITLE_TEXT","KINDERGARTEN");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_BANNER_TITLE","Grown in Christ, as God's Children");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_BANNER_MESSAGE","Worship the LORD with gladness: come before him with joyful song. - Psalm 100:2");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_1","Sunday Worship");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_1","11:00 AM\n@ Kindergarden Worship Room\n(in Kindergarden Building)");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_1","11:00 AM\n@ 유치부 예배실\n(유치부 건물)");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_2","Sunday Bible Study");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_2","주일 성경공부");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_2","11:40 AM\n@ Classroom #302, 303, 306\n(in Kindergarden Building)");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_1","11:40 AM\n@ 주일 성경공부 (#302, 303, 306호 교실)\n(유치부 건물)");
+
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_3","Friday Night\nBible Study");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_3","금요일밤 성경공부");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_3","8:00 PM\n@ Classroom #303\n(in Kindergarden Building)");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SECTION_1","As a goal, let children grow in the Lord Jesus Christ, building the image of God through the \"Word of God.\" Becoming disciples of Jesus in the joy of worshipping God as well as becoming evangelists of Jesus in Children's lives.");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SECTION_2","For families, Christian education builds up in a family and provide parents with training opportunities and teaching materials to be active ministry supporters.");
+
+	$section_id_banner_kindergarten = giau_insert_section($widget_id_banner_medal,
+		[
+			"title" => "PAGE_DEPARTMENT_KINDERGARTEN_BANNER_TITLE",
+			"message" => "PAGE_DEPARTMENT_KINDERGARTEN_BANNER_MESSAGE",
+			"icon" => "./wp-content/themes/giau/img/departments/featured_kindergarden.png",
+			"color_base" => "0xE0D011",
+			"color_light" => "0xDDC313",
+			"color_dark" => "0xDDC313",
+			"class" => "",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_services_kindergarten = giau_insert_section($widget_id_service_listing,
+		[
+			"services" => [
+				[
+					"title" => "PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_1",
+					"description" => "PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_1",
+				],
+				[
+					"title" => "PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_2",
+					"description" => "PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_2",
+				],
+				[
+					"title" => "PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_3",
+					"description" => "PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_3",
+				],
+			],
+			"class" => "",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_personnel_kindergarten = giau_insert_section($widget_id_personnel_coverage,
+		[
+			"tags" => [
+				"kindergarten"
+			],
+			"class" => "",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_text_kindergarten_1 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_KINDERGARTEN_SECTION_1",
+			"class" => "departmentDescriptionItemBold",
+			"style" => "",
+		]
+	, []);
+	$section_id_text_kindergarten_2 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_KINDERGARTEN_SECTION_2",
+			"class" => "departmentDescriptionItemBold",
+			"style" => "",
+		]
+	, []);
+
+		$section_image_gallery_kindergarten_prefix = "./wp-content/themes/giau/img/departments/galleries/"."kindergarten/";
+	$section_id_gallery_kindergarten = giau_insert_section($widget_id_image_gallery,
+		[
+			"autoplay" => "10000",
+			"display_navigation" => "false",
+			"images" => [
+				$section_image_gallery_kindergarten_prefix."gallery_01.png",
+				$section_image_gallery_kindergarten_prefix."gallery_02.png",
+				$section_image_gallery_kindergarten_prefix."gallery_03.png",
+				$section_image_gallery_kindergarten_prefix."gallery_04.png",
+				$section_image_gallery_kindergarten_prefix."gallery_05.png",
+				$section_image_gallery_kindergarten_prefix."gallery_06.png",
+				$section_image_gallery_kindergarten_prefix."gallery_07.png",
+			],
+			"height" => "400px",
+			"style" => "",
+			"class" => ""
+		]
+	, []);
+
+	
+
+	$section_id_text_kindergarten_left = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:table-cell; width:40%; vertical-align:top; text-align:center;",
+		]
+	, [$section_id_personnel_kindergarten]);
+	$section_id_text_kindergarten_right = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:table-cell; width:60%; vertical-align:top; text-align:center; padding:0px 20px 0px 20px;",
+		]
+	, [$section_id_text_kindergarten_1,$section_id_text_kindergarten_2]);
+
+	$section_id_text_kindergarten_container = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:block; background-color:#FFF; padding:20px;",
+		]
+	, [$section_id_text_kindergarten_left,$section_id_text_kindergarten_right]);
+
+	$PAGE_TAG_DEPARTMENTS_KINDERGARTEN = "kindergarten";
+	// PAGE - KINDERGARTEN
+	$page_id_kindergarten = giau_insert_page("page_kindergarten",
+		[
+			// NAV
+			$section_id_navigation_main_container,
+			$section_id_navigation_secondary_container,
+			//
+			$section_id_banner_kindergarten,
+			$section_id_gallery_kindergarten,
+			$section_id_services_kindergarten,
+			$section_id_text_kindergarten_container,
+			// TODO -- make specific kindergarten gallery
+			$section_id_text_calendar_heading,
+			$section_id_calendar_listing_home,
+
+		],
+		"".$PAGE_TAG_DEPARTMENTS_KINDERGARTEN.""
+	);
+	error_log("page_id_kindergarten: ".$page_id_kindergarten);
+
+
+
+
+
+	// PAGE DEPARTMENT - ELEMENTARY
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_TITLE_TEXT","ELEMENTARY");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_BANNER_TITLE","");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_BANNER_MESSAGE","Start children off on the way they should go, and even when they are old they will not turn from it - Proverbs 22:6");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_TITLE_1","Sunday Worship\n1st Service");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_TITLE_1","주일예배 (첫예배)");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_1","11:00 AM\n@ Elementary Worship Room");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_1","11:00 AM\n@ 초등부 예배");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_TITLE_2","Sunday Worship\n2nd Service");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_2","11:45 AM\n@ Classroom #138, 139, 140, 141, 142");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_TITLE_3","Friday Program: AWANA");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_3","8:00 - 8:30 PM\nGame Time (Cafeteria)\n\n8:30 - 9:00 PM<br>Handbook Time\n(Classrooms)\n\n9:00 - 9:20 PM\nCouncil Time (Choir Room)");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_3","8:00 - 8:30 PM\n게임 (식당)\n\n8:30 - 9:00 PM<br>안내서 시간 (교실)\n\n9:00 - 9:20 PM\n이사회 모임 (성가대실)");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SECTION_1","Elementary Department's vision and goal is to start children off on their journey of faith through:");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SECTION_2","1");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SECTION_3","Fostering a joy and desire to lean about God (fun and engaging worship, bible studies, and events)");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SECTION_4","2");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SECTION_5","Implementing the basic Christian disciplines (prayer, quiet time, bible reading)");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SECTION_6","3");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SECTION_7","Encouraging an active Christian lifestyle (knowledge into action)");
+
+	$section_id_banner_elementary = giau_insert_section($widget_id_banner_medal,
+		[
+			"title" => "PAGE_DEPARTMENT_ELEMENTARY_BANNER_TITLE",
+			"message" => "PAGE_DEPARTMENT_ELEMENTARY_BANNER_MESSAGE",
+			"icon" => "./wp-content/themes/giau/img/departments/featured_elementary.png",
+			"color_base" => "0xF1592A",
+			"color_light" => "0xDD5526",
+			"color_dark" => "0xDD5526",
+			"class" => "",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_services_elementary = giau_insert_section($widget_id_service_listing,
+		[
+			"services" => [
+				[
+					"title" => "PAGE_DEPARTMENT_ELEMENTARY_SERVICE_TITLE_1",
+					"description" => "PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_1",
+				],
+				[
+					"title" => "PAGE_DEPARTMENT_ELEMENTARY_SERVICE_TITLE_2",
+					"description" => "PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_2",
+				],
+				[
+					"title" => "PAGE_DEPARTMENT_ELEMENTARY_SERVICE_TITLE_3",
+					"description" => "PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_3",
+				],
+			],
+			"class" => "",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_personnel_elementary = giau_insert_section($widget_id_personnel_coverage,
+		[
+			"tags" => [
+				"elementary"
+			],
+			"class" => "",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_text_elementary_1 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_ELEMENTARY_SECTION_1",
+			"class" => "departmentDescriptionItemBold",
+			"style" => "",
+		]
+	, []);
+	$section_id_text_elementary_2 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_ELEMENTARY_SECTION_2",
+			"class" => "departmentDescriptionItemFeatured",
+			"style" => "",
+		]
+	, []);
+	$section_id_text_elementary_3 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_ELEMENTARY_SECTION_3",
+			"class" => "departmentDescriptionItemInfo",
+			"style" => "",
+		]
+	, []);
+	$section_id_text_elementary_4 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_ELEMENTARY_SECTION_4",
+			"class" => "departmentDescriptionItemFeatured",
+			"style" => "",
+		]
+	, []);
+	$section_id_text_elementary_5 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_ELEMENTARY_SECTION_5",
+			"class" => "departmentDescriptionItemInfo",
+			"style" => "",
+		]
+	, []);
+	$section_id_text_elementary_6 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_ELEMENTARY_SECTION_6",
+			"class" => "departmentDescriptionItemFeatured",
+			"style" => "",
+		]
+	, []);
+	$section_id_text_elementary_7 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_ELEMENTARY_SECTION_7",
+			"class" => "departmentDescriptionItemInfo",
+			"style" => "",
+		]
+	, []);
+
+		$section_image_gallery_elementary_prefix = "./wp-content/themes/giau/img/departments/galleries/"."elementary/";
+	$section_id_gallery_elementary = giau_insert_section($widget_id_image_gallery,
+		[
+			"autoplay" => "10000",
+			"display_navigation" => "false",
+			"images" => [
+				$section_image_gallery_elementary_prefix."gallery_01.png",
+				$section_image_gallery_elementary_prefix."gallery_02.png",
+				$section_image_gallery_elementary_prefix."gallery_03.png",
+				$section_image_gallery_elementary_prefix."gallery_04.png",
+				$section_image_gallery_elementary_prefix."gallery_05.png",
+				$section_image_gallery_elementary_prefix."gallery_06.png",
+				$section_image_gallery_elementary_prefix."gallery_07.png",
+				$section_image_gallery_elementary_prefix."gallery_08.png",
+				$section_image_gallery_elementary_prefix."gallery_09.png",
+			],
+			"height" => "400px",
+			"style" => "",
+			"class" => ""
+		]
+	, []);
+
+	
+
+	$section_id_text_elementary_left = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:table-cell; width:40%; vertical-align:top; text-align:center;",
+		]
+	, [$section_id_personnel_elementary]);
+	$section_id_text_elementary_right = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:table-cell; width:60%; vertical-align:top; text-align:center; padding:0px 20px 0px 20px;",
+		]
+	, [$section_id_text_elementary_1,$section_id_text_elementary_2,$section_id_text_elementary_3,$section_id_text_elementary_4,$section_id_text_elementary_5,$section_id_text_elementary_6,$section_id_text_elementary_7]);
+
+	$section_id_text_elementary_container = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:block; background-color:#FFF; padding:20px;",
+		]
+	, [$section_id_text_elementary_left,$section_id_text_elementary_right]);
+
+	$PAGE_TAG_DEPARTMENTS_ELEMENTARY = "elementary";
+	// PAGE - ELEMENTARY
+	$page_id_elementary = giau_insert_page("page_elementary",
+		[
+			// NAV
+			$section_id_navigation_main_container,
+			$section_id_navigation_secondary_container,
+			//
+			$section_id_banner_elementary,
+			$section_id_gallery_elementary,
+			$section_id_services_elementary,
+			$section_id_text_elementary_container,
+			// TODO -- make specific elementary gallery
+			$section_id_text_calendar_heading,
+			$section_id_calendar_listing_home,
+
+		],
+		"".$PAGE_TAG_DEPARTMENTS_ELEMENTARY.""
+	);
+	error_log("page_id_elementary: ".$page_id_elementary);
+
+
+
+
+
+	// PAGE DEPARTMENT - JUNIORHIGH
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_TITLE_TEXT","\"HIS\" JR. HIGH");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_BANNER_TITLE","Live for the Lord for we are His");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_BANNER_MESSAGE","If we live, we live to the Lord; and if we die, we die to the Lord. So, whether we live or die, we belong to the Lord.");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_1","Sunday Worship");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_1","주일예배");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_1","11:00 AM\n@ Junior High Worship Room");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_1","11:00 AM\n@ 중등부 예배실");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_2","Sunday Bible Study");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_2","12:00 PM\n@ Classroom #150, 152, 153");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_3","Friday Night\nBible Study");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_3","금요일밤 성경공부");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_3","8:00 PM\n@ Junior High Worship Room");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_1","8:00 PM\n@ 중등부 예배실");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SECTION_1","We belong to God and belonging to God is the greatest blessing and encouragement that anyone can have. Being His is a great blessing but another aspect of being His is to live and die for Him. Our lives belong to Him therfore we should live our lives accodring to His will.");
+
+	$section_id_banner_juniorhigh = giau_insert_section($widget_id_banner_medal,
+		[
+			"title" => "PAGE_DEPARTMENT_JUNIORHIGH_BANNER_TITLE",
+			"message" => "PAGE_DEPARTMENT_JUNIORHIGH_BANNER_MESSAGE",
+			"icon" => "./wp-content/themes/giau/img/departments/featured_jrhigh.png",
+			"color_base" => "0xBA1E71",
+			"color_light" => "0xB91370",
+			"color_dark" => "0xB91370",
+			"class" => "",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_services_juniorhigh = giau_insert_section($widget_id_service_listing,
+		[
+			"services" => [
+				[
+					"title" => "PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_1",
+					"description" => "PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_1",
+				],
+				[
+					"title" => "PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_2",
+					"description" => "PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_2",
+				],
+				[
+					"title" => "PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_3",
+					"description" => "PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_3",
+				],
+			],
+			"class" => "",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_personnel_juniorhigh = giau_insert_section($widget_id_personnel_coverage,
+		[
+			"tags" => [
+				"juniorhigh"
+			],
+			"class" => "",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_text_juniorhigh_1 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_JUNIORHIGH_SECTION_1",
+			"class" => "departmentDescriptionItemBold",
+			"style" => "",
+		]
+	, []);
+
+		$section_image_gallery_juniorhigh_prefix = "./wp-content/themes/giau/img/departments/galleries/"."jrhigh/";
+	$section_id_gallery_juniorhigh = giau_insert_section($widget_id_image_gallery,
+		[
+			"autoplay" => "10000",
+			"display_navigation" => "false",
+			"images" => [
+				$section_image_gallery_juniorhigh_prefix."gallery_01.png",
+				$section_image_gallery_juniorhigh_prefix."gallery_02.png",
+				$section_image_gallery_juniorhigh_prefix."gallery_03.png",
+				$section_image_gallery_juniorhigh_prefix."gallery_04.png",
+				$section_image_gallery_juniorhigh_prefix."gallery_05.png",
+				$section_image_gallery_juniorhigh_prefix."gallery_06.png",
+				$section_image_gallery_juniorhigh_prefix."gallery_07.png",
+				$section_image_gallery_juniorhigh_prefix."gallery_08.png",
+				$section_image_gallery_juniorhigh_prefix."gallery_09.png",
+				$section_image_gallery_juniorhigh_prefix."gallery_10.png",
+			],
+			"height" => "400px",
+			"style" => "",
+			"class" => ""
+		]
+	, []);
+
+	
+
+	$section_id_text_juniorhigh_left = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:table-cell; width:40%; vertical-align:top; text-align:center;",
+		]
+	, [$section_id_personnel_juniorhigh]);
+	$section_id_text_juniorhigh_right = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:table-cell; width:60%; vertical-align:top; text-align:center; padding:0px 20px 0px 20px;",
+		]
+	, [$section_id_text_juniorhigh_1,$section_id_text_juniorhigh_2]);
+
+	$section_id_text_juniorhigh_container = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:block; background-color:#FFF; padding:20px;",
+		]
+	, [$section_id_text_juniorhigh_left,$section_id_text_juniorhigh_right]);
+
+	$PAGE_TAG_DEPARTMENTS_JUNIORHIGH = "juniorhigh";
+	// PAGE - JUNIORHIGH
+	$page_id_juniorhigh = giau_insert_page("page_juniorhigh",
+		[
+			// NAV
+			$section_id_navigation_main_container,
+			$section_id_navigation_secondary_container,
+			//
+			$section_id_banner_juniorhigh,
+			$section_id_gallery_juniorhigh,
+			$section_id_services_juniorhigh,
+			$section_id_text_juniorhigh_container,
+			// TODO -- make specific juniorhigh gallery
+			$section_id_text_calendar_heading,
+			$section_id_calendar_listing_home,
+
+		],
+		"".$PAGE_TAG_DEPARTMENTS_JUNIORHIGH.""
+	);
+	error_log("page_id_juniorhigh: ".$page_id_juniorhigh);
+
+
+
+
+
+
+	// PAGE DEPARTMENT - HIGHSCHOOL
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_TITLE_TEXT","HIGH SCHOOL");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_TITLE","");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_MESSAGE","But seek first his kingdom and his righteousness, and all these things will be given to you as well. Therefore do not worry about tomorrow, for tomorrow will worry about itself.");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_1","Sunday Worship");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_1","11:00 AM\n@ High School Worship Room");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_1","11:00 AM\n@ 고등부 예배실");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_2","Sunday Bible Study");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_2","12:00 PM\n@ Classroom #135, 136, 137, 148");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_3","Friday Night\nBible Study");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_3","금요일밤 성경공부");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_3","8:00 PM\n@ High School Worship Room");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_3","8:00 PM\n@ 고등부 예배실");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SECTION_1","Our mission is to help take the next step in their spiritual lives and grown in maturity in their relationship with Jesus. The high school years are a challenging time when sudents have so many other activities competing for their time and energy, and we emphasize prioritizing their personal relationship with Jesus amidst all of the busyness in their lives. Students are encouraged to go beyond a simple emotional relationship with God and have a relationship marked by spiritual discipline and obedience.");
+
+	$section_id_banner_highschool = giau_insert_section($widget_id_banner_medal,
+		[
+			"title" => "PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_TITLE",
+			"message" => "PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_MESSAGE",
+			"icon" => "./wp-content/themes/giau/img/departments/featured_jrhigh.png",
+			"color_base" => "0x3B1955",
+			"color_light" => "0x361650",
+			"color_dark" => "0x361650",
+			"class" => "",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_services_highschool = giau_insert_section($widget_id_service_listing,
+		[
+			"services" => [
+				[
+					"title" => "PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_1",
+					"description" => "PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_1",
+				],
+				[
+					"title" => "PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_2",
+					"description" => "PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_2",
+				],
+				[
+					"title" => "PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_3",
+					"description" => "PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_3",
+				],
+			],
+			"class" => "",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_personnel_highschool = giau_insert_section($widget_id_personnel_coverage,
+		[
+			"tags" => [
+				"highschool"
+			],
+			"class" => "",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_text_highschool_1 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_DEPARTMENT_HIGHSCHOOL_SECTION_1",
+			"class" => "departmentDescriptionItemBold",
+			"style" => "",
+		]
+	, []);
+
+		$section_image_gallery_highschool_prefix = "./wp-content/themes/giau/img/departments/galleries/"."highschool/";
+	$section_id_gallery_highschool = giau_insert_section($widget_id_image_gallery,
+		[
+			"autoplay" => "10000",
+			"display_navigation" => "false",
+			"images" => [
+				$section_image_gallery_highschool_prefix."gallery_01.png",
+				$section_image_gallery_highschool_prefix."gallery_02.png",
+			],
+			"height" => "400px",
+			"style" => "",
+			"class" => ""
+		]
+	, []);
+
+	
+
+	$section_id_text_highschool_left = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:table-cell; width:40%; vertical-align:top; text-align:center;",
+		]
+	, [$section_id_personnel_highschool]);
+	$section_id_text_highschool_right = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:table-cell; width:60%; vertical-align:top; text-align:center; padding:0px 20px 0px 20px;",
+		]
+	, [$section_id_text_highschool_1,$section_id_text_highschool_2]);
+
+	$section_id_text_highschool_container = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:block; background-color:#FFF; padding:20px;",
+		]
+	, [$section_id_text_highschool_left,$section_id_text_highschool_right]);
+
+	$PAGE_TAG_DEPARTMENTS_HIGHSCHOOL = "highschool";
+	// PAGE - HIGHSCHOOL
+	$page_id_highschool = giau_insert_page("page_highschool",
+		[
+			// NAV
+			$section_id_navigation_main_container,
+			$section_id_navigation_secondary_container,
+			//
+			$section_id_banner_highschool,
+			$section_id_gallery_highschool,
+			$section_id_services_highschool,
+			$section_id_text_highschool_container,
+			// TODO -- make specific highschool gallery
+			$section_id_text_calendar_heading,
+			$section_id_calendar_listing_home,
+
+		],
+		"".$PAGE_TAG_DEPARTMENTS_HIGHSCHOOL.""
+	);
+	error_log("page_id_highschool: ".$page_id_highschool);
+
+
+
 
 }
 
