@@ -23,6 +23,7 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"BIO_EMAIL_JOSEPH_KIM_TEXT","jmkim75@gmail.com");
 	giau_insert_languagization($langEng,"BIO_PHONE_JOSEPH_KIM_TEXT","2132006092");
 	giau_insert_languagization($langEng,"BIO_DESCRIPTION_JOSEPH_KIM_TEXT","Joseph is happily married to Joyce, the woman of his dreams. He has a bachelor’s degree in civil engineering and a Master of Divinity degree and was called into vocational ministry in 2004. He began serving at LACPC as a high school pastor in December 2006 and by God’s grace is currently serving as the director of Christian Education.");
+		giau_insert_languagization($langKor,"BIO_DESCRIPTION_JOSEPH_KIM_TEXT","요셉은 꿈의 여인같은 아내 죠이스 씨랑  행복한 삶을 살고 있습니다.  토목 공사 학사 학위와 신학 석사 학위를 지니고, 2004년에 전문 사역의 부름을 받으며, 2006년 12월 LACPC 의 고등부 담임 목사로 시작하여 현재 하나님의 은혜로 기독교 교육부 이사로 섬기고 있습니다.");
 	giau_insert_languagization($langEng,"BIO_URI_JOSEPH_KIM_URI_TEXT","");
 	
 	giau_insert_languagization($langEng,"BIO_FIRST_NAME_TONY_PARK_TEXT","Tony");
@@ -61,6 +62,7 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"BIO_EMAIL_ANDREW_LIM_TEXT","mrlimshhs@gmail.com");
 	giau_insert_languagization($langEng,"BIO_PHONE_ANDREW_LIM_TEXT","6265366126");
 	giau_insert_languagization($langEng,"BIO_DESCRIPTION_ANDREW_LIM_TEXT","Andrew has been attending LACPC ever since he was a high school freshman. He got his bachelor’s degree from UC Irvine and a Masters in Pastoral Studies from Azusa Pacific University. He has been serving as the high school pastor since May of last year and also works full time as a high school English teacher.");
+		giau_insert_languagization($langKor,"BIO_DESCRIPTION_ANDREW_LIM_TEXT","앤드류는 고등학교 1학년떄부터LACPC 의 멤버였으며, 유시 얼바인 에서 학위를 받았고, 아주사 퍼시픽 대학원에서 목회 학사 학위를 받았습니다. 지난 해 5월달부터 고등부 목사 또는 고등부 영어 교사로 섬기고 있습니다.");
 	giau_insert_languagization($langEng,"BIO_URI_ANDREW_LIM_URI_TEXT","");
 
 	giau_insert_languagization($langEng,"BIO_FIRST_NAME_BORAM_LEE_TEXT","Boram");
@@ -71,6 +73,7 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"BIO_EMAIL_BORAM_LEE_TEXT","boramjdsn@gmail.com");
 	giau_insert_languagization($langEng,"BIO_PHONE_BORAM_LEE_TEXT","9098688457");
 	giau_insert_languagization($langEng,"BIO_DESCRIPTION_BORAM_LEE_TEXT","Born and raised in Los Angeles, Boram has a BA in cognitive psychology, a multiple subjects credential, and a master’s degree in teaching. She began seminary in January 2013 at Azusa Pacific University where she is studying to obtain an MA in pastoral studies with an emphasis is youth and family ministry. Her passion is to serve and train young children so that they can develop a solid relationship with God.");
+		giau_insert_languagization($langKor,"BIO_DESCRIPTION_BORAM_LEE_TEXT","로스 앤젤레스에서 태어나 자란 보람 씨는 심리학 또는 여러 과목 자격 증명을 얻고, 교육 석사 학위를 가지고 있습니다. 보람 씨는 2013년 1월 아주사 퍼시픽 대학교에서 신학 공부를 시작하였고, 현재 청소년과 가족 사역을 중점으로 하여 목회 학위를 얻기 위해 공부하고 있습니다. 그녀의 열정은 어린이들이 주님과 견고한 관계를 발전 할 수 있도록 가리키고 봉사하는 것입니다.");
 	giau_insert_languagization($langEng,"BIO_URI_BORAM_LEE_URI_TEXT","");
 
 	giau_insert_languagization($langEng,"BIO_FIRST_NAME_SHEEN_HONG_TEXT","Sheen");
@@ -81,6 +84,7 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"BIO_EMAIL_SHEEN_HONG_TEXT","pastorhong71@gmail.com");
 	giau_insert_languagization($langEng,"BIO_PHONE_SHEEN_HONG_TEXT","2133695590");
 	giau_insert_languagization($langEng,"BIO_DESCRIPTION_SHEEN_HONG_TEXT","Sheen Hong is a loving mother of two children, Karis and Jin-Sung, and happy wife of Joshua, husband and a Chaplain. She has a bachelor’s degree in Christian education and Master of Arts degree in Christian Education. She was called into Children’s ministry in 2009. She began serving at LACPC as a Kindergarten pastor in December 2015.");
+		giau_insert_languagization($langKor,"BIO_DESCRIPTION_SHEEN_HONG_TEXT","쉰 홍씨는 사랑스러운 카리스 그리고 진성의 엄마이자, 남편 여호수아씨의 행복한 아내입니다. 기독교 교육과 예술 학위를 가지고있으며, 그녀는2009 년에 어린이부 사역에 부름을 받았습니다. 12 월 2015 년에 LACPC 유치부 담임 목사로 섬기기 시작하였습니다.");
 	giau_insert_languagization($langEng,"BIO_URI_SHEEN_HONG_URI_TEXT","");
 
 	giau_insert_languagization($langEng,"BIO_FIRST_NAME_JESSICA_WON_TEXT","Jessica");
@@ -91,6 +95,7 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"BIO_EMAIL_JESSICA_WON_TEXT","jcb4jessica@gmail.com");
 	giau_insert_languagization($langEng,"BIO_PHONE_JESSICA_WON_TEXT","3232034004");
 	giau_insert_languagization($langEng,"BIO_DESCRIPTION_JESSICA_WON_TEXT","Jessica Won is married to Peter Won and has twin boys and a girl. She has a degree of Child Development from Patten University and currently working on M.Div. from Azusa University. She loves to share gospel to children and now oversees the nursery department.");
+		giau_insert_languagization($langKor,"BIO_DESCRIPTION_JESSICA_WON_TEXT","제시카 원 는 피터 원과 결혼하였으며, 쌍둥이 아들 딸이 있습니다. 그녀는 패튼 대학교 에서 아동발달 학위를 얻었고, 현재 아주사 대학원에서 M.Div 공부를 하고 있습니다. 그녀는 아이들에게 복음 전하는 것을 즐기며, 유아부를 담당하고 있습니다.");
 	giau_insert_languagization($langEng,"BIO_URI_JESSICA_WON_URI_TEXT","");
 
 	// -> CALENDAR
@@ -858,88 +863,232 @@ function giau_data_default_insert_into_database(){
 		]
 	);
 
+	// => GOOGLE MAP
+	$widget_id_map_google = giau_insert_widget("map_google",
+		[
+			"alias" => "map_google",
+			"name" => "Giau Google Map",
+			"cssClass" => "",
+			"jsClass" => "",
+			"fields" => [
+				"source" => [
+					"type" => "string"
+				],
+				"style" => [
+					"type" => "string"
+				],
+				"class" => [
+					"type" => "string"
+				],
+			]
+		]
+	);
+	
+	// => CONTACT BIO ORDERING
+	$widget_id_contact_bio = giau_insert_widget("contact_bio",
+		[
+			"alias" => "map_google",
+			"name" => "Giau Google Map",
+			"cssClass" => "",
+			"jsClass" => "",
+			"fields" => [
+				"ordering" => [
+					"type" => "array-object",
+					"fields" => [
+						"index" => [
+							"type" => "string"
+						],
+						"title" => [
+							"type" => "string"
+						]
+					]
+				],
+				"tags" => [
+					"type" => "array-string"
+				],
+				"style" => [
+					"type" => "string"
+				],
+				"class" => [
+					"type" => "string"
+				],
+			]
+		]
+	);
+	
+	// => CONTACT FORM
+	$widget_id_contact_form = giau_insert_widget("contact_form",
+		[
+			"alias" => "map_google",
+			"name" => "Giau Google Map",
+			"cssClass" => "",
+			"jsClass" => "",
+			"fields" => [
+				"ordering" => [
+					"type" => "array-object",
+					"fields" => [
+						"index" => [
+							"type" => "string"
+						],
+						"title" => [
+							"type" => "string"
+						]
+					]
+				],
+				"tags" => [
+					"type" => "array-string"
+				],
+				"style" => [
+					"type" => "string"
+				],
+				"class" => [
+					"type" => "string"
+				],
+			]
+		]
+	);
+
+
+	// => TOP LEFT CORNER PAGE TITLE
+	$widget_id_info_status = giau_insert_widget("info_status",
+		[
+			"alias" => "info_status",
+			"name" => "Giau Info Status",
+			"cssClass" => "",
+			"jsClass" => "",
+			"fields" => [
+				"titles" => [
+					"type" => "array-object",
+					"fields" => [
+						"index" => [
+							"type" => "string"
+						],
+						"title" => [
+							"type" => "string"
+						]
+					]
+				],
+				"style" => [
+					"type" => "string"
+				],
+				"class" => [
+					"type" => "string"
+				],
+			]
+		]
+	);
 
 	
-	$section_id_navigation_main = giau_insert_section($widget_id_navigation_list,
-		[
+
+
+	$navigationComponentsMainMenu = [
 			"components" => [ // return $root."?page=".$pageName."&sp=".($subpage ? $subpage : "");
 				[
 					"name" => "nav_home",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_HOME_TEXT",
-					"uri" => "./?page=home"
+					"uri" => "./?page=home",
+					"page" => "home"
 				],
 				[
 					"name" => "nav_departments",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPARTMENTS_TEXT",
 					//"uri" => "./?page=departments&sp="
+					"page" => "",
 				],
 				[
 					"name" => "nav_staff",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_STAFF_TEXT",
-					"uri" => "./?page=staff"
+					"uri" => "./?page=staff",
+					"page" => "staff",
 				],
 				[
 					"name" => "nav_forms",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_FORMS_TEXT",
-					"uri" => "./?page=forms"
+					"uri" => "./?page=forms",
+					"page" => "forms",
 				],
 				[
 					"name" => "nav_contact",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_CONTACT_TEXT",
-					"uri" => "./?page=contact"
+					"uri" => "./?page=contact",
+					"page" => "contact",
 				],
 				[
 					"name" => "nav_lacpc",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_LACPC_TEXT",
-					"uri" => "http://www.lacpcks.org"
+					"uri" => "http://www.lacpcks.org",
+					"page" => "",
 				]
-			]
-		]
+			],
+			"dark_mode" => "true",
+		];
+	
+	$section_id_navigation_main = giau_insert_section($widget_id_navigation_list,
+		$navigationComponentsMainMenu
 	, []);
 
-	$section_id_navigation_departments = giau_insert_section($widget_id_navigation_list,
-		[
+	$navigationComponentsMainMenu["dark_mode"] = "false";
+	$section_id_navigation_main_light = giau_insert_section($widget_id_navigation_list,
+		$navigationComponentsMainMenu
+	, []);
+	
+	$navigationComponentsSubMenu = [
 			"components" => [ // return $root."?page=".$pageName."&sp=".($subpage ? $subpage : "");
 				[
 					"name" => "nav_nursery",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPT_NURSERY_TEXT",
-					"uri" => "./?page=nursery"
+					"uri" => "./?page=nursery",
+					"page" => "nursery",
 				],
 				[
 					"name" => "nav_kindergarten",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPT_KINDERGARTEN_TEXT",
-					"uri" => "./?page=kindergarten"
+					"uri" => "./?page=kindergarten",
+					"page" => "kindergarten",
 				],
 				[
 					"name" => "nav_elementary",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPT_ELEMENTARY_TEXT",
-					"uri" => "./?page=elementary"
+					"uri" => "./?page=elementary",
+					"page" => "elementary",
 				],
 				[
 					"name" => "nav_junior_high",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPT_JUNIOR_HIGH_TEXT",
-					"uri" => "./?page=juniorhigh"
+					"uri" => "./?page=juniorhigh",
+					"page" => "juniorhigh",
 				],
 				[
 					"name" => "nav_high_school",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPT_HIGH_SCHOOL_TEXT",
-					"uri" => "./?page=highschool"
+					"uri" => "./?page=highschool",
+					"page" => "highschool",
 				],
 				[
 					"name" => "nav_korean_school",
 					"display_text" => "NAV_ITEM_PAGE_NAVIGATION_DEPT_KOREAN_SCHOOL_TEXT",
-					"uri" => "http://www.lacpcks.org"
+					"uri" => "http://www.lacpcks.org",
+					"page" => "",
 				]
 			],
+			"dark_mode" => "true",
 			"start_hidden" => "true",
 			"animates_down" => "nav_departments",
 			"animates_up" => "",
-		]
+		];
+
+	$section_id_navigation_departments = giau_insert_section($widget_id_navigation_list,
+		$navigationComponentsSubMenu
 	, []);
 
 
-	$section_id_language_switch = giau_insert_section($widget_id_language_switch,
-		[
+	$navigationComponentsSubMenu["dark_mode"] = "false";
+	//$navigationComponentsSubMenu["style"] = "display:block;";
+	$section_id_navigation_departments_light = giau_insert_section($widget_id_navigation_list,
+		$navigationComponentsSubMenu
+	, []);
+
+	$languageSwitchComponents = [
 			"languages" => [
 				[
 					"display_text" => "LANGUAGE_SWITCH_ENGLISH_TEXT",
@@ -948,9 +1097,19 @@ function giau_data_default_insert_into_database(){
 				[
 					"display_text" => "LANGUAGE_SWITCH_KOREAN_TEXT",
 					"language_name" => "ko"
-				]
+				],
+				"color" => "0xFFFFFFFF",
 			]
-		]
+		];
+
+	$section_id_language_switch = giau_insert_section($widget_id_language_switch,
+		$languageSwitchComponents
+	, []);
+
+
+	$languageSwitchComponents["color"] = "0xFF000000";
+	$section_id_language_switch_light = giau_insert_section($widget_id_language_switch,
+		$languageSwitchComponents
 	, []);
 
 
@@ -998,27 +1157,27 @@ function giau_data_default_insert_into_database(){
 				[
 					"image" => $section_category_prefix."category_nursery.png",
 					"name" => "Nursery",
-					"uri" => "./?page=departments&sp=nursery"
+					"uri" => "./?page=nursery"
 				],
 				[
 					"image" => $section_category_prefix."category_kindergarten.png",
 					"name" => "Kindergarten",
-					"uri" => "./?page=departments&sp=kindergarten"
+					"uri" => "./?page=kindergarten"
 				],
 				[
 					"image" => $section_category_prefix."category_elementary.png",
 					"name" => "Elementary",
-					"uri" => "./?page=departments&sp=elementary"
+					"uri" => "./?page=elementary"
 				],
 				[
 					"image" => $section_category_prefix."category_junior_high.png",
 					"name" => "Junior High",
-					"uri" => "./?page=departments&sp=juniorhigh"
+					"uri" => "./?page=juniorhigh"
 				],
 				[
 					"image" => $section_category_prefix."category_high_school.png",
 					"name" => "High School",
-					"uri" => "./?page=departments&sp=highschool"
+					"uri" => "./?page=highschool"
 				],
 				[
 					"image" => $section_category_prefix."category_korean_school.png",
@@ -1033,6 +1192,84 @@ function giau_data_default_insert_into_database(){
 			"style" => ""
 		]
 	, []);
+
+
+
+
+
+
+
+// LIGHT STUFF
+
+	$section_id_navigation_departments_light_container = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "display:block; width:100%; text-align:center;",
+		]
+	, [$section_id_navigation_departments_light]);
+
+
+	$section_id_navigation_status_container = giau_insert_section($widget_id_info_status,
+		[
+			"fields" => [
+				[
+					"index" => "home",
+					"title" => "PAGE_HOME_TITLE_TEXT",
+				],
+				[
+					"index" => "nursery",
+					"title" => "PAGE_DEPARTMENT_NURSERY_TITLE_TEXT",
+				],
+				[
+					"index" => "kindergarten",
+					"title" => "PAGE_DEPARTMENT_KINDERGARTEN_TITLE_TEXT",
+				],
+				[
+					"index" => "elementary",
+					"title" => "PAGE_DEPARTMENT_ELEMENTARY_TITLE_TEXT",
+				],
+				[
+					"index" => "juniorhigh",
+					"title" => "PAGE_DEPARTMENT_JUNIORHIGH_TITLE_TEXT",
+				],
+				[
+					"index" => "highschool",
+					"title" => "PAGE_DEPARTMENT_HIGHSCHOOL_TITLE_TEXT",
+				],
+				[
+					"index" => "staff",
+					"title" => "PAGE_STAFF_TITLE_TEXT",
+				],
+				[
+					"index" => "forms",
+					"title" => "PAGE_FORMS_TITLE_TEXT",
+				],
+				[
+					"index" => "contact",
+					"title" => "PAGE_CONTACT_TITLE_TEXT",
+				],
+				[
+					"index" => "lacpc",
+					"title" => "PAGE_LACPC_TITLE_TEXT",
+				],
+			],
+			"class" => "",
+			"style" => "",
+		]
+	, [$section_id_navigation_main_light,$section_id_language_switch_light]);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	$section_id_navigation_main_shadow = giau_insert_section($widget_id_content_container,
 		[
@@ -1099,7 +1336,7 @@ function giau_data_default_insert_into_database(){
 			],
 			"overlay_color" => "0x66000000",
 			"height" => "500px",
-			"style" => "position:relative; width:100%; height:400px;",
+			"style" => "position:relative; width:100%;", // height:400px;
 			"class" => "limitedWidth"
 		]
 	, []);
@@ -1407,7 +1644,7 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_elementary_prefix."gallery_08.png",
 				$section_image_gallery_elementary_prefix."gallery_09.png",
 			],
-			"height" => "400px",
+			"height" => "500px",
 			"style" => "",
 			"class" => ""
 		]
@@ -1444,9 +1681,8 @@ function giau_data_default_insert_into_database(){
 	// PAGE - NURSERY
 	$page_id_nursery = giau_insert_page("page_nursery",
 		[
-			// NAV
-			$section_id_navigation_main_container,
-			$section_id_navigation_secondary_container,
+			$section_id_navigation_status_container,
+			$section_id_navigation_departments_light_container,
 			//
 			$section_id_banner_nursery,
 			$section_id_gallery_nursery,
@@ -1556,7 +1792,7 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_kindergarten_prefix."gallery_06.png",
 				$section_image_gallery_kindergarten_prefix."gallery_07.png",
 			],
-			"height" => "400px",
+			"height" => "500px",
 			"style" => "",
 			"class" => ""
 		]
@@ -1588,9 +1824,8 @@ function giau_data_default_insert_into_database(){
 	// PAGE - KINDERGARTEN
 	$page_id_kindergarten = giau_insert_page("page_kindergarten",
 		[
-			// NAV
-			$section_id_navigation_main_container,
-			$section_id_navigation_secondary_container,
+			$section_id_navigation_status_container,
+			$section_id_navigation_departments_light_container,
 			//
 			$section_id_banner_kindergarten,
 			$section_id_gallery_kindergarten,
@@ -1743,7 +1978,7 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_elementary_prefix."gallery_08.png",
 				$section_image_gallery_elementary_prefix."gallery_09.png",
 			],
-			"height" => "400px",
+			"height" => "500px",
 			"style" => "",
 			"class" => ""
 		]
@@ -1775,9 +2010,8 @@ function giau_data_default_insert_into_database(){
 	// PAGE - ELEMENTARY
 	$page_id_elementary = giau_insert_page("page_elementary",
 		[
-			// NAV
-			$section_id_navigation_main_container,
-			$section_id_navigation_secondary_container,
+			$section_id_navigation_status_container,
+			$section_id_navigation_departments_light_container,
 			//
 			$section_id_banner_elementary,
 			$section_id_gallery_elementary,
@@ -1881,7 +2115,7 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_juniorhigh_prefix."gallery_09.png",
 				$section_image_gallery_juniorhigh_prefix."gallery_10.png",
 			],
-			"height" => "400px",
+			"height" => "500px",
 			"style" => "",
 			"class" => ""
 		]
@@ -1913,9 +2147,8 @@ function giau_data_default_insert_into_database(){
 	// PAGE - JUNIORHIGH
 	$page_id_juniorhigh = giau_insert_page("page_juniorhigh",
 		[
-			// NAV
-			$section_id_navigation_main_container,
-			$section_id_navigation_secondary_container,
+			$section_id_navigation_status_container,
+			$section_id_navigation_departments_light_container,
 			//
 			$section_id_banner_juniorhigh,
 			$section_id_gallery_juniorhigh,
@@ -2011,7 +2244,7 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_highschool_prefix."gallery_01.png",
 				$section_image_gallery_highschool_prefix."gallery_02.png",
 			],
-			"height" => "400px",
+			"height" => "500px",
 			"style" => "",
 			"class" => ""
 		]
@@ -2043,9 +2276,8 @@ function giau_data_default_insert_into_database(){
 	// PAGE - HIGHSCHOOL
 	$page_id_highschool = giau_insert_page("page_highschool",
 		[
-			// NAV
-			$section_id_navigation_main_container,
-			$section_id_navigation_secondary_container,
+			$section_id_navigation_status_container,
+			$section_id_navigation_departments_light_container,
 			//
 			$section_id_banner_highschool,
 			$section_id_gallery_highschool,
@@ -2068,10 +2300,12 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"PAGE_STAFF_TITLE_TEXT","MEET THE STAFF");
 		giau_insert_languagization($langKor,"PAGE_STAFF_TITLE_TEXT","직원들 만나기");
 
-
+	giau_insert_languagization($langEng,"PAGE_BIO_DEFAULT_TEXT","Bio forthcoming.");
+		giau_insert_languagization($langKor,"PAGE_BIO_DEFAULT_TEXT","섬기는 사람들 소개 ");
 	$section_id_bio_listing_bio = giau_insert_section($widget_id_bio_listing,
 		[
-			"tags" => ["bio"]
+			"tags" => ["bio"],
+			"default_display" => "PAGE_BIO_DEFAULT_TEXT"
 		]
 	, []);
 
@@ -2080,8 +2314,8 @@ function giau_data_default_insert_into_database(){
 	$page_id_staff = giau_insert_page("page_staff",
 		[
 			// NAV
-			$section_id_navigation_main_container,
-			$section_id_navigation_secondary_container,
+			$section_id_navigation_status_container,
+			$section_id_navigation_departments_light_container,
 			$section_id_bio_listing_bio,
 			$section_id_footer_all
 		],
@@ -2092,8 +2326,13 @@ function giau_data_default_insert_into_database(){
 
 
 	// PAGE FORMS
-	giau_insert_languagization($langEng,"PAGE_FORMS_TITLE_TEXT","MEET THE STAFF");
+	giau_insert_languagization($langEng,"PAGE_FORMS_TITLE_TEXT","FORMS");
 	giau_insert_languagization($langEng,"PAGE_FORMS_DOWNLOAD_TEXT","Download forms and documentation here:");
+		giau_insert_languagization($langKor,"PAGE_FORMS_DOWNLOAD_TEXT","자료 및 문서 다운로드는 여기서 하 실수 있습니다:");
+	giau_insert_languagization($langEng,"PAGE_FORMS_ITEM_MEDICAL_RELEASE_2016_2017_TEXT","LACPC Medical Release Form 2016-2017 (pdf)");
+		giau_insert_languagization($langKor,"PAGE_FORMS_ITEM_MEDICAL_RELEASE_2016_2017_TEXT","의료 출시 자료 2016-2017 (pdf)");
+	giau_insert_languagization($langEng,"PAGE_FORMS_ITEM_PHOTOGRAPH_RELEASE_TEXT","LACPC Photograph Release Form (pdf)");
+		giau_insert_languagization($langKor,"PAGE_FORMS_ITEM_PHOTOGRAPH_RELEASE_TEXT","사진 공개 자료 (pdf)");
 	$section_id_form_title = giau_insert_section($widget_id_text_display,
 		[
 			"text" => "PAGE_FORMS_DOWNLOAD_TEXT",
@@ -2105,11 +2344,11 @@ function giau_data_default_insert_into_database(){
 		[
 			"files" => [
 				[
-					"title" => "LACPC Medical Release Form 2016-2017 (pdf)",
+					"title" => "PAGE_FORMS_ITEM_MEDICAL_RELEASE_2016_2017_TEXT",
 					"uri" => "./wp-content/themes/giau/uploads/lacpc_medical_release_form_2016_2017.pdf"
 				],
 				[
-					"title" => "LACPC Photograph Release Form (pdf)",
+					"title" => "PAGE_FORMS_ITEM_PHOTOGRAPH_RELEASE_TEXT",
 					"uri" => "./wp-content/themes/giau/uploads/photograph_release_form.pdf"
 				]
 			],
@@ -2123,8 +2362,8 @@ function giau_data_default_insert_into_database(){
 	// PAGE - FORMS
 	$page_id_forms = giau_insert_page("page_forms",
 		[
-			$section_id_navigation_main_container,
-			$section_id_navigation_secondary_container,
+			$section_id_navigation_status_container,
+			$section_id_navigation_departments_light_container,
 			$section_id_form_title,
 			$section_id_form_listing_downloads,
 			$section_id_footer_all
@@ -2132,6 +2371,93 @@ function giau_data_default_insert_into_database(){
 		"".$PAGE_TAG_FORMS.""
 	);
 	error_log("page_id_forms: ".$page_id_forms);
+
+
+
+
+	// PAGE CONTACT
+	giau_insert_languagization($langEng,"PAGE_CONTACT_TITLE_TEXT","CONTACT");
+
+	$section_id_contact_map = giau_insert_section($widget_id_map_google,
+		[
+			"source" => "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3304.9435064350605!2d-118.18318181958668!3d34.07096242428407!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c5b8f66d4e9d%3A0xa798b42cbfdca248!2sLos+Angeles+Christian+Presbyterian!5e0!3m2!1sen!2sus!4v1475290571183"
+		]
+	, []);
+
+	$section_id_contact_bio = giau_insert_section($widget_id_contact_bio,
+		[
+			"tags" => [
+				"contact"
+			],
+			"ordering" => [
+				[
+					"index" => 0,
+					"title" => "CE",
+				],
+				[
+					"index" => 3,
+					"title" => "Elementary",
+				],
+				[
+					"index" => 5,
+					"title" => "Nursery",
+				],
+				[
+					"index" => 2,
+					"title" => "High School",
+				],
+				[
+					"index" => 4,
+					"title" => "Kindergarten",
+				],
+				[
+					"index" => 1,
+					"title" => "Korean School",
+				],
+			],
+			"class" => "customContactInfo",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_contact_form = giau_insert_section($widget_id_contact_form,
+		[
+			"class" => "",
+			"style" => "",
+		]
+	, []);
+
+	$section_id_contact_bio_container = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "customContactContainer",
+			"style" => "width:100%;",
+		]
+	, [$section_id_contact_bio,$section_id_contact_form]);
+
+
+	$section_id_contact_bio_container_outer = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "limitedWidth",
+			"style" => "display:block; padding:10px;",
+		]
+	, [$section_id_contact_bio_container]);
+
+
+	$PAGE_TAG_CONTACT = "contact";
+	// PAGE - CONTACT
+	$page_id_contact = giau_insert_page("page_contact",
+		[
+			$section_id_navigation_status_container,
+			$section_id_navigation_departments_light_container,
+			$section_id_contact_map,
+			$section_id_contact_bio_container_outer,
+			$section_id_footer_all
+		],
+		"".$PAGE_TAG_CONTACT.""
+	);
+	error_log("page_id_contact: ".$page_id_contact);
+
+
 
 }
 

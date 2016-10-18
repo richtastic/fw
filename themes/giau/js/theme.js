@@ -378,7 +378,6 @@ giau.BioView = function(element){ //
 
 	this._default_bio_description = Code.getPropertyOrDefault(this._container,propertyDefultDescription, "");
 	this._default_bio_image = Code.getPropertyOrDefault(this._container,propertyDefaultImage, "");
-	console.log(this._default_bio_image);
 
 	var propertyData = "data-data";
 	var propertyFirstName = "data-first-name";
@@ -424,6 +423,7 @@ giau.BioView = function(element){ //
 //Code.addChild(this._container,containerElement);
 Code.setStyleDisplay(this._container,"block");
 Code.setStylePosition(this._container,"relative");
+Code.setStyleWidth(this._container,"100%");
 //Code.setStyleBackgroundColor(this._container,"#F6F7F9");
 
 	var col = 0;
@@ -528,15 +528,14 @@ giau.BioView.prototype._handleWindowResizedFxn = function(){
 
 giau.BioView.prototype.updateLayout = function(){
 	var listings = this._galleryList;
-console.log("0")
 	var maximumColumnCount = 3;
 	var elementMinWidth = 300;
 	var elementMaxWidth = 350; // to next row size
 	var widthContainer = $(this._container).width();
 	var heightContainer = $(this._container).height();
 
-	var outerPadding = 10;
-	var innerPadding = 10;
+	var outerPadding = 12;
+	var innerPadding = 20;
 	var columns = Math.floor(widthContainer/elementMaxWidth);
 	if(widthContainer<elementMinWidth){
 		columns = 1;
@@ -554,6 +553,7 @@ var row;
 			Code.setStyleDisplay(row,"inline-block");
 			Code.setStylePosition(row,"relative");
 			Code.setStyleWidth(row,widthContainer+"px");
+				Code.setStyleBackgroundColor(row,"#EEE");
 			//Code.setStyleHeight(row,"");
 		}
 		var person = personnelList[i];
@@ -569,17 +569,18 @@ var row;
 		Code.setStyleWidth(innerElement,innerWidth);
 		Code.setStylePadding(innerElement,innerPadding+"px");
 		Code.setStyleBackground(innerElement,"#FFF");
+			Code.setStyleMinHeight(innerElement,"200px");
 			if(i<len-columns){
 				var div = outerElement;
-				Code.setStyleBorderColor(div,"#EEE");
-				Code.setStyleBorder(div,"solid");
-				Code.setStyleBorderWidthTop(div,"0px");
-				Code.setStyleBorderWidthLeft(div,"0px");
-				Code.setStyleBorderWidthRight(div,"0px");
-				Code.setStyleBorderWidthBottom(div,"1px");
+				// Code.setStyleBorderColor(div,"#EEE");
+				// Code.setStyleBorder(div,"solid");
+				// Code.setStyleBorderWidthTop(div,"0px");
+				// Code.setStyleBorderWidthLeft(div,"0px");
+				// Code.setStyleBorderWidthRight(div,"0px");
+				// Code.setStyleBorderWidthBottom(div,"1px");
 			}else{
 				var div = outerElement;
-				Code.setStyleBorder(div,"none");
+				//Code.setStyleBorder(div,"none");
 			}
 		/*
 		var outerElement = Code.newDiv();
@@ -952,7 +953,7 @@ giau.LanguageToggle.prototype.updateLayout = function(){
 
 giau.NavigationList = function(element){
 	this._container = element;
-	console.log(element)
+
 	var propertyAnimatesDown = "data-animates-down";
 	var propertyAnimatesUp = "data-animates-up";
 	var propertyStartHidden = "data-start-hidden";
@@ -961,7 +962,6 @@ giau.NavigationList = function(element){
 	this._busEventAnimateDown = null;
 	this._busEventAnimateUp = null;
 	var bus = giau.MessageBus();
-	console.log(bus)
 	var div = this._container;
 	if(Code.hasProperty(div,propertyAnimatesDown)){
 		var listenEventName = Code.getProperty(div,propertyAnimatesDown);
@@ -1026,7 +1026,7 @@ giau.NavigationList = function(element){
 	var i, len;
 	var listElement = element;//Code.getChild(element,0);
 	var menuItems = [];
-	var foundSelectedIndex = 0;
+	var foundSelectedIndex = -1;
 	if(listElement){
 		len = Code.numChildren(listElement);
 		for(i=0; i<len; ++i){
@@ -1373,9 +1373,6 @@ giau.ImageGallery = function(element){
 
 
 giau.ImageGallery.prototype._updatePageIndicators = function(){ 
-	console.log(this._pageIndicatorContainer)
-	//this._pageIndicatorContainer = Code.newDiv();
-	//Code.addChild(this._functionalityContainer,this._pageIndicatorContainer);
 	var iconActiveLocation = GLOBAL_SERVER_IMAGE_PATH+"/gallery_page_dot_active.png";
 	var iconInactiveLocation = GLOBAL_SERVER_IMAGE_PATH+"/gallery_page_dot_inactive.png";
 	var iconSizeWidth = 20;
@@ -1488,7 +1485,6 @@ giau.ImageGallery.ANIMATION_DIRECTION_FADE_IN = 3;
 giau.ImageGallery.ANIMATION_DIRECTION_FADE_OUT = 4;
 
 giau.ImageGallery.prototype._animateToNewImage = function(prevIndex,nextIndex,isRight){
-	console.log("anim")
 	this._transitionIndexPrevious = prevIndex;
 	this._transitionIndexNext = nextIndex;
 	this._currentIndex = this._transitionIndexNext;

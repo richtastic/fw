@@ -559,22 +559,24 @@ ul {
 	border: 0;
 	margin: 0;
 	vertical-align: top;
+	font-size: 0px;
 }
 .giauContactForm {
 	width: 50%;
 	display: inline-block;
-	padding: 0;
-	border: 0;
-	margin: 0;
+	padding: 0px;
+	border: 0px;
+	margin: 0px;
+	font-size: 0px;
 }
 
 .customContactContainer{
 	width: 100%;
 	display: inline-block;
-	padding: 0;
-	border: 0;
-	margin: 0;
-	font-size: 0;
+	padding: 0px;
+	border: 0px;
+	margin: 0px;
+	font-size: 0px;
 }
 
 .customContactTitle {

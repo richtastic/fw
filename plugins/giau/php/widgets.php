@@ -52,11 +52,14 @@ function fillOutSectionFromWidget($widget,$section){
 	$lookup["language_switch"] = handle_widget_language_switch;
 	$lookup["display_overlay"] = handle_widget_display_overlay;
 	$lookup["bio_listing"] = handle_widget_bio_listing;
-
 	$lookup["medal_banner"] = handle_widget_medal_banner;
 	$lookup["service_listing"] = handle_widget_service_listing;
 	$lookup["personnel_coverage"] = handle_widget_personnel_coverage;
 	$lookup["download_listing"] = handle_widget_download_listing;
+	$lookup["map_google"] = handle_widget_map_google;
+	$lookup["contact_form"] = handle_widget_contact_form;
+	$lookup["contact_bio"] = handle_widget_contact_bio;
+	$lookup["info_status"] = handle_widget_info_status;
 
 	$fxn = $lookup[$widgetName];
 	if($fxn!=null){
@@ -64,12 +67,169 @@ function fillOutSectionFromWidget($widget,$section){
 	}
 }
 
+function handle_widget_info_status($widget,$section){
+	$widgetJSON = decodeWidget($widget);
+	$sectionJSON = decodeSection($section);
+	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
+	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
+	$titles = section_get_value_widget_array($widgetJSON,$sectionJSON,"fields");
+
+	$pageRequest = getPageRequest();
+	$headingTitleDisplay = "";
+	foreach ($titles as $item) {
+		$page = $item["index"];
+		$name = $item["title"];
+		if( strcmp($page,$pageRequest)==0 ){
+			$headingTitleDisplay = giau_languagization_substitution($name,null);
+			break;
+		}
+	}
+
+	
+	?>
+	<!-- FEATURE TITLE -->
+<div class="headerTitleContainer" style="display:block;">
+	<div class="headerNavigationContainer" style="display:table;">
+		<!-- LOGO -->
+		<div class="organizationTitleContainer" style="display:table-cell;  border-collapse: collapse; ">
+			<div class="mainNavigationBarTitle" >THE FATHER'S HOUSE</div>
+			<div class="mainNavigationBarHeading" ><?php echo $headingTitleDisplay; ?></div>
+		</div>
+		<?php
+		// sub sections
+		fillOutFromSectionList($section["sectionList"]);
+		?>
+	</div>
+</div>
+<?php
+}
+
+function handle_widget_map_google($widget,$section){
+	$widgetJSON = decodeWidget($widget);
+	$sectionJSON = decodeSection($section);
+	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
+	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
+	$frameSource = section_get_value_widget_string($widgetJSON,$sectionJSON,"source");
+	?>
+	<!-- GOOGLE MAP -->
+	<div class="giauMobileLimted limitedWidth"  style="background-color: rgba(255,255,255,0.0); text-align:center; width:100%; height:400px;" data-limited-width-activation="" data-limited-height="300px" data-limited-interaction="true">
+	<!-- if the height of the item is greater than the viewable page, interaction is disabled to allow mobile devices to scroll -->
+		<iframe src="<?php echo $frameSource; ?>" frameborder="0" style="overflow:hidden;height:100%;width:100%; display:inline-block; margin: 0 auto;" allowfullscreen>
+		</iframe>
+	</div>
+
+	<?php
+}
+
+function handle_widget_contact_bio($widget,$section){
+	$widgetJSON = decodeWidget($widget);
+	$sectionJSON = decodeSection($section);
+	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
+	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
+	$bioOrdering = section_get_value_widget_array($widgetJSON,$sectionJSON,"ordering");
+	$tags = section_get_value_widget_array($widgetJSON,$sectionJSON,"tags");
+	?><div class="customContactInfo">
+			<div class="customContactTitle" style="">Contact Info</div>
+			<div class="customContactAddress" style="">2241 N. Eastern Ave.</div>
+			<div class="customContactAddress" style="">Los Angeles, CA 90032</div>
+			<?php 
+			$offset = null;
+			$count = null;
+			$sortIndexDirection = null;
+			$bios = giau_bio_paginated($offset,$count,$sortIndexDirection,$tags);
+			$bioCount = count($bios);
+
+			$orderCount = count($bioOrdering);
+
+			$bioList = [];
+
+			for($i=0; $i<$bioCount; ++$i){
+				$title = null;
+				$bio = null;
+				if($orderCount>$i){
+					$lookup = $bioOrdering[$i];
+					$index = $lookup["index"];
+					if($index!==null){
+						$bio = $bios[$index];
+					}
+					$title = $lookup["title"];
+				}else{
+					$bio = $bios[$i];
+					
+				}
+				if(!$title){
+					$title = $bio["position"];
+				}
+				
+				$name = $bio["display_name"];
+				$email = $bio["email"];
+				$phone = $bio["phone"];
+					$phone = getHumanReadablePhone($phone);
+				$item = [
+					"heading" => $title,
+					"title" => $name,
+					"email" => $email,
+					"phone" => $phone
+				];
+				$bioList[] = $item;
+			}
+				foreach ($bioList as $bio) {
+					$heading = $bio["heading"];
+					$title = $bio["title"];
+					$email = $bio["email"];
+					$phone = $bio["phone"];
+			?>
+			<div class="customContactBioContainer" style="">
+				<div class="customContactBioHeading" style=""><?php echo $heading; ?></div>
+				<div class="customContactBioTitle" style=""><?php echo $title; ?></div>
+				<?php
+				if($email!==null && strlen($email)>0){
+				?>
+					<div style=""><a class="customContactBioEmail" href="mailto:<?php echo $email; ?>"><?php echo $email; ?></a></div>
+				<?php
+				}
+				?>
+				<div class="customContactBioPhone" style=""><?php echo $phone; ?></div>
+			</div>
+			<?php
+				}
+			?>
+		</div><?php
+}
+
+function handle_widget_contact_form($widget,$section){
+	$widgetJSON = decodeWidget($widget);
+	$sectionJSON = decodeSection($section);
+	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
+	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
+	//$frameSource = section_get_value_widget_string($widgetJSON,$sectionJSON,"source");
+	echo '<div class="giauContactForm"></div>';
+}
+
 function handle_widget_download_listing($widget,$section){
 	$widgetJSON = decodeWidget($widget);
 	$sectionJSON = decodeSection($section);
 	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
 	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
-	echo "DOWNLOADS LISTING";
+	$files = section_get_value_widget_array($widgetJSON,$sectionJSON,"files");
+	?>
+	<div class="formDownloadSectionContainer">
+	<?php
+		$fileCount = count($files);
+		$i;
+		for($i=0; $i<$fileCount; ++$i){
+			$title = $files[$i]["title"];
+				$title = giau_languagization_substitution($title,null);
+			$uri = $files[$i]["uri"];
+			?>
+		<div class="formItemDownload">
+			<a href="<?php echo $uri; ?>" target="_blank"><?php echo $title; ?></a>
+		</div>
+			<?php
+		}
+		?>
+	</div>
+	<?php
 }
 
 function handle_widget_medal_banner($widget,$section){
@@ -180,13 +340,11 @@ function handle_widget_personnel_coverage($widget,$section){
 
 
 function handle_widget_display_overlay($widget,$section){
-	error_log("handle_widget_navigation_list");
 	$widgetJSON = decodeWidget($widget);
 	$sectionJSON = decodeSection($section);
 	?>
 	<div class="featureInfoOverlay giauInfoOverlay" style="">
 	<?php
-		// sub sections
 		fillOutFromSectionList($section["sectionList"]);
 	?>
 	</div>
@@ -195,6 +353,8 @@ function handle_widget_display_overlay($widget,$section){
 function handle_widget_navigation_list($widget,$section){
 	$widgetJSON = decodeWidget($widget);
 	$sectionJSON = decodeSection($section);
+	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
+	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 	$navigationList = get_value_array($sectionJSON,"components");
 	$animatesUp = section_get_value_widget_string($widgetJSON,$sectionJSON,"animates_up");
 	$animatesDown = section_get_value_widget_string($widgetJSON,$sectionJSON,"animates_down");
@@ -202,8 +362,17 @@ function handle_widget_navigation_list($widget,$section){
 	$propertyAnimatesDown = "data-animates-down";
 	$propertyAnimatesUp = "data-animates-up";
 	$propertyStartHidden = "data-start-hidden";
+
+
+	$isDarkMode =  section_get_value_widget_boolean($widgetJSON,$sectionJSON,"dark_mode");
+	$darkModeText = "";
+	if($isDarkMode){
+		$darkModeText = 'data-darkmode="true"';
+	}
+
+	$pageRequest = getPageRequest();
 	?>
-	<div class="giauNavigationItemList navigationContainer" style="display:inline-block; position:relative; text-align: center; padding:6px; text-align:center;padding: 10px; z-index:100;" data-darkmode="true" <?php
+	<div class="giauNavigationItemList navigationContainer <?php echo $class; ?>" style="display:inline-block; position:relative; text-align: center; padding:6px; text-align:center;padding: 10px; z-index:100; <?php echo $style; ?>" <?php echo $darkModeText; ?> <?php
 		if($animatesDown && strlen($animatesDown)>0){
 			echo ' '.$propertyAnimatesDown.'="'.$animatesDown.'" ';
 		}
@@ -217,14 +386,17 @@ function handle_widget_navigation_list($widget,$section){
 		<ul>
 		<?php
 		foreach($navigationList as $item){
+			$page = $item["page"];
 			$name = $item["name"];
-			error_log("NAME: ".$name);
 			$uri = $item["uri"];
 			$display = $item["display_text"];
 			$display = giau_languagization_substitution($display,null);
-			//  data-selected="selected"
+			$selected = "";
+			if( strcmp($page,$pageRequest)==0 ){
+				$selected = ' data-selected="selected" ';
+			}
 		?>
-		<div class="navigationMenuItem" data-display="<?php echo $display; ?>" data-url="<?php echo $uri; ?>" data-name="<?php echo $name; ?>"></div>
+		<div class="navigationMenuItem" data-display="<?php echo $display; ?>" data-url="<?php echo $uri; ?>" data-name="<?php echo $name; ?>" <?php echo $selected; ?> ></div>
 		<?php
 		}
 		?>
@@ -238,9 +410,10 @@ function handle_widget_text_display($widget,$section){
 	$sectionJSON = decodeSection($section);
 	$text = $sectionJSON["text"];
 		$text = giau_languagization_substitution($text,null);
-	$class = $sectionJSON["class"];
+	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
+	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 	?>
-	<div class="<?php echo $class; ?>"><?php echo $text; ?></div>
+	<div class="<?php echo $klass; ?>" style="<?php echo $style; ?>"><?php echo $text; ?></div>
 	<?php
 	// sub sections
 	fillOutFromSectionList($section["sectionList"]);
@@ -251,7 +424,7 @@ function handle_widget_content_container ($widget,$section){
 	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
 	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 	?>
-	<div class="<?php echo $class; ?>" style="<?php echo $style; ?>">
+	<div class="<?php echo $klass; ?>" style="<?php echo $style; ?>">
 	<?php
 		fillOutFromSectionList($section["sectionList"]);
 	?>
@@ -263,16 +436,23 @@ function handle_widget_language_switch($widget,$section){
 	$widgetJSON = decodeWidget($widget);
 	$sectionJSON = decodeSection($section);
 	$languages = get_value_array($sectionJSON,"languages");
+	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
+	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
+	$color = section_get_value_widget_string($widgetJSON,$sectionJSON,"color");
+	$dataColor = "0xFFFFFFFF";
+	if($color && !(strcmp($color,"")==0) ){
+		$dataColor = $color;
+	}
 	?>
 	<div class="languageSwitchContainer" style="display:inline-block; position:absolute; right:0; top:0; padding-right:10px; z-index:100;">
-	<div class="giauLanguageToggleSwitch" style="display:table-cell; padding:10px; vertical-align:middle; text-align:right;"  data-storage="<?php echo KEY_COOKIE_PARAM_LANGUAGE(); ?>" data-color="0xFFFFFFFF" >
+	<div class="giauLanguageToggleSwitch" style="display:table-cell; padding:10px; vertical-align:middle; text-align:right;"  data-storage="<?php echo KEY_COOKIE_PARAM_LANGUAGE(); ?>" data-color="<?php echo $dataColor; ?>" >
 	<?php
 		foreach($languages as $language){
 			$lang = $language["language_name"];
 			$display = $language["display_text"];
 			$display = giau_languagization_substitution($display,null);
 			?>
-			<div style="display:inline-block;" data-language="<?php echo $lang; ?>" data-display="<?php echo $display; ?>" data-url="./"></div>
+			<div class="<?php echo $klass; ?>" style="display:inline-block; <?php echo $style; ?>" data-language="<?php echo $lang; ?>" data-display="<?php echo $display; ?>" data-url="./"></div>
 			<?php
 		}
 	?>
@@ -338,7 +518,6 @@ function handle_widget_category_listing($widget,$section){
 
 
 function handle_widget_image_gallery($widget,$section){
-	error_log("handle_widget_image_gallery: ".$section);
 	$widgetJSON = decodeWidget($widget);
 	$sectionJSON = decodeSection($section);
 	$autoPlay = section_get_value_widget_number_int($widgetJSON,$sectionJSON,"autoplay");
@@ -351,7 +530,6 @@ function handle_widget_image_gallery($widget,$section){
 	if(!$divHeight){
 		$divHeight = "500px";
 	}
-	error_log("HEIGHT: ".$divHeight);
 	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
 	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 	// position:relative; width:100%; height:400px;
@@ -360,7 +538,6 @@ function handle_widget_image_gallery($widget,$section){
 		<?php
 			$i;
 			$len = count($imageList);
-			error_log("autoPlay: ".$autoPlay);
 			for($i=0; $i<$len; ++$i){
 				$image = $imageList[$i];
 				?>
@@ -417,14 +594,7 @@ function handle_widget_social_apps($widget,$section){
 	?>
 	</div>
 	<?php
-	/*
-			
-		<a href="https://www.facebook.com/thefathershouse.lacpc"><img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_facebook.png" ?>" /></a>
-		<a href="https://twitter.com/thefathersh0use?lang=en"><img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_twitter.png" ?>" /></a>
-			<img class="footerElementSocialItem" style="opacity: 0.25;" src="<?php echo relativePathIMG()."social/icon_footer_instagram.png" ?>" />
-			<a href="mailto:ce@lacpc.org"><img class="footerElementSocialItem" src="<?php echo relativePathIMG()."social/icon_footer_email.png" ?>" /></a>
-		</div>
-	*/
+
 	// sub sections
 	fillOutFromSectionList($section["sectionList"]);
 }
@@ -465,9 +635,6 @@ function handle_widget_calendar_listing($widget,$section){
 					$endDate = stringFromDate($rangeEnd/1000);
 				}
 				$orderDateNumber = $orderRecentFirst ? 1 : 0;
-				error_log("now: ".$dateNow);
-				error_log("start: ".$startDate);
-				error_log("  end: ".$endDate);
 				$operationOffset = 0;
 				$operationCount = 100;
 				$operationOrder = [ ["start_date",$orderDateNumber], ["duration",1], ["id",0] ];
@@ -498,7 +665,8 @@ function handle_widget_bio_listing($widget,$section){
 
 	$imagePrefx = "./wp-content/themes/giau/img/personnel/";
 	$defaultImage = $imagePrefx."anonymous.png";
-	$defaultBio = "Bio forthcoming.";
+	$defaultBio = section_get_value_widget_string($widgetJSON,$sectionJSON,"default_display");
+		$defaultBio = giau_languagization_substitution($defaultBio,"");
 
 	$offset = null;
 	$count = null;
@@ -507,7 +675,6 @@ function handle_widget_bio_listing($widget,$section){
 
 	$bios = giau_bio_paginated($offset,$count,$sortIndexDirection,$tags);
 	$bioCount = count($bios);
-	error_log("BIO COUNT:".$bioCount." = ".$defaultImage);
 
 	?>
 	<div class="giauBiographyList" data-default-image="<?php echo $defaultImage; ?>" data-default-description="<?php echo $defaultBio; ?>">

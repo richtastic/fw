@@ -152,14 +152,6 @@ function CALENDAR_DAYS_SHORT_KO(){
 }
 
 
-/*
-Code.monthsShort = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-Code.monthsLong = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-Code.daysOfWeekShort = 
-Code.daysOfWeekLong = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-*/
-
-
 function languageSpecificFromLanguage($lang){
 	$map = [
 		"en" => LANGUAGE_EN_US(),
@@ -214,6 +206,22 @@ function getCookieDaysOfWeekShort(){
 	return getValueFromMapCookieLanguage($map, CALENDAR_MONTHS_LONG_EN());
 }
 
+function getParameterOrDefault($param, $def){
+	$value = $_GET[$param];
+	if($value){
+		return $value;
+	}
+	if($def){
+		return $def;
+	}
+	return "";
+}
+
+
+function getPageRequest(){
+	$pageRequest = getParameterOrDefault( KEY_GET_PARAM_PAGE(), $PAGE_REQUEST_TYPE_DEFAULT );
+	return $pageRequest;
+}
 
 function include_widget_calendar_events(){
 ?>
@@ -1179,6 +1187,33 @@ function tagsCriteriaFromTagList($tags,$index="tags") {
 	return $criteria;
 }
 
+function giau_get_page_tag($tag){
+	$tags = [$tag];
+	$tags = tagsCriteriaFromTagList($tags);
+	//
+	$criteria = "";
+	if($tags){
+		$criteria = "WHERE ".(implode(" AND ", $tags));
+	}
+	global $wpdb;
+	$table = GIAU_FULL_TABLE_NAME_PAGE();
+	$querystr = "
+	    SELECT ".$table.".* 
+	    FROM ".$table."
+	    ".$criteria."
+	    LIMIT 1
+	";
+	error_log($querystr);
+	$results = $wpdb->get_results($querystr, ARRAY_A);
+	error_log( count($results) );
+	if(count($results) == 1){
+		$pageID = $results[0]["id"];
+		error_log( $pageID );
+		return giau_get_page_id($pageID);
+	}
+	return null;
+
+}
 function giau_get_page_id($pageID){
 	return giau_get_table_row_from_col(GIAU_FULL_TABLE_NAME_PAGE(), "id", $pageID);
 }
