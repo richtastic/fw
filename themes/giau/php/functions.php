@@ -301,7 +301,7 @@ if($pageRequest==$PAGE_REQUEST_TYPE_HOME){
 /*
 	<!-- DOWNLOADS -->
 	<div class="limitedWidth" style="">
-		<!-- <div class="headerSectionMain">FORMS</div> -->
+		<!-- <div class="headerSectionMain>FORMS</div> -->
 		<div class="titleSectionMain">Download forms and documentation here:</div>
 		<div class="formItemDownload">
 			<a href="<?php echo relativePathUploads()."/lacpc_medical_release_form_2016_2017.pdf"; ?>">LACPC Medical Release Form 2016-2017 (pdf)</a>

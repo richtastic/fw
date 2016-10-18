@@ -424,6 +424,7 @@ giau.BioView = function(element){ //
 //Code.addChild(this._container,containerElement);
 Code.setStyleDisplay(this._container,"block");
 Code.setStylePosition(this._container,"relative");
+//Code.setStyleBackgroundColor(this._container,"#F6F7F9");
 
 	var col = 0;
 	var i, len = personnelList.length;
@@ -434,7 +435,7 @@ Code.setStylePosition(this._container,"relative");
 			Code.setStyleDisplay(outerElement,"table-cell");
 			Code.setStylePosition(outerElement,"relative");
 		var containerElement = Code.newDiv();
-			Code.setStyleBackground(containerElement,"#FFF");
+			Code.setStyleBackgroundColor(containerElement,"#F6F7F9");
 			Code.setStyleDisplay(containerElement,"inline-block"); // fit height
 			Code.setStylePosition(containerElement,"relative");
 			Code.setStyleVerticalAlign(containerElement,"top");
@@ -567,7 +568,7 @@ var row;
 		Code.setStylePadding(outerElement,outerPadding+"px");
 		Code.setStyleWidth(innerElement,innerWidth);
 		Code.setStylePadding(innerElement,innerPadding+"px");
-
+		Code.setStyleBackground(innerElement,"#FFF");
 			if(i<len-columns){
 				var div = outerElement;
 				Code.setStyleBorderColor(div,"#EEE");
@@ -1346,6 +1347,20 @@ giau.ImageGallery = function(element){
 			}
 		}
 	}
+
+	// page indicators
+	this._pageIndicatorContainer = Code.newDiv();
+		//Code.addChild(this._functionalityContainer,this._pageIndicatorContainer);
+		Code.addChild(this._container,this._pageIndicatorContainer);
+		Code.setStyleWidth(this._pageIndicatorContainer,"100%");
+		Code.setStyleDisplay(this._pageIndicatorContainer,"block");
+		Code.setStyleMargin(this._pageIndicatorContainer,"0 auto");
+		Code.setStyleTextAlign(this._pageIndicatorContainer,"center");
+		Code.setStyleZIndex(this._pageIndicatorContainer,"99");
+		Code.setStylePosition(this._pageIndicatorContainer,"absolute");
+		Code.setStyleBottom(this._pageIndicatorContainer,"0px");
+		//width:100%; z-index:100000;  display:block; position:relative; margin:0 auto; text-align:center;
+	//
 	
 	// LISTENERS
 	this._jsDispatch.addJSEventListener(window, Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
@@ -1356,6 +1371,32 @@ giau.ImageGallery = function(element){
 	this.nextImage();
 }
 
+
+giau.ImageGallery.prototype._updatePageIndicators = function(){ 
+	console.log(this._pageIndicatorContainer)
+	//this._pageIndicatorContainer = Code.newDiv();
+	//Code.addChild(this._functionalityContainer,this._pageIndicatorContainer);
+	var iconActiveLocation = GLOBAL_SERVER_IMAGE_PATH+"/gallery_page_dot_active.png";
+	var iconInactiveLocation = GLOBAL_SERVER_IMAGE_PATH+"/gallery_page_dot_inactive.png";
+	var iconSizeWidth = 20;
+	var iconSizeHeight = 20;
+	Code.removeAllChildren(this._pageIndicatorContainer);
+	var imageCount = this._images.length;
+	var index = this._currentIndex;
+	var i;
+	for(i=0; i<imageCount; ++i){
+		var image = Code.newImage();
+		if(i==index){
+			Code.setSrc(image, iconActiveLocation);
+		}else{
+			Code.setSrc(image, iconInactiveLocation);
+		}
+		Code.setStyleWidth(image,iconSizeWidth+"px");
+		Code.setStyleHeight(image,iconSizeHeight+"px");
+		Code.addChild(this._pageIndicatorContainer,image);
+	}
+	
+}
 giau.ImageGallery.prototype._handleAutomatedTickerFxn = function(){
 	this._automatedTicker.stop();
 	this._handleRightButtonClickedFxn();
@@ -1499,6 +1540,7 @@ giau.ImageGallery.prototype._handleTickerFxn = function(){
 		Code.setSrc(this._secondaryImageElement,"");
 		this._transitionIndexNext = null;
 		this._transitionIndexPrevious = null;
+		this._updatePageIndicators();
 	}
 }
 giau.ImageGallery.prototype._handleImageLoaded = function(info, index){
@@ -1525,8 +1567,8 @@ giau.ImageGallery.prototype._updateLayout = function(index){
 		var size = Code.sizeToFitRectInRect(info.width,info.height, widthContainer,heightContainer);
 		var diffX = widthContainer - size.width;
 		var diffY = heightContainer - size.height;
-		var iconButtonWidth = 30;
-		var iconButtonHeight = 30;
+		var iconButtonWidth = 15;
+		var iconButtonHeight = 15;
 		var barIconWidth = 50;
 		Code.setSrc(this._primaryImageElement,info.url);
 
@@ -1616,6 +1658,7 @@ giau.ImageGallery.prototype._updateLayout = function(index){
 		Code.setProperty(this._secondaryImageElement, "style", primary);
 		//
 	}
+	this._updatePageIndicators();
 }
 
 

@@ -10,7 +10,7 @@ function fillOutPageFromID($pageID){
 	if($page!=null){
 		fillOutFromSectionList($page["sectionList"]);
 	}else{
-		error_log("NO PAGE");
+		error_log("NO PAGE : ".$pageID);
 	}
 }
 
@@ -56,11 +56,20 @@ function fillOutSectionFromWidget($widget,$section){
 	$lookup["medal_banner"] = handle_widget_medal_banner;
 	$lookup["service_listing"] = handle_widget_service_listing;
 	$lookup["personnel_coverage"] = handle_widget_personnel_coverage;
+	$lookup["download_listing"] = handle_widget_download_listing;
 
 	$fxn = $lookup[$widgetName];
 	if($fxn!=null){
 		$fxn($widget,$section);
 	}
+}
+
+function handle_widget_download_listing($widget,$section){
+	$widgetJSON = decodeWidget($widget);
+	$sectionJSON = decodeSection($section);
+	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
+	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
+	echo "DOWNLOADS LISTING";
 }
 
 function handle_widget_medal_banner($widget,$section){

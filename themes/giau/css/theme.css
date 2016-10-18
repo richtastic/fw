@@ -288,7 +288,10 @@ ul {
 	font-size: 16px;
 	color: #6D86C8;
 }
-
+.formDownloadSectionContainer {
+	padding: 10px;
+	min-height: 400px;
+}
 
 /* FOOTER */
 .sectionContainerFooter {
