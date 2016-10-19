@@ -501,6 +501,7 @@ function handle_widget_category_listing($widget,$section){
 				$category = $categoryList[$i];
 				$image = $category["image"];
 				$name = $category["name"];
+					$name = giau_languagization_substitution($name,"");
 				$uri = $category["uri"];
 				$shading = "";
 				$cover = "";

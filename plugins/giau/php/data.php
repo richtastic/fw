@@ -915,7 +915,7 @@ function giau_data_default_insert_into_database(){
 			]
 		]
 	);
-	
+
 	// => CONTACT FORM
 	$widget_id_contact_form = giau_insert_widget("contact_form",
 		[
@@ -924,15 +924,74 @@ function giau_data_default_insert_into_database(){
 			"cssClass" => "",
 			"jsClass" => "",
 			"fields" => [
-				"ordering" => [
-					"type" => "array-object",
+				"inputs" => [
+					"type" => "object",
 					"fields" => [
-						"index" => [
-							"type" => "string"
+						"email" => [
+							"type" => "object"
+							"fields" => [
+								"include" => [
+									"type" => "string-boolean"
+								],
+								"hint" => [
+									"type" => "string-language"
+								],
+								"required" => [
+									"type" => "string-boolean"
+								],
+							]
 						],
-						"title" => [
-							"type" => "string"
-						]
+						"name" => [
+							"type" => "object"
+							"fields" => [
+								"include" => [
+									"type" => "string-boolean"
+								],
+								"hint" => [
+									"type" => "string-language"
+								],
+								"required" => [
+									"type" => "string-boolean"
+								],
+							]
+						],
+						"message" => [
+							"type" => "object"
+							"fields" => [
+								"include" => [
+									"type" => "string-boolean"
+								],
+								"hint" => [
+									"type" => "string-language"
+								],
+								"required" => [
+									"type" => "string-boolean"
+								],
+							]
+						],
+						"phone" => [
+							"type" => "object"
+							"fields" => [
+								"include" => [
+									"type" => "string-boolean"
+								],
+								"hint" => [
+									"type" => "string-language"
+								],
+								"required" => [
+									"type" => "string-boolean"
+								],
+							]
+						],
+						"submit" => [
+							"type" => "object"
+								"fields" => [
+									"message" => [
+										"type" => "string-language"
+									],
+								]
+							]
+						],
 					]
 				],
 				"tags" => [
@@ -1149,6 +1208,19 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"PAGE_HOME_QUOTE_PURPOSE_BODY_TEXT","Through worship, bible study & accountability, we strive to provide an environment for our children and youth to experience the grace of God. In addition, we aim to serve parents and entire families as well. More than just a children and youth ministry, our Christian Education department is a family ministry.");
 		giau_insert_languagization($langKor,"PAGE_HOME_QUOTE_PURPOSE_BODY_TEXT","어린이들과 청소년들이 가족들과 함께 예배와 성경공부를 통해 하나님의 은혜를 경험할수있는 환경을 제공하겠습니다. 우리는 부모와 가족 전체뿐만 아니라 서비스를 제공하는 것을 목표로하고 있습니다. 저희 교회의 교육부서는 어린이들과 청소년을 포함한, 가족을위한 XX (Ministry) 입니다.");
 
+	giau_insert_languagization($langEng,"LISTING_DEPT_NURSERY_TEXT","Nursery");
+		giau_insert_languagization($langKor,"LISTING_DEPT_NURSERY_TEXT","유아실");
+	giau_insert_languagization($langEng,"LISTING_DEPT_KINDERGARTEN_TEXT","Kindergarten");
+		giau_insert_languagization($langKor,"LISTING_DEPT_KINDERGARTEN_TEXT","유치부");
+	giau_insert_languagization($langEng,"LISTING_DEPT_ELEMENTARY_TEXT","Elementary");
+		giau_insert_languagization($langKor,"LISTING_DEPT_ELEMENTARY_TEXT","초등부");
+	giau_insert_languagization($langEng,"LISTING_DEPT_JUNIOR_HIGH_TEXT","Junior High");
+		giau_insert_languagization($langKor,"LISTING_DEPT_JUNIOR_HIGH_TEXT","중등부");
+	giau_insert_languagization($langEng,"LISTING_DEPT_HIGH_SCHOOL_TEXT","High School");
+		giau_insert_languagization($langKor,"LISTING_DEPT_HIGH_SCHOOL_TEXT","고등부");
+	giau_insert_languagization($langEng,"LISTING_DEPT_KOREAN_SCHOOL_TEXT","Korean School");
+		giau_insert_languagization($langKor,"LISTING_DEPT_KOREAN_SCHOOL_TEXT","한국어 학교");
+	
 
 		$section_category_prefix = "./wp-content/themes/giau/img/departments/";
 	$section_id_category_listing_departments = giau_insert_section($widget_id_category_listing,
@@ -1156,32 +1228,32 @@ function giau_data_default_insert_into_database(){
 			"categories" => [
 				[
 					"image" => $section_category_prefix."category_nursery.png",
-					"name" => "Nursery",
+					"name" => "LISTING_DEPT_NURSERY_TEXT",
 					"uri" => "./?page=nursery"
 				],
 				[
 					"image" => $section_category_prefix."category_kindergarten.png",
-					"name" => "Kindergarten",
+					"name" => "LISTING_DEPT_KINDERGARTEN_TEXT",
 					"uri" => "./?page=kindergarten"
 				],
 				[
 					"image" => $section_category_prefix."category_elementary.png",
-					"name" => "Elementary",
+					"name" => "LISTING_DEPT_ELEMENTARY_TEXT",
 					"uri" => "./?page=elementary"
 				],
 				[
 					"image" => $section_category_prefix."category_junior_high.png",
-					"name" => "Junior High",
+					"name" => "LISTING_DEPT_JUNIOR_HIGH_TEXT",
 					"uri" => "./?page=juniorhigh"
 				],
 				[
 					"image" => $section_category_prefix."category_high_school.png",
-					"name" => "High School",
+					"name" => "LISTING_DEPT_HIGH_SCHOOL_TEXT",
 					"uri" => "./?page=highschool"
 				],
 				[
 					"image" => $section_category_prefix."category_korean_school.png",
-					"name" => "Korean School",
+					"name" => "LISTING_DEPT_KOREAN_SCHOOL_TEXT",
 					"uri" => "http://www.lacpcks.org"
 				]
 			],
@@ -1192,11 +1264,6 @@ function giau_data_default_insert_into_database(){
 			"style" => ""
 		]
 	, []);
-
-
-
-
-
 
 
 // LIGHT STUFF
@@ -1334,7 +1401,6 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_prefix."featured_05_opt.png",
 				$section_image_gallery_prefix."featured_06_opt.png",
 			],
-			"overlay_color" => "0x66000000",
 			"height" => "500px",
 			"style" => "position:relative; width:100%;", // height:400px;
 			"class" => "limitedWidth"
@@ -2134,7 +2200,7 @@ function giau_data_default_insert_into_database(){
 			"class" => "",
 			"style" => "display:table-cell; width:60%; vertical-align:top; text-align:center; padding:0px 20px 0px 20px;",
 		]
-	, [$section_id_text_juniorhigh_1,$section_id_text_juniorhigh_2]);
+	, [$section_id_text_juniorhigh_1]);
 
 	$section_id_text_juniorhigh_container = giau_insert_section($widget_id_content_container,
 		[
@@ -2187,7 +2253,7 @@ function giau_data_default_insert_into_database(){
 		[
 			"title" => "PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_TITLE",
 			"message" => "PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_MESSAGE",
-			"icon" => "./wp-content/themes/giau/img/departments/featured_jrhigh.png",
+			"icon" => "./wp-content/themes/giau/img/departments/featured_highschool.png",
 			"color_base" => "0x3B1955",
 			"color_light" => "0x361650",
 			"color_dark" => "0x361650",
@@ -2377,6 +2443,36 @@ function giau_data_default_insert_into_database(){
 
 	// PAGE CONTACT
 	giau_insert_languagization($langEng,"PAGE_CONTACT_TITLE_TEXT","CONTACT");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_ADDRESS_LINE_1_TEXT","Contact Info");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_ADDRESS_LINE_2_TEXT","2241 N. Eastern Ave.");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_ADDRESS_LINE_3_TEXT","Los Angeles, CA 90032");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_HINT_NAME","Name*");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_HINT_EMAIL","Email*");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_HINT_PHONE","Phone Numner (optional)");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_HINT_MESSAGE","Message*");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_SUBMIT","SUBMIT");
+
+	$section_id_contact_address_1 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_CONTACT_ADDRESS_LINE_1_TEXT",
+			"class" => "customContactTitle",
+			"style" => "",
+		]
+	, []);
+	$section_id_contact_address_2 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_CONTACT_ADDRESS_LINE_2_TEXT",
+			"class" => "customContactAddress",
+			"style" => "",
+		]
+	, []);
+	$section_id_contact_address_3 = giau_insert_section($widget_id_text_display,
+		[
+			"text" => "PAGE_CONTACT_ADDRESS_LINE_3_TEXT",
+			"class" => "customContactAddress",
+			"style" => "",
+		]
+	, []);
 
 	$section_id_contact_map = giau_insert_section($widget_id_map_google,
 		[
@@ -2418,10 +2514,42 @@ function giau_data_default_insert_into_database(){
 			"class" => "customContactInfo",
 			"style" => "",
 		]
-	, []);
+	, []);0
+
+	$section_id_contact_left_container = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "",
+			"style" => "customContactInfo",
+		]
+	, [,$section_id_contact_address_1,$section_id_contact_address_1,$section_id_contact_address_3,$section_id_contact_bio]);
 
 	$section_id_contact_form = giau_insert_section($widget_id_contact_form,
 		[
+			"inputs" => [
+				"email" => [
+					"include" => "true",
+					"hint" => "PAGE_CONTACT_FORM_HINT_EMAIL",
+					"required" => "false",
+				],
+				"name" => [
+					"include" => "true",
+					"hint" => "PAGE_CONTACT_FORM_HINT_NAME",
+					"required" => "true",
+				],
+				"message" => [
+					"include" => "true",
+					"hint" => "PAGE_CONTACT_FORM_HINT_MESSAGE",
+					"required" => "true",
+				],
+				"phone" => [
+					"include" => "true",
+					"hint" => "PAGE_CONTACT_FORM_HINT_PHONE",
+					"required" => "false",
+				],
+				"submit" => [
+					"message" => "PAGE_CONTACT_FORM_SUBMIT"
+				]
+			]
 			"class" => "",
 			"style" => "",
 		]
@@ -2432,7 +2560,7 @@ function giau_data_default_insert_into_database(){
 			"class" => "customContactContainer",
 			"style" => "width:100%;",
 		]
-	, [$section_id_contact_bio,$section_id_contact_form]);
+	, [$section_id_contact_left_container,$section_id_contact_form]);
 
 
 	$section_id_contact_bio_container_outer = giau_insert_section($widget_id_content_container,

@@ -104,7 +104,7 @@ cp /media/sf_zirbr001/dev/extRepos/ff/src/code/Code.js /repos/ff/src/code/Code.j
 
 
 
-rm -r /var/www/html/wordpress/wp-content/themes/giau && cp -r /media/sf_zirbr001/dev/extRepos/fw/themes/giau/ /var/www/html/wordpress/wp-content/themes/giau && chmod -R 777 /var/www/html/wordpress/wp-content/themes/giau
+rm -r /var/www/html/wordpress/wp-content/themes/giau && cp -r /media/sf_zirbr001/dev/extRepos/fw/themes/giau/ /var/www/html/wordpress/wp-content/themes/giau &&  rm /var/www/html/wordpress/wp-content/themes/giau/js/code && ln -s /repos/ff/src/code /var/www/html/wordpress/wp-content/themes/giau/js/code && chmod -R 777 /var/www/html/wordpress/wp-content/themes/giau
 rm -r /var/www/html/wordpress/wp-content/plugins/giau && cp -r /media/sf_zirbr001/dev/extRepos/fw/plugins/giau/ /var/www/html/wordpress/wp-content/plugins/giau && chmod -R 777 /var/www/html/wordpress/wp-content/plugins/giau
 
 

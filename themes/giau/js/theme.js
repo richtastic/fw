@@ -528,7 +528,7 @@ giau.BioView.prototype._handleWindowResizedFxn = function(){
 
 giau.BioView.prototype.updateLayout = function(){
 	var listings = this._galleryList;
-	var maximumColumnCount = 3;
+	var maximumColumnCount = 2;
 	var elementMinWidth = 300;
 	var elementMaxWidth = 350; // to next row size
 	var widthContainer = $(this._container).width();
@@ -541,6 +541,10 @@ giau.BioView.prototype.updateLayout = function(){
 		columns = 1;
 	}
 	columns = Math.max(1,columns);
+
+	if(columns>maximumColumnCount){
+		columns = maximumColumnCount;
+	}
 	var colWidth = Math.floor(widthContainer/columns);
 
 	var personnelList = this._personnelList;
