@@ -171,7 +171,7 @@ chmod -R 755 giau/
 
 # ---- 3: PLUGIN
 # GOTO
-cd /www/ce/wp-content/pugins
+cd /www/ce/wp-content/plugins/
 lcd ~/universe/repo/fw/plugins
 # COPY GIAU
 rm -rf ./giau

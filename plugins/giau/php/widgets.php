@@ -128,10 +128,7 @@ function handle_widget_contact_bio($widget,$section){
 	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 	$bioOrdering = section_get_value_widget_array($widgetJSON,$sectionJSON,"ordering");
 	$tags = section_get_value_widget_array($widgetJSON,$sectionJSON,"tags");
-	?><div class="customContactInfo">
-			<div class="customContactTitle" style="">Contact Info</div>
-			<div class="customContactAddress" style="">2241 N. Eastern Ave.</div>
-			<div class="customContactAddress" style="">Los Angeles, CA 90032</div>
+	?>
 			<?php 
 			$offset = null;
 			$count = null;
@@ -194,7 +191,7 @@ function handle_widget_contact_bio($widget,$section){
 			<?php
 				}
 			?>
-		</div><?php
+		<?php
 }
 
 function handle_widget_contact_form($widget,$section){

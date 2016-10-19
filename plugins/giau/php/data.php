@@ -928,7 +928,7 @@ function giau_data_default_insert_into_database(){
 					"type" => "object",
 					"fields" => [
 						"email" => [
-							"type" => "object"
+							"type" => "object",
 							"fields" => [
 								"include" => [
 									"type" => "string-boolean"
@@ -942,7 +942,7 @@ function giau_data_default_insert_into_database(){
 							]
 						],
 						"name" => [
-							"type" => "object"
+							"type" => "object",
 							"fields" => [
 								"include" => [
 									"type" => "string-boolean"
@@ -956,7 +956,7 @@ function giau_data_default_insert_into_database(){
 							]
 						],
 						"message" => [
-							"type" => "object"
+							"type" => "object",
 							"fields" => [
 								"include" => [
 									"type" => "string-boolean"
@@ -970,7 +970,7 @@ function giau_data_default_insert_into_database(){
 							]
 						],
 						"phone" => [
-							"type" => "object"
+							"type" => "object",
 							"fields" => [
 								"include" => [
 									"type" => "string-boolean"
@@ -984,7 +984,7 @@ function giau_data_default_insert_into_database(){
 							]
 						],
 						"submit" => [
-							"type" => "object"
+							"type" => "object",
 								"fields" => [
 									"message" => [
 										"type" => "string-language"
@@ -1003,7 +1003,6 @@ function giau_data_default_insert_into_database(){
 				"class" => [
 					"type" => "string"
 				],
-			]
 		]
 	);
 
@@ -2514,14 +2513,14 @@ function giau_data_default_insert_into_database(){
 			"class" => "customContactInfo",
 			"style" => "",
 		]
-	, []);0
+	, []);
 
 	$section_id_contact_left_container = giau_insert_section($widget_id_content_container,
 		[
-			"class" => "",
-			"style" => "customContactInfo",
+			"class" => "customContactInfo",
+			"style" => "width:50%;",
 		]
-	, [,$section_id_contact_address_1,$section_id_contact_address_1,$section_id_contact_address_3,$section_id_contact_bio]);
+	, [$section_id_contact_address_1,$section_id_contact_address_2,$section_id_contact_address_3,$section_id_contact_bio]);
 
 	$section_id_contact_form = giau_insert_section($widget_id_contact_form,
 		[
@@ -2549,7 +2548,7 @@ function giau_data_default_insert_into_database(){
 				"submit" => [
 					"message" => "PAGE_CONTACT_FORM_SUBMIT"
 				]
-			]
+			],
 			"class" => "",
 			"style" => "",
 		]
