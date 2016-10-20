@@ -87,6 +87,10 @@ ul {
 	padding-bottom: 20px;
 }
 
+.organizationTitleContainer {
+	padding: 10px 0px 0px 0px;
+	vertical-align:top;
+}
 
 .mainNavigationBarTitle {
 	display: block;
@@ -95,7 +99,7 @@ ul {
 	color: #1D2129;
 	margin: 0 auto;
 	text-align: left;
-	padding: 10px 10px 0px 10px;
+	padding: 0px 10px 0px 10px;
 }
 
 .mainNavigationBarHeading {
@@ -105,7 +109,7 @@ ul {
 	color: #1D2129;
 	margin: 0 auto;
 	text-align: left;
-	padding: 0px 10px 10px 10px;
+	padding: 0px 10px 0px 10px;
 }
 
 

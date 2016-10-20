@@ -572,6 +572,9 @@ function giau_data_default_insert_into_database(){
 				"height" => [
 					"type" => "string"
 				],
+				"page_indicators" => [
+					"type" => "string-boolean"
+				],
 			]
 		]
 	);
@@ -1161,7 +1164,7 @@ function giau_data_default_insert_into_database(){
 
 
 	$navigationComponentsSubMenu["dark_mode"] = "false";
-	//$navigationComponentsSubMenu["style"] = "display:block;";
+		$navigationComponentsSubMenu["style"] = "padding-top:0px;";
 	$section_id_navigation_departments_light = giau_insert_section($widget_id_navigation_list,
 		$navigationComponentsSubMenu
 	, []);
@@ -1396,7 +1399,8 @@ function giau_data_default_insert_into_database(){
 			"overlay_color" => "0x66000000",
 			"height" => "500px",
 			"style" => "",
-			"class" => "featurePresentationContainer"
+			"class" => "featurePresentationContainer",
+			"page_indicators" => "true",
 		]
 	, [$section_id_home_gallery_overlay, $section_id_navigation_main_container, $section_id_navigation_secondary_container]);
 
@@ -1421,6 +1425,7 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_prefix."featured_06_opt.png",
 			],
 			"height" => "500px",
+			"page_indicators" => "true",
 			"style" => "position:relative; width:100%;", // height:400px;
 			"class" => "limitedWidth"
 		]
@@ -1605,9 +1610,10 @@ function giau_data_default_insert_into_database(){
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_1","9:00 AM\n@ 유아 예배실\n(유아실 건물)");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_TITLE_2","Sunday Worship\n2nd Service");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_2","11:00 AM\n@ Nursery Worship Room\n(in Nursery Building)");
-		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_1","11:00 AM\n@ 유아 예배실\n(유아실 건물)");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_2","11:00 AM\n@ 유아 예배실\n(유아실 건물)");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_TITLE_3","Friday Night\nFellowship");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_3","8:00 PM\n@ Nursery Building");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_3","8:00 PM\n@ 유아실 건물");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SECTION_1","The Nursery department at LACPC envisions a children's ministry that follows the overarching theme of the education department, \"Father's House.\" Through nursery department's worship, gudance, and nuturing, we hope to restablish the following:");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SECTION_2","1");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SECTION_3","Family worships and communication with families that will enrich the spiritual lives of our young children.");
@@ -1730,6 +1736,7 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_elementary_prefix."gallery_09.png",
 			],
 			"height" => "500px",
+			"page_indicators" => "true",
 			"style" => "",
 			"class" => ""
 		]
@@ -1796,11 +1803,12 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_2","Sunday Bible Study");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_2","주일 성경공부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_2","11:40 AM\n@ Classroom #302, 303, 306\n(in Kindergarden Building)");
-		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_1","11:40 AM\n@ 주일 성경공부 (#302, 303, 306호 교실)\n(유치부 건물)");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_2","11:40 AM\n@ 주일 성경공부 (#302, 303, 306호 교실)\n(유치부 건물)");
 
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_3","Friday Night\nBible Study");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_3","금요일밤 성경공부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_3","8:00 PM\n@ Classroom #303\n(in Kindergarden Building)");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_3","8:00 PM\n@ 호 교실 #303\n(유치부 건물)");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SECTION_1","As a goal, let children grow in the Lord Jesus Christ, building the image of God through the \"Word of God.\" Becoming disciples of Jesus in the joy of worshipping God as well as becoming evangelists of Jesus in Children's lives.");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SECTION_2","For families, Christian education builds up in a family and provide parents with training opportunities and teaching materials to be active ministry supporters.");
 
@@ -1878,6 +1886,7 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_kindergarten_prefix."gallery_07.png",
 			],
 			"height" => "500px",
+			"page_indicators" => "true",
 			"style" => "",
 			"class" => ""
 		]
@@ -1939,6 +1948,8 @@ function giau_data_default_insert_into_database(){
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_1","11:00 AM\n@ 초등부 예배");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_TITLE_2","Sunday Worship\n2nd Service");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_2","11:45 AM\n@ Classroom #138, 139, 140, 141, 142");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_2","11:45 AM\n@ 호 교실 #138, 139, 140, 141, 142");
+	
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_TITLE_3","Friday Program: AWANA");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_3","8:00 - 8:30 PM\nGame Time (Cafeteria)\n\n8:30 - 9:00 PM<br>Handbook Time\n(Classrooms)\n\n9:00 - 9:20 PM\nCouncil Time (Choir Room)");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_3","8:00 - 8:30 PM\n게임 (식당)\n\n8:30 - 9:00 PM<br>안내서 시간 (교실)\n\n9:00 - 9:20 PM\n이사회 모임 (성가대실)");
@@ -2064,6 +2075,7 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_elementary_prefix."gallery_09.png",
 			],
 			"height" => "500px",
+			"page_indicators" => "true",
 			"style" => "",
 			"class" => ""
 		]
@@ -2125,10 +2137,11 @@ function giau_data_default_insert_into_database(){
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_1","11:00 AM\n@ 중등부 예배실");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_2","Sunday Bible Study");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_2","12:00 PM\n@ Classroom #150, 152, 153");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_2","12:00 PM\n@ 호 교실 #150, 152, 153");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_3","Friday Night\nBible Study");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_3","금요일밤 성경공부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_3","8:00 PM\n@ Junior High Worship Room");
-		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_1","8:00 PM\n@ 중등부 예배실");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_3","8:00 PM\n@ 중등부 예배실");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SECTION_1","We belong to God and belonging to God is the greatest blessing and encouragement that anyone can have. Being His is a great blessing but another aspect of being His is to live and die for Him. Our lives belong to Him therfore we should live our lives accodring to His will.");
 
 	$section_id_banner_juniorhigh = giau_insert_section($widget_id_banner_medal,
@@ -2201,6 +2214,7 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_juniorhigh_prefix."gallery_10.png",
 			],
 			"height" => "500px",
+			"page_indicators" => "true",
 			"style" => "",
 			"class" => ""
 		]
@@ -2262,6 +2276,7 @@ function giau_data_default_insert_into_database(){
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_1","11:00 AM\n@ 고등부 예배실");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_2","Sunday Bible Study");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_2","12:00 PM\n@ Classroom #135, 136, 137, 148");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_2","12:00 PM\n@ 호 교실 #135, 136, 137, 148");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_3","Friday Night\nBible Study");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_3","금요일밤 성경공부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_3","8:00 PM\n@ High School Worship Room");
@@ -2330,6 +2345,7 @@ function giau_data_default_insert_into_database(){
 				$section_image_gallery_highschool_prefix."gallery_02.png",
 			],
 			"height" => "500px",
+			"page_indicators" => "true",
 			"style" => "",
 			"class" => ""
 		]
@@ -2470,12 +2486,14 @@ function giau_data_default_insert_into_database(){
 		giau_insert_languagization($langKor,"PAGE_CONTACT_FORM_HINT_NAME","이름*");
 	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_HINT_EMAIL","Email*");
 		giau_insert_languagization($langKor,"PAGE_CONTACT_FORM_HINT_EMAIL","이메일*");
-	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_HINT_PHONE","Phone Number (필요하지)");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_HINT_PHONE","Phone Number (optional)");
 		giau_insert_languagization($langKor,"PAGE_CONTACT_FORM_HINT_PHONE","전화번호 (필요하지)");
 	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_HINT_MESSAGE","Message*");
 		giau_insert_languagization($langKor,"PAGE_CONTACT_FORM_HINT_MESSAGE","문자*");
 	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_SUBMIT","SUBMIT");
 		giau_insert_languagization($langKor,"PAGE_CONTACT_FORM_SUBMIT","보내");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_SUBMIT","Form submitted successfully.");
+		giau_insert_languagization($langKor,"PAGE_CONTACT_FORM_SUBMIT_MESSAGE","Form submitted successfully.");
 
 	$section_id_contact_address_1 = giau_insert_section($widget_id_text_display,
 		[
@@ -2552,34 +2570,40 @@ function giau_data_default_insert_into_database(){
 		[
 			"inputs" => [
 				"email" => [
+					"order" => "1",
 					"title" => "",
 					"include" => "true",
 					"hint" => "PAGE_CONTACT_FORM_HINT_EMAIL",
 					"required" => "false",
 				],
 				"name" => [
+					"order" => "0",
 					"title" => "",
 					"include" => "true",
 					"hint" => "PAGE_CONTACT_FORM_HINT_NAME",
 					"required" => "true",
 				],
 				"message" => [
+					"order" => "3",
 					"title" => "",
 					"include" => "true",
 					"hint" => "PAGE_CONTACT_FORM_HINT_MESSAGE",
 					"required" => "true",
 				],
 				"phone" => [
+					"order" => "2",
 					"title" => "",
 					"include" => "true",
 					"hint" => "PAGE_CONTACT_FORM_HINT_PHONE",
 					"required" => "false",
 				],
 				"submit" => [
+					"order" => "4",
 					"title" => "",
 					"message" => "PAGE_CONTACT_FORM_SUBMIT"
 				]
 			],
+			"submit_message" => "PAGE_CONTACT_FORM_SUBMIT_MESSAGE",
 			"class" => "",
 			"style" => "",
 		]

@@ -409,6 +409,18 @@ function wordpress_data_service(){
 			$relativeSource = $_POST['file_source'];
 			$relativeDestination = $_POST['file_destination'];
 			error_log("file move");
+		}else if($operationType=="email_form"){
+			error_log("email_form");
+
+			$toEmail = "zirbsster@gmail.com";
+			$fromEmail = "zirbsster@gmail.com";
+			$replyEmail = "zirbsster@gmail.com";
+			$subject = "subject";
+			$body = "body";
+			$result = sendEmail($toEmail, $fromEmail, $replyEmail, $subject, $body);
+			error_log("RESULT: '".$result."'");
+			$response["result"] = "success";
+			$response["data"] = [];
 		}else{// if($operationType=="file_upload"){
 			$result = exec('whoami');
 			error_log("who am i: ".$result);

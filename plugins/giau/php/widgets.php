@@ -200,14 +200,18 @@ function handle_widget_contact_form($widget,$section){
 	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
 	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 	$inputs = section_get_value_widget_object($widgetJSON,$sectionJSON,"inputs");
-	//$frameSource = section_get_value_widget_string($widgetJSON,$sectionJSON,"source");
-	echo '<div class="giauContactForm">';
+	$message = section_get_value_widget_string($widgetJSON,$sectionJSON,"submit_message");
+		if(!$message){
+			$message = "Submitted";
+		}
+	echo '<div class="giauContactForm" data-message-success="'.$message.'" data-url="" >';
 		// $inputCount = count($inputs);
 		// $i;
 		// for($i=0; $i<$inputCount; ++$i){
 	echo '<ul data-name="inputs">';
 	foreach ($inputs as $inputName => $input) {
 			$name = $inputName;
+			$order = $input["order"];
 			$incl = $input["include"];
 			$hint = $input["hint"];
 				$hint = giau_languagization_substitution($hint,null);
@@ -216,26 +220,28 @@ function handle_widget_contact_form($widget,$section){
 				$message = giau_languagization_substitution($message,null);
 			$title = $input["title"];
 				$title = giau_languagization_substitution($title,null);
-			echo '<li';
-			if($name && $name!=""){
-				echo ' data-input="'.$name.'"';
+			if(($incl && $incl!="" && $incl=="true") || (strcmp($name,"submit")==0) ){
+				echo '<li';
+				if($name && $name!=""){
+					echo ' data-input="'.$name.'"';
+				}
+				if($title && $title!=""){
+					echo ' data-title="'.$title.'"';
+				}
+				if($hint && $hint!=""){
+					echo ' data-hint="'.$hint.'"';
+				}
+				if($required && $required!=""){
+					echo ' data-required="'.$required.'"';
+				}
+				if($message && $message!=""){
+					echo ' data-message="'.$message.'"';
+				}
+				if($order && $order!=""){
+					echo ' data-order="'.$order.'"';
+				}
+				echo '></li>';
 			}
-			if($title && $title!=""){
-				echo ' data-title="'.$title.'"';
-			}
-			if($hint && $hint!=""){
-				echo ' data-hint="'.$hint.'"';
-			}
-			if($incl && $incl!=""){
-				echo ' data-include="'.$incl.'"';
-			}
-			if($message && $message!=""){
-				echo ' data-required="'.$message.'"';
-			}
-			if($message && $message!=""){
-				echo ' data-message="'.$message.'"';
-			}
-			echo '></li>';
 		}
 	echo '</ul>';
 	echo '</div>';
@@ -564,6 +570,7 @@ function handle_widget_image_gallery($widget,$section){
 
 	$imageList = section_get_value_widget_array($widgetJSON,$sectionJSON,"images");
 
+	$showPageIndicators = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"page_indicators") ? "true" : "false";
 	$overlayColor = section_get_value_widget_string($widgetJSON,$sectionJSON,"overlay_color");
 	$divHeight = section_get_value_widget_string($widgetJSON,$sectionJSON,"height");
 	if(!$divHeight){
@@ -573,7 +580,7 @@ function handle_widget_image_gallery($widget,$section){
 	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 	// position:relative; width:100%; height:400px;
 	?>
-		<div class="giauImageGallery <?php echo $klass; ?>" data-ovarlay-color="<?php echo $overlayColor; ?>" data-autoplay="<?php echo $autoPlay; ?>" data-navigation="<?php echo $displayNavigation; ?>" style="<?php echo $style; ?> position:relative; width:100%; height:<?php echo $divHeight; ?>;">
+		<div class="giauImageGallery <?php echo $klass; ?>" data-ovarlay-color="<?php echo $overlayColor; ?>" data-show-page-indicators="<?php echo $showPageIndicators; ?>;" data-autoplay="<?php echo $autoPlay; ?>" data-navigation="<?php echo $displayNavigation; ?>" style="<?php echo $style; ?> position:relative; width:100%; height:<?php echo $divHeight; ?>;">
 		<?php
 			$i;
 			$len = count($imageList);
