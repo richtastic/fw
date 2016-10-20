@@ -199,8 +199,46 @@ function handle_widget_contact_form($widget,$section){
 	$sectionJSON = decodeSection($section);
 	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
 	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
+	$inputs = section_get_value_widget_object($widgetJSON,$sectionJSON,"inputs");
 	//$frameSource = section_get_value_widget_string($widgetJSON,$sectionJSON,"source");
-	echo '<div class="giauContactForm"></div>';
+	echo '<div class="giauContactForm">';
+		// $inputCount = count($inputs);
+		// $i;
+		// for($i=0; $i<$inputCount; ++$i){
+	echo '<ul data-name="inputs">';
+	foreach ($inputs as $inputName => $input) {
+			$name = $inputName;
+			$incl = $input["include"];
+			$hint = $input["hint"];
+				$hint = giau_languagization_substitution($hint,null);
+			$required = $input["required"];
+			$message = $input["message"];
+				$message = giau_languagization_substitution($message,null);
+			$title = $input["title"];
+				$title = giau_languagization_substitution($title,null);
+			echo '<li';
+			if($name && $name!=""){
+				echo ' data-input="'.$name.'"';
+			}
+			if($title && $title!=""){
+				echo ' data-title="'.$title.'"';
+			}
+			if($hint && $hint!=""){
+				echo ' data-hint="'.$hint.'"';
+			}
+			if($incl && $incl!=""){
+				echo ' data-include="'.$incl.'"';
+			}
+			if($message && $message!=""){
+				echo ' data-required="'.$message.'"';
+			}
+			if($message && $message!=""){
+				echo ' data-message="'.$message.'"';
+			}
+			echo '></li>';
+		}
+	echo '</ul>';
+	echo '</div>';
 }
 
 function handle_widget_download_listing($widget,$section){
@@ -210,7 +248,7 @@ function handle_widget_download_listing($widget,$section){
 	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 	$files = section_get_value_widget_array($widgetJSON,$sectionJSON,"files");
 	?>
-	<div class="formDownloadSectionContainer">
+	<div class="formDownloadSectionContainer" style="background-color:#F6F7F9">
 	<?php
 		$fileCount = count($files);
 		$i;
@@ -444,7 +482,10 @@ function handle_widget_language_switch($widget,$section){
 	<div class="languageSwitchContainer" style="display:inline-block; position:absolute; right:0; top:0; padding-right:10px; z-index:100;">
 	<div class="giauLanguageToggleSwitch" style="display:table-cell; padding:10px; vertical-align:middle; text-align:right;"  data-storage="<?php echo KEY_COOKIE_PARAM_LANGUAGE(); ?>" data-color="<?php echo $dataColor; ?>" >
 	<?php
-		foreach($languages as $language){
+		$len = count($languages);
+		$i;
+		for($i=0; $i<$len; ++$i){
+			$language = $languages[$i];
 			$lang = $language["language_name"];
 			$display = $language["display_text"];
 			$display = giau_languagization_substitution($display,null);

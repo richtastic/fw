@@ -10,6 +10,9 @@ function giau_data_default_insert_into_database(){
 	$langEng = LANGUAGE_EN_US();
 	$langKor = LANGUAGE_KO_KP();
 
+
+	$themeBackgroundColorA = " background-color:#F6F7F9; ";
+
 	// MAIN PAGE ITEMS:
 	giau_insert_languagization($langEng,"CALENDAR_TITLE_TEXT","Upcoming Events");
 	giau_insert_languagization($langKor,"CALENDAR_TITLE_TEXT","다가오는 이벤트");
@@ -315,7 +318,9 @@ function giau_data_default_insert_into_database(){
 	
 
 	giau_insert_languagization($langEng,"LANGUAGE_SWITCH_ENGLISH_TEXT","EN");
-	giau_insert_languagization($langEng,"LANGUAGE_SWITCH_KOREAN_TEXT","KO");
+		//giau_insert_languagization($langKor,"LANGUAGE_SWITCH_ENGLISH_TEXT","한국의");
+	giau_insert_languagization($langEng,"LANGUAGE_SWITCH_KOREAN_TEXT","영국의");	
+		//giau_insert_languagization($langKor,"LANGUAGE_SWITCH_KOREAN_TEXT","KO");
 
 	giau_insert_languagization($langEng,"FOOTER_TITLE_TEXT","THE FATHER'S HOUSE");
 	giau_insert_languagization($langEng,"FOOTER_ADDRESS_1_TEXT","Los Angeles Presbyterian Church");
@@ -930,6 +935,9 @@ function giau_data_default_insert_into_database(){
 						"email" => [
 							"type" => "object",
 							"fields" => [
+								"title" => [
+									"type" => "string-language"
+								],
 								"include" => [
 									"type" => "string-boolean"
 								],
@@ -944,6 +952,9 @@ function giau_data_default_insert_into_database(){
 						"name" => [
 							"type" => "object",
 							"fields" => [
+								"title" => [
+									"type" => "string-language"
+								],
 								"include" => [
 									"type" => "string-boolean"
 								],
@@ -958,6 +969,9 @@ function giau_data_default_insert_into_database(){
 						"message" => [
 							"type" => "object",
 							"fields" => [
+								"title" => [
+									"type" => "string-language"
+								],
 								"include" => [
 									"type" => "string-boolean"
 								],
@@ -972,6 +986,9 @@ function giau_data_default_insert_into_database(){
 						"phone" => [
 							"type" => "object",
 							"fields" => [
+								"title" => [
+									"type" => "string-language"
+								],
 								"include" => [
 									"type" => "string-boolean"
 								],
@@ -986,6 +1003,9 @@ function giau_data_default_insert_into_database(){
 						"submit" => [
 							"type" => "object",
 								"fields" => [
+									"title" => [
+										"type" => "string-language"
+									],
 									"message" => [
 										"type" => "string-language"
 									],
@@ -1156,8 +1176,8 @@ function giau_data_default_insert_into_database(){
 					"display_text" => "LANGUAGE_SWITCH_KOREAN_TEXT",
 					"language_name" => "ko"
 				],
-				"color" => "0xFFFFFFFF",
-			]
+			],
+			"color" => "0xFFFFFFFF",
 		];
 
 	$section_id_language_switch = giau_insert_section($widget_id_language_switch,
@@ -1738,7 +1758,7 @@ function giau_data_default_insert_into_database(){
 	$section_id_text_nursery_container = giau_insert_section($widget_id_content_container,
 		[
 			"class" => "",
-			"style" => "display:block; background-color:#FFF; padding:20px;",
+			"style" => "display:block; padding:20px;".$themeBackgroundColorA."",
 		]
 	, [$section_id_text_nursery_left,$section_id_text_nursery_right]);
 
@@ -1881,7 +1901,7 @@ function giau_data_default_insert_into_database(){
 	$section_id_text_kindergarten_container = giau_insert_section($widget_id_content_container,
 		[
 			"class" => "",
-			"style" => "display:block; background-color:#FFF; padding:20px;",
+			"style" => "display:block; padding:20px;".$themeBackgroundColorA."",
 		]
 	, [$section_id_text_kindergarten_left,$section_id_text_kindergarten_right]);
 
@@ -2067,7 +2087,7 @@ function giau_data_default_insert_into_database(){
 	$section_id_text_elementary_container = giau_insert_section($widget_id_content_container,
 		[
 			"class" => "",
-			"style" => "display:block; background-color:#FFF; padding:20px;",
+			"style" => "display:block; padding:20px; ".$themeBackgroundColorA."",
 		]
 	, [$section_id_text_elementary_left,$section_id_text_elementary_right]);
 
@@ -2204,7 +2224,7 @@ function giau_data_default_insert_into_database(){
 	$section_id_text_juniorhigh_container = giau_insert_section($widget_id_content_container,
 		[
 			"class" => "",
-			"style" => "display:block; background-color:#FFF; padding:20px;",
+			"style" => "display:block; padding:20px;".$themeBackgroundColorA."",
 		]
 	, [$section_id_text_juniorhigh_left,$section_id_text_juniorhigh_right]);
 
@@ -2333,7 +2353,7 @@ function giau_data_default_insert_into_database(){
 	$section_id_text_highschool_container = giau_insert_section($widget_id_content_container,
 		[
 			"class" => "",
-			"style" => "display:block; background-color:#FFF; padding:20px;",
+			"style" => "display:block; padding:20px;".$themeBackgroundColorA."",
 		]
 	, [$section_id_text_highschool_left,$section_id_text_highschool_right]);
 
@@ -2402,7 +2422,7 @@ function giau_data_default_insert_into_database(){
 		[
 			"text" => "PAGE_FORMS_DOWNLOAD_TEXT",
 			"class" => "titleSectionMain",
-			"style" => "",
+			"style" => "background-color:#F6F7F9;",
 		]
 	, []);
 	$section_id_form_listing_downloads = giau_insert_section($widget_id_download_listing,
@@ -2442,14 +2462,20 @@ function giau_data_default_insert_into_database(){
 
 	// PAGE CONTACT
 	giau_insert_languagization($langEng,"PAGE_CONTACT_TITLE_TEXT","CONTACT");
+		giau_insert_languagization($langKor,"PAGE_CONTACT_TITLE_TEXT","교제");
 	giau_insert_languagization($langEng,"PAGE_CONTACT_ADDRESS_LINE_1_TEXT","Contact Info");
 	giau_insert_languagization($langEng,"PAGE_CONTACT_ADDRESS_LINE_2_TEXT","2241 N. Eastern Ave.");
 	giau_insert_languagization($langEng,"PAGE_CONTACT_ADDRESS_LINE_3_TEXT","Los Angeles, CA 90032");
 	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_HINT_NAME","Name*");
+		giau_insert_languagization($langKor,"PAGE_CONTACT_FORM_HINT_NAME","이름*");
 	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_HINT_EMAIL","Email*");
-	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_HINT_PHONE","Phone Numner (optional)");
+		giau_insert_languagization($langKor,"PAGE_CONTACT_FORM_HINT_EMAIL","이메일*");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_HINT_PHONE","Phone Number (필요하지)");
+		giau_insert_languagization($langKor,"PAGE_CONTACT_FORM_HINT_PHONE","전화번호 (필요하지)");
 	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_HINT_MESSAGE","Message*");
+		giau_insert_languagization($langKor,"PAGE_CONTACT_FORM_HINT_MESSAGE","문자*");
 	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_SUBMIT","SUBMIT");
+		giau_insert_languagization($langKor,"PAGE_CONTACT_FORM_SUBMIT","보내");
 
 	$section_id_contact_address_1 = giau_insert_section($widget_id_text_display,
 		[
@@ -2475,7 +2501,7 @@ function giau_data_default_insert_into_database(){
 
 	$section_id_contact_map = giau_insert_section($widget_id_map_google,
 		[
-			"source" => "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3304.9435064350605!2d-118.18318181958668!3d34.07096242428407!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c5b8f66d4e9d%3A0xa798b42cbfdca248!2sLos+Angeles+Christian+Presbyterian!5e0!3m2!1sen!2sus!4v1475290571183"
+			"source" => "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3304.9435064350605!2d-118.18318181958668!3d34.07096242428407!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c5b8f66d4e9d%3A0xa798b42cbfdca248!2sLos+Angeles+Christian+Presbyterian!5e0!3m2!1sen!2sus!4v1475290571183",
 		]
 	, []);
 
@@ -2526,26 +2552,31 @@ function giau_data_default_insert_into_database(){
 		[
 			"inputs" => [
 				"email" => [
+					"title" => "",
 					"include" => "true",
 					"hint" => "PAGE_CONTACT_FORM_HINT_EMAIL",
 					"required" => "false",
 				],
 				"name" => [
+					"title" => "",
 					"include" => "true",
 					"hint" => "PAGE_CONTACT_FORM_HINT_NAME",
 					"required" => "true",
 				],
 				"message" => [
+					"title" => "",
 					"include" => "true",
 					"hint" => "PAGE_CONTACT_FORM_HINT_MESSAGE",
 					"required" => "true",
 				],
 				"phone" => [
+					"title" => "",
 					"include" => "true",
 					"hint" => "PAGE_CONTACT_FORM_HINT_PHONE",
 					"required" => "false",
 				],
 				"submit" => [
+					"title" => "",
 					"message" => "PAGE_CONTACT_FORM_SUBMIT"
 				]
 			],
@@ -2569,6 +2600,12 @@ function giau_data_default_insert_into_database(){
 		]
 	, [$section_id_contact_bio_container]);
 
+	$section_id_contact_everything_container = giau_insert_section($widget_id_content_container,
+		[
+			"class" => "everythingContact",
+			"style" => "display:block; width:100%; padding-top:32px; padding-bottom:64px; ".$themeBackgroundColorA.""
+		]
+	, [$section_id_contact_map, $section_id_contact_bio_container_outer]);
 
 	$PAGE_TAG_CONTACT = "contact";
 	// PAGE - CONTACT
@@ -2576,8 +2613,7 @@ function giau_data_default_insert_into_database(){
 		[
 			$section_id_navigation_status_container,
 			$section_id_navigation_departments_light_container,
-			$section_id_contact_map,
-			$section_id_contact_bio_container_outer,
+			$section_id_contact_everything_container,
 			$section_id_footer_all
 		],
 		"".$PAGE_TAG_CONTACT.""

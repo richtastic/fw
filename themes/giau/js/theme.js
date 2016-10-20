@@ -120,6 +120,27 @@ giau.MessageBus.EVENT_OTHER = "other_";
 
 giau.ContactView = function(element){ //
 	this._container = element;
+	var i, j;
+	var propertyDataName = "data-name";
+	var propertyDataInput = "data-input";
+	var propertyDataRequired = "data-required";
+	var propertyDataHint = "data-hint";
+	var propertyDataMessage = "data-message";
+	for(i=0; i<Code.numChildren(this._container); ++i){ // UL
+		var div = Code.getChild(this._container,i);
+		for(j=0; i<Code.numChildren(div); ++i){ // LI
+			var child = Code.getChild(div,i);
+			if(Code.hasProperty(child,propertyDataName)){
+				var name = Code.getProperty(child, propertyDataName);
+				var title = Code.getProperty(child, propertyDataTitle);
+				var input = Code.getProperty(child, propertyDataInput);
+				var required = Code.getProperty(child, propertyDataRequired);
+				var hint = Code.getProperty(child, propertyDataHint);
+				var message = Code.getProperty(child, propertyDataMessage);
+				console.log(name,title,input,required,hint,message);
+			}
+		}
+	}
 
 	var use2Colums = false;
 	// LISTENERS
@@ -419,13 +440,16 @@ giau.BioView = function(element){ //
 	}
 
 	this._personnelList = personnelList;
-
 //Code.addChild(this._container,containerElement);
 Code.setStyleDisplay(this._container,"block");
 Code.setStylePosition(this._container,"relative");
 Code.setStyleWidth(this._container,"100%");
+Code.setStylePaddingTop(this._container,"32px");
+Code.setStylePaddingBottom(this._container,"64px");
 //Code.setStyleBackgroundColor(this._container,"#F6F7F9");
-
+var backgroundColor = 0xFFF6F7F9;
+backgroundColor = Code.getJSColorFromARGB(backgroundColor);
+Code.setStyleBackgroundColor(this._container,backgroundColor);
 	var col = 0;
 	var i, len = personnelList.length;
 	for(i=0; i<len; ++i){
@@ -435,7 +459,7 @@ Code.setStyleWidth(this._container,"100%");
 			Code.setStyleDisplay(outerElement,"table-cell");
 			Code.setStylePosition(outerElement,"relative");
 		var containerElement = Code.newDiv();
-			Code.setStyleBackgroundColor(containerElement,"#F6F7F9");
+			//Code.setStyleBackgroundColor(containerElement,"#F6F7F9");
 			Code.setStyleDisplay(containerElement,"inline-block"); // fit height
 			Code.setStylePosition(containerElement,"relative");
 			Code.setStyleVerticalAlign(containerElement,"top");
@@ -534,8 +558,10 @@ giau.BioView.prototype.updateLayout = function(){
 	var widthContainer = $(this._container).width();
 	var heightContainer = $(this._container).height();
 
-	var outerPadding = 12;
-	var innerPadding = 20;
+	var outerPadding = 10;
+	var innerPadding = 14;
+	var sidePadding = 14;
+		widthContainer -= sidePadding*2;
 	var columns = Math.floor(widthContainer/elementMaxWidth);
 	if(widthContainer<elementMinWidth){
 		columns = 1;
@@ -557,8 +583,8 @@ var row;
 			Code.setStyleDisplay(row,"inline-block");
 			Code.setStylePosition(row,"relative");
 			Code.setStyleWidth(row,widthContainer+"px");
-				Code.setStyleBackgroundColor(row,"#EEE");
-			//Code.setStyleHeight(row,"");
+			Code.setStylePaddingLeft(row,sidePadding+"px");
+			Code.setStylePaddingRight(row,sidePadding+"px");
 		}
 		var person = personnelList[i];
 		var outerElement = person["element"];
