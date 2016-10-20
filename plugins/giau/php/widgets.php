@@ -285,7 +285,8 @@ function handle_widget_medal_banner($widget,$section){
 	$body = section_get_value_widget_string($widgetJSON,$sectionJSON,"message");
 		$body = giau_languagization_substitution($body,null);
 		$body = substituteLiteralNewlinesToHTMLBreaks($body);
-	$icon = section_get_value_widget_string($widgetJSON,$sectionJSON,"icon");
+	$image = section_get_value_widget_string($widgetJSON,$sectionJSON,"icon");
+		$image = plugin_url_from_any_url($image);
 
 	$colorBase = section_get_value_widget_string($widgetJSON,$sectionJSON,"color_base");
 	$colorLight = section_get_value_widget_string($widgetJSON,$sectionJSON,"color_light");
@@ -302,7 +303,7 @@ function handle_widget_medal_banner($widget,$section){
 			<div class="departmentStatementBody" style=""><?php echo $body; ?></div>
 		</div>
 		<div class="departmentStatementLogoContainer" style="">
-			<img src="<?php echo $icon; ?>" class="departmentStatementLogo" style="" />
+			<img src="<?php echo $image; ?>" class="departmentStatementLogo" style="" />
 		</div>
 	</div>
 	<?php
@@ -544,6 +545,7 @@ function handle_widget_category_listing($widget,$section){
 			for($i=0;$i<$categoryLength;++$i){
 				$category = $categoryList[$i];
 				$image = $category["image"];
+					$image = plugin_url_from_any_url($image);
 				$name = $category["name"];
 					$name = giau_languagization_substitution($name,"");
 				$uri = $category["uri"];
@@ -586,6 +588,7 @@ function handle_widget_image_gallery($widget,$section){
 			$len = count($imageList);
 			for($i=0; $i<$len; ++$i){
 				$image = $imageList[$i];
+				$image = plugin_url_from_any_url($image);
 				?>
 				<div data-source="<?php echo $image; ?>" style="display:none;"></div>
 				<?php

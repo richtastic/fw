@@ -2256,6 +2256,8 @@ giau.FileBrowser = function(element){
 	Code.setStyleBorderWidth(div,"0");
 	Code.setContent(div,"");
 	Code.setStyleBackground(div,"#FF0");
+	Code.setStyleFontSize(div,"10px");
+	Code.setStyleColor(div,"#000");
 
 	// relative:
 	div = this._elementRelative;
@@ -2266,6 +2268,8 @@ giau.FileBrowser = function(element){
 	Code.setStyleBorderWidth(div,"0");
 	Code.setContent(div,"");
 	Code.setStyleBackground(div,"#0FF");
+	Code.setStyleFontSize(div,"10px");
+	Code.setStyleColor(div,"#000");
 
 	// file scroller
 	div = this._elementFileContainer;
@@ -2493,7 +2497,8 @@ giau.FileBrowser.prototype.setSelectedIndex = function(index){
 		file = this._contents[index];
 		if(file){
 			div = this._elementRelative;
-			Code.setContent(div,file["url_relative"]);
+			var relative = Code.escapeSpaces(file["path"]); // "url_relative"
+			Code.setContent(div,relative);
 		}
 	}
 }

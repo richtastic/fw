@@ -162,12 +162,148 @@ function create_page(){
 		error_log("PAgE: ".$pageRequest);
 		$page = giau_get_page_tag($pageRequest);
 		fillOutPageFromID($page["id"]);
+		// <div class="giauFileBrowser limitedWidth" style=""></div>
 	?>
+
+	
+
 	</body>
 </html>
 
 <?php
 }
+
+
+
+/*
+// WHAT TO DO ABOUT SECTION SUB ITEM LIST ?
+		//$section = giau_get_section_id(1);
+		$section = giau_get_section_id(8);
+		//$section = giau_get_section_id(25);
+		if($section){
+			$widgetID = $section["widget"];
+			if($widgetID){
+				$widget = giau_get_widget_id($widgetID);
+				if($widget){
+					echo '<div style="display:none;" data-object="true">'. $section["configuration"].'</div>';
+					echo '<div style="display:none;"  data-model="true">' . $widget["configuration"].'</div>';
+				}
+			}
+		}
+			NAME:
+				name : object field key index (for objects only, not for arrays)
+			TYPES:
+				boolean : (stored as string)
+				number : (stored as string)
+				string
+				string-number : (expects a number: float or integet or scientific notation)
+				string-url : (expects a URL)
+				string-image : (expects a URL to an image)
+				string-date : (expects a date in format: YYYY-MM-DD hh:mm:ss.nnnn)
+				string-color : (expects a color in the format: 0xAARRGGBB) (#|0x)(RGB|ARGB|RRGGBB|AARRGGBB)
+				object
+				array-number
+				array-string(-*)
+				array-object
+				array-array
+			ATTRIBUTES:
+				hint : text to display 
+				default-value : assigned value when creating a new primitive
+				description: detailed feedback on purpose of value
+				languagization: boolean on whether the field should pass through a language substitution-filter
+				depends: another field that must exist with non-empty object/array/primitive
+					depends-value: <regex> depends specific value for string/boolean/number
+			SUBTYPES:
+				fields : specify parameters for objects, contained-types for arrays
+		*/
+			$widgetConfig = [
+				"name" => "Giau Test",
+				"fields" => [
+					"boolean" => [
+						"type" => "boolean",
+						"defaut-value" => "false"
+					],
+					"number" => [
+						"type" => "number",
+						"defaut-value" => "0.0"
+					],
+					"string" => [
+						"type" => "string",
+						"defaut-value" => ' < unknown>', // wtf php
+					],
+					"object" => [
+						"type" => "object",
+						"fields" => [
+							"fieldA" => [
+								"type" => "string"
+							],
+							"fieldB" => [
+								"type" => "string"
+							]
+						]
+					],
+					"array_strings" => [
+						"type" => "array-string"
+					],
+					"array_objects" => [
+						"type" => "array-object",
+						"fields" => [
+							"type" => "object",
+							"fields" => [
+								"fieldA" => [
+									"type" => "string"
+								],
+								"fieldB" => [
+									"type" => "string"
+								]
+							]
+						]
+					],
+					"array_list" => [
+						"type" => "array-array",			// array of arrays
+						"fields" => [
+							"type" => "array-array",		// array of arrays
+							"fields" => [
+								"type" => "array-string"	// array of strings
+							]
+						]
+					]
+				]
+			];
+			$sectionConfig = [
+				"boolean" => "true",
+				"number" => "3.141",
+				"string" => "pi",
+				"object" => [
+					"fieldA" => "value A",
+					"fieldB" => "value B",
+				],
+				"array_strings" => [
+					"string0",
+					"string1"
+				],
+				"array_objects" => [
+					[
+						"fieldA" => "valueA",
+						"fieldB" => "valueB",
+					]
+				],
+				"array_list" => [
+					[
+						[
+							"string0",
+							"string1",
+							"string2"
+						]
+					]
+				]
+
+			];
+
+			// $sectionConfig = json_encode($sectionConfig);
+			// $widgetConfig = json_encode($widgetConfig);
+			// echo '<div style="display:none;" data-object="true">'. $sectionConfig .'</div>';
+			// echo '<div style="display:none;"  data-model="true">' . $widgetConfig . '</div>';
 ?>
 
 

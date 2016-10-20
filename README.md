@@ -2,6 +2,11 @@
 
 #### fw
 
+###TODO
+- missing nursery images
+- missing some translations
+
+
 
 
 
@@ -283,6 +288,14 @@ error_log("THE URL: ".$dataServiceURL);
 	</div>
 
 	<input type="text" class="giauAutoComplete" placeholder="language" data-columns="hash_index,phrase_value" data-params='{"operation":"get_autocomplete","table":"localization"}' data-url="<?php echo $dataServiceURL; ?>" style="width:300px; height:32px;">
+
+
+
+
+
+
+
+
 
 
 

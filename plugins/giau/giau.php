@@ -39,6 +39,14 @@ function plugin_upload_root_dir(){
 function plugin_upload_root_url(){
 	return plugins_url()."/giau"."/uploads";
 }
+function plugin_url_from_any_url($image){
+	$beginsWithSlash = preg_match('/^\//',$image);
+	// assume upload directory
+	if( $beginsWithSlash && count($beginsWithSlash)>0 ){
+		$image = plugin_upload_root_url()."".$image;
+	}
+	return $image;
+}
 
 class YC_AdminTools {
 

@@ -339,21 +339,7 @@ function giau_data_default_insert_into_database(){
 
 
 	// WIDGET
-	/*
-	insert_widget('featured','{}');
-	insert_widget('navigation','{}');
-	insert_widget('language_switch','{}');
-	insert_widget('picture_list','{}');
-	insert_widget('info_statement','{}');
-	insert_widget('image_gallery','{}');
-	insert_widget('biography','{}');
-	insert_widget('google_map','{}');
-	insert_widget('calendar','{}');
-	insert_widget('footer','{}');
-	insert_widget('contact_form','{}');
-	
-*/
-	// preset defined list of widgets
+
 
 	// => EMPTY CONTAINER
 	$widget_id_content_container = giau_insert_widget("content_container",
@@ -1243,38 +1229,36 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"LISTING_DEPT_KOREAN_SCHOOL_TEXT","Korean School");
 		giau_insert_languagization($langKor,"LISTING_DEPT_KOREAN_SCHOOL_TEXT","한국어 학교");
 	
-
-		$section_category_prefix = "./wp-content/themes/giau/img/departments/";
 	$section_id_category_listing_departments = giau_insert_section($widget_id_category_listing,
 		[
 			"categories" => [
 				[
-					"image" => $section_category_prefix."category_nursery.png",
+					"image" => "/images/icons/category_nursery.png",
 					"name" => "LISTING_DEPT_NURSERY_TEXT",
 					"uri" => "./?page=nursery"
 				],
 				[
-					"image" => $section_category_prefix."category_kindergarten.png",
+					"image" => "/images/icons/category_kindergarten.png",
 					"name" => "LISTING_DEPT_KINDERGARTEN_TEXT",
 					"uri" => "./?page=kindergarten"
 				],
 				[
-					"image" => $section_category_prefix."category_elementary.png",
+					"image" => "/images/icons/category_elementary.png",
 					"name" => "LISTING_DEPT_ELEMENTARY_TEXT",
 					"uri" => "./?page=elementary"
 				],
 				[
-					"image" => $section_category_prefix."category_junior_high.png",
+					"image" => "/images/icons/category_junior_high.png",
 					"name" => "LISTING_DEPT_JUNIOR_HIGH_TEXT",
 					"uri" => "./?page=juniorhigh"
 				],
 				[
-					"image" => $section_category_prefix."category_high_school.png",
+					"image" => "/images/icons/category_high_school.png",
 					"name" => "LISTING_DEPT_HIGH_SCHOOL_TEXT",
 					"uri" => "./?page=highschool"
 				],
 				[
-					"image" => $section_category_prefix."category_korean_school.png",
+					"image" => "/images/icons/category_korean_school.png",
 					"name" => "LISTING_DEPT_KOREAN_SCHOOL_TEXT",
 					"uri" => "http://www.lacpcks.org"
 				]
@@ -1382,19 +1366,17 @@ function giau_data_default_insert_into_database(){
 		]
 	, [$section_id_navigation_departments]);
 
-
-		$section_image_gallery_prefix = "./wp-content/themes/giau/img/gallery_featured/";
 	$section_id_gallery_home_page_primary = giau_insert_section($widget_id_image_gallery,
 		[
 			"autoplay" => "10000",
 			"display_navigation" => "false",
 			"images" => [
-				$section_image_gallery_prefix."featured_06_opt.png",
-				$section_image_gallery_prefix."featured_01_opt.png",
-				$section_image_gallery_prefix."featured_02_opt.png",
-				$section_image_gallery_prefix."featured_03_opt.png",
-				$section_image_gallery_prefix."featured_04_opt.png",
-				$section_image_gallery_prefix."featured_05_opt.png",
+				"/images/galleries/home_featured/featured_06_opt.png",
+				"/images/galleries/home_featured/featured_01_opt.png",
+				"/images/galleries/home_featured/featured_02_opt.png",
+				"/images/galleries/home_featured/featured_03_opt.png",
+				"/images/galleries/home_featured/featured_04_opt.png",
+				"/images/galleries/home_featured/featured_01_opt.png",
 			],
 			"overlay_color" => "0x66000000",
 			"height" => "500px",
@@ -1404,25 +1386,16 @@ function giau_data_default_insert_into_database(){
 		]
 	, [$section_id_home_gallery_overlay, $section_id_navigation_main_container, $section_id_navigation_secondary_container]);
 
-	// $section_id_home_page_top = giau_insert_section($widget_id_content_container,
-	// 	[
-	// 		"style" => "",
-	// 		"class" => ""
-	// 	]
-	// , []);
-
-
 	$section_id_image_gallery_home_secondary = giau_insert_section($widget_id_image_gallery,
 		[
 			"autoplay" => "20000",
 			"display_navigation" => "true",
 			"images" => [
-				$section_image_gallery_prefix."featured_01_opt.png",
-				$section_image_gallery_prefix."featured_02_opt.png",
-				$section_image_gallery_prefix."featured_03_opt.png",
-				$section_image_gallery_prefix."featured_04_opt.png",
-				$section_image_gallery_prefix."featured_05_opt.png",
-				$section_image_gallery_prefix."featured_06_opt.png",
+				"/images/galleries/home_featured/featured_01_opt.png",
+				"/images/galleries/home_featured/featured_02_opt.png",
+				"/images/galleries/home_featured/featured_03_opt.png",
+				"/images/galleries/home_featured/featured_04_opt.png",
+				"/images/galleries/home_featured/featured_01_opt.png",
 			],
 			"height" => "500px",
 			"page_indicators" => "true",
@@ -1629,7 +1602,7 @@ function giau_data_default_insert_into_database(){
 		[
 			"title" => "PAGE_DEPARTMENT_NURSERY_BANNER_TITLE",
 			"message" => "PAGE_DEPARTMENT_NURSERY_BANNER_MESSAGE",
-			"icon" => "./wp-content/themes/giau/img/departments/featured_nursery.png",
+			"icon" => "/images/icons/featured_nursery.png",
 			"color_base" => "0xCBC42D",
 			"color_light" => "0xBBBB22",
 			"color_dark" => "0xBBBB22",
@@ -1719,21 +1692,20 @@ function giau_data_default_insert_into_database(){
 		]
 	, []);
 
-		$section_image_gallery_elementary_prefix = "./wp-content/themes/giau/img/departments/galleries/"."elementary/";
 	$section_id_gallery_nursery = giau_insert_section($widget_id_image_gallery,
 		[
 			"autoplay" => "10000",
 			"display_navigation" => "false",
 			"images" => [
-				$section_image_gallery_elementary_prefix."gallery_01.png",
-				$section_image_gallery_elementary_prefix."gallery_02.png",
-				$section_image_gallery_elementary_prefix."gallery_03.png",
-				$section_image_gallery_elementary_prefix."gallery_04.png",
-				$section_image_gallery_elementary_prefix."gallery_05.png",
-				$section_image_gallery_elementary_prefix."gallery_06.png",
-				$section_image_gallery_elementary_prefix."gallery_07.png",
-				$section_image_gallery_elementary_prefix."gallery_08.png",
-				$section_image_gallery_elementary_prefix."gallery_09.png",
+				"/images/galleries/elementary/gallery_01_opt.png",
+				"/images/galleries/elementary/gallery_02_opt.png",
+				"/images/galleries/elementary/gallery_03_opt.png",
+				"/images/galleries/elementary/gallery_04_opt.png",
+				"/images/galleries/elementary/gallery_05_opt.png",
+				"/images/galleries/elementary/gallery_06_opt.png",
+				"/images/galleries/elementary/gallery_07_opt.png",
+				"/images/galleries/elementary/gallery_08_opt.png",
+				"/images/galleries/elementary/gallery_09_opt.png",
 			],
 			"height" => "500px",
 			"page_indicators" => "true",
@@ -1816,7 +1788,7 @@ function giau_data_default_insert_into_database(){
 		[
 			"title" => "PAGE_DEPARTMENT_KINDERGARTEN_BANNER_TITLE",
 			"message" => "PAGE_DEPARTMENT_KINDERGARTEN_BANNER_MESSAGE",
-			"icon" => "./wp-content/themes/giau/img/departments/featured_kindergarden.png",
+			"icon" => "/images/icons/featured_kindergarden.png",
 			"color_base" => "0xE0D011",
 			"color_light" => "0xDDC313",
 			"color_dark" => "0xDDC313",
@@ -1871,19 +1843,18 @@ function giau_data_default_insert_into_database(){
 		]
 	, []);
 
-		$section_image_gallery_kindergarten_prefix = "./wp-content/themes/giau/img/departments/galleries/"."kindergarten/";
 	$section_id_gallery_kindergarten = giau_insert_section($widget_id_image_gallery,
 		[
 			"autoplay" => "10000",
 			"display_navigation" => "false",
 			"images" => [
-				$section_image_gallery_kindergarten_prefix."gallery_01.png",
-				$section_image_gallery_kindergarten_prefix."gallery_02.png",
-				$section_image_gallery_kindergarten_prefix."gallery_03.png",
-				$section_image_gallery_kindergarten_prefix."gallery_04.png",
-				$section_image_gallery_kindergarten_prefix."gallery_05.png",
-				$section_image_gallery_kindergarten_prefix."gallery_06.png",
-				$section_image_gallery_kindergarten_prefix."gallery_07.png",
+				"/images/galleries/kindergarten/gallery_01_opt.png",
+				"/images/galleries/kindergarten/gallery_02_opt.png",
+				"/images/galleries/kindergarten/gallery_03_opt.png",
+				"/images/galleries/kindergarten/gallery_04_opt.png",
+				"/images/galleries/kindergarten/gallery_05_opt.png",
+				"/images/galleries/kindergarten/gallery_06_opt.png",
+				"/images/galleries/kindergarten/gallery_07_opt.png",
 			],
 			"height" => "500px",
 			"page_indicators" => "true",
@@ -1968,7 +1939,7 @@ function giau_data_default_insert_into_database(){
 		[
 			"title" => "PAGE_DEPARTMENT_ELEMENTARY_BANNER_TITLE",
 			"message" => "PAGE_DEPARTMENT_ELEMENTARY_BANNER_MESSAGE",
-			"icon" => "./wp-content/themes/giau/img/departments/featured_elementary.png",
+			"icon" => "/images/icons/featured_elementary.png",
 			"color_base" => "0xF1592A",
 			"color_light" => "0xDD5526",
 			"color_dark" => "0xDD5526",
@@ -2058,21 +2029,20 @@ function giau_data_default_insert_into_database(){
 		]
 	, []);
 
-		$section_image_gallery_elementary_prefix = "./wp-content/themes/giau/img/departments/galleries/"."elementary/";
 	$section_id_gallery_elementary = giau_insert_section($widget_id_image_gallery,
 		[
 			"autoplay" => "10000",
 			"display_navigation" => "false",
 			"images" => [
-				$section_image_gallery_elementary_prefix."gallery_01.png",
-				$section_image_gallery_elementary_prefix."gallery_02.png",
-				$section_image_gallery_elementary_prefix."gallery_03.png",
-				$section_image_gallery_elementary_prefix."gallery_04.png",
-				$section_image_gallery_elementary_prefix."gallery_05.png",
-				$section_image_gallery_elementary_prefix."gallery_06.png",
-				$section_image_gallery_elementary_prefix."gallery_07.png",
-				$section_image_gallery_elementary_prefix."gallery_08.png",
-				$section_image_gallery_elementary_prefix."gallery_09.png",
+				"/images/galleries/elementary/gallery_01_opt.png",
+				"/images/galleries/elementary/gallery_02_opt.png",
+				"/images/galleries/elementary/gallery_03_opt.png",
+				"/images/galleries/elementary/gallery_04_opt.png",
+				"/images/galleries/elementary/gallery_05_opt.png",
+				"/images/galleries/elementary/gallery_06_opt.png",
+				"/images/galleries/elementary/gallery_07_opt.png",
+				"/images/galleries/elementary/gallery_08_opt.png",
+				"/images/galleries/elementary/gallery_09_opt.png",
 			],
 			"height" => "500px",
 			"page_indicators" => "true",
@@ -2148,7 +2118,7 @@ function giau_data_default_insert_into_database(){
 		[
 			"title" => "PAGE_DEPARTMENT_JUNIORHIGH_BANNER_TITLE",
 			"message" => "PAGE_DEPARTMENT_JUNIORHIGH_BANNER_MESSAGE",
-			"icon" => "./wp-content/themes/giau/img/departments/featured_jrhigh.png",
+			"icon" => "/images/icons/featured_jrhigh.png",
 			"color_base" => "0xBA1E71",
 			"color_light" => "0xB91370",
 			"color_dark" => "0xB91370",
@@ -2196,22 +2166,21 @@ function giau_data_default_insert_into_database(){
 		]
 	, []);
 
-		$section_image_gallery_juniorhigh_prefix = "./wp-content/themes/giau/img/departments/galleries/"."jrhigh/";
 	$section_id_gallery_juniorhigh = giau_insert_section($widget_id_image_gallery,
 		[
 			"autoplay" => "10000",
 			"display_navigation" => "false",
 			"images" => [
-				$section_image_gallery_juniorhigh_prefix."gallery_01.png",
-				$section_image_gallery_juniorhigh_prefix."gallery_02.png",
-				$section_image_gallery_juniorhigh_prefix."gallery_03.png",
-				$section_image_gallery_juniorhigh_prefix."gallery_04.png",
-				$section_image_gallery_juniorhigh_prefix."gallery_05.png",
-				$section_image_gallery_juniorhigh_prefix."gallery_06.png",
-				$section_image_gallery_juniorhigh_prefix."gallery_07.png",
-				$section_image_gallery_juniorhigh_prefix."gallery_08.png",
-				$section_image_gallery_juniorhigh_prefix."gallery_09.png",
-				$section_image_gallery_juniorhigh_prefix."gallery_10.png",
+				"/images/galleries/juniorhigh/gallery_01_opt.png",
+				"/images/galleries/juniorhigh/gallery_02_opt.png",
+				"/images/galleries/juniorhigh/gallery_03_opt.png",
+				"/images/galleries/juniorhigh/gallery_04_opt.png",
+				"/images/galleries/juniorhigh/gallery_05_opt.png",
+				"/images/galleries/juniorhigh/gallery_06_opt.png",
+				"/images/galleries/juniorhigh/gallery_07_opt.png",
+				"/images/galleries/juniorhigh/gallery_08_opt.png",
+				"/images/galleries/juniorhigh/gallery_09_opt.png",
+				"/images/galleries/juniorhigh/gallery_10_opt.png",
 			],
 			"height" => "500px",
 			"page_indicators" => "true",
@@ -2287,7 +2256,7 @@ function giau_data_default_insert_into_database(){
 		[
 			"title" => "PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_TITLE",
 			"message" => "PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_MESSAGE",
-			"icon" => "./wp-content/themes/giau/img/departments/featured_highschool.png",
+			"icon" => "/images/icons/featured_highschool.png",
 			"color_base" => "0x3B1955",
 			"color_light" => "0x361650",
 			"color_dark" => "0x361650",
@@ -2335,14 +2304,13 @@ function giau_data_default_insert_into_database(){
 		]
 	, []);
 
-		$section_image_gallery_highschool_prefix = "./wp-content/themes/giau/img/departments/galleries/"."highschool/";
 	$section_id_gallery_highschool = giau_insert_section($widget_id_image_gallery,
 		[
 			"autoplay" => "10000",
 			"display_navigation" => "false",
 			"images" => [
-				$section_image_gallery_highschool_prefix."gallery_01.png",
-				$section_image_gallery_highschool_prefix."gallery_02.png",
+				"/images/galleries/highschool/gallery_01_opt.png",
+				"/images/galleries/highschool/gallery_02_opt.png",
 			],
 			"height" => "500px",
 			"page_indicators" => "true",
