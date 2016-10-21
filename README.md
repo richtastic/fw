@@ -143,7 +143,7 @@ chmod -R 777 /var/www/html/wordpress/wp-content/plugins/giau
 
 
 
-#speicfic files
+#specific files
 
 cp /media/sf_zirbr001/dev/extRepos/fw/themes/giau/index.php /repos/fw/themes/giau/index.php 
 cp /media/sf_zirbr001/dev/extRepos/fw/themes/giau/data.php /repos/fw/themes/giau/data.php 

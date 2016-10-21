@@ -116,6 +116,7 @@ function page_link_from_page_name_subpage($pageName,$subpage){
 
 function create_page(){
 	$relativePathJSFF = relativePathJS()."code/";
+	// TODO: ONLY NEED Code.js
 	$fileJavaScriptFF = relativePathJS()."code/FF.js";
 	$fileCSSMain = relativePathCSS()."theme.css";
 	$fileJavaScriptMain = relativePathJS()."theme.js";

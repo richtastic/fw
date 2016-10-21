@@ -144,7 +144,9 @@ function giau_wordpress_data_service(){
 // EMAIL FORM SERVICE --------------------------------------------------------------------------------------------------------------
 		}else if($operationType=="email_form"){
 			error_log("email_form");
-
+			wp_mail( ["zirbsster@gmail.com"], "test title", "test body");
+			// /usr/sbin/sendmail: not found
+/*
 			$toEmail = "zirbsster@gmail.com";
 			$fromEmail = "zirbsster@gmail.com";
 			$replyEmail = "zirbsster@gmail.com";
@@ -152,6 +154,7 @@ function giau_wordpress_data_service(){
 			$body = "body";
 			$result = sendEmail($toEmail, $fromEmail, $replyEmail, $subject, $body);
 			error_log("RESULT: '".$result."'");
+*/
 			$response["result"] = "success";
 			$response["data"] = [];
 // LANGUAGIZATION SERVICE --------------------------------------------------------------------------------------------------------------

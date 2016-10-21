@@ -422,13 +422,17 @@ function giau_admin_plugin_options() {
 
 
 function sendEmail($toEmail, $fromEmail, $replyEmail, $subject, $body){
+	error_log("sendEmail: ".$toEmail." - ".$fromEmail." - ".$replyEmail." - ".$subject." - ".$body);
+	return mail("zirbsster@gmail.com", "test postfix", "test mail");
+	// https://easyengine.io/tutorials/php/test-email-sending/
+	// 
 	// http://www.html-form-guide.com/email-form/php-script-not-sending-email.html
 	// http://stackoverflow.com/questions/24644436/php-mail-form-doesnt-complete-sending-e-mail
 	if( $toEmail==null || count($toEmail)<1 ){
 		return 0;
 	}
 	$headers = "From: ".$fromEmail."\r\nReply-To: ".$replyEmail."";
-	return mail($toEmail, $subject, $body, $headers);
+	//return mail($toEmail, $subject, $body, $headers);
 	//error_log('MAIL: '.$toEmail.' | '.$subject.' | '.$body);
 }
 

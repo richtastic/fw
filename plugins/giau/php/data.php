@@ -2465,7 +2465,7 @@ function giau_data_default_insert_into_database(){
 		giau_insert_languagization($langKor,"PAGE_CONTACT_FORM_HINT_MESSAGE","문자*");
 	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_SUBMIT","SUBMIT");
 		giau_insert_languagization($langKor,"PAGE_CONTACT_FORM_SUBMIT","보내");
-	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_SUBMIT","Form submitted successfully.");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_FORM_SUBMIT_MESSAGE","Form submitted successfully.");
 		giau_insert_languagization($langKor,"PAGE_CONTACT_FORM_SUBMIT_MESSAGE","Form submitted successfully.");
 
 	$section_id_contact_address_1 = giau_insert_section($widget_id_text_display,
