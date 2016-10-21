@@ -3,10 +3,55 @@
 #### fw
 
 ###TODO
+
 - missing nursery images
 - missing some translations
 
+- object-widget editing working in test case
+- object widget interfacing with server db tables
 
+ADMIN PAGES:
+- language table: READ, UPDATE, CREATE, DELETE
+	- ability to find sections matching hash (where used)
+- bio table: READ, UPDATE, CREATE, DELETE
+- calendar table: READ, UPDATE, CREATE, DELETE
+- section table: READ, UPDATE, CREATE, DELETE
+		- choose from library of widgets
+	- color picker
+	- date picker
+	- boolean select
+	- url picker?
+	- subsection drag/drop
+	- preview section
+- page table: READ, UPDATE, CREATE, DELETE
+	- special key names:
+		- __live
+		- __error
+	- drag & drop sections
+		- choose from library of sections
+	- preview webpage (new window?)
+- widget table: READ ONLY
+	- want OBJECT-CREATOR/DEFINER in future
+- file upload
+
+- giau settings page (website table? == widget?)
+	- color theming, font theming...
+	- form emailing address
+	- images?
+
+- backup strategy
+	- database:
+		- single file with all relevant table info
+	- files (uploads):
+		- ZIP / DL ?
+	- automation (cron)?
+		- https://deliciousbrains.com/background-processing-wordpress/
+
+- no duplicate languagization entries
+- all editing behind admin wall
+
+
+- ?can create a widget to alter the HEAD (eg title)
 
 
 
