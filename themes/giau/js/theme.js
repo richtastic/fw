@@ -877,9 +877,11 @@ giau.LanguageToggle = function(element){
 			Code.setStylePadding(div,"10px 2px 10px 2px");
 		if(storageDictionaryValue==language){
 			Code.setStyleFontFamily(div,"'siteThemeRegular'");
+			Code.setStyleCursor(div,Code.JS_CURSOR_STYLE_DEFAULT);
 			foundLanguageIndex = i;
 		}else{
 			Code.setStyleFontFamily(div,"'siteThemeLight'");
+			Code.setStyleCursor(div,Code.JS_CURSOR_STYLE_FINGER);
 		}
 		entry["element"] = div;
 		Code.addChild(this._container, div);
@@ -1283,11 +1285,6 @@ giau.ImageGallery = function(element){
 			//this._coverBorderLeft
 			
 			if(showNavigation){
-				//giauImageGalleryShowNavigation
-				// this._coverIconLeft.src = GLOBAL_SERVER_IMAGE_PATH+"/gallery_button_left.png";
-				// this._coverIconRight.src = GLOBAL_SERVER_IMAGE_PATH+"gallery_button_right.png";
-				// this._coverIconLeft.src = GLOBAL_SERVER_IMAGE_PATH+"left_arrow_box.png";
-				// this._coverIconRight.src = GLOBAL_SERVER_IMAGE_PATH+"right_arrow_box.png";
 				this._coverIconLeft.src = GLOBAL_SERVER_IMAGE_PATH+"gallery_arrow_left.png";
 				this._coverIconRight.src = GLOBAL_SERVER_IMAGE_PATH+"gallery_arrow_right.png";
 				Code.setStyleBackground(this._overlayBorderLeft,""+Code.getJSColorFromARGB(overlayBorderColor));
@@ -1560,6 +1557,7 @@ giau.ImageGallery.prototype._updateLayout = function(index){
 		var iconButtonWidth = 15;
 		var iconButtonHeight = 15;
 		var barIconWidth = 50;
+var iconButtonOffset = Math.floor((barIconWidth-iconButtonWidth)*0.5);
 		Code.setSrc(this._primaryImageElement,info.url);
 
 		// FUNCTIONALITY CONTAINER
@@ -1601,13 +1599,13 @@ giau.ImageGallery.prototype._updateLayout = function(index){
 				// LEFT - BUTTON
 				if(this._coverIconLeft.src){
 					Code.setStylePosition(this._coverIconLeft, "absolute");
-					Code.setStyleLeft(this._coverIconLeft, "10px");
+					Code.setStyleLeft(this._coverIconLeft, iconButtonOffset+"px");
 					Code.setStyleTop(this._coverIconLeft, ((heightContainer-iconButtonHeight)*0.5)+"px");
 					//Code.setStyleHeight(this._coverIconLeft, iconButtonHeight+"px");
 					Code.setStyleWidth(this._coverIconLeft, iconButtonWidth+"px");
 					// RIGHT - BUTTON
 					Code.setStylePosition(this._coverIconRight, "absolute");
-					Code.setStyleRight(this._coverIconRight, "10px");
+					Code.setStyleRight(this._coverIconRight, iconButtonOffset+"px");
 					Code.setStyleTop(this._coverIconRight, ((heightContainer-iconButtonHeight)*0.5)+"px");
 					//Code.setStyleHeight(this._coverIconRight, iconButtonHeight+"px");
 					Code.setStyleWidth(this._coverIconRight, iconButtonWidth+"px");
@@ -2598,11 +2596,13 @@ giau.FileBrowser.prototype._handleDragDropUploadFxn = function(e){
 }
 giau.FileBrowser.prototype.iconFromFileType = function(filetype, url){
 	var source = "./wp-content/themes/giau/img/file_browser/icon_fb_blank.png";
+	var useBackground = false;
 	if(filetype){
 		if(filetype == "directory"){ // directory
 			source = "./wp-content/themes/giau/img/file_browser/icon_fb_folder.png";
 		}else if( filetype.match("image\/.*") ){  // any image
 			source = url;
+			useBackground = true;
 		}
 		
 		// if other type, use iconography
@@ -2615,6 +2615,9 @@ giau.FileBrowser.prototype.iconFromFileType = function(filetype, url){
 		img.src = source;
 		Code.setStyleWidth(img,"32px");
 		Code.setStyleHeight(img,"32px");
+		if(useBackground){
+			Code.setStyleBackground(img,"url('./wp-content/themes/giau/img/file_browser/icon_fb_image_background.png')");
+		}
 	return img;
 }
 

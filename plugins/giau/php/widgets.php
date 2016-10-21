@@ -24,7 +24,6 @@ function fillOutFromSectionList($sectionList){
 }
 
 function fillOutSectionFromID($sectionID){
-	//error_log("fillOutSectionFromID: ".$sectionID);
 	$section = giau_get_section_id($sectionID);
 	if($section!=null){
 		$widgetID = $section["widget"];
@@ -262,6 +261,7 @@ function handle_widget_download_listing($widget,$section){
 			$title = $files[$i]["title"];
 				$title = giau_languagization_substitution($title,null);
 			$uri = $files[$i]["uri"];
+			$uri = giau_plugin_url_from_any_url($uri);
 			?>
 		<div class="formItemDownload">
 			<a href="<?php echo $uri; ?>" target="_blank"><?php echo $title; ?></a>
@@ -286,7 +286,7 @@ function handle_widget_medal_banner($widget,$section){
 		$body = giau_languagization_substitution($body,null);
 		$body = substituteLiteralNewlinesToHTMLBreaks($body);
 	$image = section_get_value_widget_string($widgetJSON,$sectionJSON,"icon");
-		$image = plugin_url_from_any_url($image);
+		$image = giau_plugin_url_from_any_url($image);
 
 	$colorBase = section_get_value_widget_string($widgetJSON,$sectionJSON,"color_base");
 	$colorLight = section_get_value_widget_string($widgetJSON,$sectionJSON,"color_light");
@@ -358,21 +358,18 @@ function handle_widget_personnel_coverage($widget,$section){
 
 	$bios = giau_bio_paginated($offset,$count,$sortIndexDirection,$tags);
 	$bioCount = count($bios);
-	
-	$imagePrefx = "./wp-content/themes/giau/img/personnel/";
+
 	$i;
 	for($i=0; $i<$bioCount; ++$i){
 		$bio = $bios[$i];
-		if($image!=""){
-			$image = $imagePrefx."".$image;
-		}
 		$image = $bio["image_url"];
+			$image = giau_plugin_url_from_any_url($image);
 		$name = $bio["display_name"];
 		$email = $bio["email"];
 		$phone = $bio["phone"];
 			$phone = getHumanReadablePhone($phone);
 		?>
-	<img class="departmentInstructorDescription" src="./wp-content/themes/giau/img/personnel/<?php echo $image; ?>" style="width:100px; border-radius: 50%; display:inline-block;">
+	<img class="departmentInstructorDescription" src="<?php echo $image; ?>" style="width:100px; border-radius: 50%; display:inline-block;">
 	<div class="departmentInstructorDescriptionTitle"><?php echo $name; ?></div>
 	<div class="departmentInstructorDescriptionInfo"><?php echo $email; ?></div>
 	<div class="departmentInstructorDescriptionInfo"><?php echo $phone; ?></div>
@@ -545,7 +542,7 @@ function handle_widget_category_listing($widget,$section){
 			for($i=0;$i<$categoryLength;++$i){
 				$category = $categoryList[$i];
 				$image = $category["image"];
-					$image = plugin_url_from_any_url($image);
+					$image = giau_plugin_url_from_any_url($image);
 				$name = $category["name"];
 					$name = giau_languagization_substitution($name,"");
 				$uri = $category["uri"];
@@ -588,7 +585,7 @@ function handle_widget_image_gallery($widget,$section){
 			$len = count($imageList);
 			for($i=0; $i<$len; ++$i){
 				$image = $imageList[$i];
-				$image = plugin_url_from_any_url($image);
+				$image = giau_plugin_url_from_any_url($image);
 				?>
 				<div data-source="<?php echo $image; ?>" style="display:none;"></div>
 				<?php
@@ -625,7 +622,8 @@ function handle_widget_social_apps($widget,$section){
 		if($item){
 			//print_r($item);
 			$uri = $item["uri"];
-			$icon = $item["icon"];
+			$image = $item["icon"];
+				$image = giau_plugin_url_from_any_url($image);
 			$style2 = "";
 			if($uri==""){
 				$style2 = "opacity: 0.25;";
@@ -633,7 +631,7 @@ function handle_widget_social_apps($widget,$section){
 			if($uri){
 				echo '<a href="'.$uri.'">';
 			}
-				echo '<img class="'.$klass.'" style="'.$style2.'" src="'.$icon.'" />';
+				echo '<img class="'.$klass.'" style="'.$style2.'" src="'.$image.'" />';
 			if($uri){
 				echo '</a>';
 			}
@@ -712,10 +710,10 @@ function handle_widget_bio_listing($widget,$section){
 	$widgetJSON = decodeWidget($widget);
 	$sectionJSON = decodeSection($section);
 
-	$imagePrefx = "./wp-content/themes/giau/img/personnel/";
-	$defaultImage = $imagePrefx."anonymous.png";
 	$defaultBio = section_get_value_widget_string($widgetJSON,$sectionJSON,"default_display");
 		$defaultBio = giau_languagization_substitution($defaultBio,"");
+	$defaultImage = section_get_value_widget_string($widgetJSON,$sectionJSON,"default_image");
+		$defaultImage = giau_plugin_url_from_any_url($defaultImage);
 
 	$offset = null;
 	$count = null;
@@ -742,7 +740,7 @@ function handle_widget_bio_listing($widget,$section){
 			$uri = $bio["uri"];
 			$image = $bio["image_url"];
 			if($image!=""){
-				$image = $imagePrefx."".$image;
+				$image = giau_plugin_url_from_any_url($image);
 			}
 			?>
 			<div style="display:none;" data-data="true"

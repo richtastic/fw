@@ -23,7 +23,7 @@ define( 'GIAU_PLUGIN_URL', plugin_basename(__FILE__) );
 
 
 $GIAU_ROOT_PATH = dirname(__FILE__);
-error_log("GIAU_ROOT_PATH: ".$GIAU_ROOT_PATH);
+//error_log("GIAU_ROOT_PATH: ".$GIAU_ROOT_PATH);
 require_once($GIAU_ROOT_PATH.'/php/widgets.php');
 require_once($GIAU_ROOT_PATH.'/php/functions.php');
 require_once($GIAU_ROOT_PATH.'/php/tables.php');
@@ -35,16 +35,19 @@ function giau_plugin_directory_root(){
 	return GIAU_PLUGIN_DIR;
 }
 function giau_plugin_upload_root_dir(){
-	return plugin_directory_root()."uploads";
+	return giau_plugin_directory_root()."uploads";
 }
 function giau_plugin_upload_root_url(){
 	return plugins_url()."/giau"."/uploads";
 }
 function giau_plugin_url_from_any_url($image){
+	if(!$image){
+		return "";
+	}
 	$beginsWithSlash = preg_match('/^\//',$image);
 	// assume upload directory
 	if( $beginsWithSlash && count($beginsWithSlash)>0 ){
-		$image = plugin_upload_root_url()."".$image;
+		$image = giau_plugin_upload_root_url()."".$image;
 	}
 	return $image;
 }
@@ -99,7 +102,7 @@ function admin_test(){
 
 function regular_test(){
 	//error_log("richie - regular test");
-	wordpress_data_service();
+	giau_wordpress_data_service();
 }
 add_action('init','regular_test');
 
@@ -232,46 +235,6 @@ function getPageRequest(){
 	return $pageRequest;
 }
 
-function include_widget_calendar_events(){
-?>
-	<div class="giauCalendarList"
-		data-months-short="<?php echo(implode(",",getCookieMonthsOfYearShort())); ?>"
-		data-months-long="<?php echo(implode(",",getCookieMonthsOfYearLong())); ?>"
-		data-days-short="<?php echo(implode(",",getCookieDaysOfWeekShort())); ?>"
-		data-days-long="<?php echo(implode(",",getCookieDaysOfWeekLong())); ?>"
-		>
-			<?php
-				$daysInTheFuture = 6*30; // 6 months
-				$dateNow = getDateNow();
-				$dateLimit = addTimeToSeconds($dateNow, 0,0,$daysInTheFuture, 0,0,0, 0);
-				$startDate = stringFromDate($dateNow);
-				$endDate = stringFromDate($dateLimit);
-				// error_log("start: ".$startDate);
-				// error_log("  end: ".$endDate);
-				$operationOffset = 0;
-				$operationCount = 100;
-				$operationOrder = [ ["start_date",1], ["duration",1], ["id",0] ];
-				$results = giau_calendar_paginated($operationOffset,$operationCount,$operationOrder, $startDate,$endDate, null);
-				$length = count($results);
-				$index = 0;
-				foreach($results as $row){
-					$row["$__"] = $index;
-					$included = ["$__","title","description","start_date","duration"];
-					$labels = ["data-index","data-title","data-description","data-start-date","data-duration"];
-					$extra = "";
-					$div = divWithDatasValuesLabelsExtras($row, $included, $labels, $extra);
-					//error_log($div);
-					echo $div;
-					++$index;
-				}
-				// function giau_calendar_paginated($offset,$count,$sortIndexDirection, $startDate,$endDate)
-				//$calendarResults = 
-			?>
-		</div>
-<?php
-}
-
-
 function getRelativeURLFromAbsoluteURL($url){
 	$rootURL = get_site_url();
 	$pattern = "#^".preg_quote($rootURL)."?#";
@@ -281,8 +244,8 @@ function getRelativeURLFromAbsoluteURL($url){
 function operateOnFileListingEntry(&$entry){
 	// $entry["url"] = site_url($entry["path"]); // trash
 	$rootURL = get_site_url();
-	$dirPluginUpload = plugin_upload_root_dir();
-	$urlPluginUpload = plugin_upload_root_url();
+	$dirPluginUpload = giau_plugin_upload_root_dir();
+	$urlPluginUpload = giau_plugin_upload_root_url();
 	error_log($rootURL." | ".$dirPluginUpload." | ".$urlPluginUpload);
 	$path = $entry["path"];
 		$pattern = "#^".preg_quote($dirPluginUpload)."?#";

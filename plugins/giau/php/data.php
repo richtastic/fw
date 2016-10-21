@@ -203,7 +203,7 @@ function giau_data_default_insert_into_database(){
 			'BIO_PHONE_JOSEPH_KIM_TEXT',
 			'BIO_DESCRIPTION_JOSEPH_KIM_TEXT',
 			'BIO_URI_JOSEPH_KIM_URI_TEXT',
-			'ce-joe.png',
+			'/images/personnel/ce-joe.png',
 			'bio,contact,juniorhigh'
 	);
 	giau_insert_bio(
@@ -251,7 +251,7 @@ function giau_data_default_insert_into_database(){
 			'BIO_PHONE_ANDREW_LIM_TEXT',
 			'BIO_DESCRIPTION_ANDREW_LIM_TEXT',
 			'BIO_URI_ANDREW_LIM_URI_TEXT',
-			'ce-andy.png',
+			'/images/personnel/ce-andy.png',
 			'bio,contact,highschool'
 	);
 	giau_insert_bio(
@@ -263,7 +263,7 @@ function giau_data_default_insert_into_database(){
 			'BIO_PHONE_BORAM_LEE_TEXT',
 			'BIO_DESCRIPTION_BORAM_LEE_TEXT',
 			'BIO_URI_BORAM_LEE_URI_TEXT',
-			'ce-boram.png',
+			'/images/personnel/ce-boram.png',
 			'bio,contact,elementary'
 	);
 	giau_insert_bio(
@@ -275,7 +275,7 @@ function giau_data_default_insert_into_database(){
 			'BIO_PHONE_SHEEN_HONG_TEXT',
 			'BIO_DESCRIPTION_SHEEN_HONG_TEXT',
 			'BIO_URI_SHEEN_HONG_URI_TEXT',
-			'ce-hong.png',
+			'/images/personnel/ce-hong.png',
 			'bio,contact,kindergarten'
 	);
 	giau_insert_bio(
@@ -287,7 +287,7 @@ function giau_data_default_insert_into_database(){
 			'BIO_PHONE_JESSICA_WON_TEXT',
 			'BIO_DESCRIPTION_JESSICA_WON_TEXT',
 			'BIO_URI_JESSICA_WON_URI_TEXT',
-			'ce-jessica.png',
+			'/images/personnel/ce-jessica.png',
 			'bio,contact,nursery'
 	);
 
@@ -846,6 +846,10 @@ function giau_data_default_insert_into_database(){
 			"fields" => [
 				"tags" => [
 					"type" => "array-string"
+				],
+				"default_image" => [
+					"type" => "string-url",
+					"description" => "image to use if none is found on bio entry"
 				],
 				"style" => [
 					"type" => "string"
@@ -1494,19 +1498,19 @@ function giau_data_default_insert_into_database(){
 			"social" => [
 				"facebook" => [
 					"uri" => "https://www.facebook.com/thefathershouse.lacpc",
-					"icon" => "./wp-content/themes/giau/img/social/icon_footer_facebook.png"
+					"icon" => "/images/social_media/icon_footer_facebook.png"
 				],
 				"twitter" => [
 					"uri" => "https://twitter.com/thefathersh0use?lang=en",
-					"icon" => "./wp-content/themes/giau/img/social/icon_footer_twitter.png"
+					"icon" => "/images/social_media/icon_footer_twitter.png"
 				],
 				"instagram" => [
 					"uri" => "",
-					"icon" => "./wp-content/themes/giau/img/social/icon_footer_instagram.png"
+					"icon" => "/images/social_media/icon_footer_instagram.png"
 				],
 				"email" => [
 					"uri" => "mailto:ce@lacpc.org",
-					"icon" => "./wp-content/themes/giau/img/social/icon_footer_email.png"
+					"icon" => "/images/social_media/icon_footer_email.png"
 				],
 			],
 			"class" => "footerElementSocialItem"
@@ -2374,7 +2378,8 @@ function giau_data_default_insert_into_database(){
 	$section_id_bio_listing_bio = giau_insert_section($widget_id_bio_listing,
 		[
 			"tags" => ["bio"],
-			"default_display" => "PAGE_BIO_DEFAULT_TEXT"
+			"default_display" => "PAGE_BIO_DEFAULT_TEXT",
+			"default_image" => "/images/personnel/anonymous.png",
 		]
 	, []);
 
@@ -2414,11 +2419,11 @@ function giau_data_default_insert_into_database(){
 			"files" => [
 				[
 					"title" => "PAGE_FORMS_ITEM_MEDICAL_RELEASE_2016_2017_TEXT",
-					"uri" => "./wp-content/themes/giau/uploads/lacpc_medical_release_form_2016_2017.pdf"
+					"uri" => "/downloads/forms/lacpc_medical_release_form_2016_2017.pdf"
 				],
 				[
 					"title" => "PAGE_FORMS_ITEM_PHOTOGRAPH_RELEASE_TEXT",
-					"uri" => "./wp-content/themes/giau/uploads/photograph_release_form.pdf"
+					"uri" => "/downloads/forms/photograph_release_form.pdf"
 				]
 			],
 			"class" => "formDownloadSectionContainer",

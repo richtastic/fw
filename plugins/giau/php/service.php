@@ -95,9 +95,9 @@ function giau_wordpress_data_service(){
 			}
 			$file = $_FILES['file'];
 			if($file){
-				$uploadDirectory = plugin_directory_root()."";
+				$uploadDirectory = giau_plugin_directory_root()."";
 				$location = $file['tmp_name'];
-				$success = moveTempFileToLocation( plugin_upload_root_dir(), $location, $relative, $filename, true);
+				$success = moveTempFileToLocation( giau_plugin_upload_root_dir(), $location, $relative, $filename, true);
 				if($success){
 					$response["result"] = "success";
 				}
@@ -108,7 +108,7 @@ function giau_wordpress_data_service(){
 			$listing = [];
 			$limit = $recursive ? 2 : 1;
 			error_log("file listing: ".$relative." | ".$recursive." | ".$limit);
-			$uploadDirectory = plugin_upload_root_dir();
+			$uploadDirectory = giau_plugin_upload_root_dir();
 			$directory = relativePathToAbsolutePath($uploadDirectory, $relative);
 			getDirectoryListingRecursive($directory,$listing, $limit, $uploadDirectory, operateOnFileListingEntry);
 			$response["data"] = $listing;
@@ -116,7 +116,7 @@ function giau_wordpress_data_service(){
 		}else if($operationType=="file_create_directory"){
 			error_log("add directory");
 			$relative = $_POST['path'];
-			$directory = plugin_upload_root_dir();
+			$directory = giau_plugin_upload_root_dir();
 			$directory = relativePathToAbsolutePath($directory, $relative);
 			$created = createDirectoryAtLocation($directory);
 			if($created){
@@ -125,7 +125,7 @@ function giau_wordpress_data_service(){
 		}else if($operationType=="file_remove_file"){
 			error_log("file delete");
 			$relative = $_POST['path'];
-			$root = plugin_upload_root_dir();
+			$root = giau_plugin_upload_root_dir();
 			$directory = relativePathToAbsolutePath($root, $relative);
 			$realPathA = realpath($root);
 			$realPathB = realpath($directory);

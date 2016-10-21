@@ -284,6 +284,7 @@ function giau_insert_languagization($language,$hash,$phrase){
 	//
 	$timestampNow = stringFromDate( getDateNow() );
 	global $wpdb;
+// TODO: CHECK IF LANG ALREADY EXISTS
 	$wpdb->insert(GIAU_FULL_TABLE_NAME_LANGUAGIZATION(),
 		array(
 			"created" => $timestampNow,

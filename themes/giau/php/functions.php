@@ -148,7 +148,9 @@ function create_page(){
 		</script>
 		<?php
 			//$FAV_ICON_LOCATION =  get_stylesheet_directory_uri()."/img/favicon.ico";
-			$FAV_ICON_LOCATION = get_stylesheet_directory_uri()."/img/favicon.ico";
+			//$FAV_ICON_LOCATION = get_stylesheet_directory_uri()."/img/favicon.ico";
+			$FAV_ICON_LOCATION = "/images/theming/favicon.ico";
+				$FAV_ICON_LOCATION = giau_plugin_url_from_any_url($FAV_ICON_LOCATION);
 			$FAV_ICON_LOCATION = getRelativeURLFromAbsoluteURL($FAV_ICON_LOCATION);
 		?>
 		<meta name="viewport" content="width=device-width, initial-scale=1" maximum-scale=1>
@@ -165,7 +167,6 @@ function create_page(){
 		// <div class="giauFileBrowser limitedWidth" style=""></div>
 	?>
 
-	
 
 	</body>
 </html>
