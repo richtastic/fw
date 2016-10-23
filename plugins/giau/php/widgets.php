@@ -8,16 +8,16 @@
 function fillOutPageFromID($pageID){
 	$page = giau_get_page_id($pageID);
 	if($page!=null){
-		fillOutFromSectionList($page["sectionList"]);
+		fillOutFromsection_list($page["section_list"]);
 	}else{
 		error_log("NO PAGE : ".$pageID);
 	}
 }
 
-function fillOutFromSectionList($sectionList){
-	if($sectionList){
-		$sectionList = explode(",",$sectionList);
-		foreach($sectionList as $sectionID){
+function fillOutFromsection_list($section_list){
+	if($section_list){
+		$section_list = explode(",",$section_list);
+		foreach($section_list as $sectionID){
 			fillOutSectionFromID($sectionID);
 		}
 	}
@@ -96,7 +96,7 @@ function handle_widget_info_status($widget,$section){
 		</div>
 		<?php
 		// sub sections
-		fillOutFromSectionList($section["sectionList"]);
+		fillOutFromsection_list($section["section_list"]);
 		?>
 	</div>
 </div>
@@ -384,7 +384,7 @@ function handle_widget_display_overlay($widget,$section){
 	?>
 	<div class="featureInfoOverlay giauInfoOverlay" style="">
 	<?php
-		fillOutFromSectionList($section["sectionList"]);
+		fillOutFromsection_list($section["section_list"]);
 	?>
 	</div>
 	<?php
@@ -442,7 +442,7 @@ function handle_widget_navigation_list($widget,$section){
 		</ul>
 	</div>
 	<?php
-	fillOutFromSectionList($section["sectionList"]);
+	fillOutFromsection_list($section["section_list"]);
 }
 function handle_widget_text_display($widget,$section){
 	$widgetJSON = decodeWidget($widget);
@@ -455,7 +455,7 @@ function handle_widget_text_display($widget,$section){
 	<div class="<?php echo $klass; ?>" style="<?php echo $style; ?>"><?php echo $text; ?></div>
 	<?php
 	// sub sections
-	fillOutFromSectionList($section["sectionList"]);
+	fillOutFromsection_list($section["section_list"]);
 }
 function handle_widget_content_container ($widget,$section){
 	$widgetJSON = decodeWidget($widget);
@@ -465,7 +465,7 @@ function handle_widget_content_container ($widget,$section){
 	?>
 	<div class="<?php echo $klass; ?>" style="<?php echo $style; ?>">
 	<?php
-		fillOutFromSectionList($section["sectionList"]);
+		fillOutFromsection_list($section["section_list"]);
 	?>
 	</div>
 	<?php
@@ -502,7 +502,7 @@ function handle_widget_language_switch($widget,$section){
 	</div>
 	<?php
 	// <div style="display:inline-block;" data-language="ko" data-display="KO" data-url="./"></div>
-	fillOutFromSectionList($section["sectionList"]);
+	fillOutFromsection_list($section["section_list"]);
 }
 
 function handle_widget_vertical_divider($widget,$section){
@@ -523,7 +523,7 @@ function handle_widget_vertical_divider($widget,$section){
 	</div>
 	<?php
 	// sub sections
-	fillOutFromSectionList($section["sectionList"]);
+	fillOutFromsection_list($section["section_list"]);
 }
 
 function handle_widget_category_listing($widget,$section){
@@ -557,7 +557,7 @@ function handle_widget_category_listing($widget,$section){
 	</div>
 	<?php
 	// sub sections
-	fillOutFromSectionList($section["sectionList"]);
+	fillOutFromsection_list($section["section_list"]);
 }
 
 
@@ -591,7 +591,7 @@ function handle_widget_image_gallery($widget,$section){
 				<?php
 			}
 		// sub sections
-		fillOutFromSectionList($section["sectionList"]);
+		fillOutFromsection_list($section["section_list"]);
 		?>
 		</div>
 	<?php
@@ -602,7 +602,7 @@ function handle_widget_bottom_footer($widget,$section){
 	<div class="giauFooterContainer sectionContainerFooter">
 		<?php
 		// sub sections
-		fillOutFromSectionList($section["sectionList"]);
+		fillOutFromsection_list($section["section_list"]);
 		?>
 	</div>
 	<?php
@@ -643,7 +643,7 @@ function handle_widget_social_apps($widget,$section){
 	<?php
 
 	// sub sections
-	fillOutFromSectionList($section["sectionList"]);
+	fillOutFromsection_list($section["section_list"]);
 }
 
 function handle_widget_calendar_listing($widget,$section){
@@ -698,7 +698,7 @@ function handle_widget_calendar_listing($widget,$section){
 					++$index;
 				}
 	// sub sections
-	fillOutFromSectionList($section["sectionList"]);
+	fillOutFromsection_list($section["section_list"]);
 			?>
 	
 	</div>

@@ -116,17 +116,16 @@ function page_link_from_page_name_subpage($pageName,$subpage){
 
 function create_page(){
 	$relativePathJSFF = relativePathJS()."code/";
-	// TODO: ONLY NEED Code.js
-	$fileJavaScriptFF = relativePathJS()."code/FF.js";
+	//$fileJavaScriptFF = relativePathJS()."code/FF.js";
+	$fileJavaScriptFFMinified = relativePathJS()."code/FF.min.js";
 	$fileCSSMain = relativePathCSS()."theme.css";
 	$fileJavaScriptMain = relativePathJS()."theme.js";
 
 	$PAGE_REQUEST_PARAMETER_PAGE = "page";
-	//$PAGE_REQUEST_PARAMETER_SUBPAGE = "sp";
 	$PAGE_REQUEST_TYPE_DEFAULT = "__live";
+	$PAGE_REQUEST_TYPE_ERROR = "__error";
 
 	$pageRequest = getPageRequest();
-	//$subpageRequest = getParameterOrDefault( KEY_GET_PARAM_SUBPAGE(), null );
 
 ?>
 <html>
@@ -134,7 +133,8 @@ function create_page(){
 		<title>The Father's House | <?php echo $headingTitleDisplay; ?></title>
 		<link rel="stylesheet" href="<?php echo $fileCSSMain; ?>">
 		<script rel="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
-		<script rel="text/javascript" src="<?php echo $fileJavaScriptFF; ?>"></script>
+		<!--<script rel="text/javascript" src="<?php echo $fileJavaScriptFF; ?>"></script>-->
+		<script rel="text/javascript" src="<?php echo $fileJavaScriptFFMinified; ?>"></script>
 		<script rel="text/javascript" src="<?php echo $fileJavaScriptMain; ?>"></script>
 		<script type="text/javascript">
 			// START
@@ -142,14 +142,12 @@ function create_page(){
 				GLOBAL_SERVER_QUERY_PATH = "<?php echo absoluteWordpressServerURL().'/'.'data'; ?>";
 				GLOBAL_SERVER_IMAGE_PATH = "<?php echo relativePathIMG(); ?>";
 				$(document).ready( function(){
-					var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
+					//var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
 						var g = new giau();
-					});
+					//});
 				});
 		</script>
 		<?php
-			//$FAV_ICON_LOCATION =  get_stylesheet_directory_uri()."/img/favicon.ico";
-			//$FAV_ICON_LOCATION = get_stylesheet_directory_uri()."/img/favicon.ico";
 			$FAV_ICON_LOCATION = "/images/theming/favicon.ico";
 				$FAV_ICON_LOCATION = giau_plugin_url_from_any_url($FAV_ICON_LOCATION);
 			$FAV_ICON_LOCATION = getRelativeURLFromAbsoluteURL($FAV_ICON_LOCATION);
@@ -167,6 +165,8 @@ function create_page(){
 		fillOutPageFromID($page["id"]);
 		// <div class="giauFileBrowser limitedWidth" style=""></div>
 	?>
+
+	<div class="giauCRUD limitedWidth" style=""></div>
 
 
 	</body>

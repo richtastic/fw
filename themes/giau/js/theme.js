@@ -94,6 +94,11 @@ giau.prototype.initialize = function(){
 		var autoComplete = new giau.AutoComplete(element);
 	});
 	
+	// CRUD
+	var dataTableLists = $(".giauCRUD");
+	dataTableLists.each(function(index, element){
+		var dataTable = new giau.CRUD(element);
+	});
 }
 
 giau.ElementFloater = function(element){ //
@@ -2734,8 +2739,6 @@ giau.FileBrowser.prototype.uploadFile = function(file,filename,directory){
 	ajax.send();
 }
 
-0
-
 // giau.ObjectDesigner Constructor  Composer Layout
 giau.ObjectComposer = function(element){
 	this._container = element;
@@ -3063,12 +3066,12 @@ giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(element, mode
 			var i, len = instanceObject.length;
 			for(i=0;i<len;++i){
 				primitive = instanceObject[i];
-				console.log("\t\t => "+i+" = "+primitive);
+				console.log("\t\t: "+i+" = "+primitive);
 				var subElement = this.newSubElement(element,"primitive", instanceObject,i);
 			}
 		}else{
 			primitive = instanceObject[modelFieldName];
-			console.log("\t\t => "+primitive);
+			console.log("\t\t: "+primitive);
 			var subElement = this.newSubElement(element,"primitive", instanceObject,modelFieldName);
 		}
 	}
@@ -3209,33 +3212,33 @@ this._jsDispatch.addJSEventListener(del, Code.JS_EVENT_CLICK, this._handleDelete
 	*/
 
 /*
-	// => NAVIGATION
+	//: NAVIGATION
 	$widget_id_navigation_list = giau_insert_widget("navigation_list",
 		[
-			"alias" => "navigation_list",
-			"name" => "Giau Navigation",
-			"cssClass" => "giauNavigationItemList",
-			"jsClass" => "giau.NavigationList",
-			"fields" => [
-				"components" => [
-					"type" => "array-object",
-					"description" => "navigation item",
-					"fields" => [
-						"display_text" => [
-							"type" => "string",
-							"description" => "displayed text"
+			"alias": "navigation_list",
+			"name": "Giau Navigation",
+			"cssClass": "giauNavigationItemList",
+			"jsClass": "giau.NavigationList",
+			"fields": [
+				"components": [
+					"type": "array-object",
+					"description": "navigation item",
+					"fields": [
+						"display_text": [
+							"type": "string",
+							"description": "displayed text"
 						],
-						"uri" => [
-							"type" => "string",
-							"description" => "location destination"
+						"uri": [
+							"type": "string",
+							"description": "location destination"
 						]
 					]
 				],
-				"class" => [
-					"type" => "string"
+				"class": [
+					"type": "string"
 				],
-				"style" => [
-					"type" => "string"
+				"style": [
+					"type": "string"
 				],
 			]
 		]
@@ -3245,12 +3248,281 @@ this._jsDispatch.addJSEventListener(del, Code.JS_EVENT_CLICK, this._handleDelete
 
 
 
+giau.LibraryScroller = function(element, name, url){
+	this._container = element;
+
+	this._arrayWindow = [];
 
 
 
 
 
+	this._name = name !== undefined ? name : "library_scroller";
+	this._url = "./";
+	this._itemsPerPage = 10;
+	this._currentPageIndex = 0;
+	//
+	var data = {
+		"data": [
+			{
+				"image": "",
+				"value": "2",
+			},
+			{
+				"display": "section_name_here_2",
+				"value": "4",
+			}
+		]
+	};
+		this._dataBefore = {
+			""
+		};
+	this._dataMaxLength = 100; // maximum size of buffer array
+	this._dataStartIndex = ;
+	this._data = [];
+	
+	this._currentPageIndex = 0;
+}
+giau.LibraryScroller.prototype._updateLayout = function(){
+	//
+}
+giau.LibraryScroller.prototype._scrollTo = function(){
+	//
+}
+giau.LibraryScroller.prototype._scrollTo = function(){
+	//
+}
 
+giau.CRUD = function(element){
+	this._container = element;
+	//
+	//
+
+				"tags": {
+				"box": "true",
+			}
+	// sectioned, binned, boxed, atomic, tagged, capsule, parcel
+	// SECTION
+	var tableInfo = {
+		"columns" : [
+			"id": [
+				"type": "string",
+				"attributes": [
+					"order": "0",
+					"primary_key": "true",
+					"sort":  "false",
+					"editable": "false",
+				],
+			],
+			"created": [
+				"type": "string-date",
+				"attributes": [
+					"order": "1",
+					"sort":  "true",
+					"editable": "false",
+				],
+			],
+			"modified": [
+				"type": "string-date",
+				"attributes": [
+					"order": "2",
+					"sort":  "true",
+					"editable": "false",
+				],
+			],
+			"widget": [
+				"type": "string",
+				"attributes": [
+					"order": "3",
+					"sort":  "false",
+					"editable": "false",
+				],
+			],
+			"widget": [
+				"type": "string",
+				"attributes": [
+					"order": "4",
+					"sort":  "true",
+					"editable": "false",
+				],
+			],
+			"configuration": [
+				"type": "string-json",
+				"attributes": [
+					"order": "5",
+					"sort":  "false",
+					"editable": "false",
+				],
+			],
+			"section_list": [
+				"type": "string-json",
+				"attributes": [
+					"order": "6",
+					"sort":  "false",
+					"editable": "true",
+				],
+			],
+		],
+		"presentation": {
+			"widget": {
+				"box": "true",
+			},
+			"section_list": {
+				"drag_and_drop": {
+					"source": {
+						"name": "library_section_list",
+						"url": ""
+					}
+				}
+			}
+		}
+	}
+	/*
+		$sql = "CREATE TABLE ".GIAU_FULL_TABLE_NAME_SECTION()." (
+		id int NOT NULL AUTO_INCREMENT,
+		created VARCHAR(32) NOT NULL,
+		modified VARCHAR(32) NOT NULL,
+		widget int NOT NULL,
+		configuration TEXT NOT NULL,
+		extend int,
+		sectionList VARCHAR(65535) NOT NULL,
+		UNIQUE KEY id (id)
+		) $charset_collate
+	;";
+	*/
+	// LANGUAGIZATION
+	var tableInfo = {
+		"columns": [
+			"id": [
+				"type": "string",
+				"attributes": [
+					"order": "0",
+					"primary_key": "true",
+					"sort":  "false",
+					"editable": "false",
+				],
+			],
+			"created": [
+				"type": "string-date",
+				"attributes": [
+					"order": "1",
+					"sort":  "true",
+					"editable": "false",
+				],
+			],
+			"modified": [
+				"type": "string-date",
+				"attributes": [
+					"order": "2",
+					"sort":  "true",
+					"editable": "false",
+				],
+			],
+			"hash_index": [
+				"type": "string",
+				"attributes": [
+					"order": "3",
+					"sort":  "true",
+					"editable": "true",
+					"monospace": "true",
+				],
+			],
+			"language": [
+				"type": "string-option"
+				"options": [
+					[
+						{
+							"display": "english",
+							"value": "en-US",
+							"default": "true",
+						},
+						{
+							"display": "korean",
+							"value": "ko-KP",
+						}
+					]
+				],
+				"attributes": [
+					"order": "4",
+					"monospace": "true",
+					"editable": "true",
+				],
+			],
+			"phrase_value": [
+				"type": "string",
+				"attributes": [
+					"order": "5",
+					"sort":  "true",
+					"editable": "true",
+				],
+			],
+		],
+		"presentation": {
+			"column_grouping": [
+				"hash_index",
+			],
+		}
+	}
+	var data = {
+		"offset": 0,
+		"count": 1,
+		"total": 2
+		"data": [
+			{
+				"id" : "0",
+				"created" : "2016-07-18 12:30:23.0000",
+				"modified" : "2016-09-24 14:04:01.1234",
+				"hash_index" : "TITLE_HASH",
+				"language" : "en-US",
+				"phrase_value" : "This is where\nmultilined\n\"text\" goes.",
+			},
+			{
+				"id" : "2",
+				"created" : "2016-08-27 14:45:56.0000",
+				"modified" : "2016-10-01 8:00:00.0000",
+				"hash_index" : "TITLE_HASH",
+				"language" : "ko-KP",
+				"phrase_value" : "This is where\nmultilined\n\"text\" goes.",
+			}
+		]
+	}
+	// HOW TO DO DRAG N DROP ?
+
+
+	this._itemsPerPage = 20;
+	this._currentPageIndex = 0;
+	//this._itemsTotal = 0;
+
+	// display hierarchy
+	this._elementSortingContainer = Code.newDiv();
+	this._elementToolsContainer = Code.newDiv();
+	this._elementTableContainer = Code.newDiv();
+
+	// simulate got data:
+	this._currentPageData = data;
+	this._pageData = data;
+
+	this._updateLayout();
+}
+giau.CRUD.prototype._updateLayout = function(){
+	console.log("CRUD updateLayout");
+	var data = this._currentPageData["data"];
+	var i, dataCount = data.length;
+	for(i=0; i<dataCount; ++i){
+
+	}
+
+}
+
+/*
+		id int NOT NULL AUTO_INCREMENT,
+		created VARCHAR(32) NOT NULL,
+		modified VARCHAR(32) NOT NULL,
+		hash_index VARCHAR(255) NOT NULL,
+		language VARCHAR(16) NOT NULL,
+		phrase_value TEXT NOT NULL,
+		UNIQUE KEY id (id)
+*/
 
 
 

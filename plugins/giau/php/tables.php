@@ -127,7 +127,7 @@ function giau_create_database(){
 		widget int NOT NULL,
 		configuration TEXT NOT NULL,
 		extend int,
-		sectionList VARCHAR(65535) NOT NULL,
+		section_list VARCHAR(65535) NOT NULL,
 		UNIQUE KEY id (id)
 		) $charset_collate
 	;";
@@ -146,7 +146,7 @@ function giau_create_database(){
 		created VARCHAR(32) NOT NULL,
 		modified VARCHAR(32) NOT NULL,
 		name VARCHAR(255) NOT NULL,
-		sectionList VARCHAR(65535) NOT NULL,
+		section_list VARCHAR(65535) NOT NULL,
 		tags VARCHAR(255) NOT NULL,
 		UNIQUE KEY id (id)
 		) $charset_collate
@@ -368,7 +368,7 @@ function giau_insert_section($widgetID, $widgetConfig, $sectionIDList){
 			"modified" => $timestampNow,
 			"widget" => $widgetID,
 			"configuration" => $widgetConfig,
-			"sectionList" => $sectionList
+			"section_list" => $sectionList
 		)
 	);
 	return $wpdb->insert_id;
@@ -387,7 +387,7 @@ function giau_insert_page($pageName, $sectionIDList, $tags){
 			"created" => $timestampNow,
 			"modified" => $timestampNow,
 			"name" => $pageName,
-			"sectionList" => $sectionList,
+			"section_list" => $sectionList,
 			"tags" => $tags
 		)
 	);
