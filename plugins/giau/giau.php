@@ -386,7 +386,6 @@ function giau_action_page_head(){ // inject as desired
 
 function giau_admin_add_scripts(){ // enqueue as expected
 	//wp_enqueue_script( "giau.js", plugins_url( "/js/giau.js", GIAU_PLUGIN_URL ) );
-	
 	wp_enqueue_script( "theme.js", plugins_url( "/js/theme.js", GIAU_PLUGIN_URL ) );
 }
 

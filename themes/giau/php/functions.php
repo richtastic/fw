@@ -116,7 +116,7 @@ function page_link_from_page_name_subpage($pageName,$subpage){
 
 function create_page(){
 	$relativePathJSFF = relativePathJS()."code/";
-	//$fileJavaScriptFF = relativePathJS()."code/FF.js";
+		$fileJavaScriptFF = relativePathJS()."code/FF.js";
 	$fileJavaScriptFFMinified = relativePathJS()."code/FF.min.js";
 	$fileCSSMain = relativePathCSS()."theme.css";
 	$fileJavaScriptMain = relativePathJS()."theme.js";
@@ -133,8 +133,9 @@ function create_page(){
 		<title>The Father's House | <?php echo $headingTitleDisplay; ?></title>
 		<link rel="stylesheet" href="<?php echo $fileCSSMain; ?>">
 		<script rel="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+		<script rel="text/javascript" src="<?php echo $fileJavaScriptFF; ?>"></script>
 		<!--<script rel="text/javascript" src="<?php echo $fileJavaScriptFF; ?>"></script>-->
-		<script rel="text/javascript" src="<?php echo $fileJavaScriptFFMinified; ?>"></script>
+		<!--<script rel="text/javascript" src="<?php echo $fileJavaScriptFFMinified; ?>"></script>-->
 		<script rel="text/javascript" src="<?php echo $fileJavaScriptMain; ?>"></script>
 		<script type="text/javascript">
 			// START
@@ -142,9 +143,9 @@ function create_page(){
 				GLOBAL_SERVER_QUERY_PATH = "<?php echo absoluteWordpressServerURL().'/'.'data'; ?>";
 				GLOBAL_SERVER_IMAGE_PATH = "<?php echo relativePathIMG(); ?>";
 				$(document).ready( function(){
-					//var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
+					var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
 						var g = new giau();
-					//});
+					});
 				});
 		</script>
 		<?php

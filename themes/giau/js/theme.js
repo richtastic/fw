@@ -3275,10 +3275,10 @@ giau.LibraryScroller = function(element, name, url){
 		]
 	};
 		this._dataBefore = {
-			""
+			"cat":"hat"
 		};
 	this._dataMaxLength = 100; // maximum size of buffer array
-	this._dataStartIndex = ;
+	this._dataStartIndex = 0;
 	this._data = [];
 	
 	this._currentPageIndex = 0;
@@ -3297,72 +3297,73 @@ giau.CRUD = function(element){
 	this._container = element;
 	//
 	//
-
+			var dunno = {
 				"tags": {
 				"box": "true",
+				}
 			}
 	// sectioned, binned, boxed, atomic, tagged, capsule, parcel
 	// SECTION
 	var tableInfo = {
-		"columns" : [
-			"id": [
+		"columns" : {
+			"id": {
 				"type": "string",
-				"attributes": [
+				"attributes": {
 					"order": "0",
 					"primary_key": "true",
 					"sort":  "false",
 					"editable": "false",
-				],
-			],
-			"created": [
+				},
+			},
+			"created": {
 				"type": "string-date",
-				"attributes": [
+				"attributes": {
 					"order": "1",
 					"sort":  "true",
 					"editable": "false",
-				],
-			],
-			"modified": [
+				},
+			},
+			"modified": {
 				"type": "string-date",
-				"attributes": [
+				"attributes": {
 					"order": "2",
 					"sort":  "true",
 					"editable": "false",
-				],
-			],
-			"widget": [
+				},
+			},
+			"widget": {
 				"type": "string",
-				"attributes": [
+				"attributes": {
 					"order": "3",
 					"sort":  "false",
 					"editable": "false",
-				],
-			],
-			"widget": [
+				},
+			},
+			"widget": {
 				"type": "string",
-				"attributes": [
+				"attributes": {
 					"order": "4",
 					"sort":  "true",
 					"editable": "false",
-				],
-			],
-			"configuration": [
+				},
+			},
+			"configuration": {
 				"type": "string-json",
-				"attributes": [
+				"attributes": {
 					"order": "5",
 					"sort":  "false",
 					"editable": "false",
-				],
-			],
-			"section_list": [
+				},
+			},
+			"section_list": {
 				"type": "string-json",
-				"attributes": [
+				"attributes": {
 					"order": "6",
 					"sort":  "false",
 					"editable": "true",
-				],
-			],
-		],
+				},
+			},
+		},
 		"presentation": {
 			"widget": {
 				"box": "true",
@@ -3392,71 +3393,69 @@ giau.CRUD = function(element){
 	*/
 	// LANGUAGIZATION
 	var tableInfo = {
-		"columns": [
-			"id": [
+		"columns": {
+			"id": {
 				"type": "string",
-				"attributes": [
+				"attributes": {
 					"order": "0",
 					"primary_key": "true",
 					"sort":  "false",
 					"editable": "false",
-				],
-			],
-			"created": [
+				},
+			},
+			"created": {
 				"type": "string-date",
-				"attributes": [
+				"attributes": {
 					"order": "1",
 					"sort":  "true",
 					"editable": "false",
-				],
-			],
-			"modified": [
+				},
+			},
+			"modified": {
 				"type": "string-date",
-				"attributes": [
+				"attributes": {
 					"order": "2",
 					"sort":  "true",
 					"editable": "false",
-				],
-			],
-			"hash_index": [
+				},
+			},
+			"hash_index": {
 				"type": "string",
-				"attributes": [
+				"attributes": {
 					"order": "3",
 					"sort":  "true",
 					"editable": "true",
 					"monospace": "true",
-				],
-			],
-			"language": [
-				"type": "string-option"
+				},
+			},
+			"language": {
+				"type": "string-option",
 				"options": [
-					[
-						{
-							"display": "english",
-							"value": "en-US",
-							"default": "true",
-						},
-						{
-							"display": "korean",
-							"value": "ko-KP",
-						}
-					]
+					{
+						"display": "english",
+						"value": "en-US",
+						"default": "true",
+					},
+					{
+						"display": "korean",
+						"value": "ko-KP",
+					}
 				],
-				"attributes": [
+				"attributes": {
 					"order": "4",
 					"monospace": "true",
 					"editable": "true",
-				],
-			],
-			"phrase_value": [
+				},
+			},
+			"phrase_value": {
 				"type": "string",
-				"attributes": [
+				"attributes": {
 					"order": "5",
 					"sort":  "true",
 					"editable": "true",
-				],
-			],
-		],
+				},
+			},
+		},
 		"presentation": {
 			"column_grouping": [
 				"hash_index",
@@ -3466,7 +3465,7 @@ giau.CRUD = function(element){
 	var data = {
 		"offset": 0,
 		"count": 1,
-		"total": 2
+		"total": 2,
 		"data": [
 			{
 				"id" : "0",
@@ -3512,6 +3511,25 @@ giau.CRUD.prototype._updateLayout = function(){
 
 	}
 
+
+
+	var FA = new FragArray();
+	console.log(FA);
+	console.log(FA.toString());
+	//FA.addElements( [0,1,2,3,4], 0, 4 );
+	console.log(FA.toString());
+	FA.addElements( [6,7], 6, 7 );
+	console.log(FA.toString());
+	FA.addElements( [8,9], 8, 9 );
+	console.log(FA.toString());
+	FA.addElements( [12,13,14,15,16,17], 12, 17 );
+//	FA.addElements( [7,8,9], 7, 9 );
+	console.log(FA.toString());
+	FA.addElements( [0,1,2,3,4], 0, 4 );
+
+	//FA.addElements( [4,5,6], 6, 7 );
+
+	console.log(FA.toString());
 }
 
 /*
