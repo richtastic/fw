@@ -168,6 +168,7 @@ function create_page(){
 	?>
 
 	<!-- <div class="giauCRUD limitedWidth" style=""></div> -->
+	<!-- <div class="giauLibraryView limitedWidth" style=""></div> -->
 
 
 	</body>

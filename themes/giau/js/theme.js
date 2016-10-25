@@ -99,6 +99,12 @@ giau.prototype.initialize = function(){
 	dataTableLists.each(function(index, element){
 		var dataTable = new giau.CRUD(element);
 	});
+
+	// LIB VIEW
+	var dataTableLists = $(".giauLibraryView");
+	dataTableLists.each(function(index, element){
+		var dataTable = new giau.LibraryScroller(element);
+	});
 }
 
 giau.ElementFloater = function(element){ //
@@ -3029,6 +3035,7 @@ giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelOb
 		}
 	}
 }
+
 giau.ObjectComposer.prototype.newSubElement = function(element,type, container, field){
 	var div = this.defaultInputRowObject(element);
 	var color = Code.getColARGB( 0xFF, Code.randomInt(0,0xFF), Code.randomInt(0,0xFF), Code.randomInt(0,0xFF) );
@@ -3049,6 +3056,7 @@ giau.ObjectComposer.prototype.newSubElement = function(element,type, container, 
 	}
 	return div;
 }
+
 giau.ObjectComposer.prototype._inputTextField = function(element, key,value){
 	var div = element;
 	var content = Code.newDiv();
@@ -3067,6 +3075,7 @@ giau.ObjectComposer.prototype._inputTextField = function(element, key,value){
 	}
 	return null;
 }
+
 giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(element, modelObject,instanceObject, modelFieldName,modelFieldType, isArray){
 	var regexStringPrefix = new RegExp('^string-','i');
 	var isString = modelFieldType=="string" || modelFieldType.match(regexStringPrefix);
@@ -3272,18 +3281,63 @@ this._jsDispatch.addJSEventListener(del, Code.JS_EVENT_CLICK, this._handleDelete
 
 
 giau.LibraryScroller = function(element, name, url){
+	console.log("LibraryScroller");
 	this._container = element;
-
 	this._arrayWindow = [];
-
-
-
-
-
 	this._name = name !== undefined ? name : "library_scroller";
 	this._url = "./";
 	this._itemsPerPage = 10;
 	this._currentPageIndex = 0;
+	this._displayHeight = 500;
+	this._displayWidth = 150;
+
+	var containerBG = 0xFF00FF00;
+	var scrollerBG = 0x990000FF;
+	var contentBG = 0xCCFF0000;
+
+	containerBG = Code.getJSColorFromARGB(containerBG);
+	scrollerBG = Code.getJSColorFromARGB(scrollerBG);
+	contentBG = Code.getJSColorFromARGB(contentBG);
+
+	this._elementScroller = Code.newDiv();
+	this._elementContents = Code.newDiv();
+
+	Code.addChild(this._container,this._elementScroller);
+		Code.addChild(this._elementScroller,this._elementContents);
+
+
+	Code.setStyleBackgroundColor(this._container,containerBG);
+	Code.setStyleWidth(this._container,this._displayWidth+"px");
+	Code.setStyleHeight(this._container,this._displayHeight+"px");
+	var paddingInterriorLeft = 10;
+	var paddingInterriorRight = 10;
+	var paddingInterriorTop = 10;
+	var paddingInterriorBottom = 10;
+	var scrollerWidth = this._displayWidth - paddingInterriorLeft - paddingInterriorRight;
+	var scrollerHeight = this._displayHeight - paddingInterriorTop - paddingInterriorBottom;
+	console.log(scrollerWidth,scrollerHeight)
+
+	Code.setStylePosition(this._container,"relative");
+
+	//  scroller
+	Code.setStyleBackgroundColor(this._elementScroller,scrollerBG);
+	Code.setStylePosition(this._elementScroller,"relative");
+	Code.setStyleDisplay(this._elementScroller,"block");
+	Code.setStyleLeft(this._elementScroller,paddingInterriorLeft+"px");
+	Code.setStyleTop(this._elementScroller,paddingInterriorTop+"px");
+	Code.setStyleWidth(this._elementScroller,scrollerWidth+"px");
+	Code.setStyleHeight(this._elementScroller,scrollerHeight+"px");
+	//Code.setStyleOverflow(this._elementScroller,"hidden");
+	Code.setStyleOverflowX(this._elementScroller,"hidden");
+	Code.setStyleOverflowY(this._elementScroller,"scroll");
+
+	// content
+	
+	Code.setStyleBackgroundColor(this._elementContents,contentBG);
+
+/*
+
+
 	//
 	var data = {
 		"data": [
@@ -3305,9 +3359,67 @@ giau.LibraryScroller = function(element, name, url){
 	this._data = [];
 	
 	this._currentPageIndex = 0;
+*/
+	this._getSizeFxn = giau.LibraryScroller._generateSize;
+	this._createElementFxn = giau.LibraryScroller._generateDiv;
+	this._getPage();
+}
+giau.LibraryScroller._generateSize = function(info, data){
+	var size = {};
+	size["width"] = 100;
+	size["height"] = 100;
+	return size;
+}
+giau.LibraryScroller._generateDiv = function(info, data){
+	var index = info["index"];
+	var width = info["width"];
+	var height = info["height"];
+	var x = info["x"];
+	var y = info["y"];
+	var div = Code.newDiv();
+	Code.setStyleWidth(div,width+"px");
+	Code.setStyleHeight(div,height+"px");
+	Code.setStylePosition(div,"absolute");
+	Code.setStyleDisplay(div,"block");
+	Code.setStyleLeft(div,x+"px");
+	Code.setStyleTop(div,y+"px");
+		var color = Code.getColARGBFromFloat(0.5,Code.randomFloat(0.0,1.0),Code.randomFloat(0.0,1.0),Code.randomFloat(0.0,1.0));
+			color = Code.getJSColorFromARGB(color);
+		Code.setStyleBackgroundColor(div,color);
+	return div;
 }
 giau.LibraryScroller.prototype._updateLayout = function(){
-	//
+	console.log("_updateLayout");
+	var data = this._dataRows;
+	var i;
+	var offsetY = 0;
+	for(i=0; i<data.length; ++i){
+		var row = data[i];
+		//console.log(row)
+		var info = {"width":100,"height":100,"x":0,"y":offsetY};
+		var div = this._createElementFxn(info, row);
+		Code.addChild(this._elementScroller,div);
+		//if(i<data.length-1){
+			offsetY += 100;
+		//}
+	}
+	Code.setStyleWidth(this._elementContents,120+"px");
+	Code.setStyleHeight(this._elementContents,offsetY+"px");
+}
+
+giau.LibraryScroller.prototype._updateWithData = function(data){
+	console.log("_updateWithData");
+	var offset = data["offset"];
+	var count = data["count"];
+	var rows = data["data"];
+	var i;
+	for(i=0; i<count; ++i){
+		
+	}
+	//var FA = new FragArray();
+	//this._dataRows = FA;
+	this._dataRows = rows;
+	this._updateLayout();
 }
 giau.LibraryScroller.prototype._scrollTo = function(){
 	//
@@ -3315,6 +3427,42 @@ giau.LibraryScroller.prototype._scrollTo = function(){
 giau.LibraryScroller.prototype._scrollTo = function(){
 	//
 }
+giau.LibraryScroller.prototype._getPage = function(){
+	console.log("get page");
+	this._currentPage = 0;
+	this._pageCount = 10;
+	this._url = "./";
+	var start = this._currentPage * this._pageCount;
+	var end = start + this._pageCount;
+	var count = end-start;
+
+	var table = this._dataTable;
+	var url = this._url;
+
+	console.log("A-URL: "+url);
+	var ajax = new Ajax();
+	ajax.url(url);
+	ajax.method(Ajax.METHOD_TYPE_POST);
+	ajax.append("operation","page_data");
+	ajax.append("table","sections");
+	ajax.append("offset",""+start);
+	ajax.append("count",""+count);
+	ajax.context(this);
+	ajax.callback(function(d){
+		console.log("got page");
+		var obj = Code.parseJSON(d);
+		this._updateWithData(obj);
+	});
+	ajax.send();
+
+}
+
+
+
+
+
+
+
 
 giau.CRUD = function(element){
 	this._container = element;

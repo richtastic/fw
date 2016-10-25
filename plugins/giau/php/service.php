@@ -158,7 +158,7 @@ function giau_wordpress_data_service(){
 			$response["result"] = "success";
 			$response["data"] = [];
 // LANGUAGIZATION SERVICE --------------------------------------------------------------------------------------------------------------
-		}else if($operationType=="email_form"){
+		}else if($operationType=="page_data"){
 			/*
 			lang:
 				- set of options for language
@@ -181,14 +181,92 @@ function giau_wordpress_data_service(){
 			// edit a row
 				- values WHERE id
 			*/
+			$requestInfo = [];
+			$requestInfo["offset"] = 0;
+			$requestInfo["count"] = 10;
+			paged_data_service($requestInfo, table_info_section(), $response );
 		}else{// if($operationType=="file_upload"){
 			$result = exec('whoami');
 			error_log("who am i: ".$result);
-			error_log("other operation: ".$operationTyupe);
+			error_log("other operation: ".$operationType);
 			//$response["result"] = "success";
 		}
 		wp_send_json( $response );
 	}
 }
+
+function table_info_section(){
+	$data = [
+		"table" => GIAU_FULL_TABLE_NAME_SECTION(),
+		"columns" => [
+			"id" => [
+				"type" => "string-number",
+			],
+			"created" => [
+				"type" => "string-date",
+			],
+			"modified" => [
+				"type" => "string-date",
+			],
+			"widget" => [
+				"type" => "string-number",
+			],
+			"configuration" => [
+				"type" => "string-json",
+			],
+			"extend" => [
+				"type" => "string-number",
+			],
+			"section_list" => [
+				"type" => "string-array",
+			]
+		]
+	];
+	return $data;
+}
+
+function paged_data_service($requestInfo, $tableInfo, &$response){
+	global $wpdb;
+	$table = $tableInfo["table"];
+	$columns = $tableInfo["columns"];
+	$offset = $requestInfo["offset"];
+	$count = $requestInfo["count"];
+	
+	$offset = esc_sql($offset);
+	$count = esc_sql($count);
+	$table = esc_sql($table);
+
+	//$searchValue = esc_sql($searchValue);
+	global $wpdb;
+
+	// offset must be positive
+	if(!$offset || $offset < 0){
+		$offset = 0;
+	}
+
+	// count must be positive
+	if(!$count || $count < 0){
+		$count = 0;
+	}
+	if($count == 0){ // no results
+		return [];
+	}
+	$count = min($count, 100);
+
+	$criteria = "";
+
+	$querystr = "
+	    SELECT ".$table.".* 
+	    FROM ".$table."
+	    ".$criteria." 
+	    LIMIT ".$count."
+	";
+	$results = $wpdb->get_results($querystr, ARRAY_A);
+	// return $results;
+	$response["result"] = "success";
+	$response["count"] = count($results);
+	$response["data"] = $results;
+}
+
 
 ?>
