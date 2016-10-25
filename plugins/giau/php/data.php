@@ -300,7 +300,9 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_STAFF_TEXT","Staff");
 		giau_insert_languagization($langKor,"NAV_ITEM_PAGE_NAVIGATION_STAFF_TEXT","직원들");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_FORMS_TEXT","Forms");
+		giau_insert_languagization($langKor,"NAV_ITEM_PAGE_NAVIGATION_FORMS_TEXT","문서");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_CONTACT_TEXT","Contact");
+		giau_insert_languagization($langKor,"NAV_ITEM_PAGE_NAVIGATION_CONTACT_TEXT","연락처");
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_LACPC_TEXT","LACPC");
 
 	giau_insert_languagization($langEng,"NAV_ITEM_PAGE_NAVIGATION_DEPT_NURSERY_TEXT","Nursery");
@@ -319,7 +321,7 @@ function giau_data_default_insert_into_database(){
 
 	giau_insert_languagization($langEng,"LANGUAGE_SWITCH_ENGLISH_TEXT","EN");
 		//giau_insert_languagization($langKor,"LANGUAGE_SWITCH_ENGLISH_TEXT","한국의");
-	giau_insert_languagization($langEng,"LANGUAGE_SWITCH_KOREAN_TEXT","영국의");	
+	giau_insert_languagization($langEng,"LANGUAGE_SWITCH_KOREAN_TEXT","한글");	
 		//giau_insert_languagization($langKor,"LANGUAGE_SWITCH_KOREAN_TEXT","KO");
 
 	giau_insert_languagization($langEng,"FOOTER_TITLE_TEXT","THE FATHER'S HOUSE");
@@ -1145,7 +1147,7 @@ function giau_data_default_insert_into_database(){
 			"dark_mode" => "true",
 			"start_hidden" => "true",
 			"animates_down" => "nav_departments",
-			"animates_up" => "",
+			"animates_up" => "nav_departments",
 		];
 
 	$section_id_navigation_departments = giau_insert_section($widget_id_navigation_list,
@@ -1382,7 +1384,7 @@ function giau_data_default_insert_into_database(){
 				"/images/galleries/home_featured/featured_04_opt.png",
 				"/images/galleries/home_featured/featured_01_opt.png",
 			],
-			"overlay_color" => "0x66000000",
+			"overlay_color" => "0x44000000",
 			"height" => "500px",
 			"style" => "",
 			"class" => "featurePresentationContainer",
@@ -1740,7 +1742,7 @@ function giau_data_default_insert_into_database(){
 
 	$section_id_text_nursery_container = giau_insert_section($widget_id_content_container,
 		[
-			"class" => "",
+			"class" => "limitedWidth",
 			"style" => "display:block; padding:20px;".$themeBackgroundColorA."",
 		]
 	, [$section_id_text_nursery_left,$section_id_text_nursery_right]);
@@ -1884,7 +1886,7 @@ function giau_data_default_insert_into_database(){
 
 	$section_id_text_kindergarten_container = giau_insert_section($widget_id_content_container,
 		[
-			"class" => "",
+			"class" => "limitedWidth",
 			"style" => "display:block; padding:20px;".$themeBackgroundColorA."",
 		]
 	, [$section_id_text_kindergarten_left,$section_id_text_kindergarten_right]);
@@ -2072,7 +2074,7 @@ function giau_data_default_insert_into_database(){
 
 	$section_id_text_elementary_container = giau_insert_section($widget_id_content_container,
 		[
-			"class" => "",
+			"class" => "limitedWidth",
 			"style" => "display:block; padding:20px; ".$themeBackgroundColorA."",
 		]
 	, [$section_id_text_elementary_left,$section_id_text_elementary_right]);
@@ -2210,7 +2212,7 @@ function giau_data_default_insert_into_database(){
 
 	$section_id_text_juniorhigh_container = giau_insert_section($widget_id_content_container,
 		[
-			"class" => "",
+			"class" => "limitedWidth",
 			"style" => "display:block; padding:20px;".$themeBackgroundColorA."",
 		]
 	, [$section_id_text_juniorhigh_left,$section_id_text_juniorhigh_right]);
@@ -2340,7 +2342,7 @@ function giau_data_default_insert_into_database(){
 
 	$section_id_text_highschool_container = giau_insert_section($widget_id_content_container,
 		[
-			"class" => "",
+			"class" => "limitedWidth",
 			"style" => "display:block; padding:20px;".$themeBackgroundColorA."",
 		]
 	, [$section_id_text_highschool_left,$section_id_text_highschool_right]);
@@ -2380,6 +2382,8 @@ function giau_data_default_insert_into_database(){
 			"tags" => ["bio"],
 			"default_display" => "PAGE_BIO_DEFAULT_TEXT",
 			"default_image" => "/images/personnel/anonymous.png",
+			"class" => "limitedWidth",
+			"style" => "",
 		]
 	, []);
 
@@ -2411,7 +2415,7 @@ function giau_data_default_insert_into_database(){
 		[
 			"text" => "PAGE_FORMS_DOWNLOAD_TEXT",
 			"class" => "titleSectionMain",
-			"style" => "background-color:#F6F7F9;",
+			"style" => "background-color:#F6F7F9;", //  padding-top:20px;
 		]
 	, []);
 	$section_id_form_listing_downloads = giau_insert_section($widget_id_download_listing,

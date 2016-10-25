@@ -579,7 +579,7 @@ function handle_widget_image_gallery($widget,$section){
 	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 	// position:relative; width:100%; height:400px;
 	?>
-		<div class="giauImageGallery <?php echo $klass; ?>" data-ovarlay-color="<?php echo $overlayColor; ?>" data-show-page-indicators="<?php echo $showPageIndicators; ?>;" data-autoplay="<?php echo $autoPlay; ?>" data-navigation="<?php echo $displayNavigation; ?>" style="<?php echo $style; ?> position:relative; width:100%; height:<?php echo $divHeight; ?>;">
+		<div class="giauImageGallery <?php echo $klass; ?>" data-ovarlay-color="<?php echo $overlayColor; ?>" data-show-page-indicators="<?php echo $showPageIndicators; ?>" data-autoplay="<?php echo $autoPlay; ?>" data-navigation="<?php echo $displayNavigation; ?>" style="<?php echo $style; ?> position:relative; width:100%; height:<?php echo $divHeight; ?>;">
 		<?php
 			$i;
 			$len = count($imageList);
@@ -714,6 +714,8 @@ function handle_widget_bio_listing($widget,$section){
 		$defaultBio = giau_languagization_substitution($defaultBio,"");
 	$defaultImage = section_get_value_widget_string($widgetJSON,$sectionJSON,"default_image");
 		$defaultImage = giau_plugin_url_from_any_url($defaultImage);
+	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
+	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 
 	$offset = null;
 	$count = null;
@@ -724,7 +726,7 @@ function handle_widget_bio_listing($widget,$section){
 	$bioCount = count($bios);
 
 	?>
-	<div class="giauBiographyList" data-default-image="<?php echo $defaultImage; ?>" data-default-description="<?php echo $defaultBio; ?>">
+	<div class="giauBiographyList <?php echo $klass; ?>" style="<?php echo $style; ?>" data-default-image="<?php echo $defaultImage; ?>" data-default-description="<?php echo $defaultBio; ?>">
 	<?php
 		$i;
 		for($i=0; $i<$bioCount; ++$i){

@@ -167,7 +167,7 @@ function create_page(){
 		// <div class="giauFileBrowser limitedWidth" style=""></div>
 	?>
 
-	<div class="giauCRUD limitedWidth" style=""></div>
+	<!-- <div class="giauCRUD limitedWidth" style=""></div> -->
 
 
 	</body>

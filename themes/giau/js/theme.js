@@ -952,6 +952,8 @@ giau.LanguageToggle.prototype.updateLayout = function(){
 
 giau.NavigationList = function(element){
 	this._container = element;
+	this._isAnimating = false;
+	this._isOpen = false;
 
 	var propertyAnimatesDown = "data-animates-down";
 	var propertyAnimatesUp = "data-animates-up";
@@ -976,6 +978,7 @@ giau.NavigationList = function(element){
 	}
 	if(Code.hasProperty(div,propertyStartHidden)){
 		Code.setStyleDisplay(div,"none");
+		this._isOpen = false;
 	}
 
 	// LISTENERS
@@ -1132,12 +1135,32 @@ if(!url || url==""){ //
 }
 
 giau.NavigationList.prototype._handleNavigationBusEventDown = function(e){
-	console.log("down event ");
-	Code.setStyleDisplay(this._container,"inline-block");
+	if(!this._isAnimating && !this._isOpen){
+		console.log("down event ");
+		this._startAnimating();
+		Code.setStyleDisplay(this._container,"inline-block");
+		this._isOpen = true;
+	}
 }
 giau.NavigationList.prototype._handleNavigationBusEventUp = function(e){
-	console.log("up event ");
-	Code.setStyleDisplay(this._container,"none");
+	if(!this._isAnimating && this._isOpen){
+		console.log("up event ");
+		this._startAnimating();
+		Code.setStyleDisplay(this._container,"none");
+		this._isOpen = false;
+	}
+}
+giau.NavigationList.prototype._startAnimating = function(){
+	if(!this._isAnimating){
+		this._isAnimating = true;
+		this._tickerAnimation = new Ticker(250);
+		this._tickerAnimation.addFunction(Ticker.EVENT_TICK, this._stopAnimating, this);
+		this._tickerAnimation.start();
+	}
+}
+giau.NavigationList.prototype._stopAnimating = function(){
+	this._tickerAnimation.stop();
+	this._isAnimating = false;
 }
 giau.NavigationList.prototype._handleContentClickedFxn = function(e){
 	var target = Code.getTargetFromMouseEvent(e);
@@ -1237,7 +1260,7 @@ giau.ImageGallery = function(element){
 	overlayColor = Number(overlayColor);
 	overlayColor = Code.getJSColorFromARGB(overlayColor);
 
-	this._showPageIndicators = Code.getPropertyOrDefault(this._container, propertyOverlayColor, "false") === "true" ? true : false;
+	this._showPageIndicators = Code.getPropertyOrDefault(this._container, propertyDataPageIndicators, "false") === "true" ? true : false;
 
 
 	var showNavigation = Code.getProperty(this._container,"data-navigation");
@@ -1258,7 +1281,7 @@ giau.ImageGallery = function(element){
 			this._overlayBorderLeft = Code.newDiv();
 			this._overlayBorderRight = Code.newDiv();
 		}
-		var overlayBorderColor = 0x99000000;
+		var overlayBorderColor = 0x44000000;
 		Code.setStyleBackgroundColor(this._coverContainer,overlayColor);
 		// A
 	this._primaryImageContainer = Code.newDiv();

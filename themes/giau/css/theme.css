@@ -112,6 +112,10 @@ ul {
 	padding: 0px 10px 0px 10px;
 }
 
+.headerTitleContainer {
+	padding-bottom: 24px;
+}
+
 
 /* DIVIDERS */
 .sectionContainerDividerSmall {
