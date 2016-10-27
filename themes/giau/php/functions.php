@@ -163,12 +163,12 @@ function create_page(){
 	<?php
 		error_log("PAgE: ".$pageRequest);
 		$page = giau_get_page_tag($pageRequest);
-		fillOutPageFromID($page["id"]);
+		//fillOutPageFromID($page["id"]);
 		// <div class="giauFileBrowser limitedWidth" style=""></div>
 	?>
 
 	<!-- <div class="giauCRUD limitedWidth" style=""></div> -->
-	<!-- <div class="giauLibraryView limitedWidth" style=""></div> -->
+	<div class="giauLibraryView limitedWidth" style=""></div>
 
 
 	</body>

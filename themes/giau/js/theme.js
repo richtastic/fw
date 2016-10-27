@@ -3366,8 +3366,8 @@ giau.LibraryScroller = function(element, name, url){
 }
 giau.LibraryScroller._generateSize = function(info, data){
 	var size = {};
-	size["width"] = 100;
-	size["height"] = 100;
+	size["width"] = info["width"];
+	size["height"] = 60;
 	return size;
 }
 giau.LibraryScroller._generateDiv = function(info, data){
@@ -3386,21 +3386,37 @@ giau.LibraryScroller._generateDiv = function(info, data){
 		var color = Code.getColARGBFromFloat(0.5,Code.randomFloat(0.0,1.0),Code.randomFloat(0.0,1.0),Code.randomFloat(0.0,1.0));
 			color = Code.getJSColorFromARGB(color);
 		Code.setStyleBackgroundColor(div,color);
+
+	var elementID = Code.newDiv();
+	var elementName = Code.newDiv();
+		Code.setContent(elementID,data["section_id"]);
+		Code.setContent(elementName,data["widget_name"]);
+	console.log(data);
+
+		Code.addChild(div,elementID);
+		Code.addChild(div,elementName);
 	return div;
 }
 giau.LibraryScroller.prototype._updateLayout = function(){
 	console.log("_updateLayout");
+	// source vars
+	var widthContainer = $(this._container).width();
+	var heightContainer = $(this._container).height();
+	var divSizeY = 60;
+	var divSpacingY = 8;
+
+	// derived vars
 	var data = this._dataRows;
 	var i;
 	var offsetY = 0;
 	for(i=0; i<data.length; ++i){
 		var row = data[i];
-		//console.log(row)
-		var info = {"width":100,"height":100,"x":0,"y":offsetY};
+		
+		var info = {"width":widthContainer,"height":divSizeY,"x":0,"y":offsetY};
 		var div = this._createElementFxn(info, row);
 		Code.addChild(this._elementScroller,div);
 		//if(i<data.length-1){
-			offsetY += 100;
+			offsetY += divSizeY + divSpacingY;
 		//}
 	}
 	Code.setStyleWidth(this._elementContents,120+"px");

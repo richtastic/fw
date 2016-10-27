@@ -181,9 +181,25 @@ function giau_wordpress_data_service(){
 			// edit a row
 				- values WHERE id
 			*/
+			$offset = 0;
+			$count = 10;
 			$requestInfo = [];
-			$requestInfo["offset"] = 0;
-			$requestInfo["count"] = 10;
+			$requestInfo["offset"] = $offset;
+			$requestInfo["count"] = $count;
+			$requestInfo["query"] = "
+	    SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".created as section_created,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as section_modified,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".configuration as section_configuration,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".section_list as section_list,
+	    ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id,
+	    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name,
+	    ".GIAU_FULL_TABLE_NAME_WIDGET().".configuration as widget_configuration
+	    FROM ".GIAU_FULL_TABLE_NAME_SECTION()."
+	    JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
+	    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
+	    LIMIT ".$count."
+	";
 			paged_data_service($requestInfo, table_info_section(), $response );
 		}else{// if($operationType=="file_upload"){
 			$result = exec('whoami');
@@ -255,12 +271,16 @@ function paged_data_service($requestInfo, $tableInfo, &$response){
 
 	$criteria = "";
 
-	$querystr = "
-	    SELECT ".$table.".* 
-	    FROM ".$table."
-	    ".$criteria." 
-	    LIMIT ".$count."
-	";
+
+	$querystr = $requestInfo["query"];
+	if(!$querystr){
+		$querystr = "
+		    SELECT ".$table.".* 
+		    FROM ".$table."
+		    ".$criteria." 
+		    LIMIT ".$count."
+		";
+	}
 	$results = $wpdb->get_results($querystr, ARRAY_A);
 	// return $results;
 	$response["result"] = "success";
