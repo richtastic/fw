@@ -136,7 +136,7 @@ function create_page(){
 		<script rel="text/javascript" src="<?php echo $fileJavaScriptFF; ?>"></script>
 		<!--<script rel="text/javascript" src="<?php echo $fileJavaScriptFF; ?>"></script>-->
 		<!--<script rel="text/javascript" src="<?php echo $fileJavaScriptFFMinified; ?>"></script>-->
-		<script rel="text/javascript" src="<?php echo $fileJavaScriptMain; ?>"></script>
+<!--<script rel="text/javascript" src="<?php echo $fileJavaScriptMain; ?>"></script>-->
 		<script type="text/javascript">
 			// START
 				GLOBAL_SERVER_ROOT_PATH = "<?php echo absoluteWordpressServerURL(); ?>";
@@ -144,7 +144,12 @@ function create_page(){
 				GLOBAL_SERVER_IMAGE_PATH = "<?php echo relativePathIMG(); ?>";
 				$(document).ready( function(){
 					var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
-						var g = new giau();
+						var list = ["<?php echo $fileJavaScriptMain; ?>"];
+						console.log(list);
+						scriptLoader = new ScriptLoader("",list, this, function(e){
+							var g = new giau();
+						},null);
+						scriptLoader.load();
 					});
 				});
 		</script>
@@ -167,10 +172,11 @@ function create_page(){
 		// <div class="giauFileBrowser limitedWidth" style=""></div>
 	?>
 
-	<!-- <div class="giauCRUD limitedWidth" style=""></div> -->
-	<div class="giauLibraryView limitedWidth" style=""></div>
+	<div class="limitedWidth" style="width:100%; display:block; position:relative;">
+		<div style="width:70%; height:600px; display:inline-block; background-color:#F0F; float:left;"><div class="giauCRUD" style=""></div></div><div style="width:30%; display:inline-block; background-color:#0FF; float:left;"><div class="giauLibraryView" style=""></div></div>
+	</div>
 
-
+ <!-- width:auto; height:auto; -->
 	</body>
 </html>
 

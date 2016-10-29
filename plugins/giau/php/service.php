@@ -198,7 +198,6 @@ function giau_wordpress_data_service(){
 	    FROM ".GIAU_FULL_TABLE_NAME_SECTION()."
 	    JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
 	    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
-	    LIMIT ".$count."
 	";
 			paged_data_service($requestInfo, table_info_section(), $response );
 		}else{// if($operationType=="file_upload"){
@@ -278,9 +277,9 @@ function paged_data_service($requestInfo, $tableInfo, &$response){
 		    SELECT ".$table.".* 
 		    FROM ".$table."
 		    ".$criteria." 
-		    LIMIT ".$count."
 		";
 	}
+	$querystr = $querystr . " LIMIT ".$offset.",".$count." ";
 	$results = $wpdb->get_results($querystr, ARRAY_A);
 	// return $results;
 	$response["result"] = "success";

@@ -1921,6 +1921,7 @@ giau.DataTable = function(element){
 	this._getPage();
 }
 giau.DataTable.prototype._getPage = function(){
+	console.log(data);
 	var start = this._currentPage * this._pageCount;
 	var end = start + this._pageCount;
 	var count = end-start;
@@ -3281,19 +3282,21 @@ this._jsDispatch.addJSEventListener(del, Code.JS_EVENT_CLICK, this._handleDelete
 
 
 giau.LibraryScroller = function(element, name, url){
+	this._scrollBarSize = Code.getScrollBarSize();
+
+	this._jsDispatch = new JSDispatch();
+
+
 	console.log("LibraryScroller");
 	this._container = element;
-	this._arrayWindow = [];
 	this._name = name !== undefined ? name : "library_scroller";
-	this._url = "./";
-	this._itemsPerPage = 10;
-	this._currentPageIndex = 0;
+	
 	this._displayHeight = 500;
 	this._displayWidth = 150;
 
-	var containerBG = 0xFF00FF00;
-	var scrollerBG = 0x990000FF;
-	var contentBG = 0xCCFF0000;
+	var containerBG = 0xFFBBBBCC;
+	var scrollerBG = 0xFF0000FF;
+	var contentBG = 0xFFDDDDEE;
 
 	containerBG = Code.getJSColorFromARGB(containerBG);
 	scrollerBG = Code.getJSColorFromARGB(scrollerBG);
@@ -3305,17 +3308,19 @@ giau.LibraryScroller = function(element, name, url){
 	Code.addChild(this._container,this._elementScroller);
 		Code.addChild(this._elementScroller,this._elementContents);
 
+	var radiusContainer = 4;
 
+	Code.setStyleBorderRadius(this._container,radiusContainer+"px");
 	Code.setStyleBackgroundColor(this._container,containerBG);
 	Code.setStyleWidth(this._container,this._displayWidth+"px");
 	Code.setStyleHeight(this._container,this._displayHeight+"px");
-	var paddingInterriorLeft = 10;
-	var paddingInterriorRight = 10;
-	var paddingInterriorTop = 10;
-	var paddingInterriorBottom = 10;
+	var paddingInterriorLeft = 5;
+	var paddingInterriorRight = 5;
+	var paddingInterriorTop = 5;
+	var paddingInterriorBottom = 5;
 	var scrollerWidth = this._displayWidth - paddingInterriorLeft - paddingInterriorRight;
 	var scrollerHeight = this._displayHeight - paddingInterriorTop - paddingInterriorBottom;
-	console.log(scrollerWidth,scrollerHeight)
+	
 
 	Code.setStylePosition(this._container,"relative");
 
@@ -3330,47 +3335,50 @@ giau.LibraryScroller = function(element, name, url){
 	//Code.setStyleOverflow(this._elementScroller,"hidden");
 	Code.setStyleOverflowX(this._elementScroller,"hidden");
 	Code.setStyleOverflowY(this._elementScroller,"scroll");
+	Code.setStyleMargin(this._elementScroller,"0px");
 
-	// content
-	
+	Code.addStyle(this._elementScroller,"scrollbar-face-color","#FF0000");
+	Code.addStyle(this._elementScroller,"scrollbar-shadow-color","#FF0000");
+	Code.addStyle(this._elementScroller,"scrollbar-highlight-color","#FF0000");
+	Code.addStyle(this._elementScroller,"scrollbar-arrow-color","#FF0000");
+	// scrollbar-face-color: #367CD2;
+ //    scrollbar-shadow-color: #FFFFFF;
+ //    scrollbar-highlight-color: #FFFFFF;
+ //    scrollbar-3dlight-color: #FFFFFF;
+ //    scrollbar-darkshadow-color: #FFFFFF;
+ //    scrollbar-track-color: #FFFFFF;
+ //    scrollbar-arrow-color: #FFFFFF;
+
+	Code.setStyleWidth(this._elementContents,"100%");
 	Code.setStyleBackgroundColor(this._elementContents,contentBG);
 
-/*
 
-
-	//
-	var data = {
-		"data": [
-			{
-				"image": "",
-				"value": "2",
-			},
-			{
-				"display": "section_name_here_2",
-				"value": "4",
-			}
-		]
-	};
-		this._dataBefore = {
-			"cat":"hat"
-		};
-	this._dataMaxLength = 100; // maximum size of buffer array
-	this._dataStartIndex = 0;
-	this._data = [];
-	
-	this._currentPageIndex = 0;
-*/
 	this._getSizeFxn = giau.LibraryScroller._generateSize;
 	this._createElementFxn = giau.LibraryScroller._generateDiv;
-	this._getPage();
+
+	this._dataSource = new giau.DataSource();
+	console.log(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
+	this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
+	this._dataSource.getPage(0);
 }
 giau.LibraryScroller._generateSize = function(info, data){
 	var size = {};
-	size["width"] = info["width"];
-	size["height"] = 60;
+	var width = info["width"];
+	var height = Math.floor(0.6*width);
+	size["width"] = width;
+	size["height"] = height;
 	return size;
 }
 giau.LibraryScroller._generateDiv = function(info, data){
+	console.log(data);
+	var dataSectionModified = data["section_modified"];
+		dataSectionModified = Code.getHumanReadableDateString(dataSectionModified);
+	var dateSectionID = data["section_id"];
+	var dataWidgetName = data["widget_name"];
+	var dataIndex = info["index"];
+
+
+	var color;
 	var index = info["index"];
 	var width = info["width"];
 	var height = info["height"];
@@ -3383,44 +3391,123 @@ giau.LibraryScroller._generateDiv = function(info, data){
 	Code.setStyleDisplay(div,"block");
 	Code.setStyleLeft(div,x+"px");
 	Code.setStyleTop(div,y+"px");
-		var color = Code.getColARGBFromFloat(0.5,Code.randomFloat(0.0,1.0),Code.randomFloat(0.0,1.0),Code.randomFloat(0.0,1.0));
-			color = Code.getJSColorFromARGB(color);
-		Code.setStyleBackgroundColor(div,color);
+	//Code.setStylePadding(div,"2px");
+	// 	color = 0xFF330011;
+	// 	color = Code.getJSColorFromARGB(color);
+	// Code.setStyleBackgroundColor(div,color);
 
+	var radiusContainer = 4;
+	var exterriorPadding = 4;
+	var exterriorWidth = (width-2*exterriorPadding);
+	var exterriorHeight = (height-2*exterriorPadding);
+	var elementExterrior = Code.newDiv();
+	Code.setStyleBorderRadius(elementExterrior,radiusContainer+"px");
+	Code.setStyleWidth(elementExterrior,exterriorWidth+"px");
+	Code.setStyleHeight(elementExterrior,exterriorHeight+"px");
+	Code.setStylePosition(elementExterrior,"absolute");
+	Code.setStyleDisplay(elementExterrior,"block");
+	Code.setStyleLeft(elementExterrior,exterriorPadding+"px");
+	Code.setStyleTop(elementExterrior,exterriorPadding+"px");
+		color = 0xFF990022;
+		color = Code.getJSColorFromARGB(color);
+	Code.setStyleBackgroundColor(elementExterrior,color);
+
+	var radiusContainer = 4;
+	var interriorPadding = 4;
+	var interriorWidth = (exterriorWidth-2*interriorPadding);
+	var interriorHeight = (exterriorHeight-2*interriorPadding);
+	console.log(width,height,interriorWidth,interriorHeight);
+	var elementInterrior = Code.newDiv();
+	Code.setStyleBorderRadius(elementInterrior,radiusContainer+"px");
+	Code.setStyleWidth(elementInterrior,interriorWidth+"px");
+	Code.setStyleHeight(elementInterrior,interriorHeight+"px");
+	Code.setStylePosition(elementInterrior,"absolute");
+	Code.setStyleDisplay(elementInterrior,"block");
+	Code.setStyleLeft(elementInterrior,interriorPadding+"px");
+	Code.setStyleTop(elementInterrior,interriorPadding+"px");
+		
+	
 	var elementID = Code.newDiv();
+		Code.setContent(elementID,"#"+dataIndex+" ("+dateSectionID+")");
+		Code.setStyleFontSize(elementID,"10px");
+		Code.setStyleColor(elementID,"#DBB");
 	var elementName = Code.newDiv();
-		Code.setContent(elementID,data["section_id"]);
-		Code.setContent(elementName,data["widget_name"]);
-	console.log(data);
+		Code.setContent(elementName,dataWidgetName);
+		Code.setStyleFontSize(elementName,"12px");
+		Code.setStyleColor(elementName,"#FFF");
+	var elementModified = Code.newDiv();
+		Code.setContent(elementModified,dataSectionModified);
+		Code.setStyleFontSize(elementModified,"9px");
+		Code.setStyleColor(elementModified,"#C99");
+	
 
-		Code.addChild(div,elementID);
-		Code.addChild(div,elementName);
+	Code.addChild(div,elementExterrior);
+		Code.addChild(elementExterrior,elementInterrior);
+			Code.addChild(elementInterrior,elementID);
+			Code.addChild(elementInterrior,elementName);
+			Code.addChild(elementInterrior,elementModified);
+
 	return div;
 }
 giau.LibraryScroller.prototype._updateLayout = function(){
 	console.log("_updateLayout");
 	// source vars
-	var widthContainer = $(this._container).width();
-	var heightContainer = $(this._container).height();
-	var divSizeY = 60;
-	var divSpacingY = 8;
+	// var widthContainer = $(this._container).width();
+	// var heightContainer = $(this._container).height();
+	var widthContainer = $(this._elementScroller).width();
+	var heightContainer = $(this._elementScroller).height();
+	// var widthContainer = $(this._elementContents).width();
+	// var heightContainer = $(this._elementContents).height();
+	widthContainer -= this._scrollBarSize;
+	//var divSizeY = 60;
+	var divSpacingY = 0;
 
 	// derived vars
 	var data = this._dataRows;
 	var i;
 	var offsetY = 0;
+	var info;
 	for(i=0; i<data.length; ++i){
 		var row = data[i];
-		
-		var info = {"width":widthContainer,"height":divSizeY,"x":0,"y":offsetY};
+		info = {
+			"index":i,
+			"width":widthContainer,
+			"height":heightContainer,
+		};
+		var size = this._getSizeFxn(info, row);
+		var elementWidth = size["width"];
+		var elementHeight = size["height"];
+		info = {
+			"index":i,
+			"width":elementWidth,
+			"height":elementHeight,
+			"x":0,
+			"y":offsetY,
+		};
 		var div = this._createElementFxn(info, row);
 		Code.addChild(this._elementScroller,div);
-		//if(i<data.length-1){
-			offsetY += divSizeY + divSpacingY;
-		//}
+		offsetY += elementHeight;
+		if(i<data.length-1){
+			offsetY += divSpacingY;
+		}
+
+		//var data = {"model":modelFieldInfo, "array":array, "element":element, "field":"?"}; // modelFieldInfo
+		var datum = {"element":div};
+		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_MOUSE_DOWN, this._handleElementMouseDownFxn, this, datum);
+		// 
+
 	}
-	Code.setStyleWidth(this._elementContents,120+"px");
+	//Code.setStyleWidth(this._elementContents,120+"px");
 	Code.setStyleHeight(this._elementContents,offsetY+"px");
+}
+
+giau.LibraryScroller.prototype._handleElementMouseDownFxn = function(e,data){
+	// console.log(e);
+	// console.log(data);
+	var target = Code.getTargetFromEvent(e);
+	var element = data["element"];
+	var div = element.cloneNode(true);
+	Code.addChild(document.body,div);
 }
 
 giau.LibraryScroller.prototype._updateWithData = function(data){
@@ -3443,7 +3530,23 @@ giau.LibraryScroller.prototype._scrollTo = function(){
 giau.LibraryScroller.prototype._scrollTo = function(){
 	//
 }
-giau.LibraryScroller.prototype._getPage = function(){
+
+
+
+
+
+
+giau.DataSource = function(element){
+	giau.DataSource._.constructor.call(this);
+	this._arrayWindow = [];
+	this._url = "./";
+	this._itemsPerPage = 10;
+	this._currentPageIndex = 0;
+}
+Code.inheritClass(giau.DataSource, Dispatchable);
+
+giau.DataSource.EVENT_PAGE_DATA = "EVENT_PAGE_DATA";
+giau.DataSource.prototype.getPage = function(pageToGet){
 	console.log("get page");
 	this._currentPage = 0;
 	this._pageCount = 10;
@@ -3467,7 +3570,10 @@ giau.LibraryScroller.prototype._getPage = function(){
 	ajax.callback(function(d){
 		console.log("got page");
 		var obj = Code.parseJSON(d);
-		this._updateWithData(obj);
+		//this._updateWithData(obj);
+		console.log(giau.DataSource.EVENT_PAGE_DATA);
+		console.log(this);
+		this.alertAll(giau.DataSource.EVENT_PAGE_DATA,obj);
 	});
 	ajax.send();
 
@@ -3477,11 +3583,51 @@ giau.LibraryScroller.prototype._getPage = function(){
 
 
 
-
-
-
 giau.CRUD = function(element){
 	this._container = element;
+
+	// this._elementLibrary = Code.newDiv();
+	// Code.addChild(this._container,this._elementLibrary);
+	// this._library = new giau.LibraryScroller(this._elementLibrary);
+
+	this._elementContainer = Code.newDiv();
+	this._elementOrdering = Code.newDiv();
+	this._elementTable = Code.newDiv();
+	Code.addChild(this._container,this._elementContainer);
+		Code.addChild(this._elementContainer,this._elementOrdering);
+		Code.addChild(this._elementContainer,this._elementTable);
+		//Code.addChild(this._elementContainer,this._elementTable);
+
+
+
+	Code.setStyleWidth(this._elementContainer,"100%");
+	Code.setStyleHeight(this._elementContainer,"100%");
+	// Code.setStyleMinHeight(this._elementTable,500+"px");
+	// Code.setStyleMaxHeight(this._elementTable,800+"px");
+	// Code.setStylePosition(this._elementTable,"relative");
+	Code.setStyleDisplay(this._elementContainer,"inline-block");
+	Code.setStyleBackgroundColor(this._elementContainer,"#00F");
+
+
+	Code.setStyleWidth(this._elementOrdering,"100%");
+	Code.setStyleMinHeight(this._elementOrdering,50+"px");
+	Code.setStyleDisplay(this._elementOrdering,"inline-block");
+	Code.setStyleBackgroundColor(this._elementOrdering,"#F00");
+
+	
+		Code.setStyleBorderRadius(this._elementTable,5+"px");
+	//Code.setStyleWidth(this._elementTable,500+"px");
+	Code.setStyleWidth(this._elementTable,"100%");
+	//Code.setStyleHeight(this._elementTable,500+"px");
+	// Code.setStyleMinHeight(this._elementTable,500+"px");
+	// Code.setStyleMaxHeight(this._elementTable,800+"px");
+	Code.setStyleMinHeight(this._elementTable,100+"px");
+	Code.setStylePosition(this._elementTable,"relative");
+	Code.setStyleDisplay(this._elementTable,"inline-block");
+	Code.setStyleBackgroundColor(this._elementTable,"#0F0");
+	// Code.setStyleLeft(this._elementTable,interriorPadding+"px");
+	// Code.setStyleTop(this._elementTable,interriorPadding+"px");
+
 	//
 	//
 			var dunno = {
@@ -3688,7 +3834,14 @@ giau.CRUD = function(element){
 	this._currentPageData = data;
 	this._pageData = data;
 
-	this._updateLayout();
+//	this._updateLayout();
+
+
+
+	this._dataSource = new giau.DataSource();
+	// this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
+	// this._dataSource.getPage(0);
+
 }
 giau.CRUD.prototype._updateLayout = function(){
 	console.log("CRUD updateLayout");
