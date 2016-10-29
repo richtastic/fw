@@ -59,7 +59,197 @@ function GIAU_FULL_TABLE_NAME_BIO(){
 	return WORDPRESS_TABLE_PREFIX()."".GIAU_TABLE_PREFIX()."".GIAU_TABLE_NAME_BIO();
 }
 
+		/*
+		id int NOT NULL AUTO_INCREMENT,
+		created VARCHAR(32) NOT NULL,
+		modified VARCHAR(32) NOT NULL,
+		widget int NOT NULL,
+		configuration TEXT NOT NULL,
+		extend int,
+		section_list VARCHAR(65535) NOT NULL,
+		*/
+function GIAU_TABLE_DEFINITION_TO_PRESENTATION(&$tableDefinition){
+	// substitute or whatnot
+	return $tableDefinition;
 
+}
+function GIAU_TABLE_DEFINITION_SECTION(){
+	return
+	[
+		"table" => GIAU_FULL_TABLE_NAME_SECTION(),
+		"columns" => [
+			"id" =>  [
+				"type" => "string-number",
+				"attributes" =>  [
+					"display_name" => "ID",
+					"order" => "0",
+					"primary_key" => "true",
+					"sort" => "false",
+					"editable" => "false",
+				],
+			],
+			"created" =>  [
+				"type" => "string-date",
+				"attributes" =>  [
+					"display_name" => "Created",
+					"order" => "1",
+					"sort" =>  "true",
+					"editable" => "false",
+				],
+			],
+			"modified" =>  [
+				"type" => "string-date",
+				"attributes" =>  [
+					"display_name" => "Modified",
+					"order" => "2",
+					"sort" =>  "true",
+					"editable" => "false",
+				],
+			],
+			"widget" =>  [
+				"type" => "string",
+				"attributes" =>  [
+					"display_name" => "Widget",
+					"order" => "3",
+					"sort" =>  "false",
+					"editable" => "false",
+				],
+			],
+			"extend" =>  [
+				"type" => "string-number",
+				"attributes" =>  [
+					"display_name" => "Extends",
+					"order" => "4",
+					"sort" =>  "true",
+					"editable" => "false",
+				],
+			],
+			"configuration" =>  [
+				"type" => "string-json",
+				"attributes" =>  [
+					"display_name" => "Configuration",
+					"order" => "5",
+					"sort" =>  "false",
+					"editable" => "false",
+				],
+			],
+			"section_list" =>  [
+				"type" => "string-json",
+				"attributes" =>  [
+					"display_name" => "Subsections",
+					"order" => "6",
+					"sort" =>  "false",
+					"editable" => "true",
+				],
+			],
+		],
+		"presentation" => [
+			"column_aliases" => [
+				"section_id" => "id",
+				"section_created" => "created",
+				"section_modified" => "modified",
+				"section_configuration" => "configuration",
+				"section_subsections" => "section_list",
+				"section_extend_widget_id" => "extend",
+				// unavailable
+				"widget_id" => null,
+				"widget_name" => null,
+				"widget_configuration" => null,
+			],
+			"widget" =>  [
+				"box" => "true",
+			],
+			"section_list" =>  [
+				"drag_and_drop" =>  [
+					"source" =>  [
+						"name" => "library_section_list",
+						"url" => "",
+					]
+				]
+			],
+		]
+	];
+}
+function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
+	return
+	[
+		"table" => GIAU_FULL_TABLE_NAME_LANGUAGIZATION(),
+		"columns" => [
+			"id" => [
+				"type" => "string-number",
+				"attributes" => [
+					"display_name" => "ID",
+					"order" => "0",
+					"primary_key" => "true",
+					"sort" =>  "false",
+					"editable" => "false",
+				],
+			],
+			"created" => [
+				"type" => "string-date",
+				"attributes" => [
+					"display_name" => "Created",
+					"order" => "1",
+					"sort" =>  "true",
+					"editable" => "false",
+				],
+			],
+			"modified" => [
+				"type" => "string-date",
+				"attributes" => [
+					"display_name" => "Modified",
+					"order" => "2",
+					"sort" =>  "true",
+					"editable" => "false",
+				],
+			],
+			"hash_index" => [
+				"type" => "string",
+				"attributes" => [
+					"display_name" => "Hash Index",
+					"order" => "3",
+					"sort" =>  "true",
+					"editable" => "true",
+					"monospace" => "true",
+				],
+			],
+			"language" => [
+				"type" => "string-option",
+				"options" => [
+					[
+						"display" => "english",
+						"value" => "en-US",
+						"default" => "true",
+					],
+					[
+						"display" => "korean",
+						"value" => "ko-KP",
+					]
+				],
+				"attributes" => [
+					"display_name" => "Language",
+					"order" => "4",
+					"monospace" => "true",
+					"editable" => "true",
+				],
+			],
+			"phrase_value" => [
+				"type" => "string",
+				"attributes" => [
+					"display_name" => "Phrase",
+					"order" => "5",
+					"sort" =>  "true",
+					"editable" => "true",
+				],
+			],
+		],
+		"presentation" => [
+			"row_grouping" => [
+				"hash_index",
+			],
+		]
+	];
+}
 // DEFINITIONS
 
 function giau_create_database(){
@@ -92,7 +282,6 @@ function giau_create_database(){
 		) $charset_collate
 	;";
 	dbDelta( $sql );
-
 
 	// WIDGET
 	// id

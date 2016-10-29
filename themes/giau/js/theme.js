@@ -3370,7 +3370,7 @@ giau.LibraryScroller._generateSize = function(info, data){
 	return size;
 }
 giau.LibraryScroller._generateDiv = function(info, data){
-	console.log(data);
+	//console.log(data);
 	var dataSectionModified = data["section_modified"];
 		dataSectionModified = Code.getHumanReadableDateString(dataSectionModified);
 	var dateSectionID = data["section_id"];
@@ -3416,7 +3416,7 @@ giau.LibraryScroller._generateDiv = function(info, data){
 	var interriorPadding = 4;
 	var interriorWidth = (exterriorWidth-2*interriorPadding);
 	var interriorHeight = (exterriorHeight-2*interriorPadding);
-	console.log(width,height,interriorWidth,interriorHeight);
+	
 	var elementInterrior = Code.newDiv();
 	Code.setStyleBorderRadius(elementInterrior,radiusContainer+"px");
 	Code.setStyleWidth(elementInterrior,interriorWidth+"px");
@@ -3568,11 +3568,7 @@ giau.DataSource.prototype.getPage = function(pageToGet){
 	ajax.append("count",""+count);
 	ajax.context(this);
 	ajax.callback(function(d){
-		console.log("got page");
 		var obj = Code.parseJSON(d);
-		//this._updateWithData(obj);
-		console.log(giau.DataSource.EVENT_PAGE_DATA);
-		console.log(this);
 		this.alertAll(giau.DataSource.EVENT_PAGE_DATA,obj);
 	});
 	ajax.send();
@@ -3590,16 +3586,24 @@ giau.CRUD = function(element){
 	// Code.addChild(this._container,this._elementLibrary);
 	// this._library = new giau.LibraryScroller(this._elementLibrary);
 
+	// display hierarchy
+	// this._elementSortingContainer = Code.newDiv();
+	// this._elementToolsContainer = Code.newDiv();
+	// this._elementTableContainer = Code.newDiv();
+
 	this._elementContainer = Code.newDiv();
+	this._elementTools = Code.newDiv();
 	this._elementOrdering = Code.newDiv();
 	this._elementTable = Code.newDiv();
 	Code.addChild(this._container,this._elementContainer);
+	
 		Code.addChild(this._elementContainer,this._elementOrdering);
+		Code.addChild(this._elementContainer,this._elementTools);
 		Code.addChild(this._elementContainer,this._elementTable);
 		//Code.addChild(this._elementContainer,this._elementTable);
 
 
-
+	// CONTAINER
 	Code.setStyleWidth(this._elementContainer,"100%");
 	Code.setStyleHeight(this._elementContainer,"100%");
 	// Code.setStyleMinHeight(this._elementTable,500+"px");
@@ -3608,13 +3612,24 @@ giau.CRUD = function(element){
 	Code.setStyleDisplay(this._elementContainer,"inline-block");
 	Code.setStyleBackgroundColor(this._elementContainer,"#00F");
 
+	// TOOLS
+	Code.setStyleWidth(this._elementTools,"100%");
+	//Code.setStyleMinHeight(this._elementTools,50+"px");
+	Code.setStyleDisplay(this._elementTools,"inline-block");
+	Code.setStyleBackgroundColor(this._elementTools,"#F0F");
+	var div;
+		div = Code.newDiv();
+		Code.setContent(div,"+");
+		Code.addChild(this._elementTools,div);
 
+	// ORDERING
 	Code.setStyleWidth(this._elementOrdering,"100%");
 	Code.setStyleMinHeight(this._elementOrdering,50+"px");
 	Code.setStyleDisplay(this._elementOrdering,"inline-block");
 	Code.setStyleBackgroundColor(this._elementOrdering,"#F00");
 
 	
+	// TABLE
 		Code.setStyleBorderRadius(this._elementTable,5+"px");
 	//Code.setStyleWidth(this._elementTable,500+"px");
 	Code.setStyleWidth(this._elementTable,"100%");
@@ -3636,165 +3651,7 @@ giau.CRUD = function(element){
 				}
 			}
 	// sectioned, binned, boxed, atomic, tagged, capsule, parcel
-	// SECTION
-	var tableInfo = {
-		"columns" : {
-			"id": {
-				"type": "string",
-				"attributes": {
-					"order": "0",
-					"primary_key": "true",
-					"sort":  "false",
-					"editable": "false",
-				},
-			},
-			"created": {
-				"type": "string-date",
-				"attributes": {
-					"order": "1",
-					"sort":  "true",
-					"editable": "false",
-				},
-			},
-			"modified": {
-				"type": "string-date",
-				"attributes": {
-					"order": "2",
-					"sort":  "true",
-					"editable": "false",
-				},
-			},
-			"widget": {
-				"type": "string",
-				"attributes": {
-					"order": "3",
-					"sort":  "false",
-					"editable": "false",
-				},
-			},
-			"widget": {
-				"type": "string",
-				"attributes": {
-					"order": "4",
-					"sort":  "true",
-					"editable": "false",
-				},
-			},
-			"configuration": {
-				"type": "string-json",
-				"attributes": {
-					"order": "5",
-					"sort":  "false",
-					"editable": "false",
-				},
-			},
-			"section_list": {
-				"type": "string-json",
-				"attributes": {
-					"order": "6",
-					"sort":  "false",
-					"editable": "true",
-				},
-			},
-		},
-		"presentation": {
-			"widget": {
-				"box": "true",
-			},
-			"section_list": {
-				"drag_and_drop": {
-					"source": {
-						"name": "library_section_list",
-						"url": ""
-					}
-				}
-			}
-		}
-	}
-	/*
-		$sql = "CREATE TABLE ".GIAU_FULL_TABLE_NAME_SECTION()." (
-		id int NOT NULL AUTO_INCREMENT,
-		created VARCHAR(32) NOT NULL,
-		modified VARCHAR(32) NOT NULL,
-		widget int NOT NULL,
-		configuration TEXT NOT NULL,
-		extend int,
-		sectionList VARCHAR(65535) NOT NULL,
-		UNIQUE KEY id (id)
-		) $charset_collate
-	;";
-	*/
-	// LANGUAGIZATION
-	var tableInfo = {
-		"columns": {
-			"id": {
-				"type": "string",
-				"attributes": {
-					"order": "0",
-					"primary_key": "true",
-					"sort":  "false",
-					"editable": "false",
-				},
-			},
-			"created": {
-				"type": "string-date",
-				"attributes": {
-					"order": "1",
-					"sort":  "true",
-					"editable": "false",
-				},
-			},
-			"modified": {
-				"type": "string-date",
-				"attributes": {
-					"order": "2",
-					"sort":  "true",
-					"editable": "false",
-				},
-			},
-			"hash_index": {
-				"type": "string",
-				"attributes": {
-					"order": "3",
-					"sort":  "true",
-					"editable": "true",
-					"monospace": "true",
-				},
-			},
-			"language": {
-				"type": "string-option",
-				"options": [
-					{
-						"display": "english",
-						"value": "en-US",
-						"default": "true",
-					},
-					{
-						"display": "korean",
-						"value": "ko-KP",
-					}
-				],
-				"attributes": {
-					"order": "4",
-					"monospace": "true",
-					"editable": "true",
-				},
-			},
-			"phrase_value": {
-				"type": "string",
-				"attributes": {
-					"order": "5",
-					"sort":  "true",
-					"editable": "true",
-				},
-			},
-		},
-		"presentation": {
-			"column_grouping": [
-				"hash_index",
-			],
-		}
-	}
+	
 	var data = {
 		"offset": 0,
 		"count": 1,
@@ -3820,15 +3677,8 @@ giau.CRUD = function(element){
 	}
 	// HOW TO DO DRAG N DROP ?
 
-
-	this._itemsPerPage = 20;
-	this._currentPageIndex = 0;
 	//this._itemsTotal = 0;
 
-	// display hierarchy
-	this._elementSortingContainer = Code.newDiv();
-	this._elementToolsContainer = Code.newDiv();
-	this._elementTableContainer = Code.newDiv();
 
 	// simulate got data:
 	this._currentPageData = data;
@@ -3836,15 +3686,117 @@ giau.CRUD = function(element){
 
 //	this._updateLayout();
 
+	
+	this._dataSource = new giau.DataSource("./",20);
+	this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
+	this._dataSource.getPage(0);
 
-
-	this._dataSource = new giau.DataSource();
-	// this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
-	// this._dataSource.getPage(0);
-
+}
+giau.CRUD.prototype._updateWithData = function(data){
+	console.log("CRUD._updateWithData");
+	console.log(data);
+	var offset = data["offset"];
+	var count = data["count"];
+	var rows = data["data"];
+	var definition = data["definition"];
+	// var i;
+	// for(i=0; i<count; ++i){
+	// 
+	// }
+	// //var FA = new FragArray();
+	// //this._dataRows = FA;
+	this._dataDefinition = definition;
+	this._dataRows = rows;
+	this._updateLayout();
 }
 giau.CRUD.prototype._updateLayout = function(){
 	console.log("CRUD updateLayout");
+
+	var rows = this._dataRows;
+	var columns = this._dataDefinition["columns"];
+	var presentation = this._dataDefinition["presentation"];
+	// console.log(columns);
+	// console.log(presentation);
+	
+	var i;
+
+	var column, alias, row, keys;
+
+	// search fields
+	var searchFields = [];
+	var editFields = [];
+	var aliases = presentation["column_aliases"];
+	keys = Code.keys(aliases);
+	for(i=0; i<keys.length; ++i){
+		key = keys[i];
+		alias = aliases[key];
+		if(alias){
+			//console.log(key,alias);
+			column = columns[alias];
+			if(column){
+				//console.log(column);
+				var attributes = column["attributes"];
+				if(attributes){
+					var info = {};
+					info["column"] = alias;
+					info["alias"] = key;
+					info["definition"] = column;
+					info["attributes"] = attributes;
+					editFields.push(info);
+
+					var sortable = attributes["sort"];
+					if(sortable && sortable=="true"){
+						searchFields.push(info);
+					}
+				}
+			}
+		}
+	}
+	
+	Code.removeAllChildren(this._elementOrdering);
+	for(i=0; i<searchFields.length; ++i){
+		var field = searchFields[i];
+			var attributes = field["attributes"];
+		var name = attributes["display_name"];
+		var div = Code.newDiv();
+		Code.setContent(div,""+name+"&DownArrowBar;"); // &darr; &dArr; &#8681; &#10507; &DownArrowBar;
+		Code.setStyleDisplay(div,"table-cell");
+		Code.setStyleColor(div,"#000");
+		Code.addChild(this._elementOrdering,div);
+	}
+
+	// 
+	// editing
+	Code.removeAllChildren(this._elementTable);
+	for(i=0; i<rows.length; ++i){
+		var row = rows[i];
+		var elementRow = Code.newDiv();
+		//Code.setContent(elementRow,"i"+i);
+		for(j=0; j<editFields.length; ++j){
+			var field = editFields[j];
+			console.log(field)
+			var column = field["column"];
+			var alias = field["alias"];
+			var name = field["attributes"]["display_name"];
+			var value = row[alias];
+			//console.log(field);
+			var elementField = Code.newDiv();
+			Code.setStyleFontFamily(elementField,"monospace");
+			Code.setStyleFontSize(elementField,10+"px");
+			Code.setContent(elementField,""+name+":"+value);
+			Code.setStyleColor(elementField,"#000");
+			Code.setStyleWordWrap(elementField,"break-word");
+			
+			Code.addChild(elementRow,elementField);
+		}
+		Code.setStyleBackgroundColor(elementRow,"#FFF");
+		Code.setStyleMargin(elementRow,5+"px");
+		//console.log(rows[i]);
+		Code.addChild(this._elementTable,elementRow);
+	}
+
+
+	return;
 	var data = this._currentPageData["data"];
 	var i, dataCount = data.length;
 	for(i=0; i<dataCount; ++i){

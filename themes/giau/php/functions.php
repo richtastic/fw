@@ -145,7 +145,6 @@ function create_page(){
 				$(document).ready( function(){
 					var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
 						var list = ["<?php echo $fileJavaScriptMain; ?>"];
-						console.log(list);
 						scriptLoader = new ScriptLoader("",list, this, function(e){
 							var g = new giau();
 						},null);

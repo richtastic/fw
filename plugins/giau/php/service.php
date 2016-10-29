@@ -199,7 +199,17 @@ function giau_wordpress_data_service(){
 	    JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
 	    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
 	";
+	/*
+	    "section_id" => "id",
+				"section_created" => "created",
+				"section_modified" => "modified",
+				"section_configuration" => "configuration",
+				"section_subsections" => "section_list",
+				"section_extend_widget_id" => "extend",
+	    */
+				
 			paged_data_service($requestInfo, table_info_section(), $response );
+			$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( GIAU_TABLE_DEFINITION_SECTION() );
 		}else{// if($operationType=="file_upload"){
 			$result = exec('whoami');
 			error_log("who am i: ".$result);
@@ -213,29 +223,6 @@ function giau_wordpress_data_service(){
 function table_info_section(){
 	$data = [
 		"table" => GIAU_FULL_TABLE_NAME_SECTION(),
-		"columns" => [
-			"id" => [
-				"type" => "string-number",
-			],
-			"created" => [
-				"type" => "string-date",
-			],
-			"modified" => [
-				"type" => "string-date",
-			],
-			"widget" => [
-				"type" => "string-number",
-			],
-			"configuration" => [
-				"type" => "string-json",
-			],
-			"extend" => [
-				"type" => "string-number",
-			],
-			"section_list" => [
-				"type" => "string-array",
-			]
-		]
 	];
 	return $data;
 }
@@ -243,7 +230,7 @@ function table_info_section(){
 function paged_data_service($requestInfo, $tableInfo, &$response){
 	global $wpdb;
 	$table = $tableInfo["table"];
-	$columns = $tableInfo["columns"];
+	//$columns = $tableInfo["columns"];
 	$offset = $requestInfo["offset"];
 	$count = $requestInfo["count"];
 	
