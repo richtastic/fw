@@ -182,7 +182,7 @@ function giau_wordpress_data_service(){
 				- values WHERE id
 			*/
 			$offset = 0;
-			$count = 10;
+			$count = 1;
 			$requestInfo = [];
 			$requestInfo["offset"] = $offset;
 			$requestInfo["count"] = $count;

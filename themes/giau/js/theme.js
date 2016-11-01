@@ -2770,30 +2770,35 @@ giau.FileBrowser.prototype.uploadFile = function(file,filename,directory){
 }
 
 // giau.ObjectDesigner Constructor  Composer Layout
-giau.ObjectComposer = function(element){
+giau.ObjectComposer = function(element, model, object){
 	this._container = element;
-
-	var propertyDataModel = "data-model";
-	var propertyDataObject = "data-object";
 	this._dataModel = {};
 	this._dataInstance = {};
+	if(model && object){
+		this._dataModel = model;
+		this._dataInstance = object;
+	}else{
+		var propertyDataModel = "data-model";
+		var propertyDataObject = "data-object";
+		
 
-	var i;
-	for(i=0; i<Code.numChildren(this._container); ++i){
-		var ele = Code.getChild(this._container,i);
-		if( Code.hasProperty(ele,propertyDataModel) ){
-				var objectString = Code.getContent(ele);
-				console.log(objectString)
-				var object = Code.parseJSON(objectString);
-				this._dataModel = object;
-			Code.removeChild(this._container,ele);
-			--i;
-		}else if( Code.hasProperty(ele,propertyDataObject) ){
-				var objectString = Code.getContent(ele);
-				var object = Code.parseJSON(objectString);
-				this._dataInstance = object;
-			Code.removeChild(this._container,ele);
-			--i;
+		var i;
+		for(i=0; i<Code.numChildren(this._container); ++i){
+			var ele = Code.getChild(this._container,i);
+			if( Code.hasProperty(ele,propertyDataModel) ){
+					var objectString = Code.getContent(ele);
+					console.log(objectString)
+					var object = Code.parseJSON(objectString);
+					this._dataModel = object;
+				Code.removeChild(this._container,ele);
+				--i;
+			}else if( Code.hasProperty(ele,propertyDataObject) ){
+					var objectString = Code.getContent(ele);
+					var object = Code.parseJSON(objectString);
+					this._dataInstance = object;
+				Code.removeChild(this._container,ele);
+				--i;
+			}
 		}
 	}
 
@@ -2805,7 +2810,7 @@ giau.ObjectComposer = function(element){
 
 	this.initialize();
 
-	var div = Code.newInputButton("SUBMIT");
+	var div = Code.newInputButton("SAVE/UPDATE ?");
 		Code.setStyleBackgroundColor(div,"#FCC");
 	this._submitButton = div;
 	Code.addChild(this._container,this._submitButton);
@@ -2904,6 +2909,7 @@ giau.ObjectComposer.prototype._handleNewArrayItem = function(e,d){
 	var element = d["element"];
 	var field = d["field"];
 		var type = model["type"];
+	console.log("CAN WE JUST APPEND THE ARRAY ITEM TO THE HTML CONTAINER AND JS ARRAY? ");
 	console.log("handle new array object");
 	console.log(model);
 	console.log(array);
@@ -2978,7 +2984,7 @@ var subElement = this.newSubElement(element,"array", array[i], field);
 		}
 	}else if(modelSubType=="object"){
 		console.log("\t=>object [array]");
-		var objectModel = modelFieldInfo["fields"]["fields"];
+		var objectModel = modelFieldInfo["fields"];//["fields"];
 		for(var i=0; i<array.length; ++i){
 var subElement = this.newSubElement(element,"object", array[i], field);
 			this.fillOutModelFromElement(subElement,objectModel,array[i], false);
@@ -2993,7 +2999,7 @@ var subElement = this.newSubElement(element,"object", array[i], field);
 			Code.setStyleBackgroundColor(button,"#FCC");
 			Code.setStyleDisplay(button,"inline-block");
 		Code.addChild(element, button);
-	var data = {"model":modelFieldInfo, "array":array, "element":element, "field":"?"}; // modelFieldInfo
+	var data = {"model":modelFieldInfo, "array":array, "element":element, "field":field}; // modelFieldInfo
 	this._jsDispatch.addJSEventListener(button, Code.JS_EVENT_CLICK, this._handleNewArrayItem, this, data);
 }
 
@@ -3001,12 +3007,6 @@ giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelOb
 	console.log("++++++++++++++++++++++++++++++++++++++");
 	console.log(modelObject);
 	console.log(instanceObject);
-	//var isInstanceArray = Code.isArray(instanceObject);
-	// if(isInstanceArray){
-	// 	console.log("fillOutModelFromElement : is array");
-	// }else{
-	// 	console.log("fillOutModelFromElement : is object");
-	// }
 	var regexArrayPrefix = new RegExp('^array-','i');
 	var modelKeys = Code.keys(modelObject);
 	var i, modelFieldName, modelFieldType, modelFieldInfo;
@@ -3046,8 +3046,9 @@ giau.ObjectComposer.prototype.newSubElement = function(element,type, container, 
 		Code.setContent(div, "array: "+field);
 	}else if(type=="object"){
 		Code.setContent(div, "object: "+field);
+		console.log(element,type,container,field);
 	}else if(type=="primitive"){
-		var value = container[field]
+		var value = container[field];
 		if(Code.isArray(container)){
 			//Code.setContent(div, field+" "+": "+);
 		}else{
@@ -3357,7 +3358,6 @@ giau.LibraryScroller = function(element, name, url){
 	this._createElementFxn = giau.LibraryScroller._generateDiv;
 
 	this._dataSource = new giau.DataSource();
-	console.log(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
 	this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
 	this._dataSource.getPage(0);
 }
@@ -3619,7 +3619,7 @@ giau.CRUD = function(element){
 	Code.setStyleBackgroundColor(this._elementTools,"#F0F");
 	var div;
 		div = Code.newDiv();
-		Code.setContent(div,"+");
+		Code.setContent(div,"[+]");
 		Code.addChild(this._elementTools,div);
 
 	// ORDERING
@@ -3643,46 +3643,13 @@ giau.CRUD = function(element){
 	// Code.setStyleLeft(this._elementTable,interriorPadding+"px");
 	// Code.setStyleTop(this._elementTable,interriorPadding+"px");
 
-	//
-	//
-			var dunno = {
-				"tags": {
-				"box": "true",
-				}
-			}
-	// sectioned, binned, boxed, atomic, tagged, capsule, parcel
-	
-	var data = {
-		"offset": 0,
-		"count": 1,
-		"total": 2,
-		"data": [
-			{
-				"id" : "0",
-				"created" : "2016-07-18 12:30:23.0000",
-				"modified" : "2016-09-24 14:04:01.1234",
-				"hash_index" : "TITLE_HASH",
-				"language" : "en-US",
-				"phrase_value" : "This is where\nmultilined\n\"text\" goes.",
-			},
-			{
-				"id" : "2",
-				"created" : "2016-08-27 14:45:56.0000",
-				"modified" : "2016-10-01 8:00:00.0000",
-				"hash_index" : "TITLE_HASH",
-				"language" : "ko-KP",
-				"phrase_value" : "This is where\nmultilined\n\"text\" goes.",
-			}
-		]
-	}
+
 	// HOW TO DO DRAG N DROP ?
 
 	//this._itemsTotal = 0;
 
 
 	// simulate got data:
-	this._currentPageData = data;
-	this._pageData = data;
 
 //	this._updateLayout();
 
@@ -3715,13 +3682,31 @@ giau.CRUD.prototype._updateLayout = function(){
 	var rows = this._dataRows;
 	var columns = this._dataDefinition["columns"];
 	var presentation = this._dataDefinition["presentation"];
+
+
+	var i;
+	var column, pres, alias, row, keys;
+
+
+	// append presentation to each column
+	
+	var columnPresentations = presentation["columns"];
+	/*
+	keys = Code.keys(columnPresentations);
+	for(i=0; i<keys.length; ++i){
+		key = keys[i];
+		pres = columnPresentations[key];
+		column = columns[key];
+
+		if(pres && column){
+			console.log(pres)
+			column["presentation"] = pres;
+		}
+	}
+	*/
 	// console.log(columns);
 	// console.log(presentation);
 	
-	var i;
-
-	var column, alias, row, keys;
-
 	// search fields
 	var searchFields = [];
 	var editFields = [];
@@ -3737,11 +3722,14 @@ giau.CRUD.prototype._updateLayout = function(){
 				//console.log(column);
 				var attributes = column["attributes"];
 				if(attributes){
+					pres = columnPresentations[alias];
+					//
 					var info = {};
 					info["column"] = alias;
 					info["alias"] = key;
 					info["definition"] = column;
 					info["attributes"] = attributes;
+					info["presentation"] =  pres;
 					editFields.push(info);
 
 					var sortable = attributes["sort"];
@@ -3770,27 +3758,29 @@ giau.CRUD.prototype._updateLayout = function(){
 	Code.removeAllChildren(this._elementTable);
 	for(i=0; i<rows.length; ++i){
 		var row = rows[i];
+		// ROW
 		var elementRow = Code.newDiv();
-		//Code.setContent(elementRow,"i"+i);
-		for(j=0; j<editFields.length; ++j){
-			var field = editFields[j];
-			console.log(field)
-			var column = field["column"];
-			var alias = field["alias"];
-			var name = field["attributes"]["display_name"];
-			var value = row[alias];
-			//console.log(field);
-			var elementField = Code.newDiv();
-			Code.setStyleFontFamily(elementField,"monospace");
-			Code.setStyleFontSize(elementField,10+"px");
-			Code.setContent(elementField,""+name+":"+value);
-			Code.setStyleColor(elementField,"#000");
-			Code.setStyleWordWrap(elementField,"break-word");
-			
-			Code.addChild(elementRow,elementField);
-		}
 		Code.setStyleBackgroundColor(elementRow,"#FFF");
 		Code.setStyleMargin(elementRow,5+"px");
+		for(j=0; j<editFields.length; ++j){
+			var field = editFields[j];
+			var alias = field["alias"];
+			var value = row[alias];
+			var elementField = this._fieldFromData(field,value,row);
+			Code.addChild(elementRow,elementField);
+		}
+		// DELETE
+		var elementDelete = Code.newDiv();
+		Code.setContent(elementDelete,"[x]");
+		Code.addChild(elementRow,elementDelete);
+
+		// UPDATE
+		var elementUpdate = Code.newDiv();
+		Code.setContent(elementUpdate,"[^]");
+		Code.addChild(elementRow,elementUpdate);
+
+		// row 
+		
 		//console.log(rows[i]);
 		Code.addChild(this._elementTable,elementRow);
 	}
@@ -3834,7 +3824,104 @@ giau.CRUD.prototype._updateLayout = function(){
 		UNIQUE KEY id (id)
 */
 
+giau.CRUD._elementSelectDate = function(){
+	var elementContainer = Code.newDiv();
+	return elementContainer;
+}
+giau.CRUD._elementSelectColor = function(){
+	var elementContainer = Code.newDiv();
+	return elementContainer;
+}
+giau.CRUD._elementSelectString = function(value){
+	var elementContainer = Code.newInputTextArea();
+	Code.setStyleFontFamily(elementContainer,"monospace");
+	Code.setStyleFontSize(elementContainer,11+"px");
+	Code.setStyleColor(elementContainer,"#000");
+	Code.setStyleWidth(elementContainer,"100%");
+	Code.setStyleBackgroundColor(elementContainer,"#FFF");
+	Code.setStyleBorderColor(elementContainer,"#CCC");
+	Code.setStyleBorderWidth(elementContainer,1+"px");
+	Code.setTextAreaValue(elementContainer,""+value);
+	return elementContainer;
+}
+// giau.CRUD._elementSelectJSON = function(model,value){
+// 	var elementContainer = Code.newDiv();
+// 	return elementContainer;
+// }
 
+giau.CRUD._fieldEditString = function(definition, attributes, presentation, value, source, elementContainer){
+	var elementText = giau.CRUD._elementSelectString(value);
+	Code.addChild(elementContainer,elementText);
+}
+giau.CRUD._fieldEditJSON = function(definition, attributes, presentation, value, source, elementContainer){
+	var elementJSON = Code.newDiv();
+		Code.addChild(elementContainer,elementJSON);
+	var jsonModelColumn = presentation["json_model_column"];
+	var modelString = source[jsonModelColumn];
+	var object = Code.parseJSON(value);
+	var model = Code.parseJSON(modelString);
+	//console.log(object);
+	//console.log(model);
+	console.log("---------------------------------------------------------------------------------------------------------------");
+	var composer = new giau.ObjectComposer(elementJSON, model, object);
+	//console.log(composer);
+	return elementJSON;
+}
+
+giau.CRUD.prototype._fieldFromData = function(field, value, source){
+	//console.log(field);
+	var alias = field["alias"];
+	var column = field["column"];
+	var attributes = field["attributes"];
+	var presentation = field["presentation"];
+	var definition = field["definition"];
+	// SUB
+	var name = attributes["display_name"];
+	var fieldType = definition["type"];
+	// DISPLAY
+	var elementField = Code.newDiv();
+	var elementTitle = Code.newDiv();
+	var elementValue = Code.newDiv();
+		Code.addChild(elementField,elementTitle);
+		Code.addChild(elementField,elementValue);
+	// STYLES
+	Code.setStyleFontFamily(elementTitle,"monospace");
+	Code.setStyleFontSize(elementTitle,10+"px");
+	Code.setStyleColor(elementTitle,"#000");
+	Code.setStyleWordWrap(elementTitle,"break-word");
+	// CONTAINER
+	Code.setStylePadding(elementField,5+"px");
+
+	// VALUES
+	Code.setContent(elementTitle,""+name+":");
+	
+	
+
+	var operationFxn = {};
+		operationFxn["string"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
+		operationFxn["string-number"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
+		operationFxn["string-date"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
+		operationFxn["string-color"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
+		operationFxn["string-array"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
+		operationFxn["string-json"] = [giau.CRUD._fieldEditJSON,giau.CRUD._fieldEditJSON];
+	var operation = operationFxn[fieldType];
+	if(operation){
+		var statFxn = operation[0];
+		var editFxn = operation[1];
+		if(attributes["editable"]=="true"){
+			editFxn(definition, attributes, presentation, value, source, elementValue);
+		}else{
+			statFxn(definition, attributes, presentation, value, source, elementValue);
+		}
+	}
+
+	return elementField;
+}
+
+giau.CRUD.prototype._checkSubmitChange = function(field, value, source){
+	var str = Code.StringFromJSON(model);
+	console.log(str)
+}
 
 
 

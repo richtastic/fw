@@ -134,12 +134,24 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				],
 			],
 			"section_list" =>  [
-				"type" => "string-json",
+				"type" => "string-array",
 				"attributes" =>  [
 					"display_name" => "Subsections",
 					"order" => "6",
 					"sort" =>  "false",
 					"editable" => "true",
+				],
+			],
+
+
+			// not part of the table:
+			"widget_name" =>  [
+				"type" => "string",
+				"attributes" =>  [
+					"display_name" => "Name(Widget)",
+					"order" => "7",
+					"sort" =>  "false",
+					"editable" => "false",
 				],
 			],
 		],
@@ -153,20 +165,25 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				"section_extend_widget_id" => "extend",
 				// unavailable
 				"widget_id" => null,
-				"widget_name" => null,
+				"widget_name" => "widget_name",
 				"widget_configuration" => null,
 			],
-			"widget" =>  [
-				"box" => "true",
-			],
-			"section_list" =>  [
-				"drag_and_drop" =>  [
-					"source" =>  [
-						"name" => "library_section_list",
-						"url" => "",
+			"columns" => [
+				"configuration" => [
+					"json_model_column" => "widget_configuration",
+				],
+				"widget" =>  [
+					"box" => "true",
+				],
+				"section_list" =>  [
+					"drag_and_drop" =>  [
+						"source" =>  [
+							"name" => "library_section_list",
+							"url" => "",
+						]
 					]
-				]
-			],
+				],
+			]
 		]
 	];
 }
@@ -251,6 +268,9 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 	];
 }
 // DEFINITIONS
+
+	// sectioned, binned, boxed, atomic, tagged, capsule, parcel
+
 
 function giau_create_database(){
 	error_log("giau_create_database");

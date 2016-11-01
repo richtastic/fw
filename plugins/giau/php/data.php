@@ -397,6 +397,12 @@ function giau_data_default_insert_into_database(){
 				"style" => [
 					"type" => "string"
 				],
+				"dark_mode" => [
+					"type" => "string-boolean",
+				],
+				"start_hidden" => [
+					"type" => "string-boolean",
+				],
 			]
 		]
 	);
