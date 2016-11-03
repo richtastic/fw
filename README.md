@@ -158,6 +158,22 @@ rm -r /var/www/html/wordpress/wp-content/themes/giau && cp -r /media/sf_zirbr001
 rm -r /var/www/html/wordpress/wp-content/plugins/giau && cp -r /media/sf_zirbr001/dev/extRepos/fw/plugins/giau/ /var/www/html/wordpress/wp-content/plugins/giau && chmod -R 777 /var/www/html/wordpress/wp-content/plugins/giau
 
 
+
+rm /var/www/html/wordpress/wp-content/themes/giau/js/code && ln -s /repos/ff/src/code /var/www/html/wordpress/wp-content/themes/giau/js/code && chmod -R 777 /var/www/html/wordpress/wp-content/themes/giau
+
+
+mkdir -p /repos/ff/src
+rm -r /repos/ff/src/code/
+rm -r /var/www/html/wordpress/wp-content/plugins/giau 
+cp -r /media/sf_zirbr001/dev/extRepos/ff/src/code /repos/ff/src/
+chmod -R 777 /repos/
+ln -s /repos/ff/src/code /var/www/html/wordpress/wp-content/themes/giau/js/code
+chmod -R 777 /var/www/html/wordpress/wp-content/themes/giau
+
+
+
+
+
 #DEBUGGING
 tail -f /var/log/php_errors.log
 tail -f /var/log/apache2/error.log
@@ -186,7 +202,7 @@ wp methods excape strings for you, no need for mysql_real_escape_string
 lftp
 open -u USERNAME,PASSWORD  ftp.lacpc.org
 
-# ---- 1:
+# ---- BOX THEME:
 # GOTO
 cd /www/ce/wp-content/themes
 lcd /media/sf_zirbr001/dev/extRepos/fw/themes/
@@ -201,6 +217,23 @@ mirror -R code code
 # CHMOD READ ACCESS:
 cd /www/ce/wp-content/themes/
 chmod -R 755 giau/
+
+# ---- BOX PLUGIN:
+# GOTO
+cd /www/ce/wp-content/plugins/
+lcd /media/sf_zirbr001/dev/extRepos/fw/plugins
+# COPY GIAU
+rm -rf ./giau
+mirror -R giau giau
+# CHMOD READ ACCESS:
+cd /www/ce/wp-content/plugins/
+chmod -R 755 giau/
+
+
+
+
+
+
 
 
 # ---- 2: THEMES

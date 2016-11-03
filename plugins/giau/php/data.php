@@ -1585,10 +1585,12 @@ function giau_data_default_insert_into_database(){
 	//HomeDepartmentsStaffFormsContact UsLACPC
 
 
-	// PAGE DEPARTMENT - NURSURY
+	// PAGE DEPARTMENT - NURSERY
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_TITLE_TEXT","NURSERY");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_NURSERY_TITLE_TEXT","유아실");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_BANNER_TITLE","Nursery of Overflowing Love");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_BANNER_MESSAGE","And now these three remain: fath, hope and love, but the greatest of these is love. - 1 Corinthians 13:13");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_BANNER_MESSAGE","And now these three remain: fath, hope and love, but the greatest of these is love.\n- 1 Corinthians 13:13");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_NURSERY_BANNER_MESSAGE","그런즉 믿음, 소망, 사랑, 이 세 가지는 항상 있을 것인데 그 중에 제일은 사랑이라.\n- 고린도전서 13:13 ");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_TITLE_1","Sunday Worship\n1st Service");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_NURSERY_SERVICE_TITLE_1","주일예배 (첫예배)");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_1","9:00 AM\n@ Nursery Worship Room\n(in Nursery Building)");
@@ -1779,8 +1781,10 @@ function giau_data_default_insert_into_database(){
 
 	// PAGE DEPARTMENT - KINDERGARTEN
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_TITLE_TEXT","KINDERGARTEN");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_TITLE_TEXT","유치부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_BANNER_TITLE","Grown in Christ, as God's Children");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_BANNER_MESSAGE","Worship the LORD with gladness: come before him with joyful song. - Psalm 100:2");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_BANNER_MESSAGE","Worship the LORD with gladness: come before him with joyful song.\n- Psalm 100:2");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_BANNER_MESSAGE","기쁨으로 여호와를 섬기며 노래하면서 그 앞에 나아갈찌어다.\n- 시편 100:2");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_1","Sunday Worship");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_1","11:00 AM\n@ Kindergarden Worship Room\n(in Kindergarden Building)");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_1","11:00 AM\n@ 유치부 예배실\n(유치부 건물)");
@@ -1923,8 +1927,10 @@ function giau_data_default_insert_into_database(){
 
 	// PAGE DEPARTMENT - ELEMENTARY
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_TITLE_TEXT","ELEMENTARY");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_ELEMENTARY_TITLE_TEXT","초등부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_BANNER_TITLE","");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_BANNER_MESSAGE","Start children off on the way they should go, and even when they are old they will not turn from it - Proverbs 22:6");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_BANNER_MESSAGE","Start children off on the way they should go, and even when they are old they will not turn from it\n- Proverbs 22:6");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_ELEMENTARY_BANNER_MESSAGE","마땅히 행할 길을 아이에게 가르치라 그리하면 늙어도 그것을 떠나지 아니하리라.\n- 잠언 22:6");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_TITLE_1","Sunday Worship\n1st Service");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_TITLE_1","주일예배 (첫예배)");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_1","11:00 AM\n@ Elementary Worship Room");
@@ -2111,8 +2117,11 @@ function giau_data_default_insert_into_database(){
 
 	// PAGE DEPARTMENT - JUNIORHIGH
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_TITLE_TEXT","\"HIS\" JR. HIGH");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_TITLE_TEXT","중등부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_BANNER_TITLE","Live for the Lord for we are His");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_BANNER_MESSAGE","If we live, we live to the Lord; and if we die, we die to the Lord. So, whether we live or die, we belong to the Lord.");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_BANNER_TITLE","우리가 살아도 주를 위하여 살고 죽어도"); // guessed where this separates
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_BANNER_MESSAGE","If we live, we live to the Lord; and if we die, we die to the Lord. So, whether we live or die, we belong to the Lord.\n- Romans 14:8");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_BANNER_MESSAGE","주를 위하여 죽나니 그러므로 사나 죽으나 우리가 주의 것이로라.\n- 로마서 14:8");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_1","Sunday Worship");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_1","주일예배");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_1","11:00 AM\n@ Junior High Worship Room");
@@ -2250,8 +2259,10 @@ function giau_data_default_insert_into_database(){
 
 	// PAGE DEPARTMENT - HIGHSCHOOL
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_TITLE_TEXT","HIGH SCHOOL");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_TITLE_TEXT","고등부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_TITLE","");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_MESSAGE","But seek first his kingdom and his righteousness, and all these things will be given to you as well. Therefore do not worry about tomorrow, for tomorrow will worry about itself.");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_MESSAGE","But seek first his kingdom and his righteousness, and all these things will be given to you as well. Therefore do not worry about tomorrow, for tomorrow will worry about itself.\n- Matthew 6:33-34");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_MESSAGE","너희는 먼저 그의 나라와 그의 의를 구하라. 그리하면 이 모든 것을 너희에게 더하시리라 34 그러므로 내일 일을 위하여 염려하지 말라 내일 일은 내일 염려할 것이요.\n- 마태복음 6:33-34");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_1","Sunday Worship");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_1","11:00 AM\n@ High School Worship Room");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_1","11:00 AM\n@ 고등부 예배실");
