@@ -1800,7 +1800,7 @@ function giau_data_default_insert_into_database(){
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_3","금요일밤 성경공부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_3","8:00 PM\n@ Classroom #303\n(in Kindergarden Building)");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_3","8:00 PM\n@ 호 교실 #303\n(유치부 건물)");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SECTION_1","As a goal, let children grow in the Lord Jesus Christ, building the image of God through the "Word of God." Becoming disciples of Jesus in the joy of worshiping God as well as becoming evangelists of Jesus in Children's lives. For families, Christian education builds up in a family and provide parents with training opportunities and teaching materials to be active ministry supporters.");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SECTION_1","As a goal, let children grow in the Lord Jesus Christ, building the image of God through the \"Word of God.\" Becoming disciples of Jesus in the joy of worshiping God as well as becoming evangelists of Jesus in Children's lives. For families, Christian education builds up in a family and provide parents with training opportunities and teaching materials to be active ministry supporters.");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SECTION_2","For families, Christian education builds up in a family and provide parents with training opportunities and teaching materials to be active ministry supporters.");
 
 	$section_id_banner_kindergarten = giau_insert_section($widget_id_banner_medal,

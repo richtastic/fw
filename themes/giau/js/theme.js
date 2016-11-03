@@ -125,6 +125,7 @@ giau.MessageBus = function () {
 }
 giau.MessageBus._bus = null;
 giau.MessageBus.EVENT_NAVIGATION_SELECT = "navigate_select_";
+giau.MessageBus.EVENT_OBJECT_DRAG = "drag_begin_";
 giau.MessageBus.EVENT_OTHER = "other_";
 
 
@@ -3370,13 +3371,15 @@ giau.LibraryScroller._generateSize = function(info, data){
 	return size;
 }
 giau.LibraryScroller._generateDiv = function(info, data){
+	var bus = giau.MessageBus();
+	this._messageBus = bus;
+
 	//console.log(data);
 	var dataSectionModified = data["section_modified"];
 		dataSectionModified = Code.getHumanReadableDateString(dataSectionModified);
 	var dateSectionID = data["section_id"];
 	var dataWidgetName = data["widget_name"];
 	var dataIndex = info["index"];
-
 
 	var color;
 	var index = info["index"];
@@ -3508,6 +3511,22 @@ giau.LibraryScroller.prototype._handleElementMouseDownFxn = function(e,data){
 	var element = data["element"];
 	var div = element.cloneNode(true);
 	Code.addChild(document.body,div);
+
+
+	var bus = this._messageBus;
+	//var listenEventName = giau.MessageBus.EVENT_NAVIGATION_SELECT+""+name;
+	
+	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG;
+	var obj = {"source":this, "element":div, "data":{} };
+	console.log(listenEventName)
+	//bus.alertAll(listenEventName, obj);
+
+	bus.alertAll(listenEventName, this);
+
+	// var listenEventName = Code.getProperty(div,propertyAnimatesDown);
+	// listenEventName = giau.MessageBus.EVENT_NAVIGATION_SELECT+""+listenEventName;
+	// bus.addFunction(listenEventName, this._handleNavigationBusEventDown, this);
+
 }
 
 giau.LibraryScroller.prototype._updateWithData = function(data){
@@ -3844,17 +3863,53 @@ giau.CRUD._elementSelectString = function(value){
 	Code.setTextAreaValue(elementContainer,""+value);
 	return elementContainer;
 }
+giau.CRUD._elementSelectDiscrete = function(value){
+	var arr = [];
+	if(value){
+		arr = value.split(",");
+	}
+	var elementContainer = Code.newDiv();
+	Code.setContent(elementContainer,"DRAG N DROP BOX?");
+
+	var bus = giau.MessageBus();
+	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG;
+var myobj = {"data":"thingy"};
+	// str,fxn,ctx,obj
+	console.log(listenEventName, giau.CRUD._handleDragFxn, this, myobj);
+	bus.addFunction(listenEventName, giau.CRUD._handleDragFxn, this, myobj);
+	return elementContainer;
+}
+
 // giau.CRUD._elementSelectJSON = function(model,value){
 // 	var elementContainer = Code.newDiv();
 // 	return elementContainer;
 // }
-
-giau.CRUD._fieldEditString = function(definition, attributes, presentation, value, source, elementContainer){
-	var elementText = giau.CRUD._elementSelectString(value);
-	Code.addChild(elementContainer,elementText);
+giau.CRUD._handleDragFxn = function(e, b){
+	console.log("_handleDragFxn");
+	console.log(e);
+	console.log(b);
 }
+giau.CRUD._fieldEditString = function(definition, attributes, presentation, value, source, elementContainer){
+	console.log(definition);
+	console.log(attributes);
+	console.log(presentation);
+	console.log(value);
+	console.log(source);
+	if(presentation && presentation["drag_and_drop"]){
+		var dd = presentation["drag_and_drop"];
+		console.log("DRAG AND DROP")
+		console.log(dd)
+		var elementDrop = giau.CRUD._elementSelectDiscrete(value);
+		Code.addChild(elementContainer,elementDrop);
+	}else{
+		var elementText = giau.CRUD._elementSelectString(value);
+		Code.addChild(elementContainer,elementText);
+	}
+}
+
 giau.CRUD._fieldEditJSON = function(definition, attributes, presentation, value, source, elementContainer){
 	var elementJSON = Code.newDiv();
+return elementJSON;
 		Code.addChild(elementContainer,elementJSON);
 	var jsonModelColumn = presentation["json_model_column"];
 	var modelString = source[jsonModelColumn];
@@ -3895,7 +3950,7 @@ giau.CRUD.prototype._fieldFromData = function(field, value, source){
 	// VALUES
 	Code.setContent(elementTitle,""+name+":");
 	
-	
+	//console.log(fieldType)
 
 	var operationFxn = {};
 		operationFxn["string"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
