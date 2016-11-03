@@ -84,8 +84,11 @@ function colorHTMLFromColorString($color){
 	return "#000000";
 }
 function substituteLiteralNewlinesToHTMLBreaks($editorString){
-	$htmlString = preg_replace('/\\n/', '<br/>', $editorString);
-	return $htmlString;
+	if($editorString){
+		$htmlString = preg_replace('/\\n/', '<br/>', $editorString);
+		return $htmlString;
+	}
+	return null;
 }
 function substituteHTMLBreaksToLiteralNewlines($htmlString){
 	$editorString = preg_replace('/<( )*br( )*(/)*( )*>/', '\\n', $htmlString);

@@ -1123,6 +1123,12 @@ function filterRowsLanguagization($rows,$fields){
 	return $rows;
 }
 
+function giau_languagization_substitution_and_html($hash_index, $language=null){
+	$result = giau_languagization_substitution($hash_index, $language);
+	$result = substituteLiteralNewlinesToHTMLBreaks($result);
+	return $result;
+}
+
 function giau_languagization_substitution($hash_index, $language=null){
 	$DEFAULT_LANGUAGE = LANGUAGE_EN_US();
 	// hash_index must be non-null and non-zero length

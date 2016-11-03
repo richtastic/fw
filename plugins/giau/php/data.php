@@ -1596,12 +1596,14 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_1","9:00 AM\n@ Nursery Worship Room\n(in Nursery Building)");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_1","9:00 AM\n@ 유아 예배실\n(유아실 건물)");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_TITLE_2","Sunday Worship\n2nd Service");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_NURSERY_SERVICE_TITLE_2","주일예배\n2nd Service");
+	
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_2","11:00 AM\n@ Nursery Worship Room\n(in Nursery Building)");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_2","11:00 AM\n@ 유아 예배실\n(유아실 건물)");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_TITLE_3","Friday Night\nFellowship");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_3","8:00 PM\n@ Nursery Building");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_NURSERY_SERVICE_INFO_3","8:00 PM\n@ 유아실 건물");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SECTION_1","The Nursery department at LACPC envisions a children's ministry that follows the overarching theme of the education department, \"Father's House.\" Through nursery department's worship, gudance, and nuturing, we hope to restablish the following:");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SECTION_1","The Nursery department at LACPC envisions a children's ministry that follows the overarching theme of the education department, \"Father's House.\" Through nursery department's worship, guidance, and nurturing, we hope to reestablish the following:");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SECTION_2","1");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_NURSERY_SECTION_3","Family worships and communication with families that will enrich the spiritual lives of our young children.");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_NURSERY_SECTION_3","우리 어린이들의 영적 삶을 풍요롭게하는 가족예배와 서로간의 소통");
@@ -1786,6 +1788,7 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_BANNER_MESSAGE","Worship the LORD with gladness: come before him with joyful song.\n- Psalm 100:2");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_BANNER_MESSAGE","기쁨으로 여호와를 섬기며 노래하면서 그 앞에 나아갈찌어다.\n- 시편 100:2");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_1","Sunday Worship");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_1","주일예배");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_1","11:00 AM\n@ Kindergarden Worship Room\n(in Kindergarden Building)");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_1","11:00 AM\n@ 유치부 예배실\n(유치부 건물)");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_2","Sunday Bible Study");
@@ -1797,7 +1800,7 @@ function giau_data_default_insert_into_database(){
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_3","금요일밤 성경공부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_3","8:00 PM\n@ Classroom #303\n(in Kindergarden Building)");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_3","8:00 PM\n@ 호 교실 #303\n(유치부 건물)");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SECTION_1","As a goal, let children grow in the Lord Jesus Christ, building the image of God through the \"Word of God.\" Becoming disciples of Jesus in the joy of worshipping God as well as becoming evangelists of Jesus in Children's lives.");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SECTION_1","As a goal, let children grow in the Lord Jesus Christ, building the image of God through the "Word of God." Becoming disciples of Jesus in the joy of worshiping God as well as becoming evangelists of Jesus in Children's lives. For families, Christian education builds up in a family and provide parents with training opportunities and teaching materials to be active ministry supporters.");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SECTION_2","For families, Christian education builds up in a family and provide parents with training opportunities and teaching materials to be active ministry supporters.");
 
 	$section_id_banner_kindergarten = giau_insert_section($widget_id_banner_medal,
@@ -1936,6 +1939,7 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_1","11:00 AM\n@ Elementary Worship Room");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_1","11:00 AM\n@ 초등부 예배");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_TITLE_2","Sunday Worship\n2nd Service");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_TITLE_2","주일예배\n2nd Service");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_2","11:45 AM\n@ Classroom #138, 139, 140, 141, 142");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_2","11:45 AM\n@ 호 교실 #138, 139, 140, 141, 142");
 	
@@ -2127,13 +2131,14 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_1","11:00 AM\n@ Junior High Worship Room");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_1","11:00 AM\n@ 중등부 예배실");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_2","Sunday Bible Study");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_2","주일 성경공부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_2","12:00 PM\n@ Classroom #150, 152, 153");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_2","12:00 PM\n@ 호 교실 #150, 152, 153");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_3","Friday Night\nBible Study");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_3","금요일밤 성경공부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_3","8:00 PM\n@ Junior High Worship Room");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_3","8:00 PM\n@ 중등부 예배실");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SECTION_1","We belong to God and belonging to God is the greatest blessing and encouragement that anyone can have. Being His is a great blessing but another aspect of being His is to live and die for Him. Our lives belong to Him therfore we should live our lives accodring to His will.");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SECTION_1","We belong to God and belonging to God is the greatest blessing and encouragement that anyone can have. Being His is a great blessing but another aspect of being His is to live and die for Him. Our lives belong to Him therefore we should live our lives according to His will.");
 
 	$section_id_banner_juniorhigh = giau_insert_section($widget_id_banner_medal,
 		[
@@ -2264,16 +2269,18 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_MESSAGE","But seek first his kingdom and his righteousness, and all these things will be given to you as well. Therefore do not worry about tomorrow, for tomorrow will worry about itself.\n- Matthew 6:33-34");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_MESSAGE","너희는 먼저 그의 나라와 그의 의를 구하라. 그리하면 이 모든 것을 너희에게 더하시리라 34 그러므로 내일 일을 위하여 염려하지 말라 내일 일은 내일 염려할 것이요.\n- 마태복음 6:33-34");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_1","Sunday Worship");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_1","주일예배");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_1","11:00 AM\n@ High School Worship Room");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_1","11:00 AM\n@ 고등부 예배실");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_2","Sunday Bible Study");
+		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_2","주일 성경공부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_2","12:00 PM\n@ Classroom #135, 136, 137, 148");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_2","12:00 PM\n@ 호 교실 #135, 136, 137, 148");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_3","Friday Night\nBible Study");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_3","금요일밤 성경공부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_3","8:00 PM\n@ High School Worship Room");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_3","8:00 PM\n@ 고등부 예배실");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SECTION_1","Our mission is to help take the next step in their spiritual lives and grown in maturity in their relationship with Jesus. The high school years are a challenging time when sudents have so many other activities competing for their time and energy, and we emphasize prioritizing their personal relationship with Jesus amidst all of the busyness in their lives. Students are encouraged to go beyond a simple emotional relationship with God and have a relationship marked by spiritual discipline and obedience.");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SECTION_1","Our mission is to help take the next step in their spiritual lives and grown in maturity in their relationship with Jesus. The high school years are a challenging time when students have so many other activities competing for their time and energy, and we emphasize prioritizing their personal relationship with Jesus amidst all of the busyness in their lives. Students are encouraged to go beyond a simple emotional relationship with God and have a relationship marked by spiritual discipline and obedience.");
 
 	$section_id_banner_highschool = giau_insert_section($widget_id_banner_medal,
 		[
@@ -2517,6 +2524,23 @@ function giau_data_default_insert_into_database(){
 		]
 	, []);
 
+
+	giau_insert_languagization($langEng,"PAGE_CONTACT_BIO_TITLE_CE","CE");
+		giau_insert_languagization($langKor,"PAGE_CONTACT_BIO_TITLE_CE","CE");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_BIO_TITLE_ELEMENTARY","Elementary");
+		giau_insert_languagization($langKor,"PAGE_CONTACT_BIO_TITLE_ELEMENTARY","초등부");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_BIO_TITLE_NURSERY","Nursery");
+		giau_insert_languagization($langKor,"PAGE_CONTACT_BIO_TITLE_NURSERY","유아실");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_BIO_TITLE_HIGHSCHOOL","High School");
+		giau_insert_languagization($langKor,"PAGE_CONTACT_BIO_TITLE_HIGHSCHOOL","고등부");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_BIO_TITLE_KINDERGARTEN","Kindergarten");
+		giau_insert_languagization($langKor,"PAGE_CONTACT_BIO_TITLE_KINDERGARTEN","유치부");
+	giau_insert_languagization($langEng,"PAGE_CONTACT_BIO_TITLE_KOREANSCHOOL","Korean School");
+		giau_insert_languagization($langKor,"PAGE_CONTACT_BIO_TITLE_KOREANSCHOOL","한국어 학교");
+	// jr high
+	// 중등부
+
+
 	$section_id_contact_bio = giau_insert_section($widget_id_contact_bio,
 		[
 			"tags" => [
@@ -2525,27 +2549,27 @@ function giau_data_default_insert_into_database(){
 			"ordering" => [
 				[
 					"index" => 0,
-					"title" => "CE",
+					"title" => "PAGE_CONTACT_BIO_TITLE_CE",
 				],
 				[
 					"index" => 3,
-					"title" => "Elementary",
+					"title" => "PAGE_CONTACT_BIO_TITLE_ELEMENTARY",
 				],
 				[
 					"index" => 5,
-					"title" => "Nursery",
+					"title" => "PAGE_CONTACT_BIO_TITLE_NURSERY",
 				],
 				[
 					"index" => 2,
-					"title" => "High School",
+					"title" => "PAGE_CONTACT_BIO_TITLE_HIGHSCHOOL",
 				],
 				[
 					"index" => 4,
-					"title" => "Kindergarten",
+					"title" => "PAGE_CONTACT_BIO_TITLE_KINDERGARTEN",
 				],
 				[
 					"index" => 1,
-					"title" => "Korean School",
+					"title" => "PAGE_CONTACT_BIO_TITLE_KOREANSCHOOL",
 				],
 			],
 			"class" => "customContactInfo",

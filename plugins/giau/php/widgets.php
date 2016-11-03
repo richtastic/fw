@@ -79,7 +79,7 @@ function handle_widget_info_status($widget,$section){
 		$page = $item["index"];
 		$name = $item["title"];
 		if( strcmp($page,$pageRequest)==0 ){
-			$headingTitleDisplay = giau_languagization_substitution($name,null);
+			$headingTitleDisplay = giau_languagization_substitution_and_html($name,null);
 			break;
 		}
 	}
@@ -149,6 +149,7 @@ function handle_widget_contact_bio($widget,$section){
 						$bio = $bios[$index];
 					}
 					$title = $lookup["title"];
+						$title = giau_languagization_substitution_and_html($title,null);
 				}else{
 					$bio = $bios[$i];
 					
@@ -213,12 +214,12 @@ function handle_widget_contact_form($widget,$section){
 			$order = $input["order"];
 			$incl = $input["include"];
 			$hint = $input["hint"];
-				$hint = giau_languagization_substitution($hint,null);
+				$hint = giau_languagization_substitution_and_html($hint,null);
 			$required = $input["required"];
 			$message = $input["message"];
-				$message = giau_languagization_substitution($message,null);
+				$message = giau_languagization_substitution_and_html($message,null);
 			$title = $input["title"];
-				$title = giau_languagization_substitution($title,null);
+				$title = giau_languagization_substitution_and_html($title,null);
 			if(($incl && $incl!="" && $incl=="true") || (strcmp($name,"submit")==0) ){
 				echo '<li';
 				if($name && $name!=""){
@@ -259,7 +260,7 @@ function handle_widget_download_listing($widget,$section){
 		$i;
 		for($i=0; $i<$fileCount; ++$i){
 			$title = $files[$i]["title"];
-				$title = giau_languagization_substitution($title,null);
+				$title = giau_languagization_substitution_and_html($title,null);
 			$uri = $files[$i]["uri"];
 			$uri = giau_plugin_url_from_any_url($uri);
 			?>
@@ -280,11 +281,9 @@ function handle_widget_medal_banner($widget,$section){
 	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 
 	$title = section_get_value_widget_string($widgetJSON,$sectionJSON,"title");
-		$title = giau_languagization_substitution($title,null);
-		$title = substituteLiteralNewlinesToHTMLBreaks($title);
+		$title = giau_languagization_substitution_and_html($title,null);
 	$body = section_get_value_widget_string($widgetJSON,$sectionJSON,"message");
-		$body = giau_languagization_substitution($body,null);
-		$body = substituteLiteralNewlinesToHTMLBreaks($body);
+		$body = giau_languagization_substitution_and_html($body,null);
 	$image = section_get_value_widget_string($widgetJSON,$sectionJSON,"icon");
 		$image = giau_plugin_url_from_any_url($image);
 
@@ -325,11 +324,9 @@ function handle_widget_service_listing($widget,$section){
 					for($i=0; $i<$len; ++$i){
 						$service = $servicesList[$i];
 						$title = $service["title"];
-							$title = giau_languagization_substitution($title,null);
-							$title = substituteLiteralNewlinesToHTMLBreaks($title);
+							$title = giau_languagization_substitution_and_html($title,null);
 						$body = $service["description"];
-							$body = giau_languagization_substitution($body,null);
-							$body = substituteLiteralNewlinesToHTMLBreaks($body);
+							$body = giau_languagization_substitution_and_html($body,null);
 			?>
 				<div class="departmentScheduleItemContainer" style="">
 					<div class="departmentScheduleItemTitle"><?php echo $title; ?></div>
@@ -429,7 +426,7 @@ function handle_widget_navigation_list($widget,$section){
 			$name = $item["name"];
 			$uri = $item["uri"];
 			$display = $item["display_text"];
-			$display = giau_languagization_substitution($display,null);
+			$display = giau_languagization_substitution_and_html($display,null);
 			$selected = "";
 			if( strcmp($page,$pageRequest)==0 ){
 				$selected = ' data-selected="selected" ';
@@ -448,7 +445,7 @@ function handle_widget_text_display($widget,$section){
 	$widgetJSON = decodeWidget($widget);
 	$sectionJSON = decodeSection($section);
 	$text = $sectionJSON["text"];
-		$text = giau_languagization_substitution($text,null);
+		$text = giau_languagization_substitution_and_html($text,null);
 	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
 	$klass = section_get_value_widget_string($widgetJSON,$sectionJSON,"class");
 	?>
@@ -492,7 +489,7 @@ function handle_widget_language_switch($widget,$section){
 			$language = $languages[$i];
 			$lang = $language["language_name"];
 			$display = $language["display_text"];
-			$display = giau_languagization_substitution($display,null);
+			$display = giau_languagization_substitution_and_html($display,null);
 			?>
 			<div class="<?php echo $klass; ?>" style="display:inline-block; <?php echo $style; ?>" data-language="<?php echo $lang; ?>" data-display="<?php echo $display; ?>" data-url="./"></div>
 			<?php
@@ -544,7 +541,7 @@ function handle_widget_category_listing($widget,$section){
 				$image = $category["image"];
 					$image = giau_plugin_url_from_any_url($image);
 				$name = $category["name"];
-					$name = giau_languagization_substitution($name,"");
+					$name = giau_languagization_substitution_and_html($name,"");
 				$uri = $category["uri"];
 				$shading = "";
 				$cover = "";
@@ -711,7 +708,7 @@ function handle_widget_bio_listing($widget,$section){
 	$sectionJSON = decodeSection($section);
 
 	$defaultBio = section_get_value_widget_string($widgetJSON,$sectionJSON,"default_display");
-		$defaultBio = giau_languagization_substitution($defaultBio,"");
+		$defaultBio = giau_languagization_substitution_and_html($defaultBio,"");
 	$defaultImage = section_get_value_widget_string($widgetJSON,$sectionJSON,"default_image");
 		$defaultImage = giau_plugin_url_from_any_url($defaultImage);
 	$style = section_get_value_widget_string($widgetJSON,$sectionJSON,"style");
