@@ -143,6 +143,8 @@ giau.MessageBus._bus = null;
 giau.MessageBus.EVENT_NAVIGATION_SELECT = "navigate_select_";
 giau.MessageBus.EVENT_OBJECT_DRAG_START = "drag_begin_";
 giau.MessageBus.EVENT_OBJECT_DRAG_END = "drag_end_";
+giau.MessageBus.EVENT_OBJECT_DRAG_SELECT = "drag_select_";
+giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE = "drag_available_";
 giau.MessageBus.EVENT_OTHER = "other_";
 
 
@@ -3525,8 +3527,18 @@ giau.LibraryScroller.prototype._handleElementMouseDownFxn = function(e,data){
 	// console.log(e);
 	// console.log(data);
 	var target = Code.getTargetFromEvent(e);
+		console.log(e);
+		var mouseX = e.pageX;
+		var mouseY = e.pageY;
+		var targetX = $(target).offset().left;
+		var targetY = $(target).offset().top;
+		var offsetX = e.offsetX;
+		var offsetY = e.offsetY;
+		var offX = Math.round(offsetX);//targetX - mouseX;
+		var offY = Math.round(offsetY);//targetY - mouseY;
 	var element = data["element"];
 	var div = element.cloneNode(true);
+	var off = new V2D(offX,offY);
 //	Code.addChild(document.body,div);
 
 
@@ -3534,7 +3546,7 @@ giau.LibraryScroller.prototype._handleElementMouseDownFxn = function(e,data){
 	//var listenEventName = giau.MessageBus.EVENT_NAVIGATION_SELECT+""+name;
 	
 	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_START;
-	var obj = {"source":this, "element":div, "data":{} };
+	var obj = {"source":this, "element":div, "offset":off, "data":{} };
 	console.log(listenEventName)
 	//bus.alertAll(listenEventName, obj);
 
@@ -3572,27 +3584,25 @@ giau.LibraryScroller.prototype._scrollTo = function(){
 giau.DragNDropManager = function(bus, start, end){
 	console.log("DragNDropManager");
 
-
-Code.triTriIntersection2DBoolean(a1,b1,c1, a2,b2,c2);
-
-HERE
-
-
-
 	this._messageBus = bus;
 	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_START;
 	bus.addFunction(listenEventName, this._handleDragFxn, this);
+
+	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE;
+	bus.addFunction(listenEventName, this._handleDragAvailableFxn, this);
+
 	this._ticker = new Ticker(30);
 	this._ticker.addFunction(Ticker.EVENT_TICK, this._tickerTickFxn, this);
 
+	this._jsDispatch = new JSDispatch();
 
 	this._dropAreas = [];
 	this._currentActiveDropAreas = [];
 	this._currentActiveDropPointers = [];
 	this.clearDropAreas();
 	this.addDropArea(50,50, 200,100);
-	// this.addDropArea(350,50, 100,130);
-	// this.addDropArea(400,200, 150,40);
+	this.addDropArea(350,50, 100,130);
+	this.addDropArea(400,200, 150,40);
 }
 giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_START = "drag_intersect_area_start";
 giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_START = "drag_intersect_pointer_start";
@@ -3616,9 +3626,11 @@ giau.DragNDropManager.prototype._updateIntersections = function(isEnd){
 	//
 	var elementDrag = this._dragElement;
 	var point = THIS.mouseTracker.pos();
+	var off = this._dragOffset;
 	var elementWidth = $(elementDrag).width();
 	var elementHeight = $(elementDrag).height();
-	var intersectionRect = new Rect();
+		var intersectionRectCorner = point.copy().sub(off);
+	var intersectionRect = new Rect(intersectionRectCorner.x,intersectionRectCorner.y,elementWidth,elementHeight);
 	var intersectionQuad = intersectionRect.toArray();
 	//
 	Code.removeAllChildren(this._dragCover);
@@ -3638,13 +3650,12 @@ giau.DragNDropManager.prototype._updateIntersections = function(isEnd){
 	var collisionsArea = [];
 	var collisionsPointer = [];
 	//
-	
 	len = this._dropAreas.length;
 	for(i=0; i<len; ++i){
 		da = this._dropAreas[i];
 		rect = da["rect"];
 		quad = rect.toArray();
-		//isPoint = Code.isPointInsideRect2D(point, quad[0],quad[1],quad[2],quad[3]); //isPoint = Code.isPointInsidePolygon2D(point, quad);
+		isPoint = Code.isPointInsideRect2D(point, quad[0],quad[1],quad[2],quad[3]); //isPoint = Code.isPointInsidePolygon2D(point, quad);
 		isRect = Code.quadQuadIntersection2DBoolean(quad[0],quad[1],quad[2],quad[3], intersectionQuad[0],intersectionQuad[1],intersectionQuad[2],intersectionQuad[3]);
 		if(isPoint){
 			collisionsPointer.push(da);
@@ -3654,7 +3665,6 @@ giau.DragNDropManager.prototype._updateIntersections = function(isEnd){
 		}
 	}
 // VISUALIZE
-console.log(collisionsArea.length,collisionsPointer.length);
 	for(i=0; i<collisionsArea.length; ++i){
 		da = collisionsArea[i];
 		rect = da["rect"];
@@ -3724,15 +3734,50 @@ console.log(collisionsArea.length,collisionsPointer.length);
 
 	
 }
+giau.DragNDropManager.prototype._handleCoverMouseDownEvent = function(e){
+	console.log("stop drag");
+	this._stopDragging();
+}
+giau.DragNDropManager.prototype._stopDragging = function(){
+	this._ticker.stop();
+	this._updateDragging();
+	this._updateIntersections(true);
+	// destroy
+	Code.removeFromParent(this._dragCover);
+	Code.removeFromParent(this._dragElement);
+	this._dragCover = null;
+	this._dragElement = null;
+	this._dragOffset = null;
+	
+	
+}
+giau.DragNDropManager.prototype._handleDragAvailableFxn = function(e){
+	console.log("got avail response: ");
+	console.log(e);
+}
 giau.DragNDropManager.prototype._handleDragFxn = function(e){
 	console.log("dragndrop start drag A");
-	console.log(e);
+
+	// GET A LIST OF ELIGIBLE CANDIDATES:
+	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_SELECT;
+	var obj = {"criteria":{"type":"any"}, "manager": this};
+	var bus = this._messageBus;
+	bus.alertAll(listenEventName, obj);
+
+
+
+	// put new element on there
+	var elementDrag = e["element"];
+	var offsetDrag = e["offset"];
+	Code.addChild(document.body,elementDrag);
+
+
 	// put cover over window
 	var div = Code.newDiv();
 	// window is full height of body
 	var screenWidth = $(window).width();
 	var screenHeight = $(window).height();
-	var bgColor = 0x99CC0000;
+	var bgColor = 0x33000000;
 		bgColor = Code.getJSColorFromARGB(bgColor);
 	Code.setStyleWidth(div,screenWidth+"px");
 	Code.setStyleHeight(div,screenHeight+"px");
@@ -3741,22 +3786,23 @@ giau.DragNDropManager.prototype._handleDragFxn = function(e){
 	//Code.setStyle(div,);
 	Code.addChild(document.body,div);
 
-	var elementDrag = e["element"];
-	var offsetDrag = new V2D();
-	Code.addChild(document.body,elementDrag);
-	console.log(elementDrag);
 	this._dragCover = div;
 	this._dragElement = elementDrag;
+	this._dragOffset = offsetDrag;
 	this._updateDragging();
-	this._ticker.start();
 
+	this._jsDispatch.addJSEventListener(this._dragCover, Code.JS_EVENT_MOUSE_DOWN, this._handleCoverMouseDownEvent, this);
+	this._ticker.start();
 
 	// want a list of all dragging rects, to do inside-hit-tests (visualize with dom rects)
 }
+
 giau.DragNDropManager.prototype._updateDragging = function(){
 	var elementDrag = this._dragElement;
 	var pos = THIS.mouseTracker.pos();
-	//console.log(pos);
+	var off = this._dragOffset;
+	pos.x -= off.x;
+	pos.y -= off.y;
 	Code.setStylePosition(elementDrag,"absolute");
 	Code.setStyleLeft(elementDrag,pos.x+"px");
 	Code.setStyleTop(elementDrag,pos.y+"px");
@@ -4086,10 +4132,16 @@ giau.CRUD._elementSelectDiscrete = function(value){
 
 	var bus = giau.MessageBus();
 	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_START;
-var myobj = {"data":"thingy"};
-	// str,fxn,ctx,obj
-	console.log(listenEventName, giau.CRUD._handleDragFxn, this, myobj);
-	bus.addFunction(listenEventName, giau.CRUD._handleDragFxn, this, myobj);
+	var obj = {"data":"thingy"};
+	bus.addFunction(listenEventName, giau.CRUD._handleDragStartFxn, this, obj);
+
+
+
+	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_SELECT;
+	var obj = {"bus":bus};
+	bus.addFunction(listenEventName, giau.CRUD._handleDragSelectFxn, this, obj);
+
+
 	return elementContainer;
 }
 
@@ -4097,10 +4149,19 @@ var myobj = {"data":"thingy"};
 // 	var elementContainer = Code.newDiv();
 // 	return elementContainer;
 // }
-giau.CRUD._handleDragFxn = function(e, b){
-	console.log("_handleDragFxn");
+giau.CRUD._handleDragStartFxn = function(e, b){
+	// console.log("_handleDragStartFxn");
+	// console.log(e);
+	// console.log(b);
+}
+giau.CRUD._handleDragSelectFxn = function(e, b){
+	console.log("_handleDragSelectFxn");
 	console.log(e);
 	console.log(b);
+	var bus = e["bus"];
+	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE;
+	var obj = {};
+	bus.alertAll(listenEventName, obj);
 }
 giau.CRUD._fieldEditString = function(definition, attributes, presentation, value, source, elementContainer){
 	console.log(definition);
