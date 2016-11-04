@@ -11,8 +11,11 @@ function giau(){
 
 giau.prototype.initialize = function(){
 	
-	// GLOBAL EVENTS
+	// GLOBAL | EVENTS
 	var bus = giau.MessageBus();
+	this.mouseTracker = new PointerTracker();
+	this.DND = new giau.DragNDropManager(bus, giau.MessageBus.EVENT_OBJECT_DRAG_START, giau.MessageBus.EVENT_OBJECT_DRAG_END);
+	
 
 	// NAVIGATION
 	var navigationLists = $(".giauNavigationItemList");
@@ -105,6 +108,19 @@ giau.prototype.initialize = function(){
 	dataTableLists.each(function(index, element){
 		var dataTable = new giau.LibraryScroller(element);
 	});
+
+
+
+	
+THIS = this;
+console.log(THIS);
+	// var listener = function(e){
+	// 	console.log(e);
+	// 	THIS._mousePosition = new V2D(e.clientX,e.clientY);
+	// }
+	// var _jsDispatch = new JSDispatch();
+	// _jsDispatch.addJSEventListener(document.body, Code.JS_EVENT_MOUSE_MOVE, listener);
+	
 }
 
 giau.ElementFloater = function(element){ //
@@ -125,7 +141,8 @@ giau.MessageBus = function () {
 }
 giau.MessageBus._bus = null;
 giau.MessageBus.EVENT_NAVIGATION_SELECT = "navigate_select_";
-giau.MessageBus.EVENT_OBJECT_DRAG = "drag_begin_";
+giau.MessageBus.EVENT_OBJECT_DRAG_START = "drag_begin_";
+giau.MessageBus.EVENT_OBJECT_DRAG_END = "drag_end_";
 giau.MessageBus.EVENT_OTHER = "other_";
 
 
@@ -3510,18 +3527,18 @@ giau.LibraryScroller.prototype._handleElementMouseDownFxn = function(e,data){
 	var target = Code.getTargetFromEvent(e);
 	var element = data["element"];
 	var div = element.cloneNode(true);
-	Code.addChild(document.body,div);
+//	Code.addChild(document.body,div);
 
 
 	var bus = this._messageBus;
 	//var listenEventName = giau.MessageBus.EVENT_NAVIGATION_SELECT+""+name;
 	
-	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG;
+	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_START;
 	var obj = {"source":this, "element":div, "data":{} };
 	console.log(listenEventName)
 	//bus.alertAll(listenEventName, obj);
 
-	bus.alertAll(listenEventName, this);
+	bus.alertAll(listenEventName, obj);
 
 	// var listenEventName = Code.getProperty(div,propertyAnimatesDown);
 	// listenEventName = giau.MessageBus.EVENT_NAVIGATION_SELECT+""+listenEventName;
@@ -3552,7 +3569,203 @@ giau.LibraryScroller.prototype._scrollTo = function(){
 
 
 
+giau.DragNDropManager = function(bus, start, end){
+	console.log("DragNDropManager");
 
+
+Code.triTriIntersection2DBoolean(a1,b1,c1, a2,b2,c2);
+
+HERE
+
+
+
+	this._messageBus = bus;
+	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_START;
+	bus.addFunction(listenEventName, this._handleDragFxn, this);
+	this._ticker = new Ticker(30);
+	this._ticker.addFunction(Ticker.EVENT_TICK, this._tickerTickFxn, this);
+
+
+	this._dropAreas = [];
+	this._currentActiveDropAreas = [];
+	this._currentActiveDropPointers = [];
+	this.clearDropAreas();
+	this.addDropArea(50,50, 200,100);
+	// this.addDropArea(350,50, 100,130);
+	// this.addDropArea(400,200, 150,40);
+}
+giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_START = "drag_intersect_area_start";
+giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_START = "drag_intersect_pointer_start";
+giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_STOP = "drag_intersect_area_stop";
+giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_STOP = "drag_intersect_pointer_stop";
+giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_DROP = "drag_intersect_pointer_drop";
+giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_DROP = "drag_intersect_pointer_drop";
+
+giau.DragNDropManager.prototype.clearDropAreas = function(){
+	Code.emptyArray(this._dropAreas);
+}
+giau.DragNDropManager.prototype.addDropArea = function(x,y,w,h, fxn,ctx){
+	var rect = new Rect(x,y,w,h);
+	var obj = {"rect":rect, "fxn":fxn, "ctx":ctx, "priority":0};
+	this._dropAreas.push(obj);
+}
+giau.DragNDropManager.prototype._updateIntersections = function(isEnd){
+	var i, len;
+	var isPoint, isRect;
+	var da, rect, quad;
+	//
+	var elementDrag = this._dragElement;
+	var point = THIS.mouseTracker.pos();
+	var elementWidth = $(elementDrag).width();
+	var elementHeight = $(elementDrag).height();
+	var intersectionRect = new Rect();
+	var intersectionQuad = intersectionRect.toArray();
+	//
+	Code.removeAllChildren(this._dragCover);
+	for(i=0; i<this._dropAreas.length; ++i){
+		da = this._dropAreas[i];
+		rect = da["rect"];
+		var div = Code.newDiv();
+			Code.setStylePosition(div,"absolute");
+			Code.setStyleLeft(div,rect.x()+"px");
+			Code.setStyleTop(div,rect.y()+"px");
+			Code.setStyleWidth(div,rect.width()+"px");
+			Code.setStyleHeight(div,rect.height()+"px");
+			Code.setStyleBackgroundColor(div,"#00FF00");
+		Code.addChild(this._dragCover,div);
+	}
+	//
+	var collisionsArea = [];
+	var collisionsPointer = [];
+	//
+	
+	len = this._dropAreas.length;
+	for(i=0; i<len; ++i){
+		da = this._dropAreas[i];
+		rect = da["rect"];
+		quad = rect.toArray();
+		//isPoint = Code.isPointInsideRect2D(point, quad[0],quad[1],quad[2],quad[3]); //isPoint = Code.isPointInsidePolygon2D(point, quad);
+		isRect = Code.quadQuadIntersection2DBoolean(quad[0],quad[1],quad[2],quad[3], intersectionQuad[0],intersectionQuad[1],intersectionQuad[2],intersectionQuad[3]);
+		if(isPoint){
+			collisionsPointer.push(da);
+		}
+		if(isRect){
+			collisionsArea.push(da);
+		}
+	}
+// VISUALIZE
+console.log(collisionsArea.length,collisionsPointer.length);
+	for(i=0; i<collisionsArea.length; ++i){
+		da = collisionsArea[i];
+		rect = da["rect"];
+		var div = Code.newDiv();
+			Code.setStylePosition(div,"absolute");
+			Code.setStyleLeft(div,rect.x()+"px");
+			Code.setStyleTop(div,rect.y()+"px");
+			Code.setStyleWidth(div,rect.width()+"px");
+			Code.setStyleHeight(div,rect.height()+"px");
+			Code.setStyleZIndex(div,"999");
+			Code.setStyleBackgroundColor(div,"#FFFF00");
+		Code.addChild(this._dragCover,div);
+	}
+
+	var existsOld, existsNew;
+	len = this._dropAreas.length;
+	for(i=0; i<len; ++i){
+		da = this._dropAreas[i];
+		existsOld = Code.elementExists(this._currentActiveDropAreas,da);
+		existsNew = Code.elementExists(collisionsArea,da);
+		if(!existsOld && existsNew){ // start
+			// NOTIFY START AREA
+		}else if(existsOld && !existsNew){ // stop
+			// NOTIFY STOP AREA
+		}
+		existsOld = Code.elementExists(this._currentActiveDropPointers,da);
+		existsNew = Code.elementExists(collisionsPointer,da);
+		if(!existsOld && existsNew){ // start
+			// NOTIFY START POINT
+		}else if(existsOld && !existsNew){ // stop
+			// NOTIFY STOP POINT
+		}
+	}
+	this._currentActiveDropAreas = collisionsArea;
+	this._currentActiveDropPointers = collisionsPointer;
+	if(isEnd){ // drop
+		var foundPointEnd = null;
+		var foundAreaEnd = null;
+		if(collisionsArea.length>0){
+			foundAreaEnd = collisionsArea[0];
+			// NOTIFY END
+		}
+		if(collisionsPointer.length>0){
+			foundPointEnd = collisionsPointer[0];
+			// NOTIFY END
+		}
+		for(i=0; i<collisionsPointer.length; ++i){
+			if(collisionsPointer[i]!=foundPointEnd){
+				// STOP POINT
+			}
+		}
+		for(i=0; i<collisionsArea.length; ++i){
+			if(collisionsArea[i]!=foundAreaEnd){
+				// STOP AREA
+			}
+		}
+	}
+
+	// 
+	// if object in new array is not in old array => start
+	// if object in old array is not in new array => stop
+
+	//Code.triTriIntersection2DBoolean
+	//Code.triTriIntersection2D
+	//Code.isPointInsidePolygon2D
+	
+
+	
+}
+giau.DragNDropManager.prototype._handleDragFxn = function(e){
+	console.log("dragndrop start drag A");
+	console.log(e);
+	// put cover over window
+	var div = Code.newDiv();
+	// window is full height of body
+	var screenWidth = $(window).width();
+	var screenHeight = $(window).height();
+	var bgColor = 0x99CC0000;
+		bgColor = Code.getJSColorFromARGB(bgColor);
+	Code.setStyleWidth(div,screenWidth+"px");
+	Code.setStyleHeight(div,screenHeight+"px");
+	Code.setStyleBackgroundColor(div,bgColor);
+	Code.setStylePosition(div,"absolute");
+	//Code.setStyle(div,);
+	Code.addChild(document.body,div);
+
+	var elementDrag = e["element"];
+	var offsetDrag = new V2D();
+	Code.addChild(document.body,elementDrag);
+	console.log(elementDrag);
+	this._dragCover = div;
+	this._dragElement = elementDrag;
+	this._updateDragging();
+	this._ticker.start();
+
+
+	// want a list of all dragging rects, to do inside-hit-tests (visualize with dom rects)
+}
+giau.DragNDropManager.prototype._updateDragging = function(){
+	var elementDrag = this._dragElement;
+	var pos = THIS.mouseTracker.pos();
+	//console.log(pos);
+	Code.setStylePosition(elementDrag,"absolute");
+	Code.setStyleLeft(elementDrag,pos.x+"px");
+	Code.setStyleTop(elementDrag,pos.y+"px");
+}
+giau.DragNDropManager.prototype._tickerTickFxn = function(e){
+	//console.log("tick");
+	this._updateDragging();
+	this._updateIntersections();
+}
 
 
 giau.DataSource = function(element){
@@ -3872,7 +4085,7 @@ giau.CRUD._elementSelectDiscrete = function(value){
 	Code.setContent(elementContainer,"DRAG N DROP BOX?");
 
 	var bus = giau.MessageBus();
-	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG;
+	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_START;
 var myobj = {"data":"thingy"};
 	// str,fxn,ctx,obj
 	console.log(listenEventName, giau.CRUD._handleDragFxn, this, myobj);
