@@ -4133,7 +4133,9 @@ giau.CRUD._elementSelectDiscrete = function(value){
 		arr = value.split(",");
 	}
 	var elementContainer = Code.newDiv();
-	Code.setContent(elementContainer,"DRAG N DROP BOX?");
+		Code.setStyleBackgroundColor(elementContainer,"#DDD");
+	// Code.setContent(elementContainer,"DRAG N DROP BOX?");
+	Code.setContent(elementContainer,value);
 
 	var bus = giau.MessageBus();
 	var obj = {"bus":bus, "element":elementContainer};
@@ -4159,6 +4161,29 @@ giau.CRUD._handleDragSelectFxn = function(e, f){ // e is passed by self, f is pa
 		bus.alertAll(giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE, obj);
 	}
 }
+
+giau.CRUD._boxDiv = function(name){
+	var div = new Code.newDiv();
+		Code.setContent(div,name+" "+"[x]");
+		Code.setStylePadding(div,name);
+		Code.setStyleBackgroundColor(div,"#C05");
+
+	return div;
+}
+/*
+(sections)
+
+initially set VALUE from source
+initially set DISPLAY ??????
+	- look up on server -- mapping
+	- lookup table server
+
+how to delete from list?
+	- data-index
+
+
+
+*/
 giau.CRUD._handleDragLifecycleFxn = function(event, data){
 	console.log(this);
 	console.log(event);
@@ -4174,19 +4199,24 @@ giau.CRUD._handleDragLifecycleFxn = function(event, data){
 		var valueText = data["value"];
 		var source = data["source"];
 		if(element){
-			var originalArrayString = Code.getProperty(element,"data-value");
-			console.log("originally: "+originalArrayString);
-			originalArray = [];
-			if(originalArrayString){
-				originalArray = originalArrayString.split(",");
-			}
-			console.log("originalArray: "+originalArray);
-			originalArray.push(displayText);
-			console.log("originalArray: "+originalArray);
-			updatedArrayString = originalArray.join(",");
-			console.log("updatedArrayString: "+updatedArrayString);
-			Code.setContent(element,updatedArrayString);
-			Code.setProperty(element,"data-value",updatedArrayString);
+			var valueArrayString = Code.getProperty(element,"data-value");
+			valueArray = valueArrayString ? valueArrayString.split(",") : [];
+			valueArray.push(displayText);
+			valueArrayString = valueArray.join(",");
+			Code.setProperty(element,"data-value",valueArrayString);
+
+			// set display from data
+// SEPARATE THE FUCKING DATA FROM THE DISPLAY
+HERE
+			// 
+
+			var displayArrayString = Code.getProperty(element,"data-display");
+			displayArray = displayArrayString ? displayArrayString.split(",") : [];
+			displayArray.push(displayText);
+			displayArrayString = displayArray.join(",");
+			//Code.setProperty(element,"data-display",valueArrayString);
+
+			Code.setContent(element,displayArrayString);
 		}
 	}
 }
