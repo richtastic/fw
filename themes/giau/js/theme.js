@@ -14,7 +14,7 @@ giau.prototype.initialize = function(){
 	// GLOBAL | EVENTS
 	var bus = giau.MessageBus();
 	this.mouseTracker = new PointerTracker();
-	this.DND = new giau.DragNDropManager(bus, giau.MessageBus.EVENT_OBJECT_DRAG_START, giau.MessageBus.EVENT_OBJECT_DRAG_END);
+	this.DND = new giau.DragNDropManager(bus, giau.MessageBus.EVENT_OBJECT_DRAG_START, giau.MessageBus.EVENT_OBJECT_DRAG_SELECT, giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE);
 	
 
 	// NAVIGATION
@@ -133,7 +133,7 @@ giau.ButtonToggle = function(element){ //
 }
 
 
-giau.MessageBus = function () {
+giau.MessageBus = function() {
 	if(!giau.MessageBus._bus){
 		giau.MessageBus._bus = new MessageBus();
 	}
@@ -141,11 +141,21 @@ giau.MessageBus = function () {
 }
 giau.MessageBus._bus = null;
 giau.MessageBus.EVENT_NAVIGATION_SELECT = "navigate_select_";
-giau.MessageBus.EVENT_OBJECT_DRAG_START = "drag_begin_";
-giau.MessageBus.EVENT_OBJECT_DRAG_END = "drag_end_";
-giau.MessageBus.EVENT_OBJECT_DRAG_SELECT = "drag_select_";
-giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE = "drag_available_";
 giau.MessageBus.EVENT_OTHER = "other_";
+// DRAGGING
+giau.MessageBus.EVENT_OBJECT_DRAG_START = "drag_begin_";   // request TO dnd that an item has been selected to drag   | 
+//                                                            criteria = ({}) some way for listening events to determine eligibility
+//                                                            element = (<DIV>) element to use as dragging item
+//                                                            offset = (V2D) coordinate of mouse dragging offset from top-left-corner
+//                                                            data = ({}) object to keep track of, passed to FXN???
+giau.MessageBus.EVENT_OBJECT_DRAG_SELECT = "drag_select_"; // request FROM dnd that it will start dragging, any responding methods must provide criteria  |  ?
+//															  manager = drag-n-drop-manager doing the tracking
+//															  criteria = [passed in _START]
+giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE = "drag_available_";  // request TO dnd that an item fits the criteria and has a drag area  |   {"rect": rect, "fxn": giau.CRUD._handleDragLifecycleFxn, "ctx": ctx}
+//															  rect = (Rect) area to trigger lifecycle methods during dragging
+//															  fxn = (fxn(){}) function to call for various lifecycle methods
+//															  ctx = ({}) context to call function with
+
 
 
 
@@ -3307,7 +3317,6 @@ giau.LibraryScroller = function(element, name, url){
 
 	this._jsDispatch = new JSDispatch();
 
-
 	console.log("LibraryScroller");
 	this._container = element;
 	this._name = name !== undefined ? name : "library_scroller";
@@ -3491,6 +3500,7 @@ giau.LibraryScroller.prototype._updateLayout = function(){
 	var info;
 	for(i=0; i<data.length; ++i){
 		var row = data[i];
+		console.log(row);
 		info = {
 			"index":i,
 			"width":widthContainer,
@@ -3514,7 +3524,11 @@ giau.LibraryScroller.prototype._updateLayout = function(){
 		}
 
 		//var data = {"model":modelFieldInfo, "array":array, "element":element, "field":"?"}; // modelFieldInfo
-		var datum = {"element":div};
+		var datum = {}
+			datum["element"] = div;
+			datum["display"] = row["widget_name"]; // TODO: MAKE THIS A PARAM
+			datum["value"] = row["section_id"]; // TODO: MAKE THIS A PARAM
+			datum["source"] = row;
 		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_MOUSE_DOWN, this._handleElementMouseDownFxn, this, datum);
 		// 
 
@@ -3524,10 +3538,7 @@ giau.LibraryScroller.prototype._updateLayout = function(){
 }
 
 giau.LibraryScroller.prototype._handleElementMouseDownFxn = function(e,data){
-	// console.log(e);
-	// console.log(data);
 	var target = Code.getTargetFromEvent(e);
-		console.log(e);
 		var mouseX = e.pageX;
 		var mouseY = e.pageY;
 		var targetX = $(target).offset().left;
@@ -3539,23 +3550,16 @@ giau.LibraryScroller.prototype._handleElementMouseDownFxn = function(e,data){
 	var element = data["element"];
 	var div = element.cloneNode(true);
 	var off = new V2D(offX,offY);
-//	Code.addChild(document.body,div);
-
+	console.log(data);
 
 	var bus = this._messageBus;
-	//var listenEventName = giau.MessageBus.EVENT_NAVIGATION_SELECT+""+name;
-	
-	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_START;
-	var obj = {"source":this, "element":div, "offset":off, "data":{} };
-	console.log(listenEventName)
-	//bus.alertAll(listenEventName, obj);
-
-	bus.alertAll(listenEventName, obj);
-
-	// var listenEventName = Code.getProperty(div,propertyAnimatesDown);
-	// listenEventName = giau.MessageBus.EVENT_NAVIGATION_SELECT+""+listenEventName;
-	// bus.addFunction(listenEventName, this._handleNavigationBusEventDown, this);
-
+	var datum = {};
+		datum["display"] = data["display"];
+		datum["value"] = data["value"];
+		datum["element"] = data["element"]; // ???
+	var criteria = {"type":"section_id"};
+	var obj = {"element":div, "offset":off, "data":datum, "criteria":criteria};
+	bus.alertAll(giau.MessageBus.EVENT_OBJECT_DRAG_START, obj);
 }
 
 giau.LibraryScroller.prototype._updateWithData = function(data){
@@ -3581,15 +3585,14 @@ giau.LibraryScroller.prototype._scrollTo = function(){
 
 
 
-giau.DragNDropManager = function(bus, start, end){
-	console.log("DragNDropManager");
-
+giau.DragNDropManager = function(bus, start, select, avail){
 	this._messageBus = bus;
-	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_START;
-	bus.addFunction(listenEventName, this._handleDragFxn, this);
+	this._eventNameStart = start;
+	this._eventNameSelect = select;
+	this._eventNameAvailable = avail;
 
-	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE;
-	bus.addFunction(listenEventName, this._handleDragAvailableFxn, this);
+	bus.addFunction(this._eventNameStart, this._handleDragRequestStartFxn, this);
+	bus.addFunction(this._eventNameAvailable, this._handleDragAvailableFxn, this);
 
 	this._ticker = new Ticker(30);
 	this._ticker.addFunction(Ticker.EVENT_TICK, this._tickerTickFxn, this);
@@ -3600,23 +3603,20 @@ giau.DragNDropManager = function(bus, start, end){
 	this._currentActiveDropAreas = [];
 	this._currentActiveDropPointers = [];
 	this.clearDropAreas();
-	this.addDropArea(50,50, 200,100);
-	this.addDropArea(350,50, 100,130);
-	this.addDropArea(400,200, 150,40);
 }
 giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_START = "drag_intersect_area_start";
 giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_START = "drag_intersect_pointer_start";
 giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_STOP = "drag_intersect_area_stop";
 giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_STOP = "drag_intersect_pointer_stop";
-giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_DROP = "drag_intersect_pointer_drop";
+giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_DROP = "drag_intersect_area_drop";
 giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_DROP = "drag_intersect_pointer_drop";
 
 giau.DragNDropManager.prototype.clearDropAreas = function(){
 	Code.emptyArray(this._dropAreas);
 }
-giau.DragNDropManager.prototype.addDropArea = function(x,y,w,h, fxn,ctx){
+giau.DragNDropManager.prototype.addDropArea = function(x,y,w,h, data, fxn,ctx){
 	var rect = new Rect(x,y,w,h);
-	var obj = {"rect":rect, "fxn":fxn, "ctx":ctx, "priority":0};
+	var obj = {"rect":rect, "data":data, "fxn":fxn, "ctx":ctx, "priority":0};
 	this._dropAreas.push(obj);
 }
 giau.DragNDropManager.prototype._updateIntersections = function(isEnd){
@@ -3686,16 +3686,16 @@ giau.DragNDropManager.prototype._updateIntersections = function(isEnd){
 		existsOld = Code.elementExists(this._currentActiveDropAreas,da);
 		existsNew = Code.elementExists(collisionsArea,da);
 		if(!existsOld && existsNew){ // start
-			// NOTIFY START AREA
+			this._alertFxnIfExists(da,giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_START);
 		}else if(existsOld && !existsNew){ // stop
-			// NOTIFY STOP AREA
+			this._alertFxnIfExists(da,giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_STOP);
 		}
 		existsOld = Code.elementExists(this._currentActiveDropPointers,da);
 		existsNew = Code.elementExists(collisionsPointer,da);
 		if(!existsOld && existsNew){ // start
-			// NOTIFY START POINT
+			this._alertFxnIfExists(da,giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_START);
 		}else if(existsOld && !existsNew){ // stop
-			// NOTIFY STOP POINT
+			this._alertFxnIfExists(da,giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_STOP);
 		}
 	}
 	this._currentActiveDropAreas = collisionsArea;
@@ -3705,34 +3705,36 @@ giau.DragNDropManager.prototype._updateIntersections = function(isEnd){
 		var foundAreaEnd = null;
 		if(collisionsArea.length>0){
 			foundAreaEnd = collisionsArea[0];
-			// NOTIFY END
+			this._alertFxnIfExists(foundAreaEnd,giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_DROP);
 		}
 		if(collisionsPointer.length>0){
 			foundPointEnd = collisionsPointer[0];
-			// NOTIFY END
+			this._alertFxnIfExists(foundPointEnd,giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_DROP);
 		}
 		for(i=0; i<collisionsPointer.length; ++i){
 			if(collisionsPointer[i]!=foundPointEnd){
-				// STOP POINT
+				this._alertFxnIfExists(da,giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_STOP);
 			}
 		}
 		for(i=0; i<collisionsArea.length; ++i){
 			if(collisionsArea[i]!=foundAreaEnd){
-				// STOP AREA
+				this._alertFxnIfExists(da,giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_STOP);
 			}
 		}
 	}
-
-	// 
-	// if object in new array is not in old array => start
-	// if object in old array is not in new array => stop
-
-	//Code.triTriIntersection2DBoolean
-	//Code.triTriIntersection2D
-	//Code.isPointInsidePolygon2D
-	
-
-	
+}
+giau.DragNDropManager.prototype._alertFxnIfExists = function(da, name){
+	console.log("_alertFxnIfExists: "+name);
+	var fxn = da["fxn"];
+	var ctx = da["ctx"];
+	var data = this._dragData;
+	if(fxn){
+		if(ctx){
+			fxn.call(ctx,name, this._dragData);
+		}else{
+			fxn(name, this._dragData);
+		}
+	}
 }
 giau.DragNDropManager.prototype._handleCoverMouseDownEvent = function(e){
 	console.log("stop drag");
@@ -3754,23 +3756,28 @@ giau.DragNDropManager.prototype._stopDragging = function(){
 giau.DragNDropManager.prototype._handleDragAvailableFxn = function(e){
 	console.log("got avail response: ");
 	console.log(e);
+	if(e){
+		var rect = e["rect"];
+		var fxn = e["fxn"];
+		var ctx = e["ctx"];
+		var data = e["data"];
+		if(rect){
+			this.addDropArea(rect.x(), rect.y(), rect.width(), rect.height(), data, fxn, ctx);
+		}
+	}
 }
-giau.DragNDropManager.prototype._handleDragFxn = function(e){
-	console.log("dragndrop start drag A");
-
-	// GET A LIST OF ELIGIBLE CANDIDATES:
-	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_SELECT;
-	var obj = {"criteria":{"type":"any"}, "manager": this};
-	var bus = this._messageBus;
-	bus.alertAll(listenEventName, obj);
-
-
-
-	// put new element on there
+giau.DragNDropManager.prototype._handleDragRequestStartFxn = function(e){
+	// put new element on display
 	var elementDrag = e["element"];
 	var offsetDrag = e["offset"];
+	var dataDrag = e["data"];
+	var dataCriteria = e["criteria"];
 	Code.addChild(document.body,elementDrag);
 
+	// GET A LIST OF ELIGIBLE CANDIDATES:
+	var obj = {"criteria":dataCriteria, "manager": this};
+	var bus = this._messageBus;
+	bus.alertAll(this._eventNameSelect, obj);
 
 	// put cover over window
 	var div = Code.newDiv();
@@ -3783,18 +3790,16 @@ giau.DragNDropManager.prototype._handleDragFxn = function(e){
 	Code.setStyleHeight(div,screenHeight+"px");
 	Code.setStyleBackgroundColor(div,bgColor);
 	Code.setStylePosition(div,"absolute");
-	//Code.setStyle(div,);
 	Code.addChild(document.body,div);
 
 	this._dragCover = div;
 	this._dragElement = elementDrag;
 	this._dragOffset = offsetDrag;
+	this._dragData = dataDrag;
 	this._updateDragging();
 
 	this._jsDispatch.addJSEventListener(this._dragCover, Code.JS_EVENT_MOUSE_DOWN, this._handleCoverMouseDownEvent, this);
 	this._ticker.start();
-
-	// want a list of all dragging rects, to do inside-hit-tests (visualize with dom rects)
 }
 
 giau.DragNDropManager.prototype._updateDragging = function(){
@@ -4131,37 +4136,59 @@ giau.CRUD._elementSelectDiscrete = function(value){
 	Code.setContent(elementContainer,"DRAG N DROP BOX?");
 
 	var bus = giau.MessageBus();
-	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_START;
-	var obj = {"data":"thingy"};
-	bus.addFunction(listenEventName, giau.CRUD._handleDragStartFxn, this, obj);
-
-
-
-	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_SELECT;
-	var obj = {"bus":bus};
-	bus.addFunction(listenEventName, giau.CRUD._handleDragSelectFxn, this, obj);
-
+	var obj = {"bus":bus, "element":elementContainer};
+	bus.addFunction(giau.MessageBus.EVENT_OBJECT_DRAG_SELECT, giau.CRUD._handleDragSelectFxn, this, obj);
 
 	return elementContainer;
 }
-
-// giau.CRUD._elementSelectJSON = function(model,value){
-// 	var elementContainer = Code.newDiv();
-// 	return elementContainer;
-// }
 giau.CRUD._handleDragStartFxn = function(e, b){
-	// console.log("_handleDragStartFxn");
-	// console.log(e);
-	// console.log(b);
+	
 }
-giau.CRUD._handleDragSelectFxn = function(e, b){
-	console.log("_handleDragSelectFxn");
-	console.log(e);
-	console.log(b);
-	var bus = e["bus"];
-	var listenEventName = giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE;
-	var obj = {};
-	bus.alertAll(listenEventName, obj);
+giau.CRUD._handleDragSelectFxn = function(e, f){ // e is passed by self, f is passed by alert
+	var criteria = f["criteria"];
+	if(criteria && criteria["type"]=="section_id"){
+		var bus = e["bus"];
+		var element = e["element"];
+		var ctx = {"element":element};
+			var lef = $(element).offset().left;
+			var top = $(element).offset().top;
+			var wid = $(element).width();
+			var hei = $(element).height();
+		var rect = new Rect(lef,top, wid,hei);
+		var obj = {"rect": rect, "fxn": giau.CRUD._handleDragLifecycleFxn, "ctx": ctx};
+		bus.alertAll(giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE, obj);
+	}
+}
+giau.CRUD._handleDragLifecycleFxn = function(event, data){
+	console.log(this);
+	console.log(event);
+	console.log(data);
+	if(event==giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_START){ // /*event==giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_START || */
+		//console.log("START");
+	}else if(event==giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_STOP){ /*event==giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_STOP || */
+		//console.log("STOP");
+	}else if(event==giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_DROP){ /*event==giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_DROP || */
+		//console.log("DROP");
+		var element = this["element"];
+		var displayText = data["display"];
+		var valueText = data["value"];
+		var source = data["source"];
+		if(element){
+			var originalArrayString = Code.getProperty(element,"data-value");
+			console.log("originally: "+originalArrayString);
+			originalArray = [];
+			if(originalArrayString){
+				originalArray = originalArrayString.split(",");
+			}
+			console.log("originalArray: "+originalArray);
+			originalArray.push(displayText);
+			console.log("originalArray: "+originalArray);
+			updatedArrayString = originalArray.join(",");
+			console.log("updatedArrayString: "+updatedArrayString);
+			Code.setContent(element,updatedArrayString);
+			Code.setProperty(element,"data-value",updatedArrayString);
+		}
+	}
 }
 giau.CRUD._fieldEditString = function(definition, attributes, presentation, value, source, elementContainer){
 	console.log(definition);
