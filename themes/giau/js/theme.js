@@ -14,7 +14,7 @@ giau.prototype.initialize = function(){
 	// GLOBAL | EVENTS
 	var bus = giau.MessageBus();
 	this.mouseTracker = new PointerTracker();
-	this.DND = new giau.DragNDropManager(bus, giau.MessageBus.EVENT_OBJECT_DRAG_START, giau.MessageBus.EVENT_OBJECT_DRAG_SELECT, giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE);
+	this.DND = new DragNDrop(bus, giau.MessageBus.EVENT_OBJECT_DRAG_START, giau.MessageBus.EVENT_OBJECT_DRAG_SELECT, giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE);
 	
 
 	// NAVIGATION
@@ -143,20 +143,9 @@ giau.MessageBus._bus = null;
 giau.MessageBus.EVENT_NAVIGATION_SELECT = "navigate_select_";
 giau.MessageBus.EVENT_OTHER = "other_";
 // DRAGGING
-giau.MessageBus.EVENT_OBJECT_DRAG_START = "drag_begin_";   // request TO dnd that an item has been selected to drag   | 
-//                                                            criteria = ({}) some way for listening events to determine eligibility
-//                                                            element = (<DIV>) element to use as dragging item
-//                                                            offset = (V2D) coordinate of mouse dragging offset from top-left-corner
-//                                                            data = ({}) object to keep track of, passed to FXN???
-giau.MessageBus.EVENT_OBJECT_DRAG_SELECT = "drag_select_"; // request FROM dnd that it will start dragging, any responding methods must provide criteria  |  ?
-//															  manager = drag-n-drop-manager doing the tracking
-//															  criteria = [passed in _START]
-giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE = "drag_available_";  // request TO dnd that an item fits the criteria and has a drag area  |   {"rect": rect, "fxn": giau.CRUD._handleDragLifecycleFxn, "ctx": ctx}
-//															  rect = (Rect) area to trigger lifecycle methods during dragging
-//															  fxn = (fxn(){}) function to call for various lifecycle methods
-//															  ctx = ({}) context to call function with
-
-
+giau.MessageBus.EVENT_OBJECT_DRAG_START = "drag_begin_";
+giau.MessageBus.EVENT_OBJECT_DRAG_SELECT = "drag_select_";
+giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE = "drag_available_";
 
 
 giau.ContactView = function(element){ //
@@ -3585,239 +3574,6 @@ giau.LibraryScroller.prototype._scrollTo = function(){
 
 
 
-giau.DragNDropManager = function(bus, start, select, avail){
-	this._messageBus = bus;
-	this._eventNameStart = start;
-	this._eventNameSelect = select;
-	this._eventNameAvailable = avail;
-
-	bus.addFunction(this._eventNameStart, this._handleDragRequestStartFxn, this);
-	bus.addFunction(this._eventNameAvailable, this._handleDragAvailableFxn, this);
-
-	this._ticker = new Ticker(30);
-	this._ticker.addFunction(Ticker.EVENT_TICK, this._tickerTickFxn, this);
-
-	this._jsDispatch = new JSDispatch();
-
-	this._dropAreas = [];
-	this._currentActiveDropAreas = [];
-	this._currentActiveDropPointers = [];
-	this.clearDropAreas();
-}
-giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_START = "drag_intersect_area_start";
-giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_START = "drag_intersect_pointer_start";
-giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_STOP = "drag_intersect_area_stop";
-giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_STOP = "drag_intersect_pointer_stop";
-giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_DROP = "drag_intersect_area_drop";
-giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_DROP = "drag_intersect_pointer_drop";
-
-giau.DragNDropManager.prototype.clearDropAreas = function(){
-	Code.emptyArray(this._dropAreas);
-}
-giau.DragNDropManager.prototype.addDropArea = function(x,y,w,h, data, fxn,ctx){
-	var rect = new Rect(x,y,w,h);
-	var obj = {"rect":rect, "data":data, "fxn":fxn, "ctx":ctx, "priority":0};
-	this._dropAreas.push(obj);
-}
-giau.DragNDropManager.prototype._updateIntersections = function(isEnd){
-	var i, len;
-	var isPoint, isRect;
-	var da, rect, quad;
-	//
-	var elementDrag = this._dragElement;
-	var point = THIS.mouseTracker.pos();
-	var off = this._dragOffset;
-	var elementWidth = $(elementDrag).width();
-	var elementHeight = $(elementDrag).height();
-		var intersectionRectCorner = point.copy().sub(off);
-	var intersectionRect = new Rect(intersectionRectCorner.x,intersectionRectCorner.y,elementWidth,elementHeight);
-	var intersectionQuad = intersectionRect.toArray();
-	//
-	Code.removeAllChildren(this._dragCover);
-	for(i=0; i<this._dropAreas.length; ++i){
-		da = this._dropAreas[i];
-		rect = da["rect"];
-		var div = Code.newDiv();
-			Code.setStylePosition(div,"absolute");
-			Code.setStyleLeft(div,rect.x()+"px");
-			Code.setStyleTop(div,rect.y()+"px");
-			Code.setStyleWidth(div,rect.width()+"px");
-			Code.setStyleHeight(div,rect.height()+"px");
-			Code.setStyleBackgroundColor(div,"#00FF00");
-		Code.addChild(this._dragCover,div);
-	}
-	//
-	var collisionsArea = [];
-	var collisionsPointer = [];
-	//
-	len = this._dropAreas.length;
-	for(i=0; i<len; ++i){
-		da = this._dropAreas[i];
-		rect = da["rect"];
-		quad = rect.toArray();
-		isPoint = Code.isPointInsideRect2D(point, quad[0],quad[1],quad[2],quad[3]); //isPoint = Code.isPointInsidePolygon2D(point, quad);
-		isRect = Code.quadQuadIntersection2DBoolean(quad[0],quad[1],quad[2],quad[3], intersectionQuad[0],intersectionQuad[1],intersectionQuad[2],intersectionQuad[3]);
-		if(isPoint){
-			collisionsPointer.push(da);
-		}
-		if(isRect){
-			collisionsArea.push(da);
-		}
-	}
-// VISUALIZE
-	for(i=0; i<collisionsArea.length; ++i){
-		da = collisionsArea[i];
-		rect = da["rect"];
-		var div = Code.newDiv();
-			Code.setStylePosition(div,"absolute");
-			Code.setStyleLeft(div,rect.x()+"px");
-			Code.setStyleTop(div,rect.y()+"px");
-			Code.setStyleWidth(div,rect.width()+"px");
-			Code.setStyleHeight(div,rect.height()+"px");
-			Code.setStyleZIndex(div,"999");
-			Code.setStyleBackgroundColor(div,"#FFFF00");
-		Code.addChild(this._dragCover,div);
-	}
-
-	var existsOld, existsNew;
-	len = this._dropAreas.length;
-	for(i=0; i<len; ++i){
-		da = this._dropAreas[i];
-		existsOld = Code.elementExists(this._currentActiveDropAreas,da);
-		existsNew = Code.elementExists(collisionsArea,da);
-		if(!existsOld && existsNew){ // start
-			this._alertFxnIfExists(da,giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_START);
-		}else if(existsOld && !existsNew){ // stop
-			this._alertFxnIfExists(da,giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_STOP);
-		}
-		existsOld = Code.elementExists(this._currentActiveDropPointers,da);
-		existsNew = Code.elementExists(collisionsPointer,da);
-		if(!existsOld && existsNew){ // start
-			this._alertFxnIfExists(da,giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_START);
-		}else if(existsOld && !existsNew){ // stop
-			this._alertFxnIfExists(da,giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_STOP);
-		}
-	}
-	this._currentActiveDropAreas = collisionsArea;
-	this._currentActiveDropPointers = collisionsPointer;
-	if(isEnd){ // drop
-		var foundPointEnd = null;
-		var foundAreaEnd = null;
-		if(collisionsArea.length>0){
-			foundAreaEnd = collisionsArea[0];
-			this._alertFxnIfExists(foundAreaEnd,giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_DROP);
-		}
-		if(collisionsPointer.length>0){
-			foundPointEnd = collisionsPointer[0];
-			this._alertFxnIfExists(foundPointEnd,giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_DROP);
-		}
-		for(i=0; i<collisionsPointer.length; ++i){
-			if(collisionsPointer[i]!=foundPointEnd){
-				this._alertFxnIfExists(da,giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_STOP);
-			}
-		}
-		for(i=0; i<collisionsArea.length; ++i){
-			if(collisionsArea[i]!=foundAreaEnd){
-				this._alertFxnIfExists(da,giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_STOP);
-			}
-		}
-	}
-}
-giau.DragNDropManager.prototype._alertFxnIfExists = function(da, name){
-	console.log("_alertFxnIfExists: "+name);
-	var fxn = da["fxn"];
-	var ctx = da["ctx"];
-	var data = this._dragData;
-	if(fxn){
-		if(ctx){
-			fxn.call(ctx,name, this._dragData);
-		}else{
-			fxn(name, this._dragData);
-		}
-	}
-}
-giau.DragNDropManager.prototype._handleCoverMouseDownEvent = function(e){
-	console.log("stop drag");
-	this._stopDragging();
-}
-giau.DragNDropManager.prototype._stopDragging = function(){
-	this._ticker.stop();
-	this._updateDragging();
-	this._updateIntersections(true);
-	// destroy
-	Code.removeFromParent(this._dragCover);
-	Code.removeFromParent(this._dragElement);
-	this._dragCover = null;
-	this._dragElement = null;
-	this._dragOffset = null;
-	
-	
-}
-giau.DragNDropManager.prototype._handleDragAvailableFxn = function(e){
-	console.log("got avail response: ");
-	console.log(e);
-	if(e){
-		var rect = e["rect"];
-		var fxn = e["fxn"];
-		var ctx = e["ctx"];
-		var data = e["data"];
-		if(rect){
-			this.addDropArea(rect.x(), rect.y(), rect.width(), rect.height(), data, fxn, ctx);
-		}
-	}
-}
-giau.DragNDropManager.prototype._handleDragRequestStartFxn = function(e){
-	// put new element on display
-	var elementDrag = e["element"];
-	var offsetDrag = e["offset"];
-	var dataDrag = e["data"];
-	var dataCriteria = e["criteria"];
-	Code.addChild(document.body,elementDrag);
-
-	// GET A LIST OF ELIGIBLE CANDIDATES:
-	var obj = {"criteria":dataCriteria, "manager": this};
-	var bus = this._messageBus;
-	bus.alertAll(this._eventNameSelect, obj);
-
-	// put cover over window
-	var div = Code.newDiv();
-	// window is full height of body
-	var screenWidth = $(window).width();
-	var screenHeight = $(window).height();
-	var bgColor = 0x33000000;
-		bgColor = Code.getJSColorFromARGB(bgColor);
-	Code.setStyleWidth(div,screenWidth+"px");
-	Code.setStyleHeight(div,screenHeight+"px");
-	Code.setStyleBackgroundColor(div,bgColor);
-	Code.setStylePosition(div,"absolute");
-	Code.addChild(document.body,div);
-
-	this._dragCover = div;
-	this._dragElement = elementDrag;
-	this._dragOffset = offsetDrag;
-	this._dragData = dataDrag;
-	this._updateDragging();
-
-	this._jsDispatch.addJSEventListener(this._dragCover, Code.JS_EVENT_MOUSE_DOWN, this._handleCoverMouseDownEvent, this);
-	this._ticker.start();
-}
-
-giau.DragNDropManager.prototype._updateDragging = function(){
-	var elementDrag = this._dragElement;
-	var pos = THIS.mouseTracker.pos();
-	var off = this._dragOffset;
-	pos.x -= off.x;
-	pos.y -= off.y;
-	Code.setStylePosition(elementDrag,"absolute");
-	Code.setStyleLeft(elementDrag,pos.x+"px");
-	Code.setStyleTop(elementDrag,pos.y+"px");
-}
-giau.DragNDropManager.prototype._tickerTickFxn = function(e){
-	//console.log("tick");
-	this._updateDragging();
-	this._updateIntersections();
-}
-
 
 giau.DataSource = function(element){
 	giau.DataSource._.constructor.call(this);
@@ -3949,48 +3705,13 @@ giau.CRUD.prototype._updateWithData = function(data){
 	var count = data["count"];
 	var rows = data["data"];
 	var definition = data["definition"];
-	// var i;
-	// for(i=0; i<count; ++i){
-	// 
-	// }
-	// //var FA = new FragArray();
-	// //this._dataRows = FA;
-	this._dataDefinition = definition;
-	this._dataRows = rows;
-	this._updateLayout();
-}
-giau.CRUD.prototype._updateLayout = function(){
-	console.log("CRUD updateLayout");
 
-	var rows = this._dataRows;
-	var columns = this._dataDefinition["columns"];
-	var presentation = this._dataDefinition["presentation"];
-
-
-	var i;
-	var column, pres, alias, row, keys;
-
-
-	// append presentation to each column
-	
+	var columns = definition["columns"];
+	var presentation = definition["presentation"];
 	var columnPresentations = presentation["columns"];
-	/*
-	keys = Code.keys(columnPresentations);
-	for(i=0; i<keys.length; ++i){
-		key = keys[i];
-		pres = columnPresentations[key];
-		column = columns[key];
 
-		if(pres && column){
-			console.log(pres)
-			column["presentation"] = pres;
-		}
-	}
-	*/
-	// console.log(columns);
-	// console.log(presentation);
-	
-	// search fields
+	var i, column, pres, alias, row, keys;
+	// PUT ALL DATA INTO SINGLE STRUCTURE
 	var searchFields = [];
 	var editFields = [];
 	var aliases = presentation["column_aliases"];
@@ -4023,20 +3744,11 @@ giau.CRUD.prototype._updateLayout = function(){
 			}
 		}
 	}
+	this._searchFields = searchFields;
 	
-	Code.removeAllChildren(this._elementOrdering);
-	for(i=0; i<searchFields.length; ++i){
-		var field = searchFields[i];
-			var attributes = field["attributes"];
-		var name = attributes["display_name"];
-		var div = Code.newDiv();
-		Code.setContent(div,""+name+"&DownArrowBar;"); // &darr; &dArr; &#8681; &#10507; &DownArrowBar;
-		Code.setStyleDisplay(div,"table-cell");
-		Code.setStyleColor(div,"#000");
-		Code.addChild(this._elementOrdering,div);
-	}
 
-	// 
+	this._rowElements = [];
+
 	// editing
 	Code.removeAllChildren(this._elementTable);
 	for(i=0; i<rows.length; ++i){
@@ -4049,8 +3761,15 @@ giau.CRUD.prototype._updateLayout = function(){
 			var field = editFields[j];
 			var alias = field["alias"];
 			var value = row[alias];
-			var elementField = this._fieldFromData(field,value,row);
-			Code.addChild(elementRow,elementField);
+			//var element = this._fieldFromData(field,value,row);
+			//Code.addChild(elementRow,elementField);
+			var mapping = this._mappingFromData(field,value,row);
+			field["mapping"] = mapping;
+			console.log(mapping.element())
+			Code.addChild(elementRow,mapping.element());
+
+//this._sourceDataDisplayMap.addDataEntry(row, alias, fxn, element, i, i+offset);
+			//
 		}
 		// DELETE
 		var elementDelete = Code.newDiv();
@@ -4063,11 +3782,59 @@ giau.CRUD.prototype._updateLayout = function(){
 		Code.addChild(elementRow,elementUpdate);
 
 		// row 
-		
+		this._rowElements.push(elementRow);
 		//console.log(rows[i]);
+		//this._rowElements[]
 		Code.addChild(this._elementTable,elementRow);
 	}
+/*
+	element representing data
+	source data
+	-> when element is interacted with, source data must get updated
 
+		row
+			item
+				* mapping
+					- data
+					- element
+					- element update fxn
+
+
+*/
+
+
+	// MAPS DATA SOURCE TO DATA DISPLAY
+
+	// var i;
+	// for(i=0; i<count; ++i){
+	// 	this._sourceDataDisplayMap.addDataEntry(rows[i], div, i, i+offset);
+	// }
+
+
+
+	// //var FA = new FragArray();
+	// //this._dataRows = FA;
+	this._dataDefinition = definition;
+	this._dataRows = rows;
+	this._updateLayout();
+}
+giau.CRUD.prototype._updateLayout = function(){
+	console.log("CRUD updateLayout");
+	var searchFields = this._searchFields;
+	var i;
+	
+	Code.removeAllChildren(this._elementOrdering);
+	for(i=0; i<searchFields.length; ++i){
+		var field = searchFields[i];
+			var attributes = field["attributes"];
+		var name = attributes["display_name"];
+		var div = Code.newDiv();
+		Code.setContent(div,""+name+"&DownArrowBar;"); // &darr; &dArr; &#8681; &#10507; &DownArrowBar;
+		Code.setStyleDisplay(div,"table-cell");
+		Code.setStyleColor(div,"#000");
+		Code.addChild(this._elementOrdering,div);
+	}
+// ...
 
 	return;
 	var data = this._currentPageData["data"];
@@ -4127,20 +3894,29 @@ giau.CRUD._elementSelectString = function(value){
 	Code.setTextAreaValue(elementContainer,""+value);
 	return elementContainer;
 }
-giau.CRUD._elementSelectDiscrete = function(value){
-	var arr = [];
-	if(value){
-		arr = value.split(",");
-	}
+giau.CRUD._elementSelectDiscrete = function(mapping){
+	console.log("_elementSelectDiscrete")
+	// return giau.CRUD._fieldEditStringUpdateFxn;
+	// var arr = [];
+	// if(value){
+	// 	arr = value.split(",");
+	// }
+	//var value = ...
+
 	var elementContainer = Code.newDiv();
-		Code.setStyleBackgroundColor(elementContainer,"#DDD");
-	// Code.setContent(elementContainer,"DRAG N DROP BOX?");
-	Code.setContent(elementContainer,value);
+		Code.setStyleBackgroundColor(elementContainer,"#EEE");
+		Code.setStyleBorderColor(elementContainer,"#CCD");
+		Code.setStyleBorderWidth(elementContainer,1+"px");
+		Code.setStyleMinHeight(elementContainer,24+"px");
+	//Code.setContent(elementContainer,value);
 
 	var bus = giau.MessageBus();
-	var obj = {"bus":bus, "element":elementContainer};
+	var obj = {"bus":bus, "element":elementContainer, "mapping":mapping};
 	bus.addFunction(giau.MessageBus.EVENT_OBJECT_DRAG_SELECT, giau.CRUD._handleDragSelectFxn, this, obj);
 
+//console.log(mapping.updateDataFxn())
+	// set display to initial
+	mapping.updateElementFromData();
 	return elementContainer;
 }
 giau.CRUD._handleDragStartFxn = function(e, b){
@@ -4151,7 +3927,8 @@ giau.CRUD._handleDragSelectFxn = function(e, f){ // e is passed by self, f is pa
 	if(criteria && criteria["type"]=="section_id"){
 		var bus = e["bus"];
 		var element = e["element"];
-		var ctx = {"element":element};
+		var mapping = e["mapping"];
+		var ctx = {"element":element, "mapping":mapping};
 			var lef = $(element).offset().left;
 			var top = $(element).offset().top;
 			var wid = $(element).width();
@@ -4185,14 +3962,33 @@ how to delete from list?
 
 */
 giau.CRUD._handleDragLifecycleFxn = function(event, data){
-	console.log(this);
 	console.log(event);
+	console.log(this);
 	console.log(data);
-	if(event==giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_START){ // /*event==giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_START || */
+	if(event==DragNDrop.EVENT_DRAG_INTERSECT_AREA_START){
 		//console.log("START");
-	}else if(event==giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_STOP){ /*event==giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_STOP || */
+	}else if(event==DragNDrop.EVENT_DRAG_INTERSECT_AREA_STOP){
 		//console.log("STOP");
-	}else if(event==giau.DragNDropManager.EVENT_DRAG_INTERSECT_AREA_DROP){ /*event==giau.DragNDropManager.EVENT_DRAG_INTERSECT_POINTER_DROP || */
+	}else if(event==DragNDrop.EVENT_DRAG_INTERSECT_AREA_DROP){
+		console.log("DROP");
+		var mapping = this["mapping"];
+
+		// update element data rep:
+		var element = this["element"];
+		if(element){
+			var valueArrayString = Code.getProperty(element,"data-value");
+			valueArray = valueArrayString ? valueArrayString.split(",") : [];
+			//valueArray.push(displayText);
+			valueArrayString = valueArray.join(",");
+			Code.setProperty(element,"data-value",valueArrayString);
+			console.log(valueArrayString);
+			Code.setContent(element,"new value: "+valueArrayString);
+		}
+		console.log(mapping);
+		mapping.updateDataFromElement();
+		mapping.updateElementFromData();
+		//MapDataDisplay
+/*
 		//console.log("DROP");
 		var element = this["element"];
 		var displayText = data["display"];
@@ -4206,8 +4002,9 @@ giau.CRUD._handleDragLifecycleFxn = function(event, data){
 			Code.setProperty(element,"data-value",valueArrayString);
 
 			// set display from data
-// SEPARATE THE FUCKING DATA FROM THE DISPLAY
-HERE
+
+// HERE
+console.log("HERE");
 			// 
 
 			var displayArrayString = Code.getProperty(element,"data-display");
@@ -4218,28 +4015,43 @@ HERE
 
 			Code.setContent(element,displayArrayString);
 		}
+*/
 	}
 }
-giau.CRUD._fieldEditString = function(definition, attributes, presentation, value, source, elementContainer){
+giau.CRUD._fieldEditString = function(definition, attributes, presentation, value, source, elementContainer, mapping){
+	console.log("_fieldEditString");
 	console.log(definition);
 	console.log(attributes);
 	console.log(presentation);
 	console.log(value);
 	console.log(source);
+	// DRAG N DROP AREA:
+mapping.object(source);
+mapping.field(null); // ?
+//mapping.element(elementContainer); // set outside/before
+mapping.updateElementFxn(giau.CRUD._fieldEditStringUpdateElementFxn);
+mapping.updateDataFxn(giau.CRUD._fieldEditStringUpdateDataFxn);
 	if(presentation && presentation["drag_and_drop"]){
 		var dd = presentation["drag_and_drop"];
 		console.log("DRAG AND DROP")
 		console.log(dd)
-		var elementDrop = giau.CRUD._elementSelectDiscrete(value);
+		var elementDrop = giau.CRUD._elementSelectDiscrete(mapping);
 		Code.addChild(elementContainer,elementDrop);
 	}else{
-		var elementText = giau.CRUD._elementSelectString(value);
+		var elementText = giau.CRUD._elementSelectString(mapping,value);
 		Code.addChild(elementContainer,elementText);
 	}
 }
+giau.CRUD._fieldEditStringUpdateElementFxn = function(data,field, element){
+	console.log("update element");
+}
+giau.CRUD._fieldEditStringUpdateDataFxn = function(data,field, element){
+	console.log("update data");
+}
 
-giau.CRUD._fieldEditJSON = function(definition, attributes, presentation, value, source, elementContainer){
+giau.CRUD._fieldEditJSON = function(definition, attributes, presentation, value, source, elementContainer, mapping){
 	var elementJSON = Code.newDiv();
+//mapping.element(elementContainer);
 return elementJSON;
 		Code.addChild(elementContainer,elementJSON);
 	var jsonModelColumn = presentation["json_model_column"];
@@ -4254,8 +4066,9 @@ return elementJSON;
 	return elementJSON;
 }
 
-giau.CRUD.prototype._fieldFromData = function(field, value, source){
-	//console.log(field);
+giau.CRUD.prototype._mappingFromData = function(field, value, source){
+	console.log("_mappingFromData");
+// HERE
 	var alias = field["alias"];
 	var column = field["column"];
 	var attributes = field["attributes"];
@@ -4264,6 +4077,7 @@ giau.CRUD.prototype._fieldFromData = function(field, value, source){
 	// SUB
 	var name = attributes["display_name"];
 	var fieldType = definition["type"];
+	console.log("A");
 	// DISPLAY
 	var elementField = Code.newDiv();
 	var elementTitle = Code.newDiv();
@@ -4277,12 +4091,14 @@ giau.CRUD.prototype._fieldFromData = function(field, value, source){
 	Code.setStyleWordWrap(elementTitle,"break-word");
 	// CONTAINER
 	Code.setStylePadding(elementField,5+"px");
-
+console.log("");
 	// VALUES
 	Code.setContent(elementTitle,""+name+":");
 	
 	//console.log(fieldType)
-
+	var mapping = new MapDataDisplay();
+	console.log(mapping)
+mapping.element(elementField);
 	var operationFxn = {};
 		operationFxn["string"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
 		operationFxn["string-number"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
@@ -4291,17 +4107,19 @@ giau.CRUD.prototype._fieldFromData = function(field, value, source){
 		operationFxn["string-array"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
 		operationFxn["string-json"] = [giau.CRUD._fieldEditJSON,giau.CRUD._fieldEditJSON];
 	var operation = operationFxn[fieldType];
+	var updateElementFunction = null;
 	if(operation){
 		var statFxn = operation[0];
 		var editFxn = operation[1];
 		if(attributes["editable"]=="true"){
-			editFxn(definition, attributes, presentation, value, source, elementValue);
+			editFxn(definition, attributes, presentation, value, source, elementValue, mapping);
 		}else{
-			statFxn(definition, attributes, presentation, value, source, elementValue);
+			statFxn(definition, attributes, presentation, value, source, elementValue, mapping);
 		}
 	}
-
-	return elementField;
+	//mapping.set(field, value, elementField, updateElementFunction); // elementValue
+	//console.log(mapping.updateDataFxn())
+	return mapping;
 }
 
 giau.CRUD.prototype._checkSubmitChange = function(field, value, source){
