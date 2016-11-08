@@ -181,7 +181,7 @@ function giau_wordpress_data_service(){
 			// edit a row
 				- values WHERE id
 			*/
-			$offset = 0;
+			$offset = 46;
 			$count = 1;
 			$requestInfo = [];
 			$requestInfo["offset"] = $offset;
@@ -199,16 +199,36 @@ function giau_wordpress_data_service(){
 	    JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
 	    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
 	";
-	/*
-	    "section_id" => "id",
-				"section_created" => "created",
-				"section_modified" => "modified",
-				"section_configuration" => "configuration",
-				"section_subsections" => "section_list",
-				"section_extend_widget_id" => "extend",
-	    */
-				
 			paged_data_service($requestInfo, table_info_section(), $response );
+
+			// LIST SUBSECTIONS IN METADATA FOR DISPLAY
+			$rows = &$response["data"];
+			$i;
+			$len = count($rows);
+			$foundSubsections = [];
+			for($i=0; $i<$len; ++$i){
+				$row = &$rows[$i];
+				$subsections = $row["section_list"];
+				$subsections = arrayFromCommaSeparatedString($subsections);
+				foreach ($subsections as $section){
+					$index = "".$section;
+					if( $index !="" ){
+						$foundSubsections[$index] = true;
+					}
+				}
+			}
+			$foundSubsections = array_keys($foundSubsections);
+			//
+			$subsections = [];
+			if( count($foundSubsections)>0){
+				$subsectionsList = implode(",",$foundSubsections);
+				global $wpdb;
+				$query = 'SELECT '.GIAU_FULL_TABLE_NAME_SECTION().'.* FROM '.GIAU_FULL_TABLE_NAME_SECTION().' WHERE id IN ('.$subsectionsList.')';
+				$subsections = $wpdb->get_results($query, ARRAY_A);
+			}
+			$metadata["subsections"] = $subsections;
+			$response["metadata"] = $metadata;
+
 			$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( GIAU_TABLE_DEFINITION_SECTION() );
 		}else{// if($operationType=="file_upload"){
 			$result = exec('whoami');

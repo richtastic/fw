@@ -3705,7 +3705,6 @@ giau.CRUD.prototype._updateWithData = function(data){
 	var count = data["count"];
 	var rows = data["data"];
 	var definition = data["definition"];
-
 	var columns = definition["columns"];
 	var presentation = definition["presentation"];
 	var columnPresentations = presentation["columns"];
@@ -3744,9 +3743,8 @@ giau.CRUD.prototype._updateWithData = function(data){
 			}
 		}
 	}
-	this._searchFields = searchFields;
 	
-
+	this._searchFields = searchFields;
 	this._rowElements = [];
 
 	// editing
@@ -3759,17 +3757,16 @@ giau.CRUD.prototype._updateWithData = function(data){
 		Code.setStyleMargin(elementRow,5+"px");
 		for(j=0; j<editFields.length; ++j){
 			var field = editFields[j];
+			var column = field["column"];
 			var alias = field["alias"];
-			var value = row[alias];
-			//var element = this._fieldFromData(field,value,row);
-			//Code.addChild(elementRow,elementField);
-			var mapping = this._mappingFromData(field,value,row);
-			field["mapping"] = mapping;
-			console.log(mapping.element())
-			Code.addChild(elementRow,mapping.element());
-
-//this._sourceDataDisplayMap.addDataEntry(row, alias, fxn, element, i, i+offset);
-			//
+console.log(i+"|"+j+"--------------------------------");
+// console.log(field);
+// console.log(row);
+//console.log(value);
+//console.log(row[alias]);
+var mapping = this._mappingFromData(field,row,column);
+field["mapping"] = mapping;
+Code.addChild(elementRow,mapping.element());
 		}
 		// DELETE
 		var elementDelete = Code.newDiv();
@@ -3787,6 +3784,7 @@ giau.CRUD.prototype._updateWithData = function(data){
 		//this._rowElements[]
 		Code.addChild(this._elementTable,elementRow);
 	}
+	return;
 /*
 	element representing data
 	source data
@@ -3895,14 +3893,6 @@ giau.CRUD._elementSelectString = function(value){
 	return elementContainer;
 }
 giau.CRUD._elementSelectDiscrete = function(mapping){
-	console.log("_elementSelectDiscrete")
-	// return giau.CRUD._fieldEditStringUpdateFxn;
-	// var arr = [];
-	// if(value){
-	// 	arr = value.split(",");
-	// }
-	//var value = ...
-
 	var elementContainer = Code.newDiv();
 		Code.setStyleBackgroundColor(elementContainer,"#EEE");
 		Code.setStyleBorderColor(elementContainer,"#CCD");
@@ -3914,9 +3904,7 @@ giau.CRUD._elementSelectDiscrete = function(mapping){
 	var obj = {"bus":bus, "element":elementContainer, "mapping":mapping};
 	bus.addFunction(giau.MessageBus.EVENT_OBJECT_DRAG_SELECT, giau.CRUD._handleDragSelectFxn, this, obj);
 
-//console.log(mapping.updateDataFxn())
 	// set display to initial
-	mapping.updateElementFromData();
 	return elementContainer;
 }
 giau.CRUD._handleDragStartFxn = function(e, b){
@@ -3962,15 +3950,15 @@ how to delete from list?
 
 */
 giau.CRUD._handleDragLifecycleFxn = function(event, data){
-	console.log(event);
-	console.log(this);
-	console.log(data);
+	// console.log(event);
+	// console.log(this);
+	// console.log(data);
 	if(event==DragNDrop.EVENT_DRAG_INTERSECT_AREA_START){
 		//console.log("START");
 	}else if(event==DragNDrop.EVENT_DRAG_INTERSECT_AREA_STOP){
 		//console.log("STOP");
 	}else if(event==DragNDrop.EVENT_DRAG_INTERSECT_AREA_DROP){
-		console.log("DROP");
+		// console.log("DROP");
 		var mapping = this["mapping"];
 
 		// update element data rep:
@@ -3982,10 +3970,12 @@ giau.CRUD._handleDragLifecycleFxn = function(event, data){
 			valueArrayString = valueArray.join(",");
 			Code.setProperty(element,"data-value",valueArrayString);
 			console.log(valueArrayString);
-			Code.setContent(element,"new value: "+valueArrayString);
+			//Code.setContent(element,"new value: "+valueArrayString);
 		}
 		console.log(mapping);
-		mapping.updateDataFromElement();
+		console.log("WANT TO APPEND DATA TO DATA: ",data);
+		//mapping.updateDataFromElement();
+		mapping.updateDataFromOperation(); // op, action, event, CRUD
 		mapping.updateElementFromData();
 		//MapDataDisplay
 /*
@@ -4018,35 +4008,39 @@ console.log("HERE");
 */
 	}
 }
-giau.CRUD._fieldEditString = function(definition, attributes, presentation, value, source, elementContainer, mapping){
-	console.log("_fieldEditString");
-	console.log(definition);
-	console.log(attributes);
-	console.log(presentation);
-	console.log(value);
-	console.log(source);
-	// DRAG N DROP AREA:
-mapping.object(source);
-mapping.field(null); // ?
-//mapping.element(elementContainer); // set outside/before
-mapping.updateElementFxn(giau.CRUD._fieldEditStringUpdateElementFxn);
-mapping.updateDataFxn(giau.CRUD._fieldEditStringUpdateDataFxn);
-	if(presentation && presentation["drag_and_drop"]){
+giau.CRUD._fieldEditString = function(definition, container, fieldName, elementContainer, mapping){
+	var presentation = definition["presentation"];
+	var value = container[fieldName];
+	// update mapping
+	mapping.updateElementFxn(giau.CRUD._fieldEditStringUpdateElementFxn);
+	mapping.updateDataFxn(giau.CRUD._fieldEditStringUpdateDataFxn);
+	//
+	if(presentation && presentation["drag_and_drop"]){ // DRAG AND DROP
 		var dd = presentation["drag_and_drop"];
-		console.log("DRAG AND DROP")
-		console.log(dd)
 		var elementDrop = giau.CRUD._elementSelectDiscrete(mapping);
+Code.setProperty(elementDrop,"data-value")
 		Code.addChild(elementContainer,elementDrop);
-	}else{
+	}else{ // TEXTFIELD
 		var elementText = giau.CRUD._elementSelectString(mapping,value);
 		Code.addChild(elementContainer,elementText);
 	}
 }
 giau.CRUD._fieldEditStringUpdateElementFxn = function(data,field, element){
 	console.log("update element");
+	//var ele = Code.getElementWithProperty(element, "data-value");
+	var ele = Code.getChild(element,1);
+		ele = Code.getChild(ele,0);
+	console.log(ele) // TODO -- get from data-value
+	var value = data[field];
+	Code.setContent(ele, value);
 }
 giau.CRUD._fieldEditStringUpdateDataFxn = function(data,field, element){
+
 	console.log("update data");
+	console.log(data)
+	console.log(field)
+	console.log(element)
+
 }
 
 giau.CRUD._fieldEditJSON = function(definition, attributes, presentation, value, source, elementContainer, mapping){
@@ -4066,18 +4060,20 @@ return elementJSON;
 	return elementJSON;
 }
 
-giau.CRUD.prototype._mappingFromData = function(field, value, source){
-	console.log("_mappingFromData");
-// HERE
-	var alias = field["alias"];
-	var column = field["column"];
-	var attributes = field["attributes"];
-	var presentation = field["presentation"];
-	var definition = field["definition"];
+//giau.CRUD.prototype._mappingFromData = function(field, value, source){
+giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, itemIndex){
+	console.log(fieldDescription)
+	console.log(sourceObject)
+	console.log(itemIndex)
+	//
+	var alias = fieldDescription["alias"];
+	var column = fieldDescription["column"];
+	var attributes = fieldDescription["attributes"];
+	var presentation = fieldDescription["presentation"];
+	var definition = fieldDescription["definition"];
 	// SUB
 	var name = attributes["display_name"];
 	var fieldType = definition["type"];
-	console.log("A");
 	// DISPLAY
 	var elementField = Code.newDiv();
 	var elementTitle = Code.newDiv();
@@ -4091,14 +4087,14 @@ giau.CRUD.prototype._mappingFromData = function(field, value, source){
 	Code.setStyleWordWrap(elementTitle,"break-word");
 	// CONTAINER
 	Code.setStylePadding(elementField,5+"px");
-console.log("");
 	// VALUES
 	Code.setContent(elementTitle,""+name+":");
 	
-	//console.log(fieldType)
 	var mapping = new MapDataDisplay();
-	console.log(mapping)
-mapping.element(elementField);
+	mapping.element(elementField);
+	mapping.object(sourceObject);
+	mapping.field(itemIndex);
+	//console.log(mapping)
 	var operationFxn = {};
 		operationFxn["string"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
 		operationFxn["string-number"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
@@ -4112,13 +4108,13 @@ mapping.element(elementField);
 		var statFxn = operation[0];
 		var editFxn = operation[1];
 		if(attributes["editable"]=="true"){
-			editFxn(definition, attributes, presentation, value, source, elementValue, mapping);
+			//editFxn(definition, attributes, presentation, value, source, elementValue, mapping);
 		}else{
-			statFxn(definition, attributes, presentation, value, source, elementValue, mapping);
+			//statFxn(definition, attributes, presentation, value, source, elementValue, mapping);
 		}
+		editFxn(fieldDescription, sourceObject, itemIndex, elementValue, mapping);
 	}
-	//mapping.set(field, value, elementField, updateElementFunction); // elementValue
-	//console.log(mapping.updateDataFxn())
+	mapping.updateElementFromData();
 	return mapping;
 }
 

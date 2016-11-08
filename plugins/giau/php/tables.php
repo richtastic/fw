@@ -88,7 +88,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"editable" => "false",
 				],
 			],
-			"created" =>  [
+			"created" => [
 				"type" => "string-date",
 				"attributes" =>  [
 					"display_name" => "Created",
@@ -97,7 +97,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"editable" => "false",
 				],
 			],
-			"modified" =>  [
+			"modified" => [
 				"type" => "string-date",
 				"attributes" =>  [
 					"display_name" => "Modified",
@@ -106,7 +106,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"editable" => "false",
 				],
 			],
-			"widget" =>  [
+			"widget" => [
 				"type" => "string",
 				"attributes" =>  [
 					"display_name" => "Widget",
@@ -115,7 +115,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"editable" => "false",
 				],
 			],
-			"extend" =>  [
+			"extend" => [
 				"type" => "string-number",
 				"attributes" =>  [
 					"display_name" => "Extends",
@@ -124,7 +124,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"editable" => "false",
 				],
 			],
-			"configuration" =>  [
+			"configuration" => [
 				"type" => "string-json",
 				"attributes" =>  [
 					"display_name" => "Configuration",
@@ -133,7 +133,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"editable" => "false",
 				],
 			],
-			"section_list" =>  [
+			"section_list" => [
 				"type" => "string-array",
 				"attributes" =>  [
 					"display_name" => "Subsections",
@@ -145,7 +145,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 
 
 			// not part of the table:
-			"widget_name" =>  [
+			"widget_name" => [
 				"type" => "string",
 				"attributes" =>  [
 					"display_name" => "Name(Widget)",

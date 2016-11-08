@@ -1220,6 +1220,13 @@ function getHumanReadablePhone($phone){
 	return $phone;
 }
 
+function arrayFromCommaSeparatedString($input){
+	if(!$input){
+		return [];
+	}
+	$array = explode(",", $input);
+	return $array;
+}
 function commaSeparatedStringFromString($input, $limitCount){
 	if(!$input){
 		return "";
