@@ -3387,6 +3387,10 @@ giau.LibraryScroller._generateSize = function(info, data){
 	size["height"] = height;
 	return size;
 }
+giau.Theme = {};
+giau.Theme.Color = {};
+giau.Theme.Color.MediumRed = Code.getJSColorFromARGB(0xFF990022);
+giau.Theme.Color.DarkRed = Code.getJSColorFromARGB(0xFF550011);
 giau.LibraryScroller._generateDiv = function(info, data){
 	var bus = giau.MessageBus();
 	this._messageBus = bus;
@@ -3428,8 +3432,7 @@ giau.LibraryScroller._generateDiv = function(info, data){
 	Code.setStyleDisplay(elementExterrior,"block");
 	Code.setStyleLeft(elementExterrior,exterriorPadding+"px");
 	Code.setStyleTop(elementExterrior,exterriorPadding+"px");
-		color = 0xFF990022;
-		color = Code.getJSColorFromARGB(color);
+		color = giau.Theme.Color.MediumRed;
 	Code.setStyleBackgroundColor(elementExterrior,color);
 
 	var radiusContainer = 4;
@@ -3602,7 +3605,8 @@ giau.DataSource.prototype.getPage = function(pageToGet){
 	ajax.url(url);
 	ajax.method(Ajax.METHOD_TYPE_POST);
 	ajax.append("operation","page_data");
-	ajax.append("table","sections");
+	//ajax.append("table","sections");
+	ajax.append("table","languagization");
 	ajax.append("offset",""+start);
 	ajax.append("count",""+count);
 	ajax.context(this);
@@ -3764,7 +3768,10 @@ console.log(i+"|"+j+"--------------------------------");
 // console.log(row);
 //console.log(value);
 //console.log(row[alias]);
-var mapping = this._mappingFromData(field,row,column);
+
+// column
+
+var mapping = this._mappingFromData(field,row,alias);
 field["mapping"] = mapping;
 Code.addChild(elementRow,mapping.element());
 		}
@@ -3880,7 +3887,15 @@ giau.CRUD._elementSelectColor = function(){
 	var elementContainer = Code.newDiv();
 	return elementContainer;
 }
-giau.CRUD._elementSelectString = function(value){
+
+giau.CRUD._elementSelectDate = function(mapping){
+	var object = mapping.object();
+	var field = mapping.field();
+	var value = object[field];
+	console.log("BEFORE: "+value);
+	value = Code.getHumanReadableDateString(value);
+	console.log("AFTER: "+value);
+
 	var elementContainer = Code.newInputTextArea();
 	Code.setStyleFontFamily(elementContainer,"monospace");
 	Code.setStyleFontSize(elementContainer,11+"px");
@@ -3892,19 +3907,43 @@ giau.CRUD._elementSelectString = function(value){
 	Code.setTextAreaValue(elementContainer,""+value);
 	return elementContainer;
 }
+
+giau.CRUD._elementSelectString = function(mapping){
+	var object = mapping.object();
+	var field = mapping.field();
+	var value = object[field];
+
+	console.log("_elementSelectString")
+	console.log(mapping)
+	console.log(object)
+	console.log(field)
+	console.log(value)
+	var elementContainer = Code.newInputTextArea();
+	Code.setStyleFontFamily(elementContainer,"monospace");
+	Code.setStyleFontSize(elementContainer,11+"px");
+	Code.setStyleColor(elementContainer,"#000");
+	Code.setStyleWidth(elementContainer,"100%");
+	Code.setStyleBackgroundColor(elementContainer,"#FFF");
+	Code.setStyleBorderColor(elementContainer,"#CCC");
+	Code.setStyleBorderWidth(elementContainer,1+"px");
+	Code.setTextAreaValue(elementContainer,""+value);
+	return elementContainer;
+}
+
 giau.CRUD._elementSelectDiscrete = function(mapping){
 	var elementContainer = Code.newDiv();
 		Code.setStyleBackgroundColor(elementContainer,"#EEE");
-		Code.setStyleBorderColor(elementContainer,"#CCD");
+		Code.setStyleBorderColor(elementContainer,"#CCC");
+		Code.setStyleBorder(elementContainer,"solid");
 		Code.setStyleBorderWidth(elementContainer,1+"px");
 		Code.setStyleMinHeight(elementContainer,24+"px");
-	//Code.setContent(elementContainer,value);
+		Code.setStylePadding(elementContainer,2+"px");
+		Code.setStyleBorderRadius(elementContainer,4+"px");
+	Code.setProperty(elementContainer,"data-value","true");
 
 	var bus = giau.MessageBus();
 	var obj = {"bus":bus, "element":elementContainer, "mapping":mapping};
 	bus.addFunction(giau.MessageBus.EVENT_OBJECT_DRAG_SELECT, giau.CRUD._handleDragSelectFxn, this, obj);
-
-	// set display to initial
 	return elementContainer;
 }
 giau.CRUD._handleDragStartFxn = function(e, b){
@@ -3919,22 +3958,14 @@ giau.CRUD._handleDragSelectFxn = function(e, f){ // e is passed by self, f is pa
 		var ctx = {"element":element, "mapping":mapping};
 			var lef = $(element).offset().left;
 			var top = $(element).offset().top;
-			var wid = $(element).width();
-			var hei = $(element).height();
+			var wid = $(element).outerWidth();
+			var hei = $(element).outerHeight();
 		var rect = new Rect(lef,top, wid,hei);
 		var obj = {"rect": rect, "fxn": giau.CRUD._handleDragLifecycleFxn, "ctx": ctx};
 		bus.alertAll(giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE, obj);
 	}
 }
 
-giau.CRUD._boxDiv = function(name){
-	var div = new Code.newDiv();
-		Code.setContent(div,name+" "+"[x]");
-		Code.setStylePadding(div,name);
-		Code.setStyleBackgroundColor(div,"#C05");
-
-	return div;
-}
 /*
 (sections)
 
@@ -3950,9 +3981,6 @@ how to delete from list?
 
 */
 giau.CRUD._handleDragLifecycleFxn = function(event, data){
-	// console.log(event);
-	// console.log(this);
-	// console.log(data);
 	if(event==DragNDrop.EVENT_DRAG_INTERSECT_AREA_START){
 		//console.log("START");
 	}else if(event==DragNDrop.EVENT_DRAG_INTERSECT_AREA_STOP){
@@ -3965,49 +3993,34 @@ giau.CRUD._handleDragLifecycleFxn = function(event, data){
 		var element = this["element"];
 		if(element){
 			var valueArrayString = Code.getProperty(element,"data-value");
-			valueArray = valueArrayString ? valueArrayString.split(",") : [];
-			//valueArray.push(displayText);
+			valueArray = Code.arrayFromCommaSeparatedString(valueArrayString);
 			valueArrayString = valueArray.join(",");
 			Code.setProperty(element,"data-value",valueArrayString);
-			console.log(valueArrayString);
 			//Code.setContent(element,"new value: "+valueArrayString);
 		}
-		console.log(mapping);
-		console.log("WANT TO APPEND DATA TO DATA: ",data);
-		//mapping.updateDataFromElement();
-		mapping.updateDataFromOperation(); // op, action, event, CRUD
+		data = {"action":"append", "data":data}; // custom addition
+		mapping.updateDataFromAction(data); // op, action, event, CRUD
 		mapping.updateElementFromData();
-		//MapDataDisplay
-/*
-		//console.log("DROP");
-		var element = this["element"];
-		var displayText = data["display"];
-		var valueText = data["value"];
-		var source = data["source"];
-		if(element){
-			var valueArrayString = Code.getProperty(element,"data-value");
-			valueArray = valueArrayString ? valueArrayString.split(",") : [];
-			valueArray.push(displayText);
-			valueArrayString = valueArray.join(",");
-			Code.setProperty(element,"data-value",valueArrayString);
-
-			// set display from data
-
-// HERE
-console.log("HERE");
-			// 
-
-			var displayArrayString = Code.getProperty(element,"data-display");
-			displayArray = displayArrayString ? displayArrayString.split(",") : [];
-			displayArray.push(displayText);
-			displayArrayString = displayArray.join(",");
-			//Code.setProperty(element,"data-display",valueArrayString);
-
-			Code.setContent(element,displayArrayString);
-		}
-*/
 	}
 }
+giau.CRUD._boxActionHandle = function(event){
+	console.log("handle", this)
+}
+giau.CRUD._boxActionClose = function(event){
+	console.log("close", event, this)
+	var mapping = this["context"];
+	var index = this["index"];
+	var object = mapping.object();
+	var data = {"action":"remove", "data":{"index":index}};
+	mapping.updateDataFromAction(data);
+	mapping.updateElementFromData();
+}
+
+giau.CRUD._fieldEditDate = function(definition, container, fieldName, elementContainer, mapping){
+	var elementText = giau.CRUD._elementSelectDate(mapping);
+		Code.addChild(elementContainer,elementText);
+}
+
 giau.CRUD._fieldEditString = function(definition, container, fieldName, elementContainer, mapping){
 	var presentation = definition["presentation"];
 	var value = container[fieldName];
@@ -4018,32 +4031,52 @@ giau.CRUD._fieldEditString = function(definition, container, fieldName, elementC
 	if(presentation && presentation["drag_and_drop"]){ // DRAG AND DROP
 		var dd = presentation["drag_and_drop"];
 		var elementDrop = giau.CRUD._elementSelectDiscrete(mapping);
-Code.setProperty(elementDrop,"data-value")
 		Code.addChild(elementContainer,elementDrop);
 	}else{ // TEXTFIELD
 		var elementText = giau.CRUD._elementSelectString(mapping,value);
 		Code.addChild(elementContainer,elementText);
 	}
 }
-giau.CRUD._fieldEditStringUpdateElementFxn = function(data,field, element){
-	console.log("update element");
-	//var ele = Code.getElementWithProperty(element, "data-value");
-	var ele = Code.getChild(element,1);
-		ele = Code.getChild(ele,0);
-	console.log(ele) // TODO -- get from data-value
+
+giau.CRUD._fieldEditStringUpdateElementFxn = function(mapping){
+	var data = mapping.object();
+	var field = mapping.field();
+	var element = mapping.element();
+	var ele = Code.getElementsWithFunction(element, function(e){
+			return Code.hasProperty(e,"data-value");
+		}, true);
+	ele = ele.length > 0 ? ele[0] : null;
 	var value = data[field];
-	Code.setContent(ele, value);
+	if(ele && value){
+		var array = Code.arrayFromCommaSeparatedString(value);
+		var elements = giau.CRUD.generateBoxDivsFromArray(array, mapping, giau.CRUD._boxActionHandle, giau.CRUD._boxActionClose);
+		Code.removeAllChildren(ele);
+		for(var i=0; i<elements.length; ++i){
+			Code.addChild(ele,elements[i]);
+		}
+	}
 }
-giau.CRUD._fieldEditStringUpdateDataFxn = function(data,field, element){
-
-	console.log("update data");
-	console.log(data)
-	console.log(field)
-	console.log(element)
-
+giau.CRUD._fieldEditStringUpdateDataFxn = function(mapping, action){
+	var data = mapping.object();
+	var field = mapping.field();
+	var operation = action["action"];
+	var action = action["data"];
+	var originalValue = data[field];
+	var array = Code.arrayFromCommaSeparatedString(originalValue);
+	if(operation=="append"){
+		var actionValue = action["value"];
+			array.push(actionValue);
+		var appendedValue = Code.stringFromCommaSeparatedArray(array);
+		data[field] = appendedValue;
+	}else if(operation=="remove"){
+		var index = action["index"];
+			Code.removeElementAt(array,index);
+		var removedValue = Code.stringFromCommaSeparatedArray(array);
+		data[field] = removedValue;
+	}
 }
 
-giau.CRUD._fieldEditJSON = function(definition, attributes, presentation, value, source, elementContainer, mapping){
+giau.CRUD._fieldEditJSON = function(definition, container, fieldName, elementContainer, mapping){
 	var elementJSON = Code.newDiv();
 //mapping.element(elementContainer);
 return elementJSON;
@@ -4062,9 +4095,6 @@ return elementJSON;
 
 //giau.CRUD.prototype._mappingFromData = function(field, value, source){
 giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, itemIndex){
-	console.log(fieldDescription)
-	console.log(sourceObject)
-	console.log(itemIndex)
 	//
 	var alias = fieldDescription["alias"];
 	var column = fieldDescription["column"];
@@ -4098,7 +4128,7 @@ giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, 
 	var operationFxn = {};
 		operationFxn["string"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
 		operationFxn["string-number"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
-		operationFxn["string-date"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
+		operationFxn["string-date"] = [giau.CRUD._fieldEditDate,giau.CRUD._fieldEditDate];
 		operationFxn["string-color"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
 		operationFxn["string-array"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
 		operationFxn["string-json"] = [giau.CRUD._fieldEditJSON,giau.CRUD._fieldEditJSON];
@@ -4121,6 +4151,54 @@ giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, 
 giau.CRUD.prototype._checkSubmitChange = function(field, value, source){
 	var str = Code.StringFromJSON(model);
 	console.log(str)
+}
+
+
+giau.CRUD.generateBoxDivsFromArray = function(array, ctx, handleFxn, closeFxn){
+	if(!array){
+		return [];
+	}
+	var i, value, len = array.length;
+	var elements = [];
+	for(i=0; i<len; ++i){
+		value = array[i];
+		var obj = {"index":i, "context":ctx};
+		elements.push( giau.CRUD.generateBoxDiv(value, obj, handleFxn, closeFxn) );
+	}
+	return elements;
+}
+giau.CRUD._jsDispatch = new JSDispatch();
+giau.CRUD.generateBoxDiv = function(value, ctx, handleFxn, closeFxn){
+	var textColor = "#FFF";
+	var backgroundColor = giau.Theme.Color.MediumRed;
+	var borderColor = giau.Theme.Color.DarkRed;
+	var container = Code.newDiv();
+		Code.setStylePadding(container,4+"px");
+		Code.setStyleDisplay(container,"inline-block");
+		Code.setStyleBorderWidth(container,1+"px");
+		Code.setStyleBorderColor(container,borderColor);
+		Code.setStyleBorder(container,"solid");
+		Code.setStyleFontSize(container,12+"px");
+		Code.setStyleBackgroundColor(container,backgroundColor);
+		Code.setStyleBorderRadius(container,2+"px");
+	var content = Code.newDiv();
+		Code.setContent(content,value+""+"&nbsp;");
+		Code.setStyleDisplay(content,"inline");
+		Code.setStyleColor(content,textColor);
+	var closeButton = Code.newDiv();
+		Code.setContent(closeButton,"[x]");
+		Code.setStyleDisplay(closeButton,"inline");
+		Code.setStyleColor(closeButton,textColor);
+	Code.addChild(container,content);
+	Code.addChild(container,closeButton);
+	if(closeFxn){
+		this._jsDispatch.addJSEventListener(closeButton, Code.JS_EVENT_CLICK, closeFxn, ctx);
+	}
+	if(handleFxn){
+		this._jsDispatch.addJSEventListener(content, Code.JS_EVENT_CLICK, handleFxn, ctx);
+	}
+
+	return container;
 }
 
 

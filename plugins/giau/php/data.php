@@ -321,7 +321,7 @@ function giau_data_default_insert_into_database(){
 
 	giau_insert_languagization($langEng,"LANGUAGE_SWITCH_ENGLISH_TEXT","EN");
 		//giau_insert_languagization($langKor,"LANGUAGE_SWITCH_ENGLISH_TEXT","한국의");
-	giau_insert_languagization($langEng,"LANGUAGE_SWITCH_KOREAN_TEXT","한글");	
+	giau_insert_languagization($langEng,"LANGUAGE_SWITCH_KOREAN_TEXT","한국어");	
 		//giau_insert_languagization($langKor,"LANGUAGE_SWITCH_KOREAN_TEXT","KO");
 
 	giau_insert_languagization($langEng,"FOOTER_TITLE_TEXT","THE FATHER'S HOUSE");
@@ -1171,11 +1171,13 @@ function giau_data_default_insert_into_database(){
 			"languages" => [
 				[
 					"display_text" => "LANGUAGE_SWITCH_ENGLISH_TEXT",
-					"language_name" => "en"
+					"language_name" => "en",
+					"enabled" => "true",
 				],
 				[
 					"display_text" => "LANGUAGE_SWITCH_KOREAN_TEXT",
-					"language_name" => "ko"
+					"language_name" => "ko",
+					"enabled" => "false",
 				],
 			],
 			"color" => "0xFFFFFFFF",

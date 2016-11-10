@@ -159,77 +159,82 @@ function giau_wordpress_data_service(){
 			$response["data"] = [];
 // LANGUAGIZATION SERVICE --------------------------------------------------------------------------------------------------------------
 		}else if($operationType=="page_data"){
-			/*
-			lang:
-				- set of options for language
-			sect:
-				- use model & object model for config
-				- use section list id-library
-			page:
-				- 
-			- comma-separated array fields
-			// get a list
-				- offset, count, ordering
-				=> total, columns = all column names, data = each row entry
-			// add a new row
-				=> columns & options/specs
-				- values
-				=> created column
-			// delete a row
-				- id
-				=> success/fail
-			// edit a row
-				- values WHERE id
-			*/
-			$offset = 46;
-			$count = 1;
-			$requestInfo = [];
-			$requestInfo["offset"] = $offset;
-			$requestInfo["count"] = $count;
-			$requestInfo["query"] = "
-	    SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".created as section_created,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as section_modified,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".configuration as section_configuration,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".section_list as section_list,
-	    ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id,
-	    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name,
-	    ".GIAU_FULL_TABLE_NAME_WIDGET().".configuration as widget_configuration
-	    FROM ".GIAU_FULL_TABLE_NAME_SECTION()."
-	    JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
-	    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
-	";
-			paged_data_service($requestInfo, table_info_section(), $response );
+			$tableSourceName = $_POST['table'];
+			if($tableSourceName=="languagization"){
+				error_log("TODO LANG");
+			}else if($tableSourceName=="sections"){
+				/*
+				lang:
+					- set of options for language
+				sect:
+					- use model & object model for config
+					- use section list id-library
+				page:
+					- 
+				- comma-separated array fields
+				// get a list
+					- offset, count, ordering
+					=> total, columns = all column names, data = each row entry
+				// add a new row
+					=> columns & options/specs
+					- values
+					=> created column
+				// delete a row
+					- id
+					=> success/fail
+				// edit a row
+					- values WHERE id
+				*/
+				$offset = 46;
+				$count = 1;
+				$requestInfo = [];
+				$requestInfo["offset"] = $offset;
+				$requestInfo["count"] = $count;
+				$requestInfo["query"] = "
+		    SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
+		    ".GIAU_FULL_TABLE_NAME_SECTION().".created as section_created,
+		    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as section_modified,
+		    ".GIAU_FULL_TABLE_NAME_SECTION().".configuration as section_configuration,
+		    ".GIAU_FULL_TABLE_NAME_SECTION().".section_list as section_subsections,
+		    ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id,
+		    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name,
+		    ".GIAU_FULL_TABLE_NAME_WIDGET().".configuration as widget_configuration
+		    FROM ".GIAU_FULL_TABLE_NAME_SECTION()."
+		    JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
+		    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
+		";
+				paged_data_service($requestInfo, table_info_section(), $response );
 
-			// LIST SUBSECTIONS IN METADATA FOR DISPLAY
-			$rows = &$response["data"];
-			$i;
-			$len = count($rows);
-			$foundSubsections = [];
-			for($i=0; $i<$len; ++$i){
-				$row = &$rows[$i];
-				$subsections = $row["section_list"];
-				$subsections = arrayFromCommaSeparatedString($subsections);
-				foreach ($subsections as $section){
-					$index = "".$section;
-					if( $index !="" ){
-						$foundSubsections[$index] = true;
+				// LIST SUBSECTIONS IN METADATA FOR DISPLAY
+				$rows = &$response["data"];
+				$i;
+				$len = count($rows);
+				$foundSubsections = [];
+				for($i=0; $i<$len; ++$i){
+					$row = &$rows[$i];
+					$subsections = $row["section_list"];
+					$subsections = arrayFromCommaSeparatedString($subsections);
+					foreach ($subsections as $section){
+						$index = "".$section;
+						if( $index !="" ){
+							$foundSubsections[$index] = true;
+						}
 					}
 				}
-			}
-			$foundSubsections = array_keys($foundSubsections);
-			//
-			$subsections = [];
-			if( count($foundSubsections)>0){
-				$subsectionsList = implode(",",$foundSubsections);
-				global $wpdb;
-				$query = 'SELECT '.GIAU_FULL_TABLE_NAME_SECTION().'.* FROM '.GIAU_FULL_TABLE_NAME_SECTION().' WHERE id IN ('.$subsectionsList.')';
-				$subsections = $wpdb->get_results($query, ARRAY_A);
-			}
-			$metadata["subsections"] = $subsections;
-			$response["metadata"] = $metadata;
+				$foundSubsections = array_keys($foundSubsections);
+				//
+				$subsections = [];
+				if( count($foundSubsections)>0){
+					$subsectionsList = implode(",",$foundSubsections);
+					global $wpdb;
+					$query = 'SELECT '.GIAU_FULL_TABLE_NAME_SECTION().'.* FROM '.GIAU_FULL_TABLE_NAME_SECTION().' WHERE id IN ('.$subsectionsList.')';
+					$subsections = $wpdb->get_results($query, ARRAY_A);
+				}
+				$metadata["subsections"] = $subsections;
+				$response["metadata"] = $metadata;
+				$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( GIAU_TABLE_DEFINITION_SECTION() );
 
-			$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( GIAU_TABLE_DEFINITION_SECTION() );
+			}
 		}else{// if($operationType=="file_upload"){
 			$result = exec('whoami');
 			error_log("who am i: ".$result);

@@ -162,7 +162,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				"section_modified" => "modified",
 				"section_configuration" => "configuration",
 				"section_subsections" => "section_list",
-				"section_extend_widget_id" => "extend",
+//				"section_extend_widget_id" => "extend",
 				// unavailable
 				"widget_id" => null,
 				"widget_name" => "widget_name",
@@ -261,6 +261,20 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 			],
 		],
 		"presentation" => [
+			"column_aliases" => [
+// 				"section_id" => "id",
+// 				"section_created" => "created",
+// 				"section_modified" => "modified",
+// 				"section_configuration" => "configuration",
+// 				"section_subsections" => "section_list",
+// //				"section_extend_widget_id" => "extend",
+// 				// unavailable
+// 				"widget_id" => null,
+// 				"widget_name" => "widget_name",
+// 				"widget_configuration" => null,
+			],
+
+
 			"row_grouping" => [
 				"hash_index",
 			],
