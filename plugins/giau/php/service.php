@@ -162,6 +162,26 @@ function giau_wordpress_data_service(){
 			$tableSourceName = $_POST['table'];
 			if($tableSourceName=="languagization"){
 				error_log("TODO LANG");
+				$offset = 46;
+				$count = 1;
+				$requestInfo = [];
+				$requestInfo["offset"] = $offset;
+				$requestInfo["count"] = $count;
+				$requestInfo["query"] = "
+				    SELECT ".GIAU_FULL_TABLE_NAME_LANGUAGIZATION().".id as languagization_id,
+				    ".GIAU_FULL_TABLE_NAME_SECTION().".created as languagization_created,
+				    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as languagization_modified,
+				    ".GIAU_FULL_TABLE_NAME_SECTION().".hash_index as languagization_hash,
+				    ".GIAU_FULL_TABLE_NAME_SECTION().".language as languagization_language,
+				    ".GIAU_FULL_TABLE_NAME_WIDGET().".phrase_value as languagization_phrase,
+				    FROM ".GIAU_FULL_TABLE_NAME_SECTION()."
+				    ORDER BY hash_index ASC, modified DESC 
+				";
+				paged_data_service($requestInfo, table_info_section(), $response );
+				//
+				$metadata[] = [];
+				$response["metadata"] = $metadata;
+				$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( GIAU_TABLE_DEFINITION_LANGUAGIZATION() );
 			}else if($tableSourceName=="sections"){
 				/*
 				lang:
@@ -191,18 +211,18 @@ function giau_wordpress_data_service(){
 				$requestInfo["offset"] = $offset;
 				$requestInfo["count"] = $count;
 				$requestInfo["query"] = "
-		    SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
-		    ".GIAU_FULL_TABLE_NAME_SECTION().".created as section_created,
-		    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as section_modified,
-		    ".GIAU_FULL_TABLE_NAME_SECTION().".configuration as section_configuration,
-		    ".GIAU_FULL_TABLE_NAME_SECTION().".section_list as section_subsections,
-		    ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id,
-		    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name,
-		    ".GIAU_FULL_TABLE_NAME_WIDGET().".configuration as widget_configuration
-		    FROM ".GIAU_FULL_TABLE_NAME_SECTION()."
-		    JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
-		    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
-		";
+				    SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
+				    ".GIAU_FULL_TABLE_NAME_SECTION().".created as section_created,
+				    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as section_modified,
+				    ".GIAU_FULL_TABLE_NAME_SECTION().".configuration as section_configuration,
+				    ".GIAU_FULL_TABLE_NAME_SECTION().".section_list as section_subsections,
+				    ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id,
+				    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name,
+				    ".GIAU_FULL_TABLE_NAME_WIDGET().".configuration as widget_configuration
+				    FROM ".GIAU_FULL_TABLE_NAME_SECTION()."
+				    JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
+				    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
+				";
 				paged_data_service($requestInfo, table_info_section(), $response );
 
 				// LIST SUBSECTIONS IN METADATA FOR DISPLAY

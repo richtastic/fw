@@ -262,25 +262,24 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 		],
 		"presentation" => [
 			"column_aliases" => [
-// 				"section_id" => "id",
-// 				"section_created" => "created",
-// 				"section_modified" => "modified",
-// 				"section_configuration" => "configuration",
-// 				"section_subsections" => "section_list",
-// //				"section_extend_widget_id" => "extend",
-// 				// unavailable
-// 				"widget_id" => null,
-// 				"widget_name" => "widget_name",
-// 				"widget_configuration" => null,
+				"languagization_id" => "id",
+				"languagization_created" => "created",
+				"languagization_modified" => "modified",
+				"languagization_hash" => "hash_index",
+				"languagization_language" => "language",
+				"languagization_phrase" => "phrase_value",
 			],
-
-
-			"row_grouping" => [
-				"hash_index",
-			],
+			"columns" => [
+				"hash_index" => [
+					"row_grouping" => [
+						//
+					]
+				]
+			]
 		]
 	];
 }
+
 // DEFINITIONS
 
 	// sectioned, binned, boxed, atomic, tagged, capsule, parcel

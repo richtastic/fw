@@ -489,9 +489,12 @@ function handle_widget_language_switch($widget,$section){
 			$language = $languages[$i];
 			$lang = $language["language_name"];
 			$display = $language["display_text"];
+			$isEnabled = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"enabled") ? "true" : "false";
+
 			$display = giau_languagization_substitution_and_html($display,null);
+
 			?>
-			<div class="<?php echo $klass; ?>" style="display:inline-block; <?php echo $style; ?>" data-language="<?php echo $lang; ?>" data-display="<?php echo $display; ?>" data-url="./"></div>
+			<div class="<?php echo $klass; ?>" style="display:inline-block; <?php echo $style; ?>" data-language="<?php echo $lang; ?>" data-display="<?php echo $display; ?>" data-url="./" data-enabled="<?php echo $isEnabled; ?>"></div>
 			<?php
 		}
 	?>

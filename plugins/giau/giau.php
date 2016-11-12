@@ -454,12 +454,6 @@ function giau_admin_menu_page_submenu(){
 	$form_name = "admin_tools_form";
 
 error_log("RICHIE --- ".esc_url( $_SERVER['REQUEST_URI'] ) );
-//error_log("GOT --- ".$_POST["richie"] );
-// if( isset($_POST["richie"]) ) {
-// 	error_log("DO" );
-// 	giau_insert_bio('Richie','Last','Disp','Position', 'email', 'phone','description','uri','image','tags');
-// }
-
 
 if( isset($_POST) && isset($_POST['form_id']) ){
 	error_log("form data, send back json ??? " );

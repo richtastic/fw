@@ -28,6 +28,7 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"BIO_DESCRIPTION_JOSEPH_KIM_TEXT","Joseph is happily married to Joyce, the woman of his dreams. He has a bachelor’s degree in civil engineering and a Master of Divinity degree and was called into vocational ministry in 2004. He began serving at LACPC as a high school pastor in December 2006 and by God’s grace is currently serving as the director of Christian Education.");
 		giau_insert_languagization($langKor,"BIO_DESCRIPTION_JOSEPH_KIM_TEXT","요셉은 꿈의 여인같은 아내 죠이스 씨랑  행복한 삶을 살고 있습니다.  토목 공사 학사 학위와 신학 석사 학위를 지니고, 2004년에 전문 사역의 부름을 받으며, 2006년 12월 LACPC 의 고등부 담임 목사로 시작하여 현재 하나님의 은혜로 기독교 교육부 이사로 섬기고 있습니다.");
 	giau_insert_languagization($langEng,"BIO_URI_JOSEPH_KIM_URI_TEXT","");
+	giau_insert_languagization($langEng,"BIO_URI_JOSEPH_KIM_IMAGE_URI","/images/personnel/ce-joe.png");
 	
 	giau_insert_languagization($langEng,"BIO_FIRST_NAME_TONY_PARK_TEXT","Tony");
 	giau_insert_languagization($langEng,"BIO_LAST_NAME_TONY_PARK_TEXT","Park");
@@ -37,16 +38,18 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"BIO_PHONE_TONY_PARK_TEXT","");
 	giau_insert_languagization($langEng,"BIO_DESCRIPTION_TONY_PARK_TEXT","");
 	giau_insert_languagization($langEng,"BIO_URI_TONY_PARK_URI_TEXT","");
+	giau_insert_languagization($langEng,"BIO_URI_TONY_PARK_IMAGE_URI","");
 
 	giau_insert_languagization($langEng,"BIO_FIRST_NAME_KURT_KIM_TEXT","Kurt");
 	giau_insert_languagization($langEng,"BIO_LAST_NAME_KURT_KIM_TEXT","Kim");
-	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_KURT_KIM_TEXT","Jangyeon Kim");
+	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_KURT_KIM_TEXT","Kurt Kim");
 	giau_insert_languagization($langEng,"BIO_POSITION_KURT_KIM_TEXT","Secretary");
 		giau_insert_languagization($langKor,"BIO_POSITION_KURT_KIM_TEXT","서기");
 	giau_insert_languagization($langEng,"BIO_EMAIL_KURT_KIM_TEXT","jangyeaonkim@gmail.com");
 	giau_insert_languagization($langEng,"BIO_PHONE_KURT_KIM_TEXT","5268571224");
 	giau_insert_languagization($langEng,"BIO_DESCRIPTION_KURT_KIM_TEXT","");
 	giau_insert_languagization($langEng,"BIO_URI_KURT_KIM_URI_TEXT","");
+	giau_insert_languagization($langEng,"BIO_URI_KURT_KIM_IMAGE_URI","");
 
 	giau_insert_languagization($langEng,"BIO_FIRST_NAME_SEBASTIAN_LEE_TEXT","Sebastian");
 	giau_insert_languagization($langEng,"BIO_LAST_NAME_SEBASTIAN_LEE_TEXT","Lee");
@@ -56,6 +59,7 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"BIO_PHONE_SEBASTIAN_LEE_TEXT","");
 	giau_insert_languagization($langEng,"BIO_DESCRIPTION_SEBASTIAN_LEE_TEXT","");
 	giau_insert_languagization($langEng,"BIO_URI_SEBASTIAN_LEE_URI_TEXT","");
+	giau_insert_languagization($langEng,"BIO_URI_SEBASTIAN_LEE_IMAGE_URI","");
 
 	giau_insert_languagization($langEng,"BIO_FIRST_NAME_ANDREW_LIM_TEXT","Andrew");
 	giau_insert_languagization($langEng,"BIO_LAST_NAME_ANDREW_LIM_TEXT","Lim");
@@ -67,6 +71,7 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"BIO_DESCRIPTION_ANDREW_LIM_TEXT","Andrew has been attending LACPC ever since he was a high school freshman. He got his bachelor’s degree from UC Irvine and a Masters in Pastoral Studies from Azusa Pacific University. He has been serving as the high school pastor since May of last year and also works full time as a high school English teacher.");
 		giau_insert_languagization($langKor,"BIO_DESCRIPTION_ANDREW_LIM_TEXT","앤드류는 고등학교 1학년떄부터LACPC 의 멤버였으며, 유시 얼바인 에서 학위를 받았고, 아주사 퍼시픽 대학원에서 목회 학사 학위를 받았습니다. 지난 해 5월달부터 고등부 목사 또는 고등부 영어 교사로 섬기고 있습니다.");
 	giau_insert_languagization($langEng,"BIO_URI_ANDREW_LIM_URI_TEXT","");
+	giau_insert_languagization($langEng,"BIO_URI_ANDREW_LIM_IMAGE_URI","/images/personnel/ce-andy.png");
 
 	giau_insert_languagization($langEng,"BIO_FIRST_NAME_BORAM_LEE_TEXT","Boram");
 	giau_insert_languagization($langEng,"BIO_LAST_NAME_BORAM_LEE_TEXT","Lee");
@@ -78,7 +83,9 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"BIO_DESCRIPTION_BORAM_LEE_TEXT","Born and raised in Los Angeles, Boram has a BA in cognitive psychology, a multiple subjects credential, and a master’s degree in teaching. She began seminary in January 2013 at Azusa Pacific University where she is studying to obtain an MA in pastoral studies with an emphasis is youth and family ministry. Her passion is to serve and train young children so that they can develop a solid relationship with God.");
 		giau_insert_languagization($langKor,"BIO_DESCRIPTION_BORAM_LEE_TEXT","로스 앤젤레스에서 태어나 자란 보람 씨는 심리학 또는 여러 과목 자격 증명을 얻고, 교육 석사 학위를 가지고 있습니다. 보람 씨는 2013년 1월 아주사 퍼시픽 대학교에서 신학 공부를 시작하였고, 현재 청소년과 가족 사역을 중점으로 하여 목회 학위를 얻기 위해 공부하고 있습니다. 그녀의 열정은 어린이들이 주님과 견고한 관계를 발전 할 수 있도록 가리키고 봉사하는 것입니다.");
 	giau_insert_languagization($langEng,"BIO_URI_BORAM_LEE_URI_TEXT","");
+	giau_insert_languagization($langEng,"BIO_URI_BORAM_LEE_IMAGE_URI","/images/personnel/ce-boram.png");
 
+	/*
 	giau_insert_languagization($langEng,"BIO_FIRST_NAME_SHEEN_HONG_TEXT","Sheen");
 	giau_insert_languagization($langEng,"BIO_LAST_NAME_SHEEN_HONG_TEXT","Hong");
 	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_SHEEN_HONG_TEXT","Sheen Hong");
@@ -89,6 +96,22 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"BIO_DESCRIPTION_SHEEN_HONG_TEXT","Sheen Hong is a loving mother of two children, Karis and Jin-Sung, and happy wife of Joshua, husband and a Chaplain. She has a bachelor’s degree in Christian education and Master of Arts degree in Christian Education. She was called into Children’s ministry in 2009. She began serving at LACPC as a Kindergarten pastor in December 2015.");
 		giau_insert_languagization($langKor,"BIO_DESCRIPTION_SHEEN_HONG_TEXT","쉰 홍씨는 사랑스러운 카리스 그리고 진성의 엄마이자, 남편 여호수아씨의 행복한 아내입니다. 기독교 교육과 예술 학위를 가지고있으며, 그녀는2009 년에 어린이부 사역에 부름을 받았습니다. 12 월 2015 년에 LACPC 유치부 담임 목사로 섬기기 시작하였습니다.");
 	giau_insert_languagization($langEng,"BIO_URI_SHEEN_HONG_URI_TEXT","");
+	*/
+
+	giau_insert_languagization($langEng,"BIO_FIRST_NAME_LISA_LEE_TEXT","Lisa");
+	giau_insert_languagization($langEng,"BIO_LAST_NAME_LISA_LEE_TEXT","Lee");
+	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_LISA_LEE_TEXT","Pastor Lisa Lee");
+	giau_insert_languagization($langEng,"BIO_POSITION_LISA_LEE_TEXT","");
+	giau_insert_languagization($langEng,"BIO_EMAIL_LISA_LEE_TEXT","");
+	giau_insert_languagization($langEng,"BIO_PHONE_LISA_LEE_TEXT","");
+	giau_insert_languagization($langEng,"BIO_DESCRIPTION_LISA_LEE_TEXT","Lisa graduated from Princeton Theological Seminary in May of 2016. She recently moved back home to California. She is currently teaching part-time at Azusa Pacific University. She has a BA in Psychology Social Behavior from UC Irvine and an MA in TESOL from Teachers College, Columbia University. Her commitment is to teach and to share God's love with the youth during their formational years. She is excited to be a part of God's work at LACPC.");
+	giau_insert_languagization($langEng,"BIO_URI_NAME_LISA_LEE_URI_TEXT","");
+	giau_insert_languagization($langEng,"BIO_URI_NAME_LISA_IMAGE_URI","");
+
+
+
+
+Kindergarten Pastor - remove Sheen Hong and replace with Pastor Joseph Kim info.
 
 	giau_insert_languagization($langEng,"BIO_FIRST_NAME_JESSICA_WON_TEXT","Jessica");
 	giau_insert_languagization($langEng,"BIO_LAST_NAME_JESSICA_WON_TEXT","Won");
@@ -143,7 +166,7 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT","Hallelujah Night");
 	giau_insert_languagization($langKor,"CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT","할렐루야 의 밤");
 
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT","CE Pastors’ Retreat");
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT","CE Teachers and Staff Retreat");
 	giau_insert_languagization($langKor,"CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT","CE 목사 후퇴");
 
 	giau_insert_languagization($langEng,"CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT","CE Thanksgiving Worship");
@@ -182,7 +205,7 @@ function giau_data_default_insert_into_database(){
 	giau_insert_calendar("event_orange_tour_2016","CALENDAR_EVENT_ORANGE_TOUR_CONFERENCE_2016_TITLE_TEXT","CALENDAR_EVENT_ORANGE_TOUR_CONFERENCE_2016_TITLE_TEXT", stringFromHumanTime(2016, 9,20, 0, 0, 0, 0), 1*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
 	giau_insert_calendar("event_korean_challenge_2016","CALENDAR_EVENT_KOREAN_CHALLENGE_2016_TITLE_TEXT","CALENDAR_EVENT_KOREAN_CHALLENGE_2016_DESCRIPTION_TEXT", stringFromHumanTime(2016, 9,25, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
 	giau_insert_calendar("event_hallelujah_2016","CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT","CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT", stringFromHumanTime(2016,10,31, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
-	giau_insert_calendar("event_pastor_retreat_2016","CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT","CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT", stringFromHumanTime(2016,11,10, 0, 0, 0, 0), 1*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_pastor_retreat_2016","CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT","CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT", stringFromHumanTime(2016,11,18, 0, 0, 0, 0), 1*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
 	giau_insert_calendar("event_thanksgiving_worship_2016","CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT","CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT", stringFromHumanTime(2016,11,20, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
 	giau_insert_calendar("event_teacher_appreciation_2016","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT", stringFromHumanTime(2016,12,10, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
 	giau_insert_calendar("event_christmas_celebration_2016","CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT","CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT", stringFromHumanTime(2016,12,23, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
@@ -203,8 +226,8 @@ function giau_data_default_insert_into_database(){
 			'BIO_PHONE_JOSEPH_KIM_TEXT',
 			'BIO_DESCRIPTION_JOSEPH_KIM_TEXT',
 			'BIO_URI_JOSEPH_KIM_URI_TEXT',
-			'/images/personnel/ce-joe.png',
-			'bio,contact,juniorhigh'
+			'BIO_URI_JOSEPH_KIM_IMAGE_URI',
+			'bio,contact,kindergarten'
 	);
 	giau_insert_bio(
 			'BIO_FIRST_NAME_TONY_PARK_TEXT',
@@ -215,7 +238,7 @@ function giau_data_default_insert_into_database(){
 			'BIO_PHONE_TONY_PARK_TEXT',
 			'BIO_DESCRIPTION_TONY_PARK_TEXT',
 			'BIO_URI_TONY_PARK_URI_TEXT',
-			'',
+			'BIO_URI_TONY_PARK_IMAGE_URI',
 			'bio'
 	);
 	giau_insert_bio(
@@ -227,7 +250,7 @@ function giau_data_default_insert_into_database(){
 			'BIO_PHONE_KURT_KIM_TEXT',
 			'BIO_DESCRIPTION_KURT_KIM_TEXT',
 			'BIO_URI_KURT_KIM_URI_TEXT',
-			'',
+			'BIO_URI_KURT_KIM_IMAGE_URI',
 			'bio,contact'
 	);
 	giau_insert_bio(
@@ -239,7 +262,7 @@ function giau_data_default_insert_into_database(){
 			'BIO_PHONE_SEBASTIAN_LEE_TEXT',
 			'BIO_DESCRIPTION_SEBASTIAN_LEE_TEXT',
 			'BIO_URI_SEBASTIAN_LEE_URI_TEXT',
-			'',
+			'BIO_URI_SEBASTIAN_LEE_IMAGE_URI',
 			'bio'
 	);
 	giau_insert_bio(
@@ -251,7 +274,7 @@ function giau_data_default_insert_into_database(){
 			'BIO_PHONE_ANDREW_LIM_TEXT',
 			'BIO_DESCRIPTION_ANDREW_LIM_TEXT',
 			'BIO_URI_ANDREW_LIM_URI_TEXT',
-			'/images/personnel/ce-andy.png',
+			'BIO_URI_ANDREW_LIM_IMAGE_URI',
 			'bio,contact,highschool'
 	);
 	giau_insert_bio(
@@ -263,21 +286,34 @@ function giau_data_default_insert_into_database(){
 			'BIO_PHONE_BORAM_LEE_TEXT',
 			'BIO_DESCRIPTION_BORAM_LEE_TEXT',
 			'BIO_URI_BORAM_LEE_URI_TEXT',
-			'/images/personnel/ce-boram.png',
+			'BIO_URI_BORAM_LEE_IMAGE_URI',
 			'bio,contact,elementary'
 	);
-	giau_insert_bio(
-			'BIO_FIRST_NAME_SHEEN_HONG_TEXT',
-			'BIO_LAST_NAME_SHEEN_HONG_TEXT',
-			'BIO_DISPLAY_NAME_SHEEN_HONG_TEXT',
-			'BIO_POSITION_SHEEN_HONG_TEXT',
-			'BIO_EMAIL_SHEEN_HONG_TEXT',
-			'BIO_PHONE_SHEEN_HONG_TEXT',
-			'BIO_DESCRIPTION_SHEEN_HONG_TEXT',
-			'BIO_URI_SHEEN_HONG_URI_TEXT',
-			'/images/personnel/ce-hong.png',
-			'bio,contact,kindergarten'
+	// giau_insert_bio(
+	// 		'BIO_FIRST_NAME_SHEEN_HONG_TEXT',
+	// 		'BIO_LAST_NAME_SHEEN_HONG_TEXT',
+	// 		'BIO_DISPLAY_NAME_SHEEN_HONG_TEXT',
+	// 		'BIO_POSITION_SHEEN_HONG_TEXT',
+	// 		'BIO_EMAIL_SHEEN_HONG_TEXT',
+	// 		'BIO_PHONE_SHEEN_HONG_TEXT',
+	// 		'BIO_DESCRIPTION_SHEEN_HONG_TEXT',
+	// 		'BIO_URI_SHEEN_HONG_URI_TEXT',
+	// 		'/images/personnel/ce-hong.png',
+	// 		'bio,contact,kindergarten'
+	// );
+		giau_insert_bio(
+			'BIO_FIRST_NAME_LISA_LEE_TEXT',
+			'BIO_LAST_NAME_LISA_LEE_TEXT',
+			'BIO_DISPLAY_NAME_LISA_LEE_TEXT',
+			'BIO_POSITION_LISA_LEE_TEXT',
+			'BIO_EMAIL_LISA_LEE_TEXT',
+			'BIO_PHONE_LISA_LEE_TEXT',
+			'BIO_DESCRIPTION_LISA_LEE_TEXT',
+			'BIO_URI_NAME_LISA_LEE_URI_TEXT',
+			'BIO_URI_NAME_LISA_IMAGE_URI',
+			'bio,contact,juniorhigh'
 	);
+
 	giau_insert_bio(
 			'BIO_FIRST_NAME_JESSICA_WON_TEXT',
 			'BIO_LAST_NAME_JESSICA_WON_TEXT',
