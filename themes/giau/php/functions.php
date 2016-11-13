@@ -165,9 +165,8 @@ function create_page(){
 	</head>
 	<body style="bgColor:#F00; margin: 0 auto;">
 	<?php
-		error_log("PAgE: ".$pageRequest);
-		$page = giau_get_page_tag($pageRequest);
-		// fillOutPageFromID($page["id"]);
+		//$page = giau_get_page_tag($pageRequest);
+		//fillOutPageFromID($page["id"]);
 		// <div class="giauFileBrowser limitedWidth" style=""></div>
 	?>
 

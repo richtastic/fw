@@ -351,6 +351,12 @@ function handle_widget_personnel_coverage($widget,$section){
 	$count = null;
 	$sortIndexDirection = null;
 	$tags = section_get_value_widget_array($widgetJSON,$sectionJSON,"tags");
+
+	$defaultImage = section_get_value_widget_string($widgetJSON,$sectionJSON,"default_image");
+		// $defaultImage = "/images/personnel/anonymous.png";
+	$defaultImage = giau_plugin_url_from_any_url($defaultImage);
+
+
 	$bios = giau_bio_paginated($offset,$count,$sortIndexDirection,$tags);
 
 	$bios = giau_bio_paginated($offset,$count,$sortIndexDirection,$tags);
@@ -360,7 +366,11 @@ function handle_widget_personnel_coverage($widget,$section){
 	for($i=0; $i<$bioCount; ++$i){
 		$bio = $bios[$i];
 		$image = $bio["image_url"];
+			$image = giau_languagization_substitution($image); // _and_html
 			$image = giau_plugin_url_from_any_url($image);
+		if(!$image){
+			$image = $defaultImage;
+		}
 		$name = $bio["display_name"];
 		$email = $bio["email"];
 		$phone = $bio["phone"];
@@ -724,8 +734,9 @@ function handle_widget_bio_listing($widget,$section){
 
 	$bios = giau_bio_paginated($offset,$count,$sortIndexDirection,$tags);
 	$bioCount = count($bios);
-
+//  style="background-color: rgb(246, 247, 29);">
 	?>
+	<div class="giauBiographyListContainer">
 	<div class="giauBiographyList <?php echo $klass; ?>" style="<?php echo $style; ?>" data-default-image="<?php echo $defaultImage; ?>" data-default-description="<?php echo $defaultBio; ?>">
 	<?php
 		$i;
@@ -741,6 +752,7 @@ function handle_widget_bio_listing($widget,$section){
 			$description = $bio["description"];
 			$uri = $bio["uri"];
 			$image = $bio["image_url"];
+				$image = giau_languagization_substitution($image); // _and_html
 			if($image!=""){
 				$image = giau_plugin_url_from_any_url($image);
 			}
@@ -758,6 +770,7 @@ function handle_widget_bio_listing($widget,$section){
 			<?php
 		}
 	?>
+	</div>
 	</div>
 	<?php
 

@@ -73,6 +73,72 @@ function GIAU_TABLE_DEFINITION_TO_PRESENTATION(&$tableDefinition){
 	return $tableDefinition;
 
 }
+function GIAU_TABLE_DEFINITION_WIDGET(){
+	return
+	[
+		"table" => GIAU_FULL_TABLE_NAME_WIDGET(),
+		"columns" => [
+			"id" =>  [
+				"type" => "string-number",
+				"attributes" =>  [
+					"display_name" => "ID",
+					"order" => "0",
+					"primary_key" => "true",
+					"sort" => "false",
+					"editable" => "false",
+				],
+			],
+			"created" => [
+				"type" => "string-date",
+				"attributes" =>  [
+					"display_name" => "Created",
+					"order" => "1",
+					"sort" =>  "true",
+					"editable" => "false",
+				],
+			],
+			"modified" => [
+				"type" => "string-date",
+				"attributes" =>  [
+					"display_name" => "Modified",
+					"order" => "2",
+					"sort" =>  "true",
+					"editable" => "false",
+				],
+			],
+			"name" => [
+				"type" => "string",
+				"attributes" =>  [
+					"display_name" => "Name",
+					"order" => "3",
+					"sort" =>  "true",
+					"editable" => "true",
+				],
+			],
+			"configuration" => [
+				"type" => "string-json",
+				"attributes" =>  [
+					"display_name" => "Configuration",
+					"order" => "5",
+					"sort" =>  "false",
+					"editable" => "true",
+				],
+			]
+		],
+		"presentation" => [
+			"column_aliases" => [
+				"widget_id" => "id",
+				"widget_created" => "created",
+				"widget_modified" => "modified",
+				"widget_name" => "widget_name",
+				"widget_configuration" => "configuration",
+			],
+			"columns" => [
+				// 
+			]
+		]
+	];
+}
 function GIAU_TABLE_DEFINITION_SECTION(){
 	return
 	[
@@ -279,9 +345,391 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 		]
 	];
 }
+function GIAU_TABLE_DEFINITION_BIO(){
+	return
+	[
+		"table" => GIAU_FULL_TABLE_NAME_BIO(),
+		"columns" => [
+			"id" => [
+				"type" => "string-number",
+				"attributes" => [
+					"display_name" => "ID",
+					"order" => "0",
+					"primary_key" => "true",
+					"sort" =>  "false",
+					"editable" => "false",
+				],
+			],
+			"created" => [
+				"type" => "string-date",
+				"attributes" => [
+					"display_name" => "Created",
+					"order" => "1",
+					"sort" =>  "true",
+					"editable" => "false",
+				],
+			],
+			"modified" => [
+				"type" => "string-date",
+				"attributes" => [
+					"display_name" => "Modified",
+					"order" => "2",
+					"sort" =>  "true",
+					"editable" => "false",
+				],
+			],
+			"first_name" => [
+				"type" => "string",
+				"attributes" => [
+					"display_name" => "First Name",
+					"order" => "5",
+					"sort" =>  "true",
+					"editable" => "true",
+				],
+			],
+			"last_name" => [
+				"type" => "string",
+				"attributes" => [
+					"display_name" => "Last Name",
+					"order" => "5",
+					"sort" =>  "true",
+					"editable" => "true",
+				],
+			],
+			"display_name" => [
+				"type" => "string",
+				"attributes" => [
+					"display_name" => "Display Name",
+					"order" => "5",
+					"sort" =>  "true",
+					"editable" => "true",
+				],
+			],
+			"position" => [
+				"type" => "string",
+				"attributes" => [
+					"display_name" => "Position",
+					"order" => "5",
+					"sort" =>  "true",
+					"editable" => "true",
+				],
+			],
+			"email" => [
+				"type" => "string",
+				"attributes" => [
+					"display_name" => "Email",
+					"order" => "5",
+					"sort" =>  "true",
+					"editable" => "true",
+				],
+			],
+			"phone" => [
+				"type" => "string",
+				"attributes" => [
+					"display_name" => "Phone",
+					"order" => "5",
+					"sort" =>  "true",
+					"editable" => "true",
+				],
+			],
+			"description" => [
+				"type" => "string",
+				"attributes" => [
+					"display_name" => "Description",
+					"order" => "5",
+					"sort" =>  "true",
+					"editable" => "true",
+				],
+			],
+			"uri" => [
+				"type" => "string",
+				"attributes" => [
+					"display_name" => "Web URL",
+					"order" => "5",
+					"sort" =>  "true",
+					"editable" => "true",
+				],
+			],
+			"image_url" => [
+				"type" => "string",
+				"attributes" => [
+					"display_name" => "Image URL",
+					"order" => "5",
+					"sort" =>  "true",
+					"editable" => "true",
+				],
+			],
+			"tags" => [
+				"type" => "string",
+				"attributes" => [
+					"display_name" => "Tags",
+					"order" => "5",
+					"sort" =>  "true",
+					"editable" => "true",
+				],
+			],
+		],
+		"presentation" => [
+			"column_aliases" => [
+				"bio_id" => "id",
+				"bio_created" => "created",
+				"bio_modified" => "modified",
+				"bio_first_name" => "first_name",
+				"bio_last_name" => "last_name",
+				"bio_display_name" => "display_name",
+				"bio_position" => "position",
+				"bio_email" => "email",
+				"bio_phone" => "phone",
+				"bio_description" => "description",
+				"bio_uri" => "uri",
+				"bio_image_url" => "image_url",
+				"bio_tags" => "tags",
+			],
+			"columns" => [
+				//
+			],
+		]
+	];
+}
 
-// DEFINITIONS
-
+function GIAU_TABLE_DEFINITION_CALENDAR(){
+	return
+	[
+		"table" => GIAU_FULL_TABLE_NAME_SECTION(),
+		"columns" => [
+			"id" =>  [
+				"type" => "string-number",
+				"attributes" =>  [
+					"display_name" => "ID",
+					"order" => "0",
+					"primary_key" => "true",
+					"sort" => "false",
+					"editable" => "false",
+				],
+			],
+			"created" => [
+				"type" => "string-date",
+				"attributes" =>  [
+					"display_name" => "Created",
+					"order" => "1",
+					"sort" =>  "true",
+					"editable" => "false",
+				],
+			],
+			"modified" => [
+				"type" => "string-date",
+				"attributes" =>  [
+					"display_name" => "Modified",
+					"order" => "2",
+					"sort" =>  "true",
+					"editable" => "false",
+				],
+			],
+			"short_name" => [
+				"type" => "string",
+				"attributes" =>  [
+					"display_name" => "Short Name",
+					"order" => "3",
+					"sort" =>  "false",
+					"editable" => "false",
+				],
+			],
+			"title" => [
+				"type" => "string",
+				"attributes" =>  [
+					"display_name" => "Title",
+					"order" => "6",
+					"sort" =>  "false",
+					"editable" => "true",
+				],
+			],
+			"description" => [
+				"type" => "string",
+				"attributes" =>  [
+					"display_name" => "Description",
+					"order" => "6",
+					"sort" =>  "false",
+					"editable" => "true",
+				],
+			],
+			"start_date" => [
+				"type" => "string",
+				"attributes" =>  [
+					"display_name" => "Start Date",
+					"order" => "6",
+					"sort" =>  "false",
+					"editable" => "true",
+				],
+			],
+			"duration" => [
+				"type" => "string-seconds",
+				"attributes" =>  [
+					"display_name" => "Duration",
+					"order" => "6",
+					"sort" =>  "false",
+					"editable" => "true",
+				],
+			],
+			"tags" => [
+				"type" => "string",
+				"attributes" => [
+					"display_name" => "Tags",
+					"order" => "5",
+					"sort" =>  "true",
+					"editable" => "true",
+				],
+			],
+		],
+		"presentation" => [
+			"column_aliases" => [
+				"calendar_id" => "id",
+				"calendar_created" => "created",
+				"calendar_modified" => "modified",
+				"calendar_short_name" => "short_name",
+				"calendar_title" => "title",
+				"calendar_description" => "description",
+				"calendar_start_date" => "start_date",
+				"calendar_duration" => "duration",
+				"calendar_tags" => "tags",
+			],
+			"columns" => [
+				//
+			],
+		]
+	];
+}
+function GIAU_TABLE_DEFINITION_PAGE(){
+	return
+	[
+		"table" => GIAU_FULL_TABLE_NAME_PAGE(),
+		"columns" => [
+			"id" =>  [
+				"type" => "string-number",
+				"attributes" =>  [
+					"display_name" => "ID",
+					"order" => "0",
+					"primary_key" => "true",
+					"sort" => "false",
+					"editable" => "false",
+				],
+			],
+			"created" => [
+				"type" => "string-date",
+				"attributes" =>  [
+					"display_name" => "Created",
+					"order" => "1",
+					"sort" =>  "true",
+					"editable" => "false",
+				],
+			],
+			"modified" => [
+				"type" => "string-date",
+				"attributes" =>  [
+					"display_name" => "Modified",
+					"order" => "2",
+					"sort" =>  "true",
+					"editable" => "false",
+				],
+			],
+			"name" => [
+				"type" => "string",
+				"attributes" =>  [
+					"display_name" => "Name",
+					"order" => "3",
+					"sort" =>  "false",
+					"editable" => "false",
+				],
+			],
+			"section_list" => [
+				"type" => "string-array",
+				"attributes" =>  [
+					"display_name" => "Sections",
+					"order" => "6",
+					"sort" =>  "false",
+					"editable" => "true",
+				],
+			],
+			"tags" => [
+				"type" => "string",
+				"attributes" => [
+					"display_name" => "Tags",
+					"order" => "5",
+					"sort" =>  "true",
+					"editable" => "true",
+				],
+			],
+		],
+		"presentation" => [
+			"column_aliases" => [
+				"page_id" => "id",
+				"page_created" => "created",
+				"page_modified" => "modified",
+				"page_name" => "name",
+				"page_section_list" => "section_list",
+				"page_tags" => "tags",
+			],
+			"columns" => [
+				//
+			],
+		]
+	];
+}
+function GIAU_TABLE_DEFINITION_WEBSITE(){
+	return
+	[
+		"table" => GIAU_FULL_TABLE_NAME_WEBSITE(),
+		"columns" => [
+			"id" =>  [
+				"type" => "string-number",
+				"attributes" =>  [
+					"display_name" => "ID",
+					"order" => "0",
+					"primary_key" => "true",
+					"sort" => "false",
+					"editable" => "false",
+				],
+			],
+			"created" => [
+				"type" => "string-date",
+				"attributes" =>  [
+					"display_name" => "Created",
+					"order" => "1",
+					"sort" =>  "true",
+					"editable" => "false",
+				],
+			],
+			"modified" => [
+				"type" => "string-date",
+				"attributes" =>  [
+					"display_name" => "Modified",
+					"order" => "2",
+					"sort" =>  "true",
+					"editable" => "false",
+				],
+			],
+			"start_page" => [
+				"type" => "string-number",
+				"attributes" =>  [
+					"display_name" => "Start Page",
+					"order" => "3",
+					"sort" =>  "true",
+					"editable" => "true",
+				],
+			],
+		],
+		"presentation" => [
+			"column_aliases" => [
+				"website_id" => "id",
+				"website_created" => "created",
+				"website_modified" => "modified",
+				"website_start_page" => "start_page",
+			],
+			"columns" => [
+				// 
+			]
+		]
+	];
+}
 	// sectioned, binned, boxed, atomic, tagged, capsule, parcel
 
 
@@ -441,7 +889,7 @@ function giau_create_database(){
 		position VARCHAR(255) NOT NULL,
 		email VARCHAR(255) NOT NULL,
 		phone VARCHAR(255) NOT NULL,
-		description VARCHAR(65535) NOT NULL,
+		description VARCHAR(255) NOT NULL,
 		uri VARCHAR(255) NOT NULL,
 		image_url VARCHAR(255) NOT NULL,
 		tags VARCHAR(255) NOT NULL,
@@ -490,13 +938,32 @@ function giau_remove_database(){
 
 
 // CREATE
+function giau_insert_website($startPage){
+	error_log("giau_insert_website: ".$startPage);
+	// startPage must be non-empty
+	if($startPage===null){
+		return;
+	}
+	//
+	$timestampNow = stringFromDate( getDateNow() );
+	global $wpdb;
+	$wpdb->insert(GIAU_FULL_TABLE_NAME_WEBSITE(),
+		array(
+			"created" => $timestampNow,
+			"modified" => $timestampNow,
+			"start_page" => $startPage,
+		)
+	);
+	return $wpdb->insert_id;
+}
+
 function giau_insert_languagization($language,$hash,$phrase){
 	// hash must be non-empty
-	if(!$hash || strlen($hash) == 0){
+	if($hash===null || strlen($hash) == 0){
 		return;
 	}
 	// language must be non-empty
-	if(!$language || strlen($language) == 0){
+	if($language===null || strlen($language) == 0){
 		return;
 	}
 	// phrase must be non-null

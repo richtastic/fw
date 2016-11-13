@@ -1221,7 +1221,7 @@ function arrayFromCommaSeparatedString($input){
 	$array = explode(",", $input);
 	return $array;
 }
-function commaSeparatedStringFromString($input, $limitCount){
+function commaSeparatedStringFromString($input, $limitCount = null){
 	if(!$input){
 		return "";
 	}
@@ -1234,6 +1234,7 @@ function commaSeparatedStringFromString($input, $limitCount){
 	$cleaned = [];
 	for($i=0; $i<$len; ++$i){ // remove whitespace from ends
 		$value = trim($split[$i]);
+		error_log("VALUE: ".$value);
 		if(strlen($value)>0){
 			array_push($cleaned, $value);
 		}
@@ -1247,12 +1248,18 @@ function commaSeparatedStringFromString($input, $limitCount){
 	$output = "";
 	$len = count($cleaned);
 	$stringLength = 0;
+	$addedCount = 0;
 	for($i=0; $i<$len; ++$i){
 		$tag = $cleaned[$i];
 		$l = strlen($len);
 		if($stringLength+$l <= ($limitCount+1)){
-			$output = $output.",".$tag;
+			if($addedCount==0){
+				$output = $output."".$tag;
+			}else{
+				$output = $output.",".$tag;
+			}
 			$stringLength += $l;
+			$addedCount += 1;
 		}else{
 			break;
 		}

@@ -442,6 +442,8 @@ Code.setStylePaddingBottom(this._container,"64px");
 var backgroundColor = 0xFFF6F7F9;
 backgroundColor = Code.getJSColorFromARGB(backgroundColor);
 Code.setStyleBackgroundColor(this._container,backgroundColor);
+var parent = Code.getParent(this._container);
+Code.setStyleBackgroundColor(parent,backgroundColor);
 	var col = 0;
 	var i, len = personnelList.length;
 	for(i=0; i<len; ++i){
@@ -3375,7 +3377,7 @@ giau.LibraryScroller = function(element, name, url){
 	this._getSizeFxn = giau.LibraryScroller._generateSize;
 	this._createElementFxn = giau.LibraryScroller._generateDiv;
 
-	this._dataSource = new giau.DataSource();
+	this._dataSource = new giau.DataSource("./",20, {"table":"sections"});
 	this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
 	this._dataSource.getPage(0);
 }
@@ -3578,10 +3580,13 @@ giau.LibraryScroller.prototype._scrollTo = function(){
 
 
 
-giau.DataSource = function(element){
+giau.DataSource = function(url, itemsPerPage, params){ // element
 	giau.DataSource._.constructor.call(this);
 	this._arrayWindow = [];
 	this._url = "./";
+	this._urlParams = params;
+	console.log(this._urlParams)
+	console.log("this._urlParams")
 	this._itemsPerPage = 10;
 	this._currentPageIndex = 0;
 }
@@ -3605,8 +3610,17 @@ giau.DataSource.prototype.getPage = function(pageToGet){
 	ajax.url(url);
 	ajax.method(Ajax.METHOD_TYPE_POST);
 	ajax.append("operation","page_data");
-	//ajax.append("table","sections");
-	ajax.append("table","languagization");
+	if(this._urlParams){
+		var keys = Code.keys(this._urlParams);
+		var i = 0;
+		for(i=0; i<keys.length; ++i){
+			var key = keys[i];
+			console.log(key)
+			var val = this._urlParams[key];
+			console.log(key,val,"richie")
+			ajax.append(key, val);
+		}
+	}
 	ajax.append("offset",""+start);
 	ajax.append("count",""+count);
 	ajax.context(this);
@@ -3624,6 +3638,8 @@ giau.DataSource.prototype.getPage = function(pageToGet){
 
 giau.CRUD = function(element){
 	this._container = element;
+
+	this._jsDispatch = new JSDispatch();
 
 	// this._elementLibrary = Code.newDiv();
 	// Code.addChild(this._container,this._elementLibrary);
@@ -3662,8 +3678,12 @@ giau.CRUD = function(element){
 	Code.setStyleBackgroundColor(this._elementTools,"#F0F");
 	var div;
 		div = Code.newDiv();
-		Code.setContent(div,"[+]");
+		Code.setContent(div,"[&plus;]");
+		Code.setStyleCursor(div,Code.JS_CURSOR_STYLE_FINGER);
 		Code.addChild(this._elementTools,div);
+		var ctx = {"element":div};
+		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_CLICK, this._handleCreateFxn, this, ctx);
+			
 
 	// ORDERING
 	Code.setStyleWidth(this._elementOrdering,"100%");
@@ -3693,14 +3713,38 @@ giau.CRUD = function(element){
 
 
 	// simulate got data:
+/*
+	section
+	languagization
+	bio
+	calendar
+	page
+	widget
 
-//	this._updateLayout();
 
+*/
 	
-	this._dataSource = new giau.DataSource("./",20);
+	this._dataSource = new giau.DataSource("./",20, {"table":"sections"} );
 	this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
 	this._dataSource.getPage(0);
 
+}
+
+giau.CRUD.prototype._handleCreateFxn = function(e,data){
+	console.log("CREATE");
+	console.log(data);
+}
+giau.CRUD.prototype._handleUpdateFxn = function(e,data){
+	console.log("UPDATE");
+	console.log(data);
+}
+giau.CRUD.prototype._handleDeleteFxn = function(e,data){
+	console.log("DELETE");
+	console.log(data);
+}
+giau.CRUD.prototype._handleResetFxn = function(e,data){
+	console.log("RESET/RELOAD");
+	console.log(data);
 }
 giau.CRUD.prototype._updateWithData = function(data){
 	console.log("CRUD._updateWithData");
@@ -3777,13 +3821,31 @@ Code.addChild(elementRow,mapping.element());
 		}
 		// DELETE
 		var elementDelete = Code.newDiv();
-		Code.setContent(elementDelete,"[x]");
+		Code.setContent(elementDelete,"[&times;]"); // [x]
+		Code.setStyleDisplay(elementDelete,"inline-block");
+		Code.setStyleFloat(elementDelete,"right");
+		Code.setStyleCursor(elementDelete,Code.JS_CURSOR_STYLE_FINGER);
 		Code.addChild(elementRow,elementDelete);
+			var ctx = {"element":elementDelete};
+			this._jsDispatch.addJSEventListener(elementDelete, Code.JS_EVENT_CLICK, this._handleDeleteFxn, this, ctx);
 
 		// UPDATE
 		var elementUpdate = Code.newDiv();
-		Code.setContent(elementUpdate,"[^]");
+		Code.setContent(elementUpdate,"[&uArr;]"); // [^] &plusmn;
+		Code.setStyleDisplay(elementUpdate,"inline-block");
+		Code.setStyleCursor(elementUpdate,Code.JS_CURSOR_STYLE_FINGER);
 		Code.addChild(elementRow,elementUpdate);
+			var ctx = {"element":elementUpdate};
+			this._jsDispatch.addJSEventListener(elementUpdate, Code.JS_EVENT_CLICK, this._handleUpdateFxn, this, ctx);
+		// RESET ???
+			// re-get the data?
+		var elementReset = Code.newDiv();
+		Code.setContent(elementReset,"[&#10227;]");
+		Code.setStyleDisplay(elementReset,"inline-block");
+		Code.setStyleCursor(elementReset,Code.JS_CURSOR_STYLE_FINGER);
+		Code.addChild(elementRow,elementReset);
+			var ctx = {"element":elementReset};
+			this._jsDispatch.addJSEventListener(elementReset, Code.JS_EVENT_CLICK, this._handleResetFxn, this, ctx);
 
 		// row 
 		this._rowElements.push(elementRow);

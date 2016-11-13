@@ -368,7 +368,7 @@ ul {
 	font-family: 'siteThemeBold', 'Arial', sans-serif;
 	font-size: 14px;
 	color: #FFF;
-	display:inline-block;
+	display:block;
 	text-shadow: 0px 1px 5px rgba(0,0,0, 0.3);
 }
 

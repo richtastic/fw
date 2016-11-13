@@ -109,10 +109,6 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"BIO_URI_NAME_LISA_IMAGE_URI","");
 
 
-
-
-Kindergarten Pastor - remove Sheen Hong and replace with Pastor Joseph Kim info.
-
 	giau_insert_languagization($langEng,"BIO_FIRST_NAME_JESSICA_WON_TEXT","Jessica");
 	giau_insert_languagization($langEng,"BIO_LAST_NAME_JESSICA_WON_TEXT","Won");
 	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_JESSICA_WON_TEXT","Jessica Won");
@@ -1825,11 +1821,11 @@ Kindergarten Pastor - remove Sheen Hong and replace with Pastor Joseph Kim info.
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_BANNER_TITLE","Grown in Christ, as God's Children");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_BANNER_MESSAGE","Worship the LORD with gladness: come before him with joyful song.\n- Psalm 100:2");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_BANNER_MESSAGE","기쁨으로 여호와를 섬기며 노래하면서 그 앞에 나아갈찌어다.\n- 시편 100:2");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_1","Sunday Worship");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_1","Sunday\nWorship");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_1","주일예배");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_1","11:00 AM\n@ Kindergarden Worship Room\n(in Kindergarden Building)");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_1","11:00 AM\n@ 유치부 예배실\n(유치부 건물)");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_2","Sunday Bible Study");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_2","Sunday\nBible Study");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_TITLE_2","주일 성경공부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_2","11:40 AM\n@ Classroom #302, 303, 306\n(in Kindergarden Building)");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_KINDERGARTEN_SERVICE_INFO_2","11:40 AM\n@ 주일 성경공부 (#302, 303, 306호 교실)\n(유치부 건물)");
@@ -1981,7 +1977,7 @@ Kindergarten Pastor - remove Sheen Hong and replace with Pastor Joseph Kim info.
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_2","11:45 AM\n@ Classroom #138, 139, 140, 141, 142");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_2","11:45 AM\n@ 호 교실 #138, 139, 140, 141, 142");
 	
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_TITLE_3","Friday Program: AWANA");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_TITLE_3","Friday Program:\nAWANA");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_3","8:00 - 8:30 PM\nGame Time (Cafeteria)\n\n8:30 - 9:00 PM<br>Handbook Time\n(Classrooms)\n\n9:00 - 9:20 PM\nCouncil Time (Choir Room)");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_ELEMENTARY_SERVICE_INFO_3","8:00 - 8:30 PM\n게임 (식당)\n\n8:30 - 9:00 PM<br>안내서 시간 (교실)\n\n9:00 - 9:20 PM\n이사회 모임 (성가대실)");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_ELEMENTARY_SECTION_1","Elementary Department's vision and goal is to start children off on their journey of faith through:");
@@ -2164,11 +2160,11 @@ Kindergarten Pastor - remove Sheen Hong and replace with Pastor Joseph Kim info.
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_BANNER_TITLE","우리가 살아도 주를 위하여 살고 죽어도"); // guessed where this separates
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_BANNER_MESSAGE","If we live, we live to the Lord; and if we die, we die to the Lord. So, whether we live or die, we belong to the Lord.\n- Romans 14:8");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_BANNER_MESSAGE","주를 위하여 죽나니 그러므로 사나 죽으나 우리가 주의 것이로라.\n- 로마서 14:8");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_1","Sunday Worship");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_1","Sunday\nWorship");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_1","주일예배");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_1","11:00 AM\n@ Junior High Worship Room");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_1","11:00 AM\n@ 중등부 예배실");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_2","Sunday Bible Study");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_2","Sunday\nBible Study");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_TITLE_2","주일 성경공부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_2","12:00 PM\n@ Classroom #150, 152, 153");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_JUNIORHIGH_SERVICE_INFO_2","12:00 PM\n@ 호 교실 #150, 152, 153");
@@ -2217,6 +2213,7 @@ Kindergarten Pastor - remove Sheen Hong and replace with Pastor Joseph Kim info.
 			"tags" => [
 				"juniorhigh"
 			],
+			"default_image" => "/images/personnel/anonymous.png",
 			"class" => "",
 			"style" => "",
 		]
@@ -2306,11 +2303,11 @@ Kindergarten Pastor - remove Sheen Hong and replace with Pastor Joseph Kim info.
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_TITLE","");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_MESSAGE","But seek first his kingdom and his righteousness, and all these things will be given to you as well. Therefore do not worry about tomorrow, for tomorrow will worry about itself.\n- Matthew 6:33-34");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_BANNER_MESSAGE","너희는 먼저 그의 나라와 그의 의를 구하라. 그리하면 이 모든 것을 너희에게 더하시리라 34 그러므로 내일 일을 위하여 염려하지 말라 내일 일은 내일 염려할 것이요.\n- 마태복음 6:33-34");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_1","Sunday Worship");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_1","Sunday\nWorship");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_1","주일예배");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_1","11:00 AM\n@ High School Worship Room");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_1","11:00 AM\n@ 고등부 예배실");
-	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_2","Sunday Bible Study");
+	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_2","Sunday\nBible Study");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_TITLE_2","주일 성경공부");
 	giau_insert_languagization($langEng,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_2","12:00 PM\n@ Classroom #135, 136, 137, 148");
 		giau_insert_languagization($langKor,"PAGE_DEPARTMENT_HIGHSCHOOL_SERVICE_INFO_2","12:00 PM\n@ 호 교실 #135, 136, 137, 148");
@@ -2701,7 +2698,9 @@ Kindergarten Pastor - remove Sheen Hong and replace with Pastor Joseph Kim info.
 	error_log("page_id_contact: ".$page_id_contact);
 
 
-
+	// WEBSITE DETAILS
+	$website_id = giau_insert_website("0");
+	error_log("website_id: ".$website_id);
 }
 
 
