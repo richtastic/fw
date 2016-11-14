@@ -1787,7 +1787,7 @@ function giau_data_default_insert_into_database(){
 	$section_id_text_nursery_container = giau_insert_section($widget_id_content_container,
 		[
 			"class" => "limitedWidth",
-			"style" => "display:block; padding:20px;".$themeBackgroundColorA."",
+			"style" => "display:block; padding:20px; margin-top:32px; margin-bottom:40px; ".$themeBackgroundColorA."",
 		]
 	, [$section_id_text_nursery_left,$section_id_text_nursery_right]);
 
@@ -1934,7 +1934,7 @@ function giau_data_default_insert_into_database(){
 	$section_id_text_kindergarten_container = giau_insert_section($widget_id_content_container,
 		[
 			"class" => "limitedWidth",
-			"style" => "display:block; padding:20px;".$themeBackgroundColorA."",
+			"style" => "display:block; padding:20px; margin-top:32px; margin-bottom:40px; ".$themeBackgroundColorA."",
 		]
 	, [$section_id_text_kindergarten_left,$section_id_text_kindergarten_right]);
 
@@ -2125,7 +2125,7 @@ function giau_data_default_insert_into_database(){
 	$section_id_text_elementary_container = giau_insert_section($widget_id_content_container,
 		[
 			"class" => "limitedWidth",
-			"style" => "display:block; padding:20px; ".$themeBackgroundColorA."",
+			"style" => "display:block; padding:20px; margin-top:32px; margin-bottom:40px; ".$themeBackgroundColorA."",
 		]
 	, [$section_id_text_elementary_left,$section_id_text_elementary_right]);
 
@@ -2268,7 +2268,7 @@ function giau_data_default_insert_into_database(){
 	$section_id_text_juniorhigh_container = giau_insert_section($widget_id_content_container,
 		[
 			"class" => "limitedWidth",
-			"style" => "display:block; padding:20px;".$themeBackgroundColorA."",
+			"style" => "display:block; padding:20px; margin-top:32px; margin-bottom:40px; ".$themeBackgroundColorA."",
 		]
 	, [$section_id_text_juniorhigh_left,$section_id_text_juniorhigh_right]);
 
@@ -2402,7 +2402,7 @@ function giau_data_default_insert_into_database(){
 	$section_id_text_highschool_container = giau_insert_section($widget_id_content_container,
 		[
 			"class" => "limitedWidth",
-			"style" => "display:block; padding:20px;".$themeBackgroundColorA."",
+			"style" => "display:block; padding:20px; margin-top:32px; margin-bottom:40px; ".$themeBackgroundColorA."",
 		]
 	, [$section_id_text_highschool_left,$section_id_text_highschool_right]);
 

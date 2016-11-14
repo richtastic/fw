@@ -108,12 +108,6 @@ giau.prototype.initialize = function(){
 	dataTableLists.each(function(index, element){
 		var dataTable = new giau.LibraryScroller(element);
 	});
-
-
-
-	
-THIS = this;
-console.log(THIS);
 	// var listener = function(e){
 	// 	console.log(e);
 	// 	THIS._mousePosition = new V2D(e.clientX,e.clientY);
@@ -729,7 +723,6 @@ giau.CategoryListing = function(element){
 						Code.addChild(contentContainer, icon);
 					}
 				Code.addChild(container,title);
-console.log("done")
 		listing["content"] = contentContainer;
 		listing["image"] = img;
 		listing["text"] = title;
@@ -750,7 +743,6 @@ giau.CategoryListing.prototype._handleWindowResizedFxn = function(){
 
 giau.CategoryListing.prototype.updateLayout = function(){
 	var listings = this._galleryList;
-console.log("layout")
 	var maximumColumnCount = 3;
 	var elementMinWidth = 292;
 	var elementMaxWidth = 196;
@@ -833,7 +825,7 @@ var padAllSides = true;
 			Code.setStyleFontSize(title, 14+"px");
 		}
 		Code.setStyleFontFamily(title, "'siteThemeLight', Arial, sans-serif");
-			Code.setStylePadding(title, "4px 0px 0px 0px");
+			Code.setStylePadding(title, "8px 0px 0px 0px");
 			Code.setStyleColor(title, "#666");
 			Code.setStyleDisplay(title, "inline-block");
 			Code.setStyleTextAlign(title, "center");
@@ -873,23 +865,26 @@ giau.LanguageToggle = function(element){
 	if(propertyColor){
 		styleTextColor = parseInt(propertyColor);
 	}
+	var styleTextColorDisabled = Code.setAlpARGB(styleTextColor, 0x66);
 
 	var storageDictionaryKey = Code.getPropertyOrDefault(this._container, "data-storage", "language");
 	var storageDictionaryValue = Code.getCookie(storageDictionaryKey);
 	this._storageDictionaryKey = storageDictionaryKey;
-//console.log(storageDictionaryKey+" = '"+storageDictionaryValue+"'")
-
 
 	this._languageList = [];
-	var i, len, entry, div, element, name, language, child;
+	var i, len, entry, div, element, name, language, child, enabled;
 	len = Code.numChildren(this._container);
 	for(i=0; i<len; ++i){
 		child = Code.getChild(this._container, i);
 		language = Code.getProperty(child, "data-language");
 		var display = Code.getProperty(child, "data-display");
 		var url = Code.getProperty(child, "data-url");
+		var enabled = Code.getProperty(child, "data-enabled");
+			console.log(enabled)
+			enabled = enabled === "true";
+			console.log(enabled)
 		if(display && language && url){
-			entry = {"name":display, "language":language, "url":url, "element":null};
+			entry = {"name":display, "language":language, "url":url, "enabled":enabled, "element":null};
 			this._languageList.push(entry);
 		}
 	}
@@ -901,6 +896,7 @@ giau.LanguageToggle = function(element){
 		entry = this._languageList[i];
 		name = entry["name"];
 		language = entry["language"];
+		enabled = entry["enabled"];
 		div = Code.newDiv();
 			Code.setContent(div, name);
 			Code.setStyleDisplay(div,"inline-block");
@@ -918,8 +914,13 @@ giau.LanguageToggle = function(element){
 		entry["element"] = div;
 		Code.addChild(this._container, div);
 		// listening
-		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_CLICK, this._handleContentClickedFxn, this);
-		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_TOUCH_TAP, this._handleContentTappedxn, this);
+		if(enabled){
+			this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_CLICK, this._handleContentClickedFxn, this);
+			this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_TOUCH_TAP, this._handleContentTappedxn, this);
+		}else{
+			Code.setStyleCursor(div,Code.JS_CURSOR_STYLE_DEFAULT);
+			Code.setStyleColor(div, Code.getJSColorFromARGB(styleTextColorDisabled) );
+		}
 		// divider
 		if(i<len-1){
 			div = Code.newDiv();
@@ -959,7 +960,6 @@ giau.LanguageToggle.prototype._selectElement = function(e){
 				var language = entry["language"];
 				Code.setCookie(this._storageDictionaryKey, language);
 				var url = entry["url"];
-				//document.location.href = url;
 				document.location.reload();
 			}
 			break;

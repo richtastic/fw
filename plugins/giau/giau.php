@@ -230,8 +230,17 @@ function getParameterOrDefault($param, $def){
 }
 
 
+function getPageRequestParameterPage(){
+	return "page";
+}
+function getPageRequestTypeDefault(){
+	return "__live";
+}
+function getPageRequestTypeError(){
+	return "__error";
+}
 function getPageRequest(){
-	$pageRequest = getParameterOrDefault( KEY_GET_PARAM_PAGE(), $PAGE_REQUEST_TYPE_DEFAULT );
+	$pageRequest = getParameterOrDefault( KEY_GET_PARAM_PAGE(), getPageRequestTypeDefault() );
 	return $pageRequest;
 }
 

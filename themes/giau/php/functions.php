@@ -121,10 +121,6 @@ function create_page(){
 	$fileCSSMain = relativePathCSS()."theme.css";
 	$fileJavaScriptMain = relativePathJS()."theme.js";
 
-	$PAGE_REQUEST_PARAMETER_PAGE = "page";
-	$PAGE_REQUEST_TYPE_DEFAULT = "__live";
-	$PAGE_REQUEST_TYPE_ERROR = "__error";
-
 	$pageRequest = getPageRequest();
 
 ?>
@@ -165,14 +161,14 @@ function create_page(){
 	</head>
 	<body style="bgColor:#F00; margin: 0 auto;">
 	<?php
-		//$page = giau_get_page_tag($pageRequest);
-		//fillOutPageFromID($page["id"]);
+		$page = giau_get_page_tag($pageRequest);
+		fillOutPageFromID($page["id"]);
 		// <div class="giauFileBrowser limitedWidth" style=""></div>
 	?>
 
-	<div class="limitedWidth" style="width:100%; display:block; position:relative;">
+	<!-- <div class="limitedWidth" style="width:100%; display:block; position:relative;">
 		<div style="width:70%; height:600px; display:inline-block; background-color:#F0F; float:left;"><div class="giauCRUD" style=""></div></div><div style="width:30%; display:inline-block; background-color:#0FF; float:left;"><div class="giauLibraryView" style=""></div></div>
-	</div>
+	</div> -->
 
  <!-- width:auto; height:auto; -->
 	</body>

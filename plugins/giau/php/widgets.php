@@ -7,7 +7,7 @@
 
 function fillOutPageFromID($pageID){
 	$page = giau_get_page_id($pageID);
-	if($page!=null){
+	if($page!==null){
 		fillOutFromsection_list($page["section_list"]);
 	}else{
 		error_log("NO PAGE : ".$pageID);
@@ -499,10 +499,8 @@ function handle_widget_language_switch($widget,$section){
 			$language = $languages[$i];
 			$lang = $language["language_name"];
 			$display = $language["display_text"];
-			$isEnabled = section_get_value_widget_boolean($widgetJSON,$sectionJSON,"enabled") ? "true" : "false";
-
+			$isEnabled = get_value_boolean($language,"enabled", false) ? "true" : "false";
 			$display = giau_languagization_substitution_and_html($display,null);
-
 			?>
 			<div class="<?php echo $klass; ?>" style="display:inline-block; <?php echo $style; ?>" data-language="<?php echo $lang; ?>" data-display="<?php echo $display; ?>" data-url="./" data-enabled="<?php echo $isEnabled; ?>"></div>
 			<?php
@@ -788,12 +786,23 @@ function decodeWidget($widget){
 }
 function section_get_value_widget_boolean($widget,$section,$field){
 	$value = section_get_value_widget_any($widget,$section,$field);
-	if($value!=null){
+	if($value!==null){
 		if($value=="true"){
 			return true;
 		}
 	}
 	return false;
+}
+function get_value_boolean($object,$field, $default){
+	$value = $object[$field];
+	if($value!==null){
+		if($value==="true"){
+			return true;
+		}else if($value==="false"){
+			return false;
+		}
+	}
+	return $default;
 }
 function section_get_value_widget_number_int($widget,$section,$field){
 	$value = section_get_value_widget_any($widget,$section,$field);
