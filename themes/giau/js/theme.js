@@ -3377,7 +3377,9 @@ giau.LibraryScroller = function(element, name, url){
 	this._getSizeFxn = giau.LibraryScroller._generateSize;
 	this._createElementFxn = giau.LibraryScroller._generateDiv;
 
-	this._dataSource = new giau.DataSource("./",20, {"table":"sections"});
+	var dataTableName = "section";
+
+	this._dataSource = new giau.DataSource("./",20, {"table":dataTableName});
 	this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
 	this._dataSource.getPage(0);
 }
@@ -3580,13 +3582,11 @@ giau.LibraryScroller.prototype._scrollTo = function(){
 
 
 
-giau.DataSource = function(url, itemsPerPage, params){ // element
+giau.DataSource = function(url, itemsPerPage, params){
 	giau.DataSource._.constructor.call(this);
 	this._arrayWindow = [];
-	this._url = "./";
+	this._url = (url!==undefined && url!==null) ? url : "./";
 	this._urlParams = params;
-	console.log(this._urlParams)
-	console.log("this._urlParams")
 	this._itemsPerPage = 10;
 	this._currentPageIndex = 0;
 }
@@ -3594,10 +3594,8 @@ Code.inheritClass(giau.DataSource, Dispatchable);
 
 giau.DataSource.EVENT_PAGE_DATA = "EVENT_PAGE_DATA";
 giau.DataSource.prototype.getPage = function(pageToGet){
-	console.log("get page");
 	this._currentPage = 0;
 	this._pageCount = 10;
-	this._url = "./";
 	var start = this._currentPage * this._pageCount;
 	var end = start + this._pageCount;
 	var count = end-start;
@@ -3605,22 +3603,11 @@ giau.DataSource.prototype.getPage = function(pageToGet){
 	var table = this._dataTable;
 	var url = this._url;
 
-	console.log("A-URL: "+url);
 	var ajax = new Ajax();
 	ajax.url(url);
 	ajax.method(Ajax.METHOD_TYPE_POST);
+	ajax.append(this._urlParams);
 	ajax.append("operation","page_data");
-	if(this._urlParams){
-		var keys = Code.keys(this._urlParams);
-		var i = 0;
-		for(i=0; i<keys.length; ++i){
-			var key = keys[i];
-			console.log(key)
-			var val = this._urlParams[key];
-			console.log(key,val,"richie")
-			ajax.append(key, val);
-		}
-	}
 	ajax.append("offset",""+start);
 	ajax.append("count",""+count);
 	ajax.context(this);
@@ -3630,6 +3617,42 @@ giau.DataSource.prototype.getPage = function(pageToGet){
 	});
 	ajax.send();
 
+}
+
+
+// repository alter update  amend  revise modify
+// single access
+giau.DataCRUD = function(url, defaultParams, callbackFxn, callbackCtx){
+	giau.DataSource._.constructor.call(this);
+	this._url = (url!==undefined && url!==null) ? url : "./";
+	this._defaultParams = (defaultParams!==undefined && defaultParams!==null) ? defaultParams : {};
+}
+Code.inheritClass(giau.DataCRUD, Dispatchable);
+
+giau.DataCRUD.EVENT_CREATE = "EVENT_DATA_CRUD_CREATE";
+giau.DataCRUD.EVENT_READ = "EVENT_DATA_CRUD_READ";
+giau.DataCRUD.EVENT_UPDATE = "EVENT_DATA_CRUD_UPDATE";
+giau.DataCRUD.EVENT_DELETE = "EVENT_DATA_CRUD_DELETE";
+
+giau.DataCRUD.prototype.remove = function(data, returnData){
+	this._asyncOperation("delete", data, returnData);
+}
+// //function giau_update_section($sectionID, $widgetID, $sectionConfig, $sectionList){
+giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData){
+	var url = this._url;
+
+	var ajax = new Ajax();
+	ajax.url(url);
+	ajax.method(Ajax.METHOD_TYPE_POST);
+	ajax.append(this._defaultParams);
+	ajax.append("lifecycle",lifecycle);
+	ajax.append("data",data);
+	ajax.context(this);
+	ajax.callback(function(d){
+		var obj = Code.parseJSON(d);
+		this.alertAll(giau.DataCRUD.EVENT_DELETE,returnData);
+	});
+	ajax.send();
 }
 
 
@@ -3707,11 +3730,6 @@ giau.CRUD = function(element){
 	// Code.setStyleTop(this._elementTable,interriorPadding+"px");
 
 
-	// HOW TO DO DRAG N DROP ?
-
-	//this._itemsTotal = 0;
-
-
 	// simulate got data:
 /*
 	section
@@ -3720,32 +3738,97 @@ giau.CRUD = function(element){
 	calendar
 	page
 	widget
-
-
 */
+	var dataTableName = "section";
 	
-	this._dataSource = new giau.DataSource("./",20, {"table":"sections"} );
+	this._dataSource = new giau.DataSource("./",20, {"table":dataTableName} );
 	this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
 	this._dataSource.getPage(0);
 
+
+	this._dataCRUD = new giau.DataCRUD("./", {"operation":"crud_data", "table":dataTableName} );
+
+	this._dataCRUD.addFunction(giau.DataCRUD.EVENT_CREATE, this._handleCreateCompleteFxn, this);
+	this._dataCRUD.addFunction(giau.DataCRUD.EVENT_READ, this._handleReloadCompleteFxn, this);
+	this._dataCRUD.addFunction(giau.DataCRUD.EVENT_UPDATE, this._handleUpdateCompleteFxn, this);
+	this._dataCRUD.addFunction(giau.DataCRUD.EVENT_DELETE, this._handleDeleteCompleteFxn, this);
 }
 
 giau.CRUD.prototype._handleCreateFxn = function(e,data){
 	console.log("CREATE");
 	console.log(data);
+	// request a blank insert
+	// get a default/blank row in return
+}
+giau.CRUD.prototype._handleReloadFxn = function(e,data){
+	console.log("RESET/RELOAD/READ");
+	console.log(data);
 }
 giau.CRUD.prototype._handleUpdateFxn = function(e,data){
 	console.log("UPDATE");
 	console.log(data);
+	// get primary key index value
+	// get row data
+	// pass editable values to server
+	// get row data back
 }
 giau.CRUD.prototype._handleDeleteFxn = function(e,data){
 	console.log("DELETE");
 	console.log(data);
+	// get primary key index value
+	var passBack = {};
+		passBack["index"] = data["index"];
+		passBack["value"] = data["value"];
+	// request delete with primary key
+	var jsonData = {};
+	jsonData[ data["index"] ] = data["value"];
+	console.log(jsonData);
+	var jsonString = Code.StringFromJSON(jsonData);
+	console.log(jsonString);
+	this._dataCRUD.remove(jsonString, passBack);
+	// get success/fail message
 }
-giau.CRUD.prototype._handleResetFxn = function(e,data){
-	console.log("RESET/RELOAD");
-	console.log(data);
+
+giau.CRUD.prototype._handleCreateCompleteFxn = function(e){
+	console.log("CREATE COMPLETE");
+	console.log(e);
 }
+giau.CRUD.prototype._handleReloadCompleteFxn = function(e){
+	console.log("READ COMPLETE");
+	console.log(e);
+}
+giau.CRUD.prototype._handleUpdateCompleteFxn = function(e){
+	console.log("UPDATE COMPLETE");
+	console.log(e);
+}
+giau.CRUD.prototype._handleDeleteCompleteFxn = function(e){
+	console.log("DELETE COMPLETE");
+	console.log(e);
+	var criteriaIndex = e["index"];
+	var criteriaValue = e["value"];
+	console.log(this);
+	console.log(this._dataView);
+	var i;
+	var data = this._dataView;
+	var rows = data["data"];
+	console.log(rows);
+	for(i=0; i<rows.length; ++i){
+		var row = rows[i];
+		var value = row[criteriaIndex];
+		if(value===criteriaValue){
+			console.log("found index .. delete ? "+value);
+			Code.removeElementAt(rows,i);
+			row = this._rowElements[i];
+			Code.removeElementAt(this._rowElements,i);
+			Code.removeFromParent(row);
+			break;
+		}
+	}
+	this._updateLayout();
+}
+
+
+
 giau.CRUD.prototype._updateWithData = function(data){
 	console.log("CRUD._updateWithData");
 	console.log(data);
@@ -3756,6 +3839,8 @@ giau.CRUD.prototype._updateWithData = function(data){
 	var columns = definition["columns"];
 	var presentation = definition["presentation"];
 	var columnPresentations = presentation["columns"];
+
+this._dataView = data;
 
 	var i, column, pres, alias, row, keys;
 	// PUT ALL DATA INTO SINGLE STRUCTURE
@@ -3791,11 +3876,11 @@ giau.CRUD.prototype._updateWithData = function(data){
 			}
 		}
 	}
-	
 	this._searchFields = searchFields;
 	this._rowElements = [];
 
-	// editing
+// TODO: SEPARATE DATA SETTING FROM DISPLAY SETTING ...
+
 	Code.removeAllChildren(this._elementTable);
 	for(i=0; i<rows.length; ++i){
 		var row = rows[i];
@@ -3803,22 +3888,33 @@ giau.CRUD.prototype._updateWithData = function(data){
 		var elementRow = Code.newDiv();
 		Code.setStyleBackgroundColor(elementRow,"#FFF");
 		Code.setStyleMargin(elementRow,5+"px");
+		var primaryKeyIndex = null;
+		var primaryKeyValue = null;
 		for(j=0; j<editFields.length; ++j){
 			var field = editFields[j];
 			var column = field["column"];
 			var alias = field["alias"];
-console.log(i+"|"+j+"--------------------------------");
-// console.log(field);
-// console.log(row);
-//console.log(value);
-//console.log(row[alias]);
-
-// column
-
-var mapping = this._mappingFromData(field,row,alias);
-field["mapping"] = mapping;
-Code.addChild(elementRow,mapping.element());
+			if(field){
+				var attr = field["attributes"];
+				if(attr){
+					var primary = attr["primary_key"];
+					if(primary==="true"){
+						primaryKeyIndex = alias;
+						primaryKeyValue = row[alias];
+					}
+				}
+			}
+			var mapping = this._mappingFromData(field,row,alias);
+			//field["mapping"] = mapping;
+			Code.addChild(elementRow,mapping.element());
 		}
+		var dataContext = {};
+		if(primaryKeyIndex!==null && primaryKeyValue!==null){
+			dataContext["index"] = primaryKeyIndex;
+			dataContext["value"] = primaryKeyValue;
+			
+		}
+		dataContext["element"] = elementRow;
 		// DELETE
 		var elementDelete = Code.newDiv();
 		Code.setContent(elementDelete,"[&times;]"); // [x]
@@ -3826,8 +3922,7 @@ Code.addChild(elementRow,mapping.element());
 		Code.setStyleFloat(elementDelete,"right");
 		Code.setStyleCursor(elementDelete,Code.JS_CURSOR_STYLE_FINGER);
 		Code.addChild(elementRow,elementDelete);
-			var ctx = {"element":elementDelete};
-			this._jsDispatch.addJSEventListener(elementDelete, Code.JS_EVENT_CLICK, this._handleDeleteFxn, this, ctx);
+			this._jsDispatch.addJSEventListener(elementDelete, Code.JS_EVENT_CLICK, this._handleDeleteFxn, this, dataContext);
 
 		// UPDATE
 		var elementUpdate = Code.newDiv();
@@ -3835,8 +3930,7 @@ Code.addChild(elementRow,mapping.element());
 		Code.setStyleDisplay(elementUpdate,"inline-block");
 		Code.setStyleCursor(elementUpdate,Code.JS_CURSOR_STYLE_FINGER);
 		Code.addChild(elementRow,elementUpdate);
-			var ctx = {"element":elementUpdate};
-			this._jsDispatch.addJSEventListener(elementUpdate, Code.JS_EVENT_CLICK, this._handleUpdateFxn, this, ctx);
+			this._jsDispatch.addJSEventListener(elementUpdate, Code.JS_EVENT_CLICK, this._handleUpdateFxn, this, dataContext);
 		// RESET ???
 			// re-get the data?
 		var elementReset = Code.newDiv();
@@ -3844,45 +3938,15 @@ Code.addChild(elementRow,mapping.element());
 		Code.setStyleDisplay(elementReset,"inline-block");
 		Code.setStyleCursor(elementReset,Code.JS_CURSOR_STYLE_FINGER);
 		Code.addChild(elementRow,elementReset);
-			var ctx = {"element":elementReset};
-			this._jsDispatch.addJSEventListener(elementReset, Code.JS_EVENT_CLICK, this._handleResetFxn, this, ctx);
+			this._jsDispatch.addJSEventListener(elementReset, Code.JS_EVENT_CLICK, this._handleReloadFxn, this, dataContext);
 
 		// row 
 		this._rowElements.push(elementRow);
-		//console.log(rows[i]);
-		//this._rowElements[]
 		Code.addChild(this._elementTable,elementRow);
 	}
-	return;
-/*
-	element representing data
-	source data
-	-> when element is interacted with, source data must get updated
 
-		row
-			item
-				* mapping
-					- data
-					- element
-					- element update fxn
-
-
-*/
-
-
-	// MAPS DATA SOURCE TO DATA DISPLAY
-
-	// var i;
-	// for(i=0; i<count; ++i){
-	// 	this._sourceDataDisplayMap.addDataEntry(rows[i], div, i, i+offset);
-	// }
-
-
-
-	// //var FA = new FragArray();
-	// //this._dataRows = FA;
-	this._dataDefinition = definition;
-	this._dataRows = rows;
+	//this._dataDefinition = definition;
+	//this._dataRows = rows;
 	this._updateLayout();
 }
 giau.CRUD.prototype._updateLayout = function(){

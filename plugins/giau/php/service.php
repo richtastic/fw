@@ -157,6 +157,33 @@ function giau_wordpress_data_service(){
 */
 			$response["result"] = "success";
 			$response["data"] = [];
+		}else if($operationType=="crud_data"){
+			error_log("CRUD DATA");
+			$lifecycleCRUD = $_POST['lifecycle'];
+			$tableSourceName = $_POST['table'];
+			$dataCRUD = $_POST['data'];
+			error_log(" dataCRUD: ".$dataCRUD);
+			$dataCRUD = str_replace("\\\"", "\"", $dataCRUD); // is this the proper way ?
+			$dataCRUD = json_decode($dataCRUD);
+			if($tableSourceName=="section"){
+				if($lifecycleCRUD==="create"){
+					error_log(" => CREATE");
+				}else if($lifecycleCRUD==="read"){
+					error_log(" => READ");
+				}else if($lifecycleCRUD==="update"){
+					error_log(" => UPDATE");
+				}else if($lifecycleCRUD==="delete"){
+					error_log(" => DELETE");
+					$dataID = $dataCRUD->{'section_id'};
+					if($dataID!==null){
+						$res = giau_delete_section($dataID);
+						error_log(" => RESULT".$res);
+						if($res!==null){
+							$response["result"] = "success";
+						}
+					}
+				}
+			}
 // LANGUAGIZATION SERVICE --------------------------------------------------------------------------------------------------------------
 		}else if($operationType=="page_data"){
 			$tableSourceName = $_POST['table'];
@@ -304,7 +331,7 @@ function giau_wordpress_data_service(){
 				$metadata[] = [];
 				$response["metadata"] = $metadata;
 				$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( GIAU_TABLE_DEFINITION_LANGUAGIZATION() );
-			}else if($tableSourceName=="sections"){
+			}else if($tableSourceName=="section"){
 				/*
 				lang:
 					- set of options for language
@@ -328,7 +355,7 @@ function giau_wordpress_data_service(){
 					- values WHERE id
 				*/
 				$offset = 46;
-				$count = 2;
+				$count = 1;
 				$requestInfo = [];
 				$requestInfo["offset"] = $offset;
 				$requestInfo["count"] = $count;
