@@ -880,9 +880,7 @@ giau.LanguageToggle = function(element){
 		var display = Code.getProperty(child, "data-display");
 		var url = Code.getProperty(child, "data-url");
 		var enabled = Code.getProperty(child, "data-enabled");
-			console.log(enabled)
 			enabled = enabled === "true";
-			console.log(enabled)
 		if(display && language && url){
 			entry = {"name":display, "language":language, "url":url, "enabled":enabled, "element":null};
 			this._languageList.push(entry);
@@ -3659,7 +3657,11 @@ giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData, 
 	ajax.context(this);
 	ajax.callback(function(d){
 		var obj = Code.parseJSON(d);
-		this.alertAll(alertEventName,returnData);
+		//console.log(obj);
+		if(obj["data"]){
+			obj = obj["data"];
+		}
+		this.alertAll(alertEventName, {"source":returnData, "data":obj});
 	});
 	ajax.send();
 }
@@ -3770,7 +3772,7 @@ giau.CRUD.prototype._handleCreateFxn = function(e,data){
 	// get a default/blank row in return
 }
 giau.CRUD.prototype._handleReloadFxn = function(e,data){
-	console.log("RESET/RELOAD/READ");
+	console.log("READ");
 	console.log(data);
 	// get primary key index value
 	var passBack = {};
@@ -3785,26 +3787,46 @@ giau.CRUD.prototype._handleReloadFxn = function(e,data){
 giau.CRUD.prototype._handleUpdateFxn = function(e,data){
 	console.log("UPDATE");
 	console.log(data);
-	// get primary key index value
-	// get row data
-	// pass editable values to server
-	// get row data back
+		var dataInfo = this._dataView["data"];
+		var dataFields = dataInfo["fields"];
+	var criteriaIndex = data["index"];
+	var criteriaValue = data["value"];
+	var rowData = this._dataRowFromKeyValue(criteriaIndex, criteriaValue);
+	if(rowData){
+		console.log(rowData)
+		var row = rowData["row"];
+		var updateData = {};
+		for(var i=0; i<row.length; ++i){
+			var mapping = row[i];
+			var index = mapping.field();
+			var field = dataFields[index];
+			var attr = field["attributes"];
+			if(attr["editable"]==="true" || attr["primary_key"]==="true"){
+				updateData[index] = mapping.value();
+			}
+		}
+		//{"text":"PAGE_DEPARTMENT_ELEMENTARY_SECTION_7","class":"departmentDescriptionItemInfo","style":""}"
+		//updateData["section_configuration"] = "richie ";
+		console.log(updateData);
+		// pass editable values to server
+		var jsonData = updateData;
+		var jsonString = Code.StringFromJSON(jsonData);
+		// get row data back
+		var passBack = {};
+			passBack["index"] = data["index"];
+			passBack["value"] = data["value"];
+		this._dataCRUD.update(jsonString, passBack);
+	}
 }
 giau.CRUD.prototype._handleDeleteFxn = function(e,data){
 	console.log("DELETE");
-	console.log(data);
-	// get primary key index value
 	var passBack = {};
 		passBack["index"] = data["index"];
 		passBack["value"] = data["value"];
-	// request delete with primary key
 	var jsonData = {};
 	jsonData[ data["index"] ] = data["value"];
-	console.log(jsonData);
 	var jsonString = Code.StringFromJSON(jsonData);
-	console.log(jsonString);
 	this._dataCRUD.remove(jsonString, passBack);
-	// get success/fail message
 }
 
 giau.CRUD.prototype._handleCreateCompleteFxn = function(e){
@@ -3813,11 +3835,23 @@ giau.CRUD.prototype._handleCreateCompleteFxn = function(e){
 }
 giau.CRUD.prototype._handleReloadCompleteFxn = function(e){
 	console.log("READ COMPLETE");
-	var criteriaIndex = e["index"];
-	var criteriaValue = e["value"];
-	var data = this._dataFromRowKeyValue();
-	console.log(data);
-HERE
+	var original = e["source"];
+	var criteriaIndex = original["index"];
+	var criteriaValue = original["value"];
+	var sourceData = e["data"];
+	var rowData = this._dataRowFromKeyValue(criteriaIndex, criteriaValue);
+	if(rowData && sourceData){
+		var row = rowData["row"];
+		for(var i=0; i<row.length; ++i){
+			var mapping = row[i];
+			var field = mapping.field();
+			var sourceValue = sourceData[field];
+			if(sourceValue!==null){
+				mapping.value(sourceValue);
+			}
+		}
+	}
+	this._updateLayout();
 }
 giau.CRUD.prototype._handleUpdateCompleteFxn = function(e){
 	console.log("UPDATE COMPLETE");
@@ -3826,45 +3860,38 @@ giau.CRUD.prototype._handleUpdateCompleteFxn = function(e){
 
 giau.CRUD.prototype._handleDeleteCompleteFxn = function(e){
 	console.log("DELETE COMPLETE");
-	console.log(e);
-	var criteriaIndex = e["index"];
-	var criteriaValue = e["value"];
-	console.log(this);
-	console.log(this._dataView);
-	var i;
-	var data = this._dataView;
-	var rows = data["data"];
-	console.log(rows);
-	for(i=0; i<rows.length; ++i){
-		var row = rows[i];
-		var value = row[criteriaIndex];
-		if(value===criteriaValue){
-			console.log("found index .. delete ? "+value);
-			Code.removeElementAt(rows,i);
-			row = this._rowElements[i];
-			Code.removeElementAt(this._rowElements,i);
-			Code.removeFromParent(row);
-			break;
-		}
+	var original = e["source"];
+	var criteriaIndex = original["index"];
+	var criteriaValue = original["value"];
+	var rowData = this._dataRowFromKeyValue(criteriaIndex, criteriaValue);
+	if(rowData){
+		this._dataRowRemoveAt(rowData["index"]);
 	}
 	this._updateLayout();
 }
-giau.CRUD.prototype._dataFromRowKeyValue = function(criteriaIndex, criteriaValue){
+
+giau.CRUD.prototype._dataRowRemoveAt = function(rowIndex){
+	Code.removeElementAt(this._dataView["rows"], rowIndex);
+}
+giau.CRUD.prototype._dataRowFromKeyValue = function(criteriaIndex, criteriaValue){
+	var i, j;
 	var data = this._dataView;
-	var rows = data["data"];
-	var i;
+	var rows = data["rows"];
 	for(i=0; i<rows.length; ++i){
 		var row = rows[i];
-		var value = row[criteriaIndex];
-		if(value===criteriaValue){
-			Code.removeElementAt(rows,i);
-			var element = this._rowElements[i];
-			return {"row":row, "element": element, "mapping":mapping, };
+		for(j=0; j<row.length; ++j){
+			var mapping = row[j];
+			var index = mapping.field();
+			if(index===criteriaIndex){
+				var value = mapping.value();
+				if(value===criteriaValue){
+					return {"index":i, "row":row};
+				}
+			}
 		}
 	}
 	return null;
 }
-
 
 giau.CRUD.prototype._updateWithData = function(data){
 	console.log("CRUD._updateWithData");
@@ -3877,12 +3904,17 @@ giau.CRUD.prototype._updateWithData = function(data){
 	var presentation = definition["presentation"];
 	var columnPresentations = presentation["columns"];
 
-this._dataView = data;
+	view = {};
+	view["data"] = data;
+	view["rows"] = [];
+	this._dataView = view;
 
 	var i, column, pres, alias, row, keys;
+
 	// PUT ALL DATA INTO SINGLE STRUCTURE
 	var searchFields = [];
 	var editFields = [];
+	var lookupFields = {};
 	var aliases = presentation["column_aliases"];
 	keys = Code.keys(aliases);
 	for(i=0; i<keys.length; ++i){
@@ -3904,7 +3936,7 @@ this._dataView = data;
 					info["attributes"] = attributes;
 					info["presentation"] =  pres;
 					editFields.push(info);
-
+					lookupFields[key] = info;
 					var sortable = attributes["sort"];
 					if(sortable && sortable=="true"){
 						searchFields.push(info);
@@ -3913,83 +3945,28 @@ this._dataView = data;
 			}
 		}
 	}
+	view["data"]["fields"] = lookupFields;
 	this._searchFields = searchFields;
 	this._rowElements = [];
 
-// TODO: SEPARATE DATA SETTING FROM DISPLAY SETTING ...
-
-	Code.removeAllChildren(this._elementTable);
 	for(i=0; i<rows.length; ++i){
 		var row = rows[i];
-		// ROW
-		var elementRow = Code.newDiv();
-		Code.setStyleBackgroundColor(elementRow,"#FFF");
-		Code.setStyleMargin(elementRow,5+"px");
-		var primaryKeyIndex = null;
-		var primaryKeyValue = null;
+		var viewRow = [];
+		view["rows"].push(viewRow);
 		for(j=0; j<editFields.length; ++j){
 			var field = editFields[j];
 			var column = field["column"];
 			var alias = field["alias"];
-			if(field){
-				var attr = field["attributes"];
-				if(attr){
-					var primary = attr["primary_key"];
-					if(primary==="true"){
-						primaryKeyIndex = alias;
-						primaryKeyValue = row[alias];
-					}
-				}
-			}
 			var mapping = this._mappingFromData(field,row,alias);
-			//field["mapping"] = mapping;
-			Code.addChild(elementRow,mapping.element());
+			viewRow.push(mapping);
 		}
-		var dataContext = {};
-		if(primaryKeyIndex!==null && primaryKeyValue!==null){
-			dataContext["index"] = primaryKeyIndex;
-			dataContext["value"] = primaryKeyValue;
-			
-		}
-		dataContext["element"] = elementRow;
-		// DELETE
-		var elementDelete = Code.newDiv();
-		Code.setContent(elementDelete,"[&times;]"); // [x]
-		Code.setStyleDisplay(elementDelete,"inline-block");
-		Code.setStyleFloat(elementDelete,"right");
-		Code.setStyleCursor(elementDelete,Code.JS_CURSOR_STYLE_FINGER);
-		Code.addChild(elementRow,elementDelete);
-			this._jsDispatch.addJSEventListener(elementDelete, Code.JS_EVENT_CLICK, this._handleDeleteFxn, this, dataContext);
-
-		// UPDATE
-		var elementUpdate = Code.newDiv();
-		Code.setContent(elementUpdate,"[&uArr;]"); // [^] &plusmn;
-		Code.setStyleDisplay(elementUpdate,"inline-block");
-		Code.setStyleCursor(elementUpdate,Code.JS_CURSOR_STYLE_FINGER);
-		Code.addChild(elementRow,elementUpdate);
-			this._jsDispatch.addJSEventListener(elementUpdate, Code.JS_EVENT_CLICK, this._handleUpdateFxn, this, dataContext);
-		// RESET ???
-			// re-get the data?
-		var elementReset = Code.newDiv();
-		Code.setContent(elementReset,"[&#10227;]");
-		Code.setStyleDisplay(elementReset,"inline-block");
-		Code.setStyleCursor(elementReset,Code.JS_CURSOR_STYLE_FINGER);
-		Code.addChild(elementRow,elementReset);
-			this._jsDispatch.addJSEventListener(elementReset, Code.JS_EVENT_CLICK, this._handleReloadFxn, this, dataContext);
-
-		// row 
-		this._rowElements.push(elementRow);
-		Code.addChild(this._elementTable,elementRow);
 	}
-
-	//this._dataDefinition = definition;
-	//this._dataRows = rows;
 	this._updateLayout();
 }
 giau.CRUD.prototype._updateLayout = function(){
 	console.log("CRUD updateLayout");
 	var searchFields = this._searchFields;
-	var i;
+	var i, j;
 	
 	Code.removeAllChildren(this._elementOrdering);
 	for(i=0; i<searchFields.length; ++i){
@@ -4002,16 +3979,72 @@ giau.CRUD.prototype._updateLayout = function(){
 		Code.setStyleColor(div,"#000");
 		Code.addChild(this._elementOrdering,div);
 	}
-// ...
 
-	return;
-	var data = this._currentPageData["data"];
-	var i, dataCount = data.length;
-	for(i=0; i<dataCount; ++i){
+	Code.removeAllChildren(this._elementTable);
+	var view = this._dataView;
+	var rows = view["rows"];
+	var data = view["data"];
+	var fields = data["fields"];
+	console.log(fields);
+	//var i, dataCount = data.length;
+	for(i=0; i<rows.length; ++i){
+		var row = rows[i];
+		var elementRow = Code.newDiv();
+			Code.setStyleBackgroundColor(elementRow,"#FFF");
+			Code.setStyleMargin(elementRow,5+"px");
+		Code.addChild(this._elementTable,elementRow);
+		var primaryKeyIndex = null;
+		var primaryKeyValue = null;
+		for(j=0; j<row.length; ++j){
+			var mapping = row[j];
+			Code.addChild(elementRow,mapping.element());
+			var fieldKey = mapping.field();
+			var fieldValue = mapping.object()[fieldKey];
+			var field = fields[fieldKey];
+			if(field){
+				var attr = field["attributes"];
+				if(attr){
+					var primary = attr["primary_key"];
+					if(primary==="true"){
+						primaryKeyIndex = fieldKey;
+						primaryKeyValue = fieldValue;
+					}
+				}
+			}
+		}
+		// CONTEXT
+		if(primaryKeyIndex!==null && primaryKeyValue!==null){
+			var dataContext = {};
+			dataContext["index"] = primaryKeyIndex;
+			dataContext["value"] = primaryKeyValue;
+			// DELETE
+			var elementDelete = Code.newDiv();
+			Code.setContent(elementDelete,"[&times;]"); // [x]
+			Code.setStyleDisplay(elementDelete,"inline-block");
+			Code.setStyleFloat(elementDelete,"right");
+			Code.setStyleCursor(elementDelete,Code.JS_CURSOR_STYLE_FINGER);
+			Code.addChild(elementRow,elementDelete);
+				this._jsDispatch.addJSEventListener(elementDelete, Code.JS_EVENT_CLICK, this._handleDeleteFxn, this, dataContext);
 
+			// UPDATE
+			var elementUpdate = Code.newDiv();
+			Code.setContent(elementUpdate,"[&uArr;]"); // [^] &plusmn;
+			Code.setStyleDisplay(elementUpdate,"inline-block");
+			Code.setStyleCursor(elementUpdate,Code.JS_CURSOR_STYLE_FINGER);
+			Code.addChild(elementRow,elementUpdate);
+				this._jsDispatch.addJSEventListener(elementUpdate, Code.JS_EVENT_CLICK, this._handleUpdateFxn, this, dataContext);
+			// RESET ???
+				// re-get the data?
+			var elementReset = Code.newDiv();
+			Code.setContent(elementReset,"[&#10227;]");
+			Code.setStyleDisplay(elementReset,"inline-block");
+			Code.setStyleCursor(elementReset,Code.JS_CURSOR_STYLE_FINGER);
+			Code.addChild(elementRow,elementReset);
+				this._jsDispatch.addJSEventListener(elementReset, Code.JS_EVENT_CLICK, this._handleReloadFxn, this, dataContext);
+		}
 	}
 
-
+	return;
 
 	var FA = new FragArray();
 	console.log(FA);

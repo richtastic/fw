@@ -170,8 +170,25 @@ function giau_wordpress_data_service(){
 					error_log(" => CREATE");
 				}else if($lifecycleCRUD==="read"){
 					error_log(" => READ");
+					$dataID = $dataCRUD->{'section_id'};
+					if($dataID!==null){
+						$res = giau_read_section($dataID);
+						if($res!==null){
+							$response["data"] = $res;
+							$response["result"] = "success";
+						}
+					}
 				}else if($lifecycleCRUD==="update"){
 					error_log(" => UPDATE");
+					$dataID = $dataCRUD->{'section_id'};
+					$dataConfiguration = $dataCRUD->{'section_configuration'};
+					$dataList = $dataCRUD->{'section_list'};
+					//$dataID = $dataCRUD->{'widget_id'};
+					$res = giau_update_section($dataID, null, $dataConfiguration, $dataList);
+					if($res!==null){
+						$response["data"] = $res;
+						$response["result"] = "success";
+					}
 				}else if($lifecycleCRUD==="delete"){
 					error_log(" => DELETE");
 					$dataID = $dataCRUD->{'section_id'};
