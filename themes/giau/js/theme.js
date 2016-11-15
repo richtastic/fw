@@ -3634,11 +3634,20 @@ giau.DataCRUD.EVENT_READ = "EVENT_DATA_CRUD_READ";
 giau.DataCRUD.EVENT_UPDATE = "EVENT_DATA_CRUD_UPDATE";
 giau.DataCRUD.EVENT_DELETE = "EVENT_DATA_CRUD_DELETE";
 
+giau.DataCRUD.prototype.create = function(data, returnData){
+	this._asyncOperation("create", data, returnData, giau.DataCRUD.EVENT_CREATE);
+}
+giau.DataCRUD.prototype.read = function(data, returnData){
+	this._asyncOperation("read", data, returnData, giau.DataCRUD.EVENT_READ);
+}
+giau.DataCRUD.prototype.update = function(data, returnData){
+	this._asyncOperation("update", data, returnData, giau.DataCRUD.EVENT_UPDATE);
+}
 giau.DataCRUD.prototype.remove = function(data, returnData){
-	this._asyncOperation("delete", data, returnData);
+	this._asyncOperation("delete", data, returnData, giau.DataCRUD.EVENT_DELETE);
 }
 // //function giau_update_section($sectionID, $widgetID, $sectionConfig, $sectionList){
-giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData){
+giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData, alertEventName){
 	var url = this._url;
 
 	var ajax = new Ajax();
@@ -3650,7 +3659,7 @@ giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData){
 	ajax.context(this);
 	ajax.callback(function(d){
 		var obj = Code.parseJSON(d);
-		this.alertAll(giau.DataCRUD.EVENT_DELETE,returnData);
+		this.alertAll(alertEventName,returnData);
 	});
 	ajax.send();
 }
@@ -3763,6 +3772,15 @@ giau.CRUD.prototype._handleCreateFxn = function(e,data){
 giau.CRUD.prototype._handleReloadFxn = function(e,data){
 	console.log("RESET/RELOAD/READ");
 	console.log(data);
+	// get primary key index value
+	var passBack = {};
+		passBack["index"] = data["index"];
+		passBack["value"] = data["value"];
+	// request get with primary key
+	var jsonData = {};
+	jsonData[ data["index"] ] = data["value"];
+	var jsonString = Code.StringFromJSON(jsonData);
+	this._dataCRUD.read(jsonString, passBack);
 }
 giau.CRUD.prototype._handleUpdateFxn = function(e,data){
 	console.log("UPDATE");
@@ -3795,12 +3813,17 @@ giau.CRUD.prototype._handleCreateCompleteFxn = function(e){
 }
 giau.CRUD.prototype._handleReloadCompleteFxn = function(e){
 	console.log("READ COMPLETE");
-	console.log(e);
+	var criteriaIndex = e["index"];
+	var criteriaValue = e["value"];
+	var data = this._dataFromRowKeyValue();
+	console.log(data);
+HERE
 }
 giau.CRUD.prototype._handleUpdateCompleteFxn = function(e){
 	console.log("UPDATE COMPLETE");
 	console.log(e);
 }
+
 giau.CRUD.prototype._handleDeleteCompleteFxn = function(e){
 	console.log("DELETE COMPLETE");
 	console.log(e);
@@ -3826,7 +3849,21 @@ giau.CRUD.prototype._handleDeleteCompleteFxn = function(e){
 	}
 	this._updateLayout();
 }
-
+giau.CRUD.prototype._dataFromRowKeyValue = function(criteriaIndex, criteriaValue){
+	var data = this._dataView;
+	var rows = data["data"];
+	var i;
+	for(i=0; i<rows.length; ++i){
+		var row = rows[i];
+		var value = row[criteriaIndex];
+		if(value===criteriaValue){
+			Code.removeElementAt(rows,i);
+			var element = this._rowElements[i];
+			return {"row":row, "element": element, "mapping":mapping, };
+		}
+	}
+	return null;
+}
 
 
 giau.CRUD.prototype._updateWithData = function(data){
