@@ -2828,15 +2828,21 @@ giau.ObjectComposer = function(element, model, object){
 	console.log("insta:",this._dataInstance);
 
 	this.initialize();
-
+	/*
 	var div = Code.newInputButton("SAVE/UPDATE ?");
 		Code.setStyleBackgroundColor(div,"#FCC");
 	this._submitButton = div;
 	Code.addChild(this._container,this._submitButton);
-
 	this._jsDispatch.addJSEventListener(this._submitButton, Code.JS_EVENT_CLICK, this._handleSubmitClickFxn, this);
+	*/
 
 	console.log("insta FIN:",this._dataInstance);
+}
+giau.ObjectComposer.prototype.instance = function(){
+	this._dataInstance;
+}
+giau.ObjectComposer.prototype.model = function(){
+	this._dataModel;
 }
 giau.ObjectComposer.prototype._handleSubmitClickFxn = function(e){
 	this.prepareObjectForSubmission();
@@ -2882,45 +2888,6 @@ giau.ObjectComposer.prototype.fillOutObjectFromElements = function(inObject, jsO
 		}
 	}
 }
-/*
-giau.ObjectComposer.prototype._handleNewArrayObject = function(e,d){
-	var target = Code.getTargetFromEvent(e);
-	var modelObject = d["model"];
-	var instanceObject = d["instance"];
-	var element = d["element"];
-	var field = d["field"];
-	console.log("handle new array object");
-	console.log(modelObject);
-	console.log(instanceObject);
-	console.log(element);
-	this.fillOutModelFromElement(element, modelObject["fields"], instanceObject, field);
-	
-}
-giau.ObjectComposer.prototype._handleDeleteArrayObject = function(e,d){
-	var target = Code.getTargetFromEvent(e);
-	var modelObject = d["model"];
-	var instanceObject = d["instance"];
-	var element = d["element"];
-	var field = d["field"];
-	var index = d["index"];
-	console.log("handle delete array object");
-	console.log(modelObject);
-	console.log(instanceObject);
-	console.log(element);
-	console.log(field);
-	console.log(index);
-	if(index!==undefined){ // array
-		var array = instanceObject[field];
-		console.log(array);
-		Code.removeElementAt(array,index);
-		Code.removeFromParent(element);
-	}else{
-		// objects don't get deleted ?
-	}
-	//this.fillOutModelFromElement(element, modelObject, instanceObject, field);
-	
-}
-*/
 giau.ObjectComposer.prototype._handleNewArrayItem = function(e,d){
 	var target = Code.getTargetFromEvent(e);
 	var model = d["model"];
@@ -2928,26 +2895,11 @@ giau.ObjectComposer.prototype._handleNewArrayItem = function(e,d){
 	var element = d["element"];
 	var field = d["field"];
 		var type = model["type"];
-	console.log("CAN WE JUST APPEND THE ARRAY ITEM TO THE HTML CONTAINER AND JS ARRAY? ");
 	console.log("handle new array object");
 	console.log(model);
 	console.log(array);
 	console.log(element);
 	console.log(field);
-	// console.log("handle new array object");
-	// console.log(modelObject);
-	// console.log(instanceObject);
-	// console.log(element);
-	//this.fillOutModelFromElementArray(element, model, array, field);
-
-	/*
-	push on a new item to array:
-		- string
-		- object
-		- array
-	perform i(th) iteration of array
-	*/
-
 	var regexArrayPrefix = giau.ObjectComposer.regexArrayPrefix;
 	var subType = type.replace(regexArrayPrefix,"");
 	console.log("type: "+type);
@@ -3019,6 +2971,10 @@ var subElement = this.newSubElement(element,"object", array[i], field);
 			Code.setStyleDisplay(button,"inline-block");
 		Code.addChild(element, button);
 	var data = {"model":modelFieldInfo, "array":array, "element":element, "field":field}; // modelFieldInfo
+		// var mapping = new MapDataDisplay();
+		// 	mapping.element(element);
+		// 	mapping.object([modelFieldInfo, array]);
+		// 	mapping.field(field);
 	this._jsDispatch.addJSEventListener(button, Code.JS_EVENT_CLICK, this._handleNewArrayItem, this, data);
 }
 
@@ -3112,9 +3068,9 @@ giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(element, mode
 		console.log("\t=>primitive = number");
 		found = true;
 	}
-	if(found){
+	if(found && instanceObject){
 		var primitive = null;
-		if(isArray){
+		if(isArray){// && instanceObject){
 			console.log("isArray:",instanceObject);
 			var i, len = instanceObject.length;
 			for(i=0;i<len;++i){
@@ -3129,174 +3085,7 @@ giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(element, mode
 		}
 	}
 }
-/*
-	
-	// if( Code.hasKey(modelObject,"fields") ){
-	// 	modelObject = modelObject["fields"];
-	// }
-	console.log("++++++++++++++++++++++++++> "+newField);
-	console.log(modelObject);
-	console.log(instanceObject);
-	var keys = null; 
-	if(!isInstanceArray){
-		if(newField){
-			keys = [newField];
-		}else{
-			keys = Code.keys(modelObject);
-		}
-	}
-	var i, j, key, field, type, val, obj;
-	var div, content;
-	var len = isInstanceArray ? instanceObject.length : keys.length;
-console.log("start");
-	for(i=0; i<len; ++i){
-// k could be an index 
-		key = keys[i];
-		field = modelObject[key];
-		console.log(field);
-		type = null;
-		if(Code.hasKey(field,"type")){
-			type = field["type"];
-		}
-		name = key;
-		if(Code.hasKey(field,"name")){
-			name = field["name"];
-		}
-console.log(name,key);
-		content = null;
-			div = this.defaultInputRowObject(element);
-		if(type){
-			var isArray = type.match(regexArrayPrefix);
-			if(isArray){
-				var subType = type.replace(regexArrayPrefix,"");
-				console.log("SUB TYPE: "+subType);
-				if(newField){
-					console.log("IS NEW");
-					val = instanceObject[key];
-					obj = {};
-					val.push(obj);
-					this.fillOutModelFromElement(element, field["fields"],obj, null);
-				}else{
-					// VISUALS CONTAINER
-					content = Code.newDiv();
-					var label = Code.newDiv();
-							Code.setContent(label,""+key+": ");
-							Code.setStyleBackgroundColor(label,"#FCC");
-							Code.setStyleDisplay(label,"inline-block");
-					var button = Code.newInputButton("NEW ARRAY OBJECT");
-							Code.setStyleBackgroundColor(button,"#FCC");
-							Code.setStyleDisplay(button,"inline-block");
-					Code.addChild(content,label);
-					Code.addChild(content,button);
-					Code.addChild(div,content);
-					// DATA
-					val = instanceObject[key];
-					console.log("in",key,val);
-					subContainer = this.defaultInputRowObject(div);
-//subContainer = content;
-					if(val){ // FILL IN
-						for(j=0; j<val.length; ++j){
-							obj = val[j];
-subContainer = this.defaultInputRowObject(content);
-var del = Code.newInputButton("DELETE");
-Code.addChild(subContainer,del);
-var data = {"model":modelObject, "instance":instanceObject, "element":subContainer, "field":key, "index":j};
-this._jsDispatch.addJSEventListener(del, Code.JS_EVENT_CLICK, this._handleDeleteArrayObject, this, data);
-							this.fillOutModelFromElement(subContainer, field["fields"],obj, null);
-						}
-					}else{ // SET DEFAULT - EMPTY
-						val = [];
-						instanceObject[key] = val;
-					}
-					var data = {"model":modelObject, "instance":instanceObject, "element":content, "field":key};
-					this._jsDispatch.addJSEventListener(button, Code.JS_EVENT_CLICK, this._handleNewArrayObject, this, data);
-				}
-			}else if(type=="object"){
-				console.log("OBJECT");
-				val = instanceObject[key];
-					if(!val){ // not exist, set to default
-						val = {};
-						instanceObject[key] = val;
-					}
-					var label = Code.newDiv();
-						Code.setContent(label,""+key+": ");
-						Code.setStyleBackgroundColor(label,"#FCC");
-						Code.setStyleDisplay(label,"inline-block");
-						Code.addChild(div,label);
 
-// subContainer = this.defaultInputRowObject(div);
-// var del = Code.newInputButton("DELETE");
-// Code.addChild(subContainer,del);
-// console.log("OBJECT HERE ..........");
-// var data = {"model":modelObject, "instance":instanceObject, "element":subContainer, "field":key, "index":j};
-// this._jsDispatch.addJSEventListener(del, Code.JS_EVENT_CLICK, this._handleDeleteArrayObject, this, data);
-
-				this.fillOutModelFromElement(div, field,val, null);
-			}else if(type=="string" || type=="string-url" || type=="string-image" || type=="string-date" || type=="boolean" || type=="number"){ // primitive
-				content = Code.newDiv();
-					var label = Code.newDiv();
-						Code.setContent(label,""+key+": ");
-						Code.setStyleBackgroundColor(label,"#FCC");
-						Code.setStyleDisplay(label,"inline-block");
-					var input = Code.newInputText();
-						Code.setStyleBackgroundColor(input,"#CCF");
-						Code.setStyleDisplay(input,"inline-block");
-				Code.addChild(content,label);
-				Code.addChild(content,input);
-				Code.addChild(div,content);
-				// SETTING
-				val = instanceObject[key];
-				if(val){
-					Code.setInputTextValue(input,val);
-				}else{
-					instanceObject[key] = ""; // init to empty
-				}
-				instanceObject[key] = {"type":"string", "input":input, "nonce":this._dataNonce};
-			}else{
-				console.log("unknown type: "+type);
-			}
-
-		}
-		if(content){
-			//Code.setContent(div,content);
-			//Code.addChild(div,content);
-		}
-	}
-	*/
-
-/*
-	//: NAVIGATION
-	$widget_id_navigation_list = giau_insert_widget("navigation_list",
-		[
-			"alias": "navigation_list",
-			"name": "Giau Navigation",
-			"cssClass": "giauNavigationItemList",
-			"jsClass": "giau.NavigationList",
-			"fields": [
-				"components": [
-					"type": "array-object",
-					"description": "navigation item",
-					"fields": [
-						"display_text": [
-							"type": "string",
-							"description": "displayed text"
-						],
-						"uri": [
-							"type": "string",
-							"description": "location destination"
-						]
-					]
-				],
-				"class": [
-					"type": "string"
-				],
-				"style": [
-					"type": "string"
-				],
-			]
-		]
-	);
-*/
 
 
 
@@ -3306,7 +3095,6 @@ giau.LibraryScroller = function(element, name, url){
 
 	this._jsDispatch = new JSDispatch();
 
-	console.log("LibraryScroller");
 	this._container = element;
 	this._name = name !== undefined ? name : "library_scroller";
 	
@@ -3671,6 +3459,16 @@ giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData, 
 
 
 giau.CRUD = function(element){
+
+console.log("TODO: HERE");
+	var model = {};
+	var object = {}
+	var composer = new giau.ObjectComposer(element, model, object);
+
+return;
+
+
+
 	this._container = element;
 
 	this._jsDispatch = new JSDispatch();
@@ -4274,17 +4072,21 @@ giau.CRUD._fieldEditStringUpdateDataFxn = function(mapping, action){
 
 giau.CRUD._fieldEditJSON = function(definition, container, fieldName, elementContainer, mapping){
 	var elementJSON = Code.newDiv();
-//mapping.element(elementContainer);
-return elementJSON;
 		Code.addChild(elementContainer,elementJSON);
+	var presentation = definition["presentation"];
 	var jsonModelColumn = presentation["json_model_column"];
-	var modelString = source[jsonModelColumn];
-	var object = Code.parseJSON(value);
+	var modelString = container[jsonModelColumn]; // ALSO: mapping.object()["json_model_column"];
 	var model = Code.parseJSON(modelString);
+	var object = Code.parseJSON(mapping.value());
+	// set source to objects instead of strings
+		container[jsonModelColumn] = model;
+		mapping.value(object);
 	//console.log(object);
 	//console.log(model);
-	console.log("---------------------------------------------------------------------------------------------------------------");
+	console.log("--------------------------------------------------------------------------------------------------------------- COMPOSER START");
 	var composer = new giau.ObjectComposer(elementJSON, model, object);
+	mapping.value(composer);
+	console.log("--------------------------------------------------------------------------------------------------------------- COMPOSER END");
 	//console.log(composer);
 	return elementJSON;
 }

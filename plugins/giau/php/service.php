@@ -371,8 +371,11 @@ function giau_wordpress_data_service(){
 				// edit a row
 					- values WHERE id
 				*/
-				$offset = 46;
-				$count = 1;
+				// TEST FOR MANY SUB SECTIONS
+				// $offset = 46;
+				// $count = 1;
+				$offset = 50;
+				$count = 5;
 				$requestInfo = [];
 				$requestInfo["offset"] = $offset;
 				$requestInfo["count"] = $count;
