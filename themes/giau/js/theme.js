@@ -2914,23 +2914,65 @@ giau.ObjectComposer.prototype._handleNewArrayItem = function(e,d){
 		console.log("primitive?");
 		array.push("");
 	}
-	var container = Code.getParent(element);
+	//var container = Code.getParent(element);
 	// remove old contents
 	Code.removeAllChildren(element);
+
+	// var superModel = d["superModel"];
+	// console.log(superModel[0])
+	// console.log(superModel[1])
+	// console.log(superModel[2])
+	// console.log(superModel[3])
+	// this.fillOutModelFromElement(superModel[0],superModel[1],superModel[2],superModel[3]);
+	//this.fillOutModelFromElement(element, model, array, field);
 // CLEANER WAY IS ADDING THE ELEMENT, AND STARTING ON THE LAST INDEX
 	// insert new contents
 	this.fillOutModelFromElementArray(element, model, array, field);
 }
 
+
+giau.ObjectComposer.prototype._handleDeleteArrayItem = function(e,d){
+	console.log(e);
+	console.log(d);
+	//var container = Code.getParent(element);
+	//Code.removeAllChildren(element);
+	var model = d["model"];
+	var array = d["array"];
+	var element = d["element"];
+	var field = d["field"];
+	var type = model["type"];
+	//Code.removeFromParent(element);
+	Code.removeElementAt(array,field);
+	console.log(model)
+	console.log(array)
+	console.log(element)
+	console.log(field)
+	console.log(type)
+	
+	// needs renumbering
+	//Code.removeAllChildren(element);
+	//this.fillOutModelFromElement(element, model, array, field);
+	// this.fillOutModelFromElementArray(element, model, array, field);
+	//var subElement = this.newSubElement(element,"array", array, model, field);
+	this.fillOutModelFromElementArray(element, model, array, field);
+}
+
+
 giau.ObjectComposer.prototype.defaultInputRowObject = function(element){
-	div = Code.newDiv();
-	Code.setStylePaddingTop(div,"0px");
-	Code.setStylePaddingBottom(div,"0px");
-	Code.setStylePaddingRight(div,"0px");
-	Code.setStylePaddingLeft(div,"10px");
+	var color = 0x11110000;
+		color = Code.getJSColorFromARGB(color);
+	var div = Code.newDiv();
+	Code.setStylePaddingTop(div,"2px");
+	Code.setStylePaddingBottom(div,"2px");
+	Code.setStylePaddingRight(div,"1px");
+	Code.setStylePaddingLeft(div,"6px");
+		//Code.setStylePadding(div,"2px");
+	Code.setStyleBackgroundColor(div,color);
 	if(element){
 		Code.addChild(element,div);
 	}
+	var radius = 6;
+		Code.setStyleBorderRadius(div,radius+"px");
 	return div;
 }
 
@@ -2960,25 +3002,41 @@ giau.ObjectComposer.prototype.defaultInputRowLabel = function(element, title){
 }
 
 giau.ObjectComposer.prototype.defaultInputRowLabelObject = function(element, title){
-	var radius = 4;
+	var radius = 2;
 	var div = this.defaultInputRowLabel(element, title);
-		Code.setStyleBorderRadius(element,radius+"px");
+		Code.setStyleBorderRadius(div,radius+"px");
 	return div;
 }
 
 giau.ObjectComposer.prototype.defaultInputRowLabelPrimitive = function(element, title){
 	var radius = 4;
 	var div = this.defaultInputRowLabel(element, title);
-		Code.setStyleBorderRadius(element,0+"px "+radius+"px "+radius+"px "+0+"px");
+		//Code.setStyleBorderRadius(div,0+"px "+radius+"px "+radius+"px "+0+"px");
+		Code.setStyleBorderRadius(div,radius+"px "+0+"px "+0+"px "+radius+"px");
 	return div;
 }
-
+giau.ObjectComposer.prototype._interactActionButton = function(display, element){
+	var radius = 3;
+	var button = Code.newInputButton(display); // NEW ARRAY OBJECT
+		Code.setStylePadding(button,3+"px");
+		Code.setStyleColor(button,"#FFF");
+		Code.setStyleBorderRadius(button,radius+"px");
+		Code.setStyleBorder(button,"solid");
+		Code.setStyleBorderWidth(button,1+"px");
+		Code.setStyleBorderColor(button,giau.Theme.Color.LightRed);
+		Code.setStyleBackgroundColor(button,giau.Theme.Color.MediumRed);
+		Code.setStyleDisplay(button,"inline-block");
+		Code.setStyleVerticalAlign(button,"top");
+	if(element){
+		Code.addChild(element, button);
+	}
+	return button;
+}
 
 giau.ObjectComposer.regexArrayPrefix = new RegExp('^array-','i');
 
 giau.ObjectComposer.prototype.fillOutModelFromElementArray = function(element,modelFieldInfo,array, field){
 	var regexArrayPrefix = new RegExp('^array-','i');
-	console.log(modelFieldInfo)
 	var modelFieldType = modelFieldInfo["type"];
 	var modelSubType = modelFieldType.replace(regexArrayPrefix,"");
 	console.log("\t=> array of "+modelSubType);
@@ -2986,31 +3044,28 @@ giau.ObjectComposer.prototype.fillOutModelFromElementArray = function(element,mo
 		console.log("\t=>array [array]");
 		var objectModel = modelFieldInfo["fields"];
 		for(var i=0; i<array.length; ++i){
-var subElement = this.newSubElement(element,"array", array[i], field);
+			var subElement = this.newSubElement(element,"array", array[i], field, modelFieldInfo);
 			this.fillOutModelFromElementArray(subElement,objectModel,array[i], field);
 		}
 	}else if(modelSubType=="object"){
 		console.log("\t=>object [array]");
-		var objectModel = modelFieldInfo["fields"];//["fields"];
+		var objectModel = modelFieldInfo["fields"];
 		for(var i=0; i<array.length; ++i){
-var subElement = this.newSubElement(element,"object", array[i], field);
+			var subElement = this.newSubElement(element,"object", array[i], field. modelFieldInfo);
 			this.fillOutModelFromElement(subElement,objectModel,array[i], false);
 		}
 	}else{
 		console.log("\t=>primitive [array]");
 		console.log(modelFieldInfo,array);
-		//                         (element, modelObject,instanceObject, modelFieldName,modelFieldType, isArray)
 		this._fillOutWithPrimitiveType(element,modelFieldInfo,    array, null,modelSubType, true);
 	}
-	var button = Code.newInputButton("[&plus;]"); // NEW ARRAY OBJECT
-			Code.setStyleBackgroundColor(button,"#FCC");
-			Code.setStyleDisplay(button,"inline-block");
-		Code.addChild(element, button);
-	var data = {"model":modelFieldInfo, "array":array, "element":element, "field":field}; // modelFieldInfo
-		// var mapping = new MapDataDisplay();
-		// 	mapping.element(element);
-		// 	mapping.object([modelFieldInfo, array]);
-		// 	mapping.field(field);
+	var button = this._interactActionButton("&nbsp;+&nbsp;", element);
+	//var data = {"model":modelFieldInfo, "array":array, "element":element, "field":field};
+	var data = {"model":modelFieldInfo, "array":array, "element":element, "field":field};
+
+
+
+	
 	this._jsDispatch.addJSEventListener(button, Code.JS_EVENT_CLICK, this._handleNewArrayItem, this, data);
 }
 
@@ -3030,13 +3085,14 @@ giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelOb
 			var isArray = modelFieldType.match(regexArrayPrefix);
 			if(isArray){
 				console.log(" ---> is array: ",instanceObject,instanceObject[modelFieldName]);
-				var subElement = this.newSubElement(element,"array", instanceObject, modelFieldName);
-				this.fillOutModelFromElementArray(subElement, modelFieldInfo, instanceObject[modelFieldName], modelFieldName);
+				var subElement = this.newSubElement(element,"array", instanceObject, modelFieldName, modelFieldInfo);
+				this.fillOutModelFromElementArray(subElement, modelFieldInfo, instanceObject[modelFieldName], modelFieldName, instanceObject,
+					[element,modelObject,instanceObject, newField]);
 			}else{
 				if(modelFieldType=="object"){
 					console.log("\t=>object");
 					var object = instanceObject[modelFieldName];
-					var subElement = this.newSubElement(element,"object", instanceObject, modelFieldName);
+					var subElement = this.newSubElement(element,"object", instanceObject, modelFieldName, modelFieldInfo, instanceObject);
 					this.fillOutModelFromElement(subElement,modelFieldInfo["fields"],object, false);
 				}else{
 					this._fillOutWithPrimitiveType(element, modelObject,instanceObject, modelFieldName,modelFieldType, false);
@@ -3050,33 +3106,28 @@ giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelOb
 
 Code.newDiv();
 
-giau.ObjectComposer.prototype.newSubElement = function(element,type, container, field){
+giau.ObjectComposer.prototype.newSubElement = function(element,type, container, field, model){
 	var div = this.defaultInputRowObject(element);
-	//var color = Code.getColARGB( 0xFF, Code.randomInt(0,0xFF), Code.randomInt(0,0xFF), Code.randomInt(0,0xFF) );
-	var color = 0x11110000;
-	color = Code.getJSColorFromARGB(color);
-	Code.setStyleBackgroundColor(div,color);
-		
 	if(type=="array"){
 		var label = this.defaultInputRowLabelObject(div,""+field);
 	}else if(type=="object"){
-		var label = this.defaultInputRowLabelObject(div,""+field);
+		var label = this.defaultInputRowLabelObject(div,""+field+"!!!!");
 	}else if(type=="primitive"){
 		var value = container[field];
+		var input = this._inputTextField(div,field, value);
 		if(Code.isArray(container)){
-			//Code.setContent(div, field+" "+": "+);
-		}else{
-			//Code.setContent(div, field+" "+": "+container[field]);
+			var button = this._interactActionButton("&nbsp;-&nbsp;");
+				Code.addChild(input,button);
+			var data = {"model":model, "array":container, "element":element, "field":field};
+			this._jsDispatch.addJSEventListener(button, Code.JS_EVENT_CLICK, this._handleDeleteArrayItem, this, data);
 		}
-		this._inputTextField(div,field, value);
+
 	}
 	return div;
 }
 
 giau.ObjectComposer.prototype._inputTextField = function(element, key,value){
 	var radius = 4;
-
-
 	var div = element;
 	var content = Code.newDiv();
 	var label = this.defaultInputRowLabelPrimitive(div, ""+key);
@@ -3093,7 +3144,7 @@ giau.ObjectComposer.prototype._inputTextField = function(element, key,value){
 	if(value){
 		Code.setInputTextValue(input,value);
 	}
-	return null;
+	return content;
 }
 
 giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(element, modelObject,instanceObject, modelFieldName,modelFieldType, isArray){
@@ -3119,12 +3170,12 @@ giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(element, mode
 			for(i=0;i<len;++i){
 				primitive = instanceObject[i];
 				console.log("\t\t: "+i+" = "+primitive);
-				var subElement = this.newSubElement(element,"primitive", instanceObject,i);
+				var subElement = this.newSubElement(element,"primitive", instanceObject,i, modelObject);
 			}
 		}else{
 			primitive = instanceObject[modelFieldName];
 			console.log("\t\t: "+primitive);
-			var subElement = this.newSubElement(element,"primitive", instanceObject,modelFieldName);
+			var subElement = this.newSubElement(element,"primitive", instanceObject,modelFieldName, modelObject);
 		}
 	}
 }
@@ -3540,7 +3591,7 @@ console.log("TODO: HERE");
 				}
 			},
 			
-			"array-array": {
+			"array-arrayX": {
 				"type": "array-array",
 				"fields": {
 					"type" : "array-object",
@@ -3563,7 +3614,7 @@ console.log("TODO: HERE");
 			"fieldA": "_FIELD_A_VALUE_",
 			"fieldB": "_FIELD_B_VALUE_",
 		},
-		"array-array": [
+		"array-arrayX": [
 			[
 				{
 					"parameterA":"_VALUE_A_",
