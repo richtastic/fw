@@ -114,7 +114,7 @@ giau.prototype.initialize = function(){
 	// }
 	// var _jsDispatch = new JSDispatch();
 	// _jsDispatch.addJSEventListener(document.body, Code.JS_EVENT_MOUSE_MOVE, listener);
-	
+THIS = this;
 }
 
 giau.ElementFloater = function(element){ //
@@ -2917,10 +2917,11 @@ giau.ObjectComposer.prototype._handleNewArrayItem = function(e,d){
 	var container = Code.getParent(element);
 	// remove old contents
 	Code.removeAllChildren(element);
+// CLEANER WAY IS ADDING THE ELEMENT, AND STARTING ON THE LAST INDEX
 	// insert new contents
 	this.fillOutModelFromElementArray(element, model, array, field);
-	//this.fillOutModelFromElementArray(element, model["fields"], array, field);
 }
+
 giau.ObjectComposer.prototype.defaultInputRowObject = function(element){
 	div = Code.newDiv();
 	Code.setStylePaddingTop(div,"0px");
@@ -2930,13 +2931,48 @@ giau.ObjectComposer.prototype.defaultInputRowObject = function(element){
 	if(element){
 		Code.addChild(element,div);
 	}
-	//Code.setContent(div,"?");
 	return div;
 }
-/*
-what if array is root element ?
-	=> an only accept an OBJECT at the root element
-*/
+
+giau.ObjectComposer.prototype.defaultInputRowLabel = function(element, title){
+	var bgColor = giau.Theme.Color.MediumRed;//0xFFFFFFFF;
+		// console.log(bgColor);
+		// bgColor = Code.getJSColorFromARGB(bgColor);
+	div = Code.newDiv();
+	Code.setStylePaddingTop(div,"4px");
+	Code.setStylePaddingBottom(div,"4px");
+	Code.setStylePaddingRight(div,"4px");
+	Code.setStylePaddingLeft(div,"4px");
+	Code.setStyleBackgroundColor(div,bgColor);
+		Code.setStyleBorder(div,"solid");
+		Code.setStyleBorderWidth(div,1+"px");
+		Code.setStyleBorderColor(div,giau.Theme.Color.LightRed);
+	Code.setStyleDisplay(div,"inline-block");
+	Code.setStyleColor(div,"#FFF");
+	Code.setStyleFontSize(div,12+"px");
+	if(element){
+		Code.addChild(element,div);
+	}
+	if(title){
+		Code.setContent(div, title)
+	}
+	return div;
+}
+
+giau.ObjectComposer.prototype.defaultInputRowLabelObject = function(element, title){
+	var radius = 4;
+	var div = this.defaultInputRowLabel(element, title);
+		Code.setStyleBorderRadius(element,radius+"px");
+	return div;
+}
+
+giau.ObjectComposer.prototype.defaultInputRowLabelPrimitive = function(element, title){
+	var radius = 4;
+	var div = this.defaultInputRowLabel(element, title);
+		Code.setStyleBorderRadius(element,0+"px "+radius+"px "+radius+"px "+0+"px");
+	return div;
+}
+
 
 giau.ObjectComposer.regexArrayPrefix = new RegExp('^array-','i');
 
@@ -2966,7 +3002,7 @@ var subElement = this.newSubElement(element,"object", array[i], field);
 		//                         (element, modelObject,instanceObject, modelFieldName,modelFieldType, isArray)
 		this._fillOutWithPrimitiveType(element,modelFieldInfo,    array, null,modelSubType, true);
 	}
-	var button = Code.newInputButton("NEW ARRAY OBJECT");
+	var button = Code.newInputButton("[&plus;]"); // NEW ARRAY OBJECT
 			Code.setStyleBackgroundColor(button,"#FCC");
 			Code.setStyleDisplay(button,"inline-block");
 		Code.addChild(element, button);
@@ -3012,16 +3048,19 @@ giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelOb
 	}
 }
 
+Code.newDiv();
+
 giau.ObjectComposer.prototype.newSubElement = function(element,type, container, field){
 	var div = this.defaultInputRowObject(element);
-	var color = Code.getColARGB( 0xFF, Code.randomInt(0,0xFF), Code.randomInt(0,0xFF), Code.randomInt(0,0xFF) );
+	//var color = Code.getColARGB( 0xFF, Code.randomInt(0,0xFF), Code.randomInt(0,0xFF), Code.randomInt(0,0xFF) );
+	var color = 0x11110000;
 	color = Code.getJSColorFromARGB(color);
 	Code.setStyleBackgroundColor(div,color);
+		
 	if(type=="array"){
-		Code.setContent(div, "array: "+field);
+		var label = this.defaultInputRowLabelObject(div,""+field);
 	}else if(type=="object"){
-		Code.setContent(div, "object: "+field);
-		console.log(element,type,container,field);
+		var label = this.defaultInputRowLabelObject(div,""+field);
 	}else if(type=="primitive"){
 		var value = container[field];
 		if(Code.isArray(container)){
@@ -3035,15 +3074,19 @@ giau.ObjectComposer.prototype.newSubElement = function(element,type, container, 
 }
 
 giau.ObjectComposer.prototype._inputTextField = function(element, key,value){
+	var radius = 4;
+
+
 	var div = element;
 	var content = Code.newDiv();
-	var label = Code.newDiv();
-			Code.setContent(label,""+key+": ");
-			Code.setStyleBackgroundColor(label,"#FCC");
-			Code.setStyleDisplay(label,"inline-block");
+	var label = this.defaultInputRowLabelPrimitive(div, ""+key);
 	var input = Code.newInputText();
-			Code.setStyleBackgroundColor(input,"#CCF");
-			Code.setStyleDisplay(input,"inline-block");
+		Code.setStyleBorder(input,"solid");
+		Code.setStyleBorderWidth(input,1+"px");
+		Code.setStyleBorderColor(input,"#CCC");
+		Code.setStyleBorderRadius(input,0+"px "+radius+"px "+radius+"px "+0+"px");
+		Code.setStyleBackgroundColor(input,"#FFF");
+		Code.setStyleDisplay(input,"inline-block");
 	Code.addChild(content,label);
 	Code.addChild(content,input);
 	Code.addChild(div,content);
@@ -3179,6 +3222,7 @@ giau.LibraryScroller._generateSize = function(info, data){
 }
 giau.Theme = {};
 giau.Theme.Color = {};
+giau.Theme.Color.LightRed = Code.getJSColorFromARGB(0xFFCC2244);
 giau.Theme.Color.MediumRed = Code.getJSColorFromARGB(0xFF990022);
 giau.Theme.Color.DarkRed = Code.getJSColorFromARGB(0xFF550011);
 giau.LibraryScroller._generateDiv = function(info, data){
@@ -3459,11 +3503,76 @@ giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData, 
 
 
 giau.CRUD = function(element){
-
+	/*
+console.log("JSON PARSING");
+	//var jsonString = '{"index":"value", "array":[ "a", "b", {"c":"2"} ]}';
+	var jsonString = '{"index":"value"}';
+	var json = Code.JSONToObject(jsonString);
+	return;
+*/
 console.log("TODO: HERE");
-	var model = {};
-	var object = {}
+	var model = {
+		"fields": {
+			"text": {
+				"type": "string"
+			},
+			"number": {
+				"type": "string-number"
+			},
+			"boolean": {
+				"type": "string-boolean"
+			},
+			"array-strings": {
+				"type": "array-string"
+			},
+			"array-strings": {
+				"type": "array-string"
+			},
+			"object": {
+				"type": "object",
+				"fields": {
+					"fieldA": {
+						"type":"string"
+					},
+					"fieldB": {
+						"type":"string"
+					}
+				}
+			},
+			
+			"array-array": {
+				"type": "array-array",
+				"fields": {
+					"type" : "array-object",
+					"fields": {
+						"parameterA": {
+							"type": "string"
+						}
+					}
+				}
+			}
+			
+		}
+	};
+	var object = {
+		"text": "_TEXT_VALUE_",
+		"number": "3.141",
+		"boolean": "true",
+		"array-strings": ["A","B","C"],
+		"object": {
+			"fieldA": "_FIELD_A_VALUE_",
+			"fieldB": "_FIELD_B_VALUE_",
+		},
+		"array-array": [
+			[
+				{
+					"parameterA":"_VALUE_A_",
+				}
+			]
+		],
+	};
 	var composer = new giau.ObjectComposer(element, model, object);
+	Code.setStyleBackgroundColor(element,"#FFFFFF");
 
 return;
 
