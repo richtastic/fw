@@ -2835,8 +2835,6 @@ giau.ObjectComposer = function(element, model, object){
 	Code.addChild(this._container,this._submitButton);
 	this._jsDispatch.addJSEventListener(this._submitButton, Code.JS_EVENT_CLICK, this._handleSubmitClickFxn, this);
 	*/
-
-	console.log("insta FIN:",this._dataInstance);
 }
 giau.ObjectComposer.prototype.instance = function(){
 	this._dataInstance;
@@ -2855,14 +2853,19 @@ giau.ObjectComposer.prototype.initialize = function(){
 	}
 	this.fillOutModelFromElement(this._container, modelObject["fields"], instanceObject);
 }
-giau.ObjectComposer.prototype.prepareObjectForSubmission = function(){
-	// go thru object and set values from fields
+giau.ObjectComposer.prototype.prepareObjectForSubmission = function(){ // go thru object and set values from fields
 	console.log(this._dataInstance);
+	console.log(this._dataModel);
 	var jsObject = {};
 	this.fillOutObjectFromElements(this._dataInstance,jsObject);
 	console.log(jsObject);
 }
-giau.ObjectComposer.prototype.fillOutObjectFromElements = function(inObject, jsObject){
+giau.ObjectComposer.prototype.fillOutObjectFromElements = function(inObject, jsObject, limit){
+limit = limit!==undefined ? limit : 3;
+--limit;
+if(limit==0){
+	return;
+}
 	var isArray = Code.isArray(jsObject);
 	var keys = null;
 	if(!isArray){
@@ -2873,18 +2876,23 @@ giau.ObjectComposer.prototype.fillOutObjectFromElements = function(inObject, jsO
 	for(i=0; i<len; ++i){
 		key = isArray ? i : keys[i];
 		val = inObject[key];
+		// console.log("KEY: ",key);
+		// console.log("VAL: ",val);
 		if(val && val["nonce"] == this._dataNonce){ // primitive
+			console.log("PRIMITIVE: ",key);
 			input = val["input"];
 			value = Code.getInputTextValue(input);
 			jsObject[key] = value;
 		}else{ // is non-primitive
 			if(Code.isArray(val)){ // array
+				console.log("ARRAY: ",key);
 				value = [];
 			}else{ // object
+				console.log("OBJECT: ",key);
 				value = {};
 			}
 			jsObject[key] = value;
-			this.fillOutObjectFromElements(val, value);
+			this.fillOutObjectFromElements(val, value, limit);
 		}
 	}
 }
@@ -2896,16 +2904,7 @@ giau.ObjectComposer.prototype._handleNewArrayItem = function(e,d){
 	var field = d["field"];
 	var superModel = d["superModel"];
 		var type = model["type"];
-	/*
-	console.log(model);
-	console.log(array);
-	console.log(element);
-	console.log(field);
-	*/
 	var subType = giau.ObjectComposer.fieldTypeArraySubtype(type);
-	// console.log("type: "+type);
-	// console.log("subtype: "+subType);
-	// console.log(array)
 	if(subType=="array"){ // create default array
 		array.push([]);
 	}else if(subType=="object"){ // create default object
@@ -2918,56 +2917,32 @@ giau.ObjectComposer.prototype._handleNewArrayItem = function(e,d){
 
 	Code.removeAllChildren(superModel[0]);
 	this.fillOutModelFromElement(superModel[0],superModel[1],superModel[2],superModel[3]);
-	
-	return;
-	while(Code.numChildren(element)>1){
-		Code.removeChildAt(element, Code.numChildren(element)-1 );
-	}
-	this.fillOutModelFromElementArray(element, model, array, field);
 }
 
 
 giau.ObjectComposer.prototype._handleDeleteArrayItem = function(e,d){
-	//var container = Code.getParent(element);
-	//Code.removeAllChildren(element);
 	var model = d["model"];
 	var array = d["array"];
 	var element = d["element"];
 	var field = d["field"];
 	var type = model["type"];
 	var superModel = d["superModel"];
-	/*
-	console.log(model)
-	console.log(array)
-	console.log(element)
-	console.log(field)
-	console.log(type)
-	console.log("REMOVAL: ");
-	console.log(element);
 	
-	console.log(superModel);
-	console.log("superModel[0]")
-	console.log(superModel[0])
-	console.log("superModel[1]")
-	console.log(superModel[1])
-	console.log("superModel[2]")
-	console.log(superModel[2])
-	console.log("superModel[3]")
-	console.log(superModel[3])
-	*/
-	console.log("REMOVE: "+field);
-	console.log(array[field]);
 	Code.removeElementAt(array,field);
 	Code.removeAllChildren(superModel[0]);
 
-	//this.fillOutModelFromElement(element, model, array, field);
 	this.fillOutModelFromElement(superModel[0],superModel[1],superModel[2],superModel[3]);
-	
-	return;
-	while(Code.numChildren(element)>1){
-		Code.removeChildAt(element, Code.numChildren(element)-1 );
-	}
-	this.fillOutModelFromElementArray(element, model, array, field);
+}
+
+giau.ObjectComposer.prototype._handlePrimitiveUpdate = function(e,d){
+	var element = d["element"];
+	var container = d["container"];
+	var field = d["field"];
+	var model = d["model"];
+	var inputElement = d["input"];
+	var value = Code.getInputTextValue(inputElement);
+	container[field] = value; // update data object
+	console.log(this._dataInstance);
 }
 
 giau.ObjectComposer.prototype.fillOutModelFromElementArray = function(element,modelFieldInfo,array,field, superModel){
@@ -2995,8 +2970,7 @@ giau.ObjectComposer.prototype.fillOutModelFromElementArray = function(element,mo
 }
 
 giau.ObjectComposer.prototype.fillOutModelFromElement = function(element,modelObject,instanceObject, newField){
-	console.log("++++++++++++++++++++++++++++++++++++++");
-var superModel = [element, modelObject, instanceObject, newField];
+	var superModel = [element, modelObject, instanceObject, newField]; // recall this with exact params
 	var modelKeys = Code.keys(modelObject);
 	var i, modelFieldName, modelFieldType, modelFieldInfo;
 	for(i=0; i<modelKeys.length; ++i){
@@ -3005,19 +2979,32 @@ var superModel = [element, modelObject, instanceObject, newField];
 		modelFieldType = modelFieldInfo["type"];
 		if(modelFieldType){
 			var isArray = giau.ObjectComposer.isFieldTypeArray(modelFieldType);
+			var subObject = instanceObject[modelFieldName];
 			if(isArray){
-				var subElement = this.newSubElement(element,"[ARR]","array", instanceObject, modelFieldName, modelFieldInfo);
-				this.fillOutModelFromElementArray(subElement, modelFieldInfo, instanceObject[modelFieldName], modelFieldName, superModel, instanceObject);
+				if(!subObject){ // create default array
+					subObject = [];
+					instanceObject[modelFieldName] = subObject;
+				}
+				var subElement = this.newSubElement(element,"["+modelFieldName+"]","array", instanceObject, modelFieldName, modelFieldInfo);
+				this.fillOutModelFromElementArray(subElement, modelFieldInfo, subObject, modelFieldName, superModel, instanceObject);
 			}else{
 				if(modelFieldType=="object"){
+					if(!subObject){ // create default object
+						subObject = {};
+						instanceObject[modelFieldName] = subObject;
+					}
 					var object = instanceObject[modelFieldName];
-					var subElement = this.newSubElement(element,"[OBJ]","object", instanceObject, modelFieldName, modelFieldInfo, superModel);
+					var subElement = this.newSubElement(element,"{"+modelFieldName+"}","object", instanceObject, modelFieldName, modelFieldInfo);
 					this.fillOutModelFromElement(subElement,modelFieldInfo["fields"],object, false);
 				}else{ // primitive
+					if(subObject==undefined){ // create default primitive
+						subObject = "";
+						instanceObject[modelFieldName] = subObject;
+					}
 					this._fillOutWithPrimitiveType(element, modelObject,instanceObject, modelFieldName,modelFieldType, false);
 				}
 			}
-		} // no type
+		}
 	}
 }
 
@@ -3035,7 +3022,11 @@ giau.ObjectComposer.prototype.newSubElement = function(element,name,type, contai
 		holder = element;
 	}else if(type=="primitive"){
 		var value = container[field];
-		label = this._inputTextField(div,field, value);
+		var input = this._inputTextField(div,field, value);
+		label = input["container"];
+		var textElement = input["input"];
+			var data = {"element": element, "input":textElement, "container": container, "field": field};
+			this._jsDispatch.addJSEventListener(textElement, Code.JS_EVENT_INPUT_CHANGE, this._handlePrimitiveUpdate, this, data);
 		holder = element;
 	}
 	if(label && holder && isReallyArray){
@@ -3047,26 +3038,6 @@ giau.ObjectComposer.prototype.newSubElement = function(element,name,type, contai
 	return div;
 }
 
-giau.ObjectComposer.prototype._inputTextField = function(element, key,value){
-	var radius = 4;
-	var div = element;
-	var content = Code.newDiv();
-	var label = this.defaultInputRowLabelPrimitive(div, ""+key);
-	var input = Code.newInputText();
-		Code.setStyleBorder(input,"solid");
-		Code.setStyleBorderWidth(input,1+"px");
-		Code.setStyleBorderColor(input,"#CCC");
-		Code.setStyleBorderRadius(input,0+"px "+radius+"px "+radius+"px "+0+"px");
-		Code.setStyleBackgroundColor(input,"#FFF");
-		Code.setStyleDisplay(input,"inline-block");
-	Code.addChild(content,label);
-	Code.addChild(content,input);
-	Code.addChild(div,content);
-	if(value){
-		Code.setInputTextValue(input,value);
-	}
-	return content;
-}
 
 giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(element, modelObject,instanceObject, modelFieldName,modelFieldType, isArray){
 	var found = false;
@@ -3128,6 +3099,29 @@ giau.ObjectComposer.fieldTypeArraySubtype = function(s){
 
 
 
+giau.ObjectComposer.prototype._inputTextField = function(element, key,value){
+	var radius = 4;
+	var div = element;
+	var content = Code.newDiv();
+	var label = this.defaultInputRowLabelPrimitive(div, ""+key);
+	var input = Code.newInputText();
+		Code.setStyleBorder(input,"solid");
+		Code.setStyleBorderWidth(input,1+"px");
+		Code.setStyleBorderColor(input,"#CCC");
+		Code.setStyleBorderRadius(input,0+"px "+radius+"px "+radius+"px "+0+"px");
+		Code.setStyleBackgroundColor(input,"#FFF");
+		Code.setStyleDisplay(input,"inline-block");
+		Code.setStyleColor(input,"#000");
+		Code.setStylePadding(input,"2px");
+		Code.setStyleFontSize(input,11+"px");
+	Code.addChild(content,label);
+	Code.addChild(content,input);
+	Code.addChild(div,content);
+	if(value){
+		Code.setInputTextValue(input,value);
+	}
+	return {"container":content, "input":input};
+}
 giau.ObjectComposer.prototype.defaultInputRowObject = function(element){
 	var color = 0x11110000;
 		color = Code.getJSColorFromARGB(color);
@@ -3579,10 +3573,9 @@ console.log("JSON PARSING");
 	var json = Code.JSONToObject(jsonString);
 	return;
 */
-console.log("TODO: HERE");
 	var model = {
 		"fields": {
-			/*"text": {
+			"text": {
 				"type": "string"
 			},
 			"number": {
@@ -3608,7 +3601,7 @@ console.log("TODO: HERE");
 					}
 				}
 			},
-			*/
+			
 			
 			"array-arrayX": {
 				"type": "array-array",
@@ -3620,8 +3613,8 @@ console.log("TODO: HERE");
 						}
 					}
 				}
-			}
-			/*
+			},
+			
 			"objectA": {
 				"type": "object",
 				"fields": {
@@ -3635,10 +3628,11 @@ console.log("TODO: HERE");
 					}
 				}
 			},
-			*/
+			
 		}
 	};
 	var object = {
+		
 		"text": "_TEXT_VALUE_",
 		"number": "3.141",
 		"boolean": "true",
@@ -3667,6 +3661,7 @@ console.log("TODO: HERE");
 				"parameterA": "valueA",
 			},
 		},
+		
 	};
 	var composer = new giau.ObjectComposer(element, model, object);
 	Code.setStyleBackgroundColor(element,"#FFFFFF");
