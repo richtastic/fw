@@ -2837,10 +2837,10 @@ giau.ObjectComposer = function(element, model, object){
 	*/
 }
 giau.ObjectComposer.prototype.instance = function(){
-	this._dataInstance;
+	return this._dataInstance;
 }
 giau.ObjectComposer.prototype.model = function(){
-	this._dataModel;
+	return this._dataModel;
 }
 giau.ObjectComposer.prototype._handleSubmitClickFxn = function(e){
 	this.prepareObjectForSubmission();
@@ -3114,6 +3114,7 @@ giau.ObjectComposer.prototype._inputTextField = function(element, key,value){
 		Code.setStyleColor(input,"#000");
 		Code.setStylePadding(input,"2px");
 		Code.setStyleFontSize(input,11+"px");
+		Code.setTextPlaceholder(input,"(empty)");
 	Code.addChild(content,label);
 	Code.addChild(content,input);
 	Code.addChild(div,content);
@@ -3289,6 +3290,9 @@ giau.Theme.Color = {};
 giau.Theme.Color.LightRed = Code.getJSColorFromARGB(0xFFCC2244);
 giau.Theme.Color.MediumRed = Code.getJSColorFromARGB(0xFF990022);
 giau.Theme.Color.DarkRed = Code.getJSColorFromARGB(0xFF550011);
+giau.Theme.Color.TextOnDark = Code.getJSColorFromARGB(0xFFFFFFFF);
+giau.Theme.Color.TextOnLight = Code.getJSColorFromARGB(0xFF660011);
+
 giau.LibraryScroller._generateDiv = function(info, data){
 	var bus = giau.MessageBus();
 	this._messageBus = bus;
@@ -3567,12 +3571,6 @@ giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData, 
 
 giau.CRUD = function(element){
 	/*
-console.log("JSON PARSING");
-	//var jsonString = '{"index":"value", "array":[ "a", "b", {"c":"2"} ]}';
-	var jsonString = '{"index":"value"}';
-	var json = Code.JSONToObject(jsonString);
-	return;
-*/
 	var model = {
 		"fields": {
 			"text": {
@@ -3667,7 +3665,7 @@ console.log("JSON PARSING");
 	Code.setStyleBackgroundColor(element,"#FFFFFF");
 
 return;
-
+*/
 
 
 	this._container = element;
@@ -3710,10 +3708,11 @@ return;
 	Code.setStyleDisplay(this._elementTools,"inline-block");
 	Code.setStyleBackgroundColor(this._elementTools,"#F0F");
 	var div;
-		div = Code.newDiv();
-		Code.setContent(div,"[&plus;]");
-		Code.setStyleCursor(div,Code.JS_CURSOR_STYLE_FINGER);
-		Code.addChild(this._elementTools,div);
+	div = this._buttonInput("&plus;", this._elementTools);
+		// div = Code.newDiv();
+		// Code.setContent(div,"[&plus;]");
+		// Code.setStyleCursor(div,Code.JS_CURSOR_STYLE_FINGER);
+		// Code.addChild(this._elementTools,div);
 		var ctx = {"element":div};
 		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_CLICK, this._handleCreateFxn, this, ctx);
 			
@@ -3764,6 +3763,46 @@ return;
 	this._dataCRUD.addFunction(giau.DataCRUD.EVENT_DELETE, this._handleDeleteCompleteFxn, this);
 }
 
+giau.CRUD.prototype._buttonInput = function(display,element){
+	var div;
+		div = Code.newDiv();
+			var d = Code.newDiv();
+			Code.setContent(d,display);
+			Code.setStyleDisplay(d,"inline-block");
+			Code.setStyleFontSize(d, 12+"px");
+			Code.setStyleColor(d, giau.Theme.Color.TextOnDark);
+				Code.setStyleLineHeight(d, "12px");
+			//Code.setStyleDisplay(d,"table-cell");
+			// Code.setStyleWidth(d, "100%");
+			// Code.setStyleHeight(d, "100%");
+			//Code.setStyleLineHeight(d, "100%");
+			Code.addChild(div,d);
+		Code.setStyleCursor(div,Code.JS_CURSOR_STYLE_FINGER);
+		//Code.setStyleDisplay(div,"inline-block");
+		Code.setStyleDisplay(div,"table-cell");
+		Code.setStyleBackgroundColor(div, giau.Theme.Color.MediumRed);
+		// Code.setStyleColor(div, giau.Theme.Color.TextOnDark);
+		// Code.setStylePaddingLeft(div, 6+"px");
+		// Code.setStylePaddingRight(div, 6+"px");
+		// Code.setStylePaddingTop(div, 3+"px");
+		// Code.setStylePaddingBottom(div, 3+"px");
+		//Code.setStyleFontBold(div);
+		//Code.setStyleFontSize(div, 12+"px");
+		Code.setStyleBorderColor(div,giau.Theme.Color.LightRed);
+		Code.setStyleBorder(div,"solid");
+		Code.setStyleBorderWidth(div,1+"px");
+		Code.setStyleBorderRadius(div, 4+"px");
+		Code.setStyleMargin(div, 2+"px");
+		Code.setStyleWidth(div, 24+"px");
+		Code.setStyleHeight(div, 24+"px");
+		Code.setStyleTextAlign(div, "center");
+		Code.setStyleVerticalAlign(div, "middle");
+		if(element){
+			Code.addChild(element,div);
+		}
+	return div;
+}
+
 giau.CRUD.prototype._handleCreateFxn = function(e,data){
 	console.log("CREATE");
 	console.log(data);
@@ -3784,8 +3823,8 @@ giau.CRUD.prototype._handleReloadFxn = function(e,data){
 	this._dataCRUD.read(jsonString, passBack);
 }
 giau.CRUD.prototype._handleUpdateFxn = function(e,data){
-	console.log("UPDATE");
-	console.log(data);
+	// console.log("UPDATE");
+	// console.log(data);
 		var dataInfo = this._dataView["data"];
 		var dataFields = dataInfo["fields"];
 	var criteriaIndex = data["index"];
@@ -3799,11 +3838,27 @@ giau.CRUD.prototype._handleUpdateFxn = function(e,data){
 			var mapping = row[i];
 			var index = mapping.field();
 			var field = dataFields[index];
+			//console.log(field)
 			var attr = field["attributes"];
+			var pres = field["presentation"];
+			//console.log(prop)
 			if(attr["editable"]==="true" || attr["primary_key"]==="true"){
-				updateData[index] = mapping.value();
+				if(pres && pres["json_model_column"]){ // json configuration
+					console.log(mapping.value())
+					var json = mapping.value().instance();
+					console.log(json);
+					var str = Code.StringFromJSON(json);
+					updateData[index] = str;
+					console.log(str);
+				}else{
+					updateData[index] = mapping.value();
+				}
 			}
 		}
+console.log("+++++++++");
+console.log(updateData);
+console.log("---------");
+return;
 		//{"text":"PAGE_DEPARTMENT_ELEMENTARY_SECTION_7","class":"departmentDescriptionItemInfo","style":""}"
 		//updateData["section_configuration"] = "richie ";
 		console.log(updateData);
@@ -3834,22 +3889,65 @@ giau.CRUD.prototype._handleCreateCompleteFxn = function(e){
 }
 giau.CRUD.prototype._handleReloadCompleteFxn = function(e){
 	console.log("READ COMPLETE");
+	console.log(e)
 	var original = e["source"];
 	var criteriaIndex = original["index"];
 	var criteriaValue = original["value"];
 	var sourceData = e["data"];
 	var rowData = this._dataRowFromKeyValue(criteriaIndex, criteriaValue);
 	if(rowData && sourceData){
+		console.log(rowData);
 		var row = rowData["row"];
+		console.log(row);
+
+// old data is in mapping
+// new data is in value
+
+// return;
+// var rowDDD = null;
+// Code.emptyArray( row );
+
+// var view = this._dataView;
+// var editFields = view["data"]["edit_fields"];
+// console.log(view);
+// 		for(j=0; j<editFields.length; ++j){
+// 			var field = editFields[j];
+// 			var column = field["column"];
+// 			var alias = field["alias"];
+// 			//var mapping = this._mappingFromData(field,row,alias);
+// 			//viewRow.push(mapping);
+// 			var mapping = this._mappingFromData(field,rowDDD,alias);
+// 			row.push(mapping);
+// 		}
+
+// UPDATE VALUES / CONTAINERS
 		for(var i=0; i<row.length; ++i){
+			// REPLACE WITH NEW:
+			// var field = editFields[j];
+			// var column = field["column"];
+			// var alias = field["alias"];
 			var mapping = row[i];
 			var field = mapping.field();
-			var sourceValue = sourceData[field];
+			console.log(field)
+			var readValue = sourceData[field];
+			console.log(mapping.value());
+			// var sourceValue = sourceData[field];
 			if(sourceValue!==null){
-				mapping.value(sourceValue);
+				//mapping.value(sourceValue);
 			}
 		}
+
 	}
+	/*
+		view["rows"].push(viewRow);
+		for(j=0; j<editFields.length; ++j){
+			var field = editFields[j];
+			var column = field["column"];
+			var alias = field["alias"];
+			var mapping = this._mappingFromData(field,row,alias);
+			viewRow.push(mapping);
+		}
+	*/
 	this._updateLayout();
 }
 giau.CRUD.prototype._handleUpdateCompleteFxn = function(e){
@@ -3945,6 +4043,7 @@ giau.CRUD.prototype._updateWithData = function(data){
 		}
 	}
 	view["data"]["fields"] = lookupFields;
+	view["data"]["edit_fields"] = editFields;
 	this._searchFields = searchFields;
 	this._rowElements = [];
 
@@ -4017,28 +4116,15 @@ giau.CRUD.prototype._updateLayout = function(){
 			dataContext["index"] = primaryKeyIndex;
 			dataContext["value"] = primaryKeyValue;
 			// DELETE
-			var elementDelete = Code.newDiv();
-			Code.setContent(elementDelete,"[&times;]"); // [x]
-			Code.setStyleDisplay(elementDelete,"inline-block");
-			Code.setStyleFloat(elementDelete,"right");
-			Code.setStyleCursor(elementDelete,Code.JS_CURSOR_STYLE_FINGER);
-			Code.addChild(elementRow,elementDelete);
+			var elementDelete = this._buttonInput("&times;", elementRow);
+			//Code.setStyleFloat(elementDelete,"right");
 				this._jsDispatch.addJSEventListener(elementDelete, Code.JS_EVENT_CLICK, this._handleDeleteFxn, this, dataContext);
-
 			// UPDATE
-			var elementUpdate = Code.newDiv();
-			Code.setContent(elementUpdate,"[&uArr;]"); // [^] &plusmn;
-			Code.setStyleDisplay(elementUpdate,"inline-block");
-			Code.setStyleCursor(elementUpdate,Code.JS_CURSOR_STYLE_FINGER);
-			Code.addChild(elementRow,elementUpdate);
+			var elementUpdate = this._buttonInput("&uArr;", elementRow);
 				this._jsDispatch.addJSEventListener(elementUpdate, Code.JS_EVENT_CLICK, this._handleUpdateFxn, this, dataContext);
 			// RESET ???
 				// re-get the data?
-			var elementReset = Code.newDiv();
-			Code.setContent(elementReset,"[&#10227;]");
-			Code.setStyleDisplay(elementReset,"inline-block");
-			Code.setStyleCursor(elementReset,Code.JS_CURSOR_STYLE_FINGER);
-			Code.addChild(elementRow,elementReset);
+			var elementReset = this._buttonInput("&#10227;", elementRow);
 				this._jsDispatch.addJSEventListener(elementReset, Code.JS_EVENT_CLICK, this._handleReloadFxn, this, dataContext);
 		}
 	}
@@ -4272,6 +4358,7 @@ giau.CRUD._fieldEditStringUpdateDataFxn = function(mapping, action){
 }
 
 giau.CRUD._fieldEditJSON = function(definition, container, fieldName, elementContainer, mapping){
+	console.log("fieldEditJSON");
 	var elementJSON = Code.newDiv();
 		Code.addChild(elementContainer,elementJSON);
 	var presentation = definition["presentation"];
@@ -4292,7 +4379,6 @@ giau.CRUD._fieldEditJSON = function(definition, container, fieldName, elementCon
 	return elementJSON;
 }
 
-//giau.CRUD.prototype._mappingFromData = function(field, value, source){
 giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, itemIndex){
 	//
 	var alias = fieldDescription["alias"];
