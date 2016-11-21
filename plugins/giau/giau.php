@@ -529,8 +529,8 @@ function giau_admin_menu_page_submenu_data(){
 		[
 			"display" => 'Pages',
 			"url" => $PAGES_URL,
-			"get_table" => "sections",
-			"data_table" => "section",
+			"get_table" => "pages",
+			"data_table" => "page",
 		],
 		[
 			"display" => 'Sections',
