@@ -37,8 +37,14 @@ function giau_plugin_directory_root(){
 function giau_plugin_upload_root_dir(){
 	return giau_plugin_directory_root()."uploads";
 }
+function giau_plugin_url(){
+	return plugins_url()."/giau";
+}
+function giau_plugin_images_url(){
+	return giau_plugin_url()."/images";
+}
 function giau_plugin_upload_root_url(){
-	return plugins_url()."/giau"."/uploads";
+	return giau_plugin_url()."/uploads";
 }
 function giau_plugin_url_from_any_url($image){
 	if(!$image){
@@ -50,6 +56,11 @@ function giau_plugin_url_from_any_url($image){
 		$image = giau_plugin_upload_root_url()."".$image;
 	}
 	return $image;
+}
+
+
+function giau_is_current_user_admin(){
+	return is_admin();
 }
 
 class YC_AdminTools {
@@ -376,15 +387,27 @@ function getPluginURIPath(){
 function giau_action_page_head(){ // inject as desired
 
 	$fileJavaScriptFF = getPluginURIPath()."/js/code/FF.js";
+	$fileJavaScriptCode = getPluginURIPath()."/js/code/Code.js";
 	$relativePathJSFF = getPluginURIPath()."/js/code/";
+	$relativePathJSPluginJS = getPluginURIPath()."/js/";
+	//$fileJavaScriptGiau = getPluginURIPath()."/js/theme.js";
+	//<script rel="text/javascript" src="<?php echo $fileJavaScriptGiau; ?>"></script>
 	error_log("js path: ".$fileJavaScriptFF);
 	?>
+	<script rel="text/javascript" src="<?php echo $fileJavaScriptCode; ?>"></script>
 	<script rel="text/javascript" src="<?php echo $fileJavaScriptFF; ?>"></script>
+	
 	<script rel="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
 	<script type="text/javascript">
 		$(document).ready( function(){
-			var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
+			var classesLoadedFxn = function(){
+				console.log("hai")
 				var g = new giau();
+			}
+			var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
+				var scriptLoader = new ScriptLoader("<?php echo $relativePathJSPluginJS; ?>",["theme.js"],null,classesLoadedFxn,null);
+				scriptLoader.load();
+				//var g = new giau();
 			});
 		});
 	</script>
@@ -395,7 +418,7 @@ function giau_action_page_head(){ // inject as desired
 
 function giau_admin_add_scripts(){ // enqueue as expected
 	//wp_enqueue_script( "giau.js", plugins_url( "/js/giau.js", GIAU_PLUGIN_URL ) );
-	wp_enqueue_script( "theme.js", plugins_url( "/js/theme.js", GIAU_PLUGIN_URL ) );
+	//wp_enqueue_script( "theme.js", plugins_url( "/js/theme.js", GIAU_PLUGIN_URL ) );
 }
 
 
@@ -413,7 +436,8 @@ function giau_action_admin_menu() {
 	add_options_page('Giau Plugin Options', 'Giau Plugin', 'manage_options', GIAU_UNIQUE_IDENTIFIER(), 'giau_admin_plugin_options');
 	// GIAU PLUGIN | MENU
 	add_menu_page('Giau Plugin Page', 'Plugin Settings', 'manage_options', 'giau-plugin-main', 'giau_admin_menu_page_main');
-		add_submenu_page('giau-plugin-main', 'Giau Sub Menu', 'Data Entry | Control', 'manage_options', 'giau-plugin-submenu', 'giau_admin_menu_page_submenu');
+		add_submenu_page('giau-plugin-main', 'Giau Sub Menu 1', 'Data Entry', 'manage_options', 'giau-plugin-submenu-data', 'giau_admin_menu_page_submenu_data');
+		add_submenu_page('giau-plugin-main', 'Giau Sub Menu 2', 'File Upload', 'manage_options', 'giau-plugin-submenu-file', 'giau_admin_menu_page_submenu_file');
 }
 
 function giau_admin_plugin_options() {
@@ -447,286 +471,102 @@ function sendEmail($toEmail, $fromEmail, $replyEmail, $subject, $body){
 function giau_admin_menu_page_main(){
 ?>
 	<h1>Giau Plugin Settings</h1>
-<?php
-}
-function giau_admin_menu_page_submenu(){
-	// print phpinfo();  
-	// return;
-	// $sendMail = sendEmail("zirbsster@gmail.com","zirbsster@gmail.com","zirbsster@gmail.com","subject","body");
-	// error_log("sendMail --- ".$sendMail );
-
-	// <form action=" echo $plugins_url " method="post" enctype="multipart/form-data">
-	/*
-	  onsubmit="return checkForm()"
-
-	*/
-	$form_name = "admin_tools_form";
-
-error_log("RICHIE --- ".esc_url( $_SERVER['REQUEST_URI'] ) );
-
-if( isset($_POST) && isset($_POST['form_id']) ){
-	error_log("form data, send back json ??? " );
-	// $response = '{ "result": "success" }';
-	// wp_send_json( $response );
-
-	//GIAU_DATA_QUERY_FORM_INDEX()
-	$formID = $_POST(GIAU_DATA_QUERY_FORM_INDEX());
-	if( $formID == GIAU_DATA_QUERY_TYPE_LANGUAGIZATION() ){
-		error_log("DO LANGUAGE INSERTION ...");
-	}
-}
-
-// /wp/wp-admin/admin.php?page=giau-plugin-submenu,
-/*
-<form id="<?php echo $form_name; ?>" name="<?php echo $form_name; ?>" action="../wp-content/plugins/giau/php/admin_input.php" method="post">
-*/
-?>
-
-	<h1>Data Entry | Control</h1>
-	<!-- <form action="/wp-content/plugins/listeningto/formhtml.php" method="post"> -->
-
-
-<ul class="tab">
-  <li><a href="#" class="tablinks active" onclick="openCity(event, 'General')"><?php _e( 'General', 'admin-tools' ) ?></a></li>
-  <li><a href="#" class="tablinks" onclick="openCity(event, 'AdminMenu')"><?php _e( 'Admin Menu', 'admin-tools' ) ?></a></li>
-  <li><a href="#" class="tablinks" onclick="openCity(event, 'Plugins')"><?php _e( 'Plugins', 'admin-tools' ) ?></a></li>
-  <li><a href="#" class="tablinks" onclick="openCity(event, 'TopBar')"><?php _e( 'Top Bar', 'admin-tools' ) ?></a></li>
-</ul>
-<!-- http://www.w3schools.com/howto/howto_js_tabs.asp -->
-
-<?php
-// TEST SEARCHING DATABASE:
-	$languagizationResults = giau_languagization_paginated(0,10,[ ["language",1], ["id",0], ["hash_index",1] ]);
-	$index = 0;
-	foreach( $languagizationResults as $row ) {
-		$row_id = $row["id"];
-		$row_created = $row["created"];
-		$row_modified = $row["modified"];
-		$row_language = $row["language"];
-		$row_hash_index = $row["hash_index"];
-		$row_phrase_value = $row["phrase_value"];
-		//error_log("GOT ITEM: (".$index.") = ".$row_hash_index);
-		++$index;
-	}
-
-
-	$rowColumns = ["\$index","created","modified","language","hash_index","phrase_value"];
-	$results = $languagizationResults;
-	$index = 0;
-	?>$dataServiceURL = getPluginURIPath();
-		<table>
-	<?php
-	foreach( $languagizationResults as $row ) {
-		error_log("GOT ITEM: (".$index.") = ");
-		?>
-		<tr>
-		<?php
-		foreach($rowColumns as $column){
-			$rowValue;
-			if($column=="\$index"){
-				$rowValue = $index;
-			}else{
-				$rowValue = $row[$column];
-			}
-			?>
-			<td><?php echo $rowValue; ?></td>
-			<?php
-		}
-		//error_log("GOT ITEM: (".$index.") = ".$row_hash_index);
-		++$index;
-		?>
-		</tr>
-		<?php
-	}
-	?>
-		</table>
-
-<?php
-	//$dataServiceURL = getPluginURIPath();
-	//$dataServiceURL = get_site_url();
-	//$dataServiceURL = getPluginURIPath();
-	$dataServiceURL = "./";
-	error_log("THE URL: ".$dataServiceURL);
-?>
-		<div class="giauDataTable"  data-table="localization" data-columns="created,modified,language,hash_index,phrase_value" data-url="<?php echo $dataServiceURL; ?>" data-settings-pages="true"  data-settings-arbitrary-page="true">
-		</div>
-
-
-	<?php
-	// LANGUAGIZATION
-	$config = [
-		"items" => [
-			[
-				"name" => "hash_index",
-				"title" => "Identifier",
-				"type" => "text",
-				"hint" => "unique tag, eg: PAGE_TITLE_SUBTITLE_NAME_TEXT",
-				"value" => ""
-			],
-			[
-				"name" => "language",
-				"title" => "Language Code",
-				"type" => "option",
-				"hint" => "",
-				"options" => [
-					[
-						"display" => "EN",
-						"value" => LANGUAGE_EN_US()
-					],
-					[
-						"display" => "KO",
-						"value" => LANGUAGE_KO_KP()
-					]
-				],
-				"value" => ""
-			],
-			[
-				"name" => "phrase_value",
-				"title" => "Phrase",
-				"type" => "textarea",
-				"hint" => "display text",
-				"value" => ""
-			],
-			[
-				"name" => "".GIAU_DATA_QUERY_FORM_INDEX()."",
-				"type" => "hidden",
-				"value" => "".GIAU_DATA_QUERY_TYPE_LANGUAGIZATION().""
-			]
-		],
-		"submit_text" => "Insert Language Phrase"
-	];
-	createForm(GIAU_DATA_QUERY_TYPE_LANGUAGIZATION(), $_SERVER['REQUEST_URI'], $config);
-	// BIO
-	$config = [
-		"items" => [
-			[
-				"name" => "first_name",
-				"title" => "First Name",
-				"type" => "text",
-				"hint" => "first name",
-				"value" => ""
-			],
-			[
-				"name" => "last_name",
-				"title" => "Last Name",
-				"type" => "text",
-				"hint" => "first name",
-				"value" => ""
-			],
-			[
-				"name" => "display_name",
-				"title" => "Display Name",
-				"type" => "text",
-				"hint" => "display name",
-				"value" => ""
-			],
-			[
-				"name" => "position",
-				"title" => "Position",
-				"type" => "text",
-				"hint" => "executive, artist, etc.",
-				"value" => ""
-			],
-			[
-				"name" => "email",
-				"title" => "Email Address",
-				"type" => "text",
-				"hint" => "email",
-				"value" => ""
-			],
-			[
-				"name" => "phone",
-				"title" => "Phone Number",
-				"type" => "text",
-				"hint" => "phone",
-				"value" => ""
-			],
-			[
-				"name" => "tags",
-				"title" => "Tags",
-				"type" => "text",
-				"hint" => "bio, ",
-				"value" => ""
-			],
-			[
-				"name" => "uri",
-				"title" => "URL",
-				"type" => "text",
-				"hint" => "http://www.google.com",
-				"value" => ""
-			],
-			[
-				"name" => "image_url",
-				"title" => "Image",
-				"type" => "text",
-				"hint" => "todo: get from upload",
-				"value" => ""
-			],
-			[
-				"name" => "description",
-				"title" => "Description",
-				"type" => "textarea",
-				"hint" => "description",
-				"value" => ""
-			]
-		],
-		"submit_text" => "Insert User Bio"
-	];
-	createForm("bio", $_SERVER['REQUEST_URI'], $config);
-	
-	// CALENDAR
-	$config = [
-		"items" => [
-			[
-				"name" => "first_name",
-				"title" => "First Name",
-				"type" => "text",
-				"hint" => "first name",
-				"value" => ""
-			]
-		],
-		"submit_text" => "Insert User Bio"
-	];
-	createForm("calendar", $_SERVER['REQUEST_URI'], $config);
-
-
-?>
 	<ul>
-		<li>languages / translations</li>
-		<li>pages</li>
-		<li>sections</li>
-		<li>widgets</li>
-		<li>calendars</li>
-		<li>bios</li>
+		<li>colors</li>
+		<li></li>
+		<li></li>
+		<li>File Uploading</li>
+		<li>Data Entry</li>
+		<li>Data Backups</li>
 	</ul>
+<?php
+}
+function giau_admin_menu_page_submenu_file(){
+?>
+	<h1>File Upload</h1>
+	<div>...</div>
+	<div class="giauFileBrowser limitedWidth" style="">
+		<div data-icon-key="icon_default" data-icon-value="<?php echo giau_plugin_images_url(); ?>/file_browser/icon_fb_blank.png"></div>
+		<div data-icon-key="icon_folder" data-icon-value="<?php echo giau_plugin_images_url(); ?>/file_browser/icon_fb_folder.png"></div>
+		<div data-icon-key="icon_image_background" data-icon-value="<?php echo giau_plugin_images_url(); ?>/file_browser/icon_fb_image_background.png"></div>
+	</div>
+<?php
+}
 
+function giau_admin_menu_page_submenu_data(){
+	if( !giau_is_current_user_admin() ){
+		return;
+	}
 
-	<div>
-			file upload
-			<?php
-				$UPLOAD_FILE_DIRECTORY = ".plugins/giau/files";
-				// git contents of directory  
-				/*
-				array scandir ( string $directory [, int $sorting_order = SCANDIR_SORT_ASCENDING [, resource $context ]] )
-				http://php.net/manual/en/function.scandir.php
-				http://php.net/manual/en/function.readdir.php
+	$selectedTableGetParameter = $_GET['table'];
 
+	$THIS_URL = $_SERVER['REQUEST_URL'];
+	$LANGUAGE_URL = add_query_arg('table','languages');
+	$CALENDAR_URL = add_query_arg('table','calendar');
+	$BIOS_URL = add_query_arg('table','bios');
+	$PAGES_URL = add_query_arg('table','pages');
+	$SECTIONS_URL = add_query_arg('table','sections');
 
-				https://codex.wordpress.org/Function_Reference/wp_handle_upload
-				https://codex.wordpress.org/Function_Reference/media_handle_upload
+	$TABLE_LIST = [
+		[
+			"display" => 'Language Texts',
+			"url" => $LANGUAGE_URL,
+			"get_table" => "languages",
+			"data_table" => "languagization",
+		],
+		[
+			"display" => 'Calendar Events',
+			"url" => $CALENDAR_URL,
+			"get_table" => "calendar",
+			"data_table" => "calendar",
+		],
+		[
+			"display" => 'Bios',
+			"url" => $BIOS_URL,
+			"get_table" => "bios",
+			"data_table" => "bio",
+		],
+		[
+			"display" => 'Pages',
+			"url" => $PAGES_URL,
+			"get_table" => "sections",
+			"data_table" => "section",
+		],
+		[
+			"display" => 'Sections',
+			"url" => $SECTIONS_URL,
+			"get_table" => "sections",
+			"data_table" => "section",
+		],
+	];
 
-				https://premium.wpmudev.org/blog/upload-file-functions/?nct=b&utm_expid=3606929-85.mSQ3nlVLSHShaT4smJ6ikw.1&utm_referrer=https%3A%2F%2Fwww.google.com%2F
-				enctype="multipart/form-data">
-				<input type='file'
+	$selectedTableDisplayName = "";
+	$selectedTableDataName = "";
+?>
+	<h1>Data Entry</h1>
 	
+	<ul>
+		<?php
+			foreach ($TABLE_LIST as $key => $value) {
+				$display = $value["display"];
+				$url = $value["url"];
+				$table = $value["get_table"];
+				echo '<li><a href="'.$url.'">'.$display.'</a></li>';
+				if($selectedTableGetParameter==$table){
+					$selectedTableDataName = $value["data_table"];
+					$selectedTableDisplayName = $display;
+				}
+			}
+			
+		?>
+		<!-- <li>Widgets</li> -->
+		<!-- <li></li> -->
+	</ul>
+	<h2><?php echo $selectedTableDisplayName; ?></h2>
 
-				javascript ajax "multipart/form-data" file
-
-				http://stackoverflow.com/questions/21044798/how-to-use-formdata-for-ajax-file-upload
-				https://developer.mozilla.org/en-US/docs/Web/API/FormData/Using_FormData_Objects
-
-				*/
-			?>
+	<!-- table? -->
+		<div class="limitedWidth" style="width:100%; display:block; position:relative;">
+		<div style="width:70%; min-height:600px; display:inline-block; background-color:#F0F; float:left;"><div class="giauCRUD" style=""></div></div><div style="width:30%; display:inline-block; background-color:#0FF; float:left;"><div class="giauLibraryView" style=""></div></div>
 	</div>
 <?php
 }

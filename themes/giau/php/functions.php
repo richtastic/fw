@@ -159,18 +159,11 @@ function create_page(){
 		<link rel="icon" href="<?php echo $FAV_ICON_LOCATION; ?>" type="image/x-icon">
 		
 	</head>
-	<body style="bgColor:#F00; margin: 0 auto;">
+	<body style="margin: 0 auto;">
 	<?php
-		// $page = giau_get_page_tag($pageRequest);
-		// fillOutPageFromID($page["id"]);
-		// <div class="giauFileBrowser limitedWidth" style=""></div>
+		$page = giau_get_page_tag($pageRequest);
+		fillOutPageFromID($page["id"]);
 	?>
-
-	<div class="limitedWidth" style="width:100%; display:block; position:relative;">
-		<div style="width:70%; height:600px; display:inline-block; background-color:#F0F; float:left;"><div class="giauCRUD" style=""></div></div><div style="width:30%; display:inline-block; background-color:#0FF; float:left;"><div class="giauLibraryView" style=""></div></div>
-	</div>
-
- <!-- width:auto; height:auto; -->
 	</body>
 </html>
 

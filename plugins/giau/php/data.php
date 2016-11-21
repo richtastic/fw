@@ -85,19 +85,6 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"BIO_URI_BORAM_LEE_URI_TEXT","");
 	giau_insert_languagization($langEng,"BIO_URI_BORAM_LEE_IMAGE_URI","/images/personnel/ce-boram.png");
 
-	/*
-	giau_insert_languagization($langEng,"BIO_FIRST_NAME_SHEEN_HONG_TEXT","Sheen");
-	giau_insert_languagization($langEng,"BIO_LAST_NAME_SHEEN_HONG_TEXT","Hong");
-	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_SHEEN_HONG_TEXT","Sheen Hong");
-	giau_insert_languagization($langEng,"BIO_POSITION_SHEEN_HONG_TEXT","Kindergarten Pastor");
-		giau_insert_languagization($langKor,"BIO_POSITION_SHEEN_HONG_TEXT","유치부 목사");
-	giau_insert_languagization($langEng,"BIO_EMAIL_SHEEN_HONG_TEXT","pastorhong71@gmail.com");
-	giau_insert_languagization($langEng,"BIO_PHONE_SHEEN_HONG_TEXT","2133695590");
-	giau_insert_languagization($langEng,"BIO_DESCRIPTION_SHEEN_HONG_TEXT","Sheen Hong is a loving mother of two children, Karis and Jin-Sung, and happy wife of Joshua, husband and a Chaplain. She has a bachelor’s degree in Christian education and Master of Arts degree in Christian Education. She was called into Children’s ministry in 2009. She began serving at LACPC as a Kindergarten pastor in December 2015.");
-		giau_insert_languagization($langKor,"BIO_DESCRIPTION_SHEEN_HONG_TEXT","쉰 홍씨는 사랑스러운 카리스 그리고 진성의 엄마이자, 남편 여호수아씨의 행복한 아내입니다. 기독교 교육과 예술 학위를 가지고있으며, 그녀는2009 년에 어린이부 사역에 부름을 받았습니다. 12 월 2015 년에 LACPC 유치부 담임 목사로 섬기기 시작하였습니다.");
-	giau_insert_languagization($langEng,"BIO_URI_SHEEN_HONG_URI_TEXT","");
-	*/
-
 	giau_insert_languagization($langEng,"BIO_FIRST_NAME_LISA_LEE_TEXT","Lisa");
 	giau_insert_languagization($langEng,"BIO_LAST_NAME_LISA_LEE_TEXT","Lee");
 	giau_insert_languagization($langEng,"BIO_DISPLAY_NAME_LISA_LEE_TEXT","Pastor Lisa Lee");
@@ -285,19 +272,7 @@ function giau_data_default_insert_into_database(){
 			'BIO_URI_BORAM_LEE_IMAGE_URI',
 			'bio,contact,elementary'
 	);
-	// giau_insert_bio(
-	// 		'BIO_FIRST_NAME_SHEEN_HONG_TEXT',
-	// 		'BIO_LAST_NAME_SHEEN_HONG_TEXT',
-	// 		'BIO_DISPLAY_NAME_SHEEN_HONG_TEXT',
-	// 		'BIO_POSITION_SHEEN_HONG_TEXT',
-	// 		'BIO_EMAIL_SHEEN_HONG_TEXT',
-	// 		'BIO_PHONE_SHEEN_HONG_TEXT',
-	// 		'BIO_DESCRIPTION_SHEEN_HONG_TEXT',
-	// 		'BIO_URI_SHEEN_HONG_URI_TEXT',
-	// 		'/images/personnel/ce-hong.png',
-	// 		'bio,contact,kindergarten'
-	// );
-		giau_insert_bio(
+	giau_insert_bio(
 			'BIO_FIRST_NAME_LISA_LEE_TEXT',
 			'BIO_LAST_NAME_LISA_LEE_TEXT',
 			'BIO_DISPLAY_NAME_LISA_LEE_TEXT',
@@ -309,7 +284,6 @@ function giau_data_default_insert_into_database(){
 			'BIO_URI_NAME_LISA_IMAGE_URI',
 			'bio,contact,juniorhigh'
 	);
-
 	giau_insert_bio(
 			'BIO_FIRST_NAME_JESSICA_WON_TEXT',
 			'BIO_LAST_NAME_JESSICA_WON_TEXT',
@@ -352,9 +326,7 @@ function giau_data_default_insert_into_database(){
 	
 
 	giau_insert_languagization($langEng,"LANGUAGE_SWITCH_ENGLISH_TEXT","EN");
-		//giau_insert_languagization($langKor,"LANGUAGE_SWITCH_ENGLISH_TEXT","한국의");
 	giau_insert_languagization($langEng,"LANGUAGE_SWITCH_KOREAN_TEXT","한국어");	
-		//giau_insert_languagization($langKor,"LANGUAGE_SWITCH_KOREAN_TEXT","KO");
 
 	giau_insert_languagization($langEng,"FOOTER_TITLE_TEXT","THE FATHER'S HOUSE");
 	giau_insert_languagization($langEng,"FOOTER_ADDRESS_1_TEXT","Los Angeles Presbyterian Church");

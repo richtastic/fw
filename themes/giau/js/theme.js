@@ -10,6 +10,15 @@ function giau(){
 
 
 giau.prototype.initialize = function(){
+	// SETTINGS
+	giau.Theme = {};
+	giau.Theme.Color = {};
+	giau.Theme.Color.LightRed = Code.getJSColorFromARGB(0xFFCC2244);
+	giau.Theme.Color.MediumRed = Code.getJSColorFromARGB(0xFF990022);
+	giau.Theme.Color.DarkRed = Code.getJSColorFromARGB(0xFF550011);
+	giau.Theme.Color.TextOnDark = Code.getJSColorFromARGB(0xFFFFFFFF);
+	giau.Theme.Color.TextOnLight = Code.getJSColorFromARGB(0xFF660011);
+	giau.Theme.Color.backgroundLight = Code.getJSColorFromARGB(0xFFDDD6DD);
 	
 	// GLOBAL | EVENTS
 	var bus = giau.MessageBus();
@@ -2265,6 +2274,25 @@ giau.AutoComplete.prototype._handleSelectElementClickFxn = function(e){
 giau.FileBrowser = function(element){
 	this._container = element;
 
+	this._iconLookupTable = {};
+	var propertyDataIconKey = "data-icon-key";
+	var propertyDataIconValue = "data-icon-value";
+	var i;
+	for(i=0; i<Code.numChildren(this._container);++i){
+		var ele = Code.getChild(this._container,i);
+		if( Code.hasProperty(ele,propertyDataIconKey) ){
+			var iconKey = Code.getProperty(ele, propertyDataIconKey);
+			var iconValue = Code.getProperty(ele, propertyDataIconValue);
+			this._iconLookupTable[iconKey] = iconValue;
+			console.log(iconKey,iconValue);
+			Code.removeChild(this._container,ele);
+			--i;
+		}
+	}
+	// <div data-icon-key="icon_default" data-icon-value="./wp-content/themes/giau/img/file_browser/icon_fb_blank.png">
+	// 	<div data-icon-key="icon_folder" data-icon-value="./wp-content/themes/giau/img/file_browser/icon_fb_folder.png">
+	// 	<div data-icon-key="icon_image_background" data-icon-value="./wp-content/themes/giau/img/file_browser/icon_fb_image_background.png">
+
 	this._elementPathContainer = Code.newDiv();
 		Code.addChild(this._container,this._elementPathContainer);
 		this._elementPath = Code.newDiv();
@@ -2428,7 +2456,8 @@ giau.FileBrowser.prototype.elementFromFile = function(file, index){
 	var title = Code.getValueOrDefault(file, "name", "?");
 	var mimetype = Code.getValueOrDefault(file, "mimetype", "");
 	var url = Code.getValueOrDefault(file, "url", "?");
-	var relativeURL = Code.getValueOrDefault(file, "url_relative", "?");
+	//var relativeURL = Code.getValueOrDefault(file, "url_relative", "?");
+	var absoluteURL = Code.getValueOrDefault(file, "url", "?");
 	title = Code.clipStringToMaxChars(title,24,"...");
 
 
@@ -2445,7 +2474,7 @@ giau.FileBrowser.prototype.elementFromFile = function(file, index){
 		//Code.setStyleVerticalAlign(div,"middle");
 		Code.setStyleVerticalAlign(div,"top");
 		Code.setStyleTextAlign(div,"center");
-	var img = this.iconFromFileType(mimetype, relativeURL);
+	var img = this.iconFromFileType(mimetype, absoluteURL);//relativeURL);
 	var label = Code.newDiv();
 		Code.setStyleFontSize(label,"11px");
 		Code.setStyleColor(label,"#000000");
@@ -2649,11 +2678,11 @@ giau.FileBrowser.prototype._handleDragDropUploadFxn = function(e){
 
 }
 giau.FileBrowser.prototype.iconFromFileType = function(filetype, url){
-	var source = "./wp-content/themes/giau/img/file_browser/icon_fb_blank.png";
+	var source = this._iconLookupTable["icon_default"];
 	var useBackground = false;
 	if(filetype){
 		if(filetype == "directory"){ // directory
-			source = "./wp-content/themes/giau/img/file_browser/icon_fb_folder.png";
+			source =  this._iconLookupTable["icon_folder"];
 		}else if( filetype.match("image\/.*") ){  // any image
 			source = url;
 			useBackground = true;
@@ -2670,7 +2699,7 @@ giau.FileBrowser.prototype.iconFromFileType = function(filetype, url){
 		Code.setStyleWidth(img,"32px");
 		Code.setStyleHeight(img,"32px");
 		if(useBackground){
-			Code.setStyleBackground(img,"url('./wp-content/themes/giau/img/file_browser/icon_fb_image_background.png')");
+			Code.setStyleBackground(img,"url('"+this._iconLookupTable["icon_image_background"]+"')");
 		}
 	return img;
 }
@@ -2836,12 +2865,26 @@ giau.ObjectComposer = function(element, model, object){
 	this._jsDispatch.addJSEventListener(this._submitButton, Code.JS_EVENT_CLICK, this._handleSubmitClickFxn, this);
 	*/
 }
-giau.ObjectComposer.prototype.instance = function(){
+giau.ObjectComposer.prototype.instance = function(i){
+	if(i!==undefined){
+		this._dataInstance = Code.parseJSON(i);
+		this._updateLayout();
+	}
 	return this._dataInstance;
 }
-giau.ObjectComposer.prototype.model = function(){
+giau.ObjectComposer.prototype.model = function(m){
+	if(m!==undefined){
+		this._dataModel = Code.parseJSON(m);
+		this._updateLayout();
+	}
 	return this._dataModel;
 }
+giau.ObjectComposer.prototype._updateLayout = function(){
+	// TODO: cleaner way to cleanup / reset
+	Code.removeAllChildren(this._container);
+	this.initialize();
+}
+
 giau.ObjectComposer.prototype._handleSubmitClickFxn = function(e){
 	this.prepareObjectForSubmission();
 }
@@ -3038,8 +3081,9 @@ giau.ObjectComposer.prototype.newSubElement = function(element,name,type, contai
 	return div;
 }
 
-
-giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(element, modelObject,instanceObject, modelFieldName,modelFieldType, isArray){
+// (element,modelFieldInfo, array,                null, modelSubType, array, superModel
+// element, modelObject,instanceObject, modelFieldName,modelFieldType, isArray
+giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(element, modelObject,instanceObject, modelFieldName,modelFieldType, isArray, superModel){
 	var found = false;
 	if( giau.ObjectComposer.isFieldTypeString(modelFieldType) ){
 		found = true;
@@ -3054,7 +3098,7 @@ giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(element, mode
 			var i, len = instanceObject.length;
 			for(i=0;i<len;++i){
 				primitive = instanceObject[i];
-				var subElement = this.newSubElement(element,null,"primitive", instanceObject,i, modelObject);
+				var subElement = this.newSubElement(element,null,"primitive", instanceObject,i, modelObject, instanceObject, superModel);
 			}
 		}else{
 			primitive = instanceObject[modelFieldName];
@@ -3178,7 +3222,7 @@ giau.ObjectComposer.prototype.defaultInputRowLabelPrimitive = function(element, 
 }
 giau.ObjectComposer.prototype._interactActionButton = function(display, element){
 	var radius = 3;
-	var button = Code.newInputButton(display); // NEW ARRAY OBJECT
+	var button = Code.newInputButton(display);"" // NEW ARRAY OBJECT
 		Code.setStylePadding(button,3+"px");
 		Code.setStyleColor(button,"#FFF");
 		Code.setStyleBorderRadius(button,radius+"px");
@@ -3285,13 +3329,6 @@ giau.LibraryScroller._generateSize = function(info, data){
 	size["height"] = height;
 	return size;
 }
-giau.Theme = {};
-giau.Theme.Color = {};
-giau.Theme.Color.LightRed = Code.getJSColorFromARGB(0xFFCC2244);
-giau.Theme.Color.MediumRed = Code.getJSColorFromARGB(0xFF990022);
-giau.Theme.Color.DarkRed = Code.getJSColorFromARGB(0xFF550011);
-giau.Theme.Color.TextOnDark = Code.getJSColorFromARGB(0xFFFFFFFF);
-giau.Theme.Color.TextOnLight = Code.getJSColorFromARGB(0xFF660011);
 
 giau.LibraryScroller._generateDiv = function(info, data){
 	var bus = giau.MessageBus();
@@ -3734,7 +3771,7 @@ return;
 	Code.setStyleMinHeight(this._elementTable,100+"px");
 	Code.setStylePosition(this._elementTable,"relative");
 	Code.setStyleDisplay(this._elementTable,"inline-block");
-	Code.setStyleBackgroundColor(this._elementTable,"#0F0");
+	Code.setStyleBackgroundColor(this._elementTable,giau.Theme.Color.backgroundLight);
 	// Code.setStyleLeft(this._elementTable,interriorPadding+"px");
 	// Code.setStyleTop(this._elementTable,interriorPadding+"px");
 
@@ -3858,13 +3895,14 @@ giau.CRUD.prototype._handleUpdateFxn = function(e,data){
 console.log("+++++++++");
 console.log(updateData);
 console.log("---------");
-return;
+//return;
 		//{"text":"PAGE_DEPARTMENT_ELEMENTARY_SECTION_7","class":"departmentDescriptionItemInfo","style":""}"
 		//updateData["section_configuration"] = "richie ";
 		console.log(updateData);
 		// pass editable values to server
 		var jsonData = updateData;
 		var jsonString = Code.StringFromJSON(jsonData);
+console.log(jsonString);
 		// get row data back
 		var passBack = {};
 			passBack["index"] = data["index"];
@@ -3874,13 +3912,19 @@ return;
 }
 giau.CRUD.prototype._handleDeleteFxn = function(e,data){
 	console.log("DELETE");
+	var keyIndex = data["index"];
+	var keyValue = data["value"];
 	var passBack = {};
-		passBack["index"] = data["index"];
-		passBack["value"] = data["value"];
+		passBack["index"] = keyIndex;
+		passBack["value"] = keyValue;
 	var jsonData = {};
 	jsonData[ data["index"] ] = data["value"];
 	var jsonString = Code.StringFromJSON(jsonData);
-	this._dataCRUD.remove(jsonString, passBack);
+	var name = keyIndex+" : "+keyValue;
+	var alertDelete = confirm("are you sure you want to delete\n"+name+" ?");
+	if(alertDelete){
+		this._dataCRUD.remove(jsonString, passBack);
+	}
 }
 
 giau.CRUD.prototype._handleCreateCompleteFxn = function(e){
@@ -3896,62 +3940,26 @@ giau.CRUD.prototype._handleReloadCompleteFxn = function(e){
 	var sourceData = e["data"];
 	var rowData = this._dataRowFromKeyValue(criteriaIndex, criteriaValue);
 	if(rowData && sourceData){
-		console.log(rowData);
 		var row = rowData["row"];
-		console.log(row);
-
-// old data is in mapping
-// new data is in value
-
-// return;
-// var rowDDD = null;
-// Code.emptyArray( row );
-
-// var view = this._dataView;
-// var editFields = view["data"]["edit_fields"];
-// console.log(view);
-// 		for(j=0; j<editFields.length; ++j){
-// 			var field = editFields[j];
-// 			var column = field["column"];
-// 			var alias = field["alias"];
-// 			//var mapping = this._mappingFromData(field,row,alias);
-// 			//viewRow.push(mapping);
-// 			var mapping = this._mappingFromData(field,rowDDD,alias);
-// 			row.push(mapping);
-// 		}
-
-// UPDATE VALUES / CONTAINERS
+		// UPDATE VALUES / CONTAINERS
 		for(var i=0; i<row.length; ++i){
 			// REPLACE WITH NEW:
-			// var field = editFields[j];
-			// var column = field["column"];
-			// var alias = field["alias"];
 			var mapping = row[i];
 			var field = mapping.field();
-			console.log(field)
-			var readValue = sourceData[field];
-			console.log(mapping.value());
-			// var sourceValue = sourceData[field];
-			if(sourceValue!==null){
-				//mapping.value(sourceValue);
+			var sourceValue = sourceData[field];
+			if(mapping!=null){
+				var action = {"action":"update","data":{"value":sourceValue}};
+				mapping.updateDataFromAction(action);
+				mapping.updateElementFromData();
 			}
 		}
 
 	}
-	/*
-		view["rows"].push(viewRow);
-		for(j=0; j<editFields.length; ++j){
-			var field = editFields[j];
-			var column = field["column"];
-			var alias = field["alias"];
-			var mapping = this._mappingFromData(field,row,alias);
-			viewRow.push(mapping);
-		}
-	*/
 	this._updateLayout();
 }
 giau.CRUD.prototype._handleUpdateCompleteFxn = function(e){
 	console.log("UPDATE COMPLETE");
+	// TODO HANDLE ERROR
 	console.log(e);
 }
 
@@ -4354,11 +4362,18 @@ giau.CRUD._fieldEditStringUpdateDataFxn = function(mapping, action){
 			Code.removeElementAt(array,index);
 		var removedValue = Code.stringFromCommaSeparatedArray(array);
 		data[field] = removedValue;
+	}else if(operation=="update"){
+		var updatedValue = action["value"];
+		data[field] = updatedValue;
 	}
 }
 
 giau.CRUD._fieldEditJSON = function(definition, container, fieldName, elementContainer, mapping){
 	console.log("fieldEditJSON");
+	// update mapping
+	mapping.updateElementFxn(giau.CRUD._fieldEditJSONUpdateElementFxn);
+	mapping.updateDataFxn(giau.CRUD._fieldEditJSONUpdateDataFxn);
+
 	var elementJSON = Code.newDiv();
 		Code.addChild(elementContainer,elementJSON);
 	var presentation = definition["presentation"];
@@ -4377,6 +4392,26 @@ giau.CRUD._fieldEditJSON = function(definition, container, fieldName, elementCon
 	console.log("--------------------------------------------------------------------------------------------------------------- COMPOSER END");
 	//console.log(composer);
 	return elementJSON;
+}
+giau.CRUD._fieldEditJSONUpdateDataFxn = function(mapping, action){
+	console.log("_fieldEditJSONUpdateDataFxn");
+	var field = mapping.field();
+	var operation = action["action"];
+	var action = action["data"];
+	var element = mapping.element();
+	var composer = mapping.value(composer);
+	if(operation=="update"){
+		var updatedValue = action["value"];
+		composer.instance(updatedValue);
+	}
+	
+}
+
+giau.CRUD._fieldEditJSONUpdateElementFxn = function(mapping){
+	console.log("_fieldEditJSONUpdateDataFxn");
+	var data = mapping.object();
+	var field = mapping.field();
+	var element = mapping.element();
 }
 
 giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, itemIndex){

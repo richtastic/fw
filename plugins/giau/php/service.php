@@ -2,7 +2,12 @@
 // service.php
 
 function giau_wordpress_data_service(){
+	if(!giau_is_current_user_admin()){
+		return;
+	}
 	error_log("         wordpress_data_service -- ".$_POST['operation']);
+
+
 	$response = [];
 	$response["result"] = "failure";
 
@@ -162,8 +167,9 @@ function giau_wordpress_data_service(){
 			$lifecycleCRUD = $_POST['lifecycle'];
 			$tableSourceName = $_POST['table'];
 			$dataCRUD = $_POST['data'];
-			error_log(" dataCRUD: ".$dataCRUD);
-			$dataCRUD = str_replace("\\\"", "\"", $dataCRUD); // is this the proper way ?
+			//error_log(" dataCRUD: ".$dataCRUD);
+			$dataCRUD = stripslashes($dataCRUD); // remove mass baskslashes
+			error_log(" dataCRUD2: ".$dataCRUD);
 			$dataCRUD = json_decode($dataCRUD);
 			if($tableSourceName=="section"){
 				if($lifecycleCRUD==="create"){
@@ -181,6 +187,7 @@ function giau_wordpress_data_service(){
 				}else if($lifecycleCRUD==="update"){
 					error_log(" => UPDATE");
 					$dataID = $dataCRUD->{'section_id'};
+				error_log("dataID: ".$dataID);
 					$dataConfiguration = $dataCRUD->{'section_configuration'};
 					$dataList = $dataCRUD->{'section_list'};
 					//$dataID = $dataCRUD->{'widget_id'};
