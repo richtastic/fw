@@ -3843,8 +3843,27 @@ giau.CRUD.prototype._buttonInput = function(display,element){
 giau.CRUD.prototype._handleCreateFxn = function(e,data){
 	console.log("CREATE");
 	console.log(data);
-	// request a blank insert
-	// get a default/blank row in return
+
+	var view = this._dataView;
+	var dataInfo = view["data"];
+	var dataFields = dataInfo["fields"];
+	var dataFieldKeys = Code.keys(dataFields);
+	var i;
+	// create a default object using default fields
+	var defaultObject = {};
+	for(i=0; i<dataFieldKeys.length; ++i){
+		var index = dataFieldKeys[i];
+		var field = dataFields[index];
+		var attr = field["attributes"];
+		var pres = field["presentation"];
+		var defaultValue = attr["default"];
+		defaultObject[index] = defaultValue;
+	}
+	// request an insert into table
+	console.log(defaultObject);
+	var jsonString = Code.StringFromJSON(defaultObject);
+	var passBack = {};
+	this._dataCRUD.create(jsonString, passBack);
 }
 giau.CRUD.prototype._handleReloadFxn = function(e,data){
 	console.log("READ");
@@ -3927,9 +3946,17 @@ giau.CRUD.prototype._handleDeleteFxn = function(e,data){
 	}
 }
 
-giau.CRUD.prototype._handleCreateCompleteFxn = function(e){
+giau.CRUD.prototype._handleCreateCompleteFxn = function(e,d){
 	console.log("CREATE COMPLETE");
 	console.log(e);
+	console.log(d);
+	var source = e["source"];
+	var data = e["data"];
+		//this._dataCRUD.create(jsonString, passBack);
+	// get back new row
+		//
+	// add row to top of table 
+		//
 }
 giau.CRUD.prototype._handleReloadCompleteFxn = function(e){
 	console.log("READ COMPLETE");

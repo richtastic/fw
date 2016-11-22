@@ -435,7 +435,9 @@ function giau_action_admin_menu() {
 	// OPTIONS > GIAU PLUGIN
 	add_options_page('Giau Plugin Options', 'Giau Plugin', 'manage_options', GIAU_UNIQUE_IDENTIFIER(), 'giau_admin_plugin_options');
 	// GIAU PLUGIN | MENU
-	add_menu_page('Giau Plugin Page', 'Plugin Settings', 'manage_options', 'giau-plugin-main', 'giau_admin_menu_page_main');
+	//add_menu_page('Giau Plugin Page', 'Plugin Settings', 'manage_options', 'giau-plugin-main', 'giau_admin_menu_page_main');
+		//    PAGE_TITLE    MENU_TITLE    CAPABILITY   SLUG   FUNCTION    ICON_URL   POITION
+		add_menu_page('Giau Plugin Page', 'Giau Plugin Settings', 'manage_options', 'giau-plugin-main', 'giau_admin_menu_page_main',  giau_plugin_images_url().'/admin/giau_icon_white_32x32.png');
 		add_submenu_page('giau-plugin-main', 'Giau Sub Menu 1', 'Data Entry', 'manage_options', 'giau-plugin-submenu-data', 'giau_admin_menu_page_submenu_data');
 		add_submenu_page('giau-plugin-main', 'Giau Sub Menu 2', 'File Upload', 'manage_options', 'giau-plugin-submenu-file', 'giau_admin_menu_page_submenu_file');
 }
@@ -469,8 +471,9 @@ function sendEmail($toEmail, $fromEmail, $replyEmail, $subject, $body){
 }
 
 function giau_admin_menu_page_main(){
+	$iconBlackMini = giau_plugin_images_url().'/admin/giau_icon_black_32x32.png';
 ?>
-	<h1>Giau Plugin Settings</h1>
+	<h1 style="vertical-align:middle;"><img src="<?php echo $iconBlackMini; ?>"  style="display:inline-block; vertical-align:middle;" />Giau Plugin Settings</h1>
 	<ul>
 		<li>colors</li>
 		<li></li>

@@ -86,6 +86,7 @@ function GIAU_TABLE_DEFINITION_WIDGET(){
 					"primary_key" => "true",
 					"sort" => "false",
 					"editable" => "false",
+					"default" => "",
 				],
 			],
 			"created" => [
@@ -95,6 +96,7 @@ function GIAU_TABLE_DEFINITION_WIDGET(){
 					"order" => "1",
 					"sort" =>  "true",
 					"editable" => "false",
+					"default" => "",
 				],
 			],
 			"modified" => [
@@ -104,6 +106,7 @@ function GIAU_TABLE_DEFINITION_WIDGET(){
 					"order" => "2",
 					"sort" =>  "true",
 					"editable" => "false",
+					"default" => "",
 				],
 			],
 			"name" => [
@@ -113,6 +116,7 @@ function GIAU_TABLE_DEFINITION_WIDGET(){
 					"order" => "3",
 					"sort" =>  "true",
 					"editable" => "true",
+					"default" => "",
 				],
 			],
 			"configuration" => [
@@ -122,6 +126,7 @@ function GIAU_TABLE_DEFINITION_WIDGET(){
 					"order" => "5",
 					"sort" =>  "false",
 					"editable" => "true",
+					"default" => "{}",
 				],
 			]
 		],
@@ -192,7 +197,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"order" => "4",
 					"sort" =>  "true",
 					"editable" => "false",
-					"default" => null, // SELECT FROM MENU
+					"default" => "",
 				],
 			],
 			"configuration" => [
@@ -202,7 +207,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"order" => "5",
 					"sort" =>  "false",
 					"editable" => "true",
-					"default" => null, // 
+					"default" => "{}",
 				],
 			],
 			"section_list" => [
@@ -212,7 +217,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"order" => "6",
 					"sort" =>  "false",
 					"editable" => "true",
-					"default" => null,
+					"default" => "",
 				],
 			],
 

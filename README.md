@@ -4,19 +4,8 @@
 
 ###TODO
 
-- missing nursery images
-- missing some translations
-
-- object-widget editing working in test case
-- object widget interfacing with server db tables
-
 ADMIN PAGES:
-- language table: READ, UPDATE, CREATE, DELETE
-	- ability to find sections matching hash (where used)
-- bio table: READ, UPDATE, CREATE, DELETE
-- calendar table: READ, UPDATE, CREATE, DELETE
-- section table: READ, UPDATE, CREATE, DELETE
-		- choose from library of widgets
+	- choose from library of widgets
 	- color picker
 	- date picker
 	- boolean select
