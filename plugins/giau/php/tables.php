@@ -210,6 +210,16 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"default" => "{}",
 				],
 			],
+			"name" => [
+				"type" => "string",
+				"attributes" =>  [
+					"display_name" => "Name",
+					"order" => "5",
+					"sort" =>  "true",
+					"editable" => "true",
+					"default" => "",
+				],
+			],
 			"section_list" => [
 				"type" => "string-array",
 				"attributes" =>  [
@@ -239,6 +249,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				"section_created" => "created",
 				"section_modified" => "modified",
 				"section_configuration" => "configuration",
+				"section_name" => "name",
 				"section_subsections" => "section_list",
 //				"section_extend_widget_id" => "extend",
 				// unavailable
@@ -807,6 +818,7 @@ function giau_create_database(){
 		id int NOT NULL AUTO_INCREMENT,
 		created VARCHAR(32) NOT NULL,
 		modified VARCHAR(32) NOT NULL,
+		name VARCHAR(255) NOT NULL,
 		widget int NOT NULL,
 		configuration TEXT NOT NULL,
 		section_list VARCHAR(65535) NOT NULL,
@@ -1055,8 +1067,10 @@ function giau_insert_widget($widgetName,$widgetConfig){
 	return $wpdb->insert_id;
 }
 
-function giau_insert_section($widgetID, $widgetConfig, $sectionIDList){
-	$widgetConfig = json_encode($widgetConfig);
+function giau_insert_section($sectionName, $widgetID, $sectionConfig, $sectionIDList){
+	$widgetID = $widgetID!==null ? $widgetID : 0;
+	$sectionName = $sectionName!==null ? $sectionName : "";
+	$sectionConfig = json_encode($sectionConfig);
 	if(!$sectionIDList){
 		$sectionIDList = [];
 	}
@@ -1067,15 +1081,20 @@ function giau_insert_section($widgetID, $widgetConfig, $sectionIDList){
 		array(
 			"created" => $timestampNow,
 			"modified" => $timestampNow,
+			"name" => $sectionName,
 			"widget" => $widgetID,
-			"configuration" => $widgetConfig,
+			"configuration" => $sectionConfig,
 			"section_list" => $sectionList,
 		)
 	);
 	return $wpdb->insert_id;
 }
-function giau_create_section($sectionID){
-	//
+function giau_create_section($sectionName, $widgetID, $sectionConfig, $sectionList){
+	error_log("sectionConfig: ".$sectionConfig);
+	// to array
+	$sectionList = arrayFromCommaSeparatedString($sectionList);
+	$sectionID = giau_insert_section($sectionName, $widgetID, $sectionConfig, $sectionIDList);
+	return giau_read_section($sectionID);
 }
 function giau_read_section($sectionID){
 	error_log(" read sectionID: ".$sectionID);
@@ -1087,25 +1106,30 @@ function giau_read_section($sectionID){
 		SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
 	    ".GIAU_FULL_TABLE_NAME_SECTION().".created as section_created,
 	    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as section_modified,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".name as section_name,
 	    ".GIAU_FULL_TABLE_NAME_SECTION().".configuration as section_configuration,
 	    ".GIAU_FULL_TABLE_NAME_SECTION().".section_list as section_subsections,
 	    ".GIAU_FULL_TABLE_NAME_SECTION().".widget as widget_id
 		FROM ".GIAU_FULL_TABLE_NAME_SECTION()." 
 		WHERE id=\"".$sectionID."\" LIMIT 1";
 	$rows = $wpdb->get_results($querystr, ARRAY_A);
-	error_log(" read row: ".count($rows));
+	error_log(" read row: ".($rows[0]["section_id"]));
 	if( count($rows)==1 ){
 		return $rows[0];
 	}
 	return null;
 }
-function giau_update_section($sectionID, $widgetID, $sectionConfig, $sectionList){
+function giau_update_section($sectionID, $sectionName, $widgetID, $sectionConfig, $sectionList){
 	$section = giau_read_section($sectionID);
 	if($section){
 		$timestampNow = stringFromDate( getDateNow() );
 		$sectionID = $section['section_id'];
 		global $wpdb;
 		$array = [];
+
+		if($sectionName!==null){
+			$array['name'] = $sectionName;
+		}
 		if($widgetID!==null){
 			$array['widget'] = $widgetID;
 		}
@@ -1118,6 +1142,7 @@ function giau_update_section($sectionID, $widgetID, $sectionConfig, $sectionList
 		}
 		if( count($array)>0 ){
 			$array['modified'] = $timestampNow;
+			error_log("UPDATE: ".$sectionID);
 			$result = $wpdb->update( GIAU_FULL_TABLE_NAME_SECTION(), $array,
 				['id' => $sectionID]);
 			if($result===false){

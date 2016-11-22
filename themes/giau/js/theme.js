@@ -3134,6 +3134,7 @@ giau.ObjectComposer.isFieldTypeArray = function(s){ // array-SUBTYPE
 	return isArray;
 }
 giau.ObjectComposer.fieldTypeArraySubtype = function(s){
+
 	var regexArrayPrefix = new RegExp('^array-','i');
 	var arraySubType = s.replace(regexArrayPrefix,"");
 	return arraySubType;
@@ -3897,6 +3898,7 @@ giau.CRUD.prototype._handleUpdateFxn = function(e,data){
 			//console.log(field)
 			var attr = field["attributes"];
 			var pres = field["presentation"];
+console.log("field: "+index);
 			//console.log(prop)
 			if(attr["editable"]==="true" || attr["primary_key"]==="true"){
 				if(pres && pres["json_model_column"]){ // json configuration
@@ -3960,7 +3962,6 @@ giau.CRUD.prototype._handleCreateCompleteFxn = function(e,d){
 }
 giau.CRUD.prototype._handleReloadCompleteFxn = function(e){
 	console.log("READ COMPLETE");
-	console.log(e)
 	var original = e["source"];
 	var criteriaIndex = original["index"];
 	var criteriaValue = original["value"];
@@ -3974,7 +3975,7 @@ giau.CRUD.prototype._handleReloadCompleteFxn = function(e){
 			var mapping = row[i];
 			var field = mapping.field();
 			var sourceValue = sourceData[field];
-			if(mapping!=null){
+			if(mapping!==null){
 				var action = {"action":"update","data":{"value":sourceValue}};
 				mapping.updateDataFromAction(action);
 				mapping.updateElementFromData();
@@ -3986,8 +3987,7 @@ giau.CRUD.prototype._handleReloadCompleteFxn = function(e){
 }
 giau.CRUD.prototype._handleUpdateCompleteFxn = function(e){
 	console.log("UPDATE COMPLETE");
-	// TODO HANDLE ERROR
-	console.log(e);
+	this._handleReloadCompleteFxn(e);
 }
 
 giau.CRUD.prototype._handleDeleteCompleteFxn = function(e){
@@ -4340,30 +4340,68 @@ giau.CRUD._fieldEditDate = function(definition, container, fieldName, elementCon
 giau.CRUD._fieldEditString = function(definition, container, fieldName, elementContainer, mapping){
 	var presentation = definition["presentation"];
 	var value = container[fieldName];
-	// update mapping
-	mapping.updateElementFxn(giau.CRUD._fieldEditStringUpdateElementFxn);
-	mapping.updateDataFxn(giau.CRUD._fieldEditStringUpdateDataFxn);
-	//
 	if(presentation && presentation["drag_and_drop"]){ // DRAG AND DROP
+		// update mapping
+		mapping.updateElementFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateElementFxn);
+		mapping.updateDataFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateDataFxn);
 		var dd = presentation["drag_and_drop"];
 		var elementDrop = giau.CRUD._elementSelectDiscrete(mapping);
 		Code.addChild(elementContainer,elementDrop);
 	}else{ // TEXTFIELD
+		mapping.updateElementFxn(giau.CRUD._fieldEditStringPrimitiveUpdateElementFxn);
+		mapping.updateDataFxn(giau.CRUD._fieldEditStringPrimitiveUpdateDataFxn);
 		var elementText = giau.CRUD._elementSelectString(mapping,value);
 		Code.addChild(elementContainer,elementText);
+		console.log(mapping.element());
+		var data = {"mapping":mapping};
+		console.log(mapping);
+		giau.CRUD._jsDispatch.addJSEventListener(mapping.element(), Code.JS_EVENT_INPUT_CHANGE, giau.CRUD._handleInputStringDidChange, null, data);
 	}
 }
+giau.CRUD._handleInputStringDidChange = function(e, data){
+	console.log(e)
+	console.log(data)
+	var mapping = data["mapping"];
+	var element = mapping.element();
+	element = Code.getElementsWithFunction(element, function(e){
+			return Code.getElementTag(e)=="textarea";
+		}, true)[0];
+	console.log(element)
+	var value = Code.getInputTextValue(element);
+	data = {"action":"update", "data":{"value":value}};
+	mapping.updateDataFromAction(data);
+}
 
-giau.CRUD._fieldEditStringUpdateElementFxn = function(mapping){
+giau.CRUD._fieldEditStringPrimitiveUpdateDataFxn = function(mapping, action){
+	console.log("UPDATE ELEMENT");
+	var operation = action["action"];
+	var data = action["data"];
+	var value = data["value"];
+	if(operation=="update"){
+		mapping.value(value);
+	}
+}
+giau.CRUD._fieldEditStringPrimitiveUpdateElementFxn = function(mapping){
+	console.log("UPDATE ELEMENT");
+	var value = mapping.value();
+	var element = mapping.element();
+	element = Code.getElementsWithFunction(element, function(e){
+			return Code.getElementTag(e)=="textarea";
+		}, true)[0];
+	Code.setInputTextValue(element, value);
+}
+
+giau.CRUD._fieldEditCommaSeparatedStringUpdateElementFxn = function(mapping){
+	console.log("_fieldEditCommaSeparatedStringUpdateElementFxn: "+mapping.value());
 	var data = mapping.object();
 	var field = mapping.field();
 	var element = mapping.element();
+	var value = mapping.value();
 	var ele = Code.getElementsWithFunction(element, function(e){
 			return Code.hasProperty(e,"data-value");
 		}, true);
 	ele = ele.length > 0 ? ele[0] : null;
-	var value = data[field];
-	if(ele && value){
+	if(ele!==null && value!==null){
 		var array = Code.arrayFromCommaSeparatedString(value);
 		var elements = giau.CRUD.generateBoxDivsFromArray(array, mapping, giau.CRUD._boxActionHandle, giau.CRUD._boxActionClose);
 		Code.removeAllChildren(ele);
@@ -4372,13 +4410,16 @@ giau.CRUD._fieldEditStringUpdateElementFxn = function(mapping){
 		}
 	}
 }
-giau.CRUD._fieldEditStringUpdateDataFxn = function(mapping, action){
+
+giau.CRUD._fieldEditCommaSeparatedStringUpdateDataFxn = function(mapping, action){
+	console.log("_fieldEditCommaSeparatedStringUpdateDataFxn: "+mapping.value());
 	var data = mapping.object();
 	var field = mapping.field();
 	var operation = action["action"];
 	var action = action["data"];
 	var originalValue = data[field];
 	var array = Code.arrayFromCommaSeparatedString(originalValue);
+	console.log(array);
 	if(operation=="append"){
 		var actionValue = action["value"];
 			array.push(actionValue);
@@ -4387,8 +4428,9 @@ giau.CRUD._fieldEditStringUpdateDataFxn = function(mapping, action){
 	}else if(operation=="remove"){
 		var index = action["index"];
 			Code.removeElementAt(array,index);
+		console.log(array+"");
 		var removedValue = Code.stringFromCommaSeparatedArray(array);
-		data[field] = removedValue;
+		mapping.value(removedValue);
 	}else if(operation=="update"){
 		var updatedValue = action["value"];
 		data[field] = updatedValue;

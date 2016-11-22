@@ -174,6 +174,14 @@ function giau_wordpress_data_service(){
 			if($tableSourceName=="section"){
 				if($lifecycleCRUD==="create"){
 					error_log(" => CREATE");
+					$dataName = $dataCRUD->{'section_name'};
+					$dataConfiguration = $dataCRUD->{'section_configuration'};
+					$dataList = $dataCRUD->{'section_subsections'};
+					$res = giau_create_section($dataName, null, $dataConfiguration, $dataList);
+					if($res!==null){
+						$response["data"] = $res;
+						$response["result"] = "success";
+					}
 				}else if($lifecycleCRUD==="read"){
 					error_log(" => READ");
 					$dataID = $dataCRUD->{'section_id'};
@@ -188,10 +196,10 @@ function giau_wordpress_data_service(){
 					error_log(" => UPDATE");
 					$dataID = $dataCRUD->{'section_id'};
 				error_log("dataID: ".$dataID);
+					$dataName = $dataCRUD->{'section_name'};
 					$dataConfiguration = $dataCRUD->{'section_configuration'};
-					$dataList = $dataCRUD->{'section_list'};
-					//$dataID = $dataCRUD->{'widget_id'};
-					$res = giau_update_section($dataID, null, $dataConfiguration, $dataList);
+					$dataList = $dataCRUD->{'section_subsections'};
+					$res = giau_update_section($dataID, $dataName, null, $dataConfiguration, $dataList);
 					if($res!==null){
 						$response["data"] = $res;
 						$response["result"] = "success";
@@ -390,6 +398,7 @@ function giau_wordpress_data_service(){
 				    SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
 				    ".GIAU_FULL_TABLE_NAME_SECTION().".created as section_created,
 				    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as section_modified,
+				    ".GIAU_FULL_TABLE_NAME_SECTION().".name as section_name,
 				    ".GIAU_FULL_TABLE_NAME_SECTION().".configuration as section_configuration,
 				    ".GIAU_FULL_TABLE_NAME_SECTION().".section_list as section_subsections,
 				    ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id,

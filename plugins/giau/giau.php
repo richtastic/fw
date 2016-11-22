@@ -391,7 +391,6 @@ function giau_action_page_head(){ // inject as desired
 	$relativePathJSFF = getPluginURIPath()."/js/code/";
 	$relativePathJSPluginJS = getPluginURIPath()."/js/";
 	//$fileJavaScriptGiau = getPluginURIPath()."/js/theme.js";
-	//<script rel="text/javascript" src="<?php echo $fileJavaScriptGiau; ?>"></script>
 	error_log("js path: ".$fileJavaScriptFF);
 	?>
 	<script rel="text/javascript" src="<?php echo $fileJavaScriptCode; ?>"></script>
@@ -401,7 +400,6 @@ function giau_action_page_head(){ // inject as desired
 	<script type="text/javascript">
 		$(document).ready( function(){
 			var classesLoadedFxn = function(){
-				console.log("hai")
 				var g = new giau();
 			}
 			var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
