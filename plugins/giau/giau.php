@@ -30,6 +30,7 @@ require_once($GIAU_ROOT_PATH.'/php/tables.php');
 require_once($GIAU_ROOT_PATH.'/php/data.php');
 require_once($GIAU_ROOT_PATH.'/php/files.php');
 require_once($GIAU_ROOT_PATH.'/php/service.php');
+require_once($GIAU_ROOT_PATH.'/php/admin.php');
 
 function giau_plugin_directory_root(){
 	return GIAU_PLUGIN_DIR;
@@ -428,17 +429,6 @@ function add_site_menu_to_top_bar() {
 	error_log("$menus: ".print_r($menus));
 }
 
-function giau_action_admin_menu() {
-	error_log("RICHIE Y");
-	// OPTIONS > GIAU PLUGIN
-	add_options_page('Giau Plugin Options', 'Giau Plugin', 'manage_options', GIAU_UNIQUE_IDENTIFIER(), 'giau_admin_plugin_options');
-	// GIAU PLUGIN | MENU
-	//add_menu_page('Giau Plugin Page', 'Plugin Settings', 'manage_options', 'giau-plugin-main', 'giau_admin_menu_page_main');
-		//    PAGE_TITLE    MENU_TITLE    CAPABILITY   SLUG   FUNCTION    ICON_URL   POITION
-		add_menu_page('Giau Plugin Page', 'Giau Plugin Settings', 'manage_options', 'giau-plugin-main', 'giau_admin_menu_page_main',  giau_plugin_images_url().'/admin/giau_icon_white_32x32.png');
-		add_submenu_page('giau-plugin-main', 'Giau Sub Menu 1', 'Data Entry', 'manage_options', 'giau-plugin-submenu-data', 'giau_admin_menu_page_submenu_data');
-		add_submenu_page('giau-plugin-main', 'Giau Sub Menu 2', 'File Upload', 'manage_options', 'giau-plugin-submenu-file', 'giau_admin_menu_page_submenu_file');
-}
 
 function giau_admin_plugin_options() {
 	error_log("RICHIE PLUGIN OPTIONS");
@@ -468,109 +458,7 @@ function sendEmail($toEmail, $fromEmail, $replyEmail, $subject, $body){
 	//error_log('MAIL: '.$toEmail.' | '.$subject.' | '.$body);
 }
 
-function giau_admin_menu_page_main(){
-	$iconBlackMini = giau_plugin_images_url().'/admin/giau_icon_black_32x32.png';
-?>
-	<h1 style="vertical-align:middle;"><img src="<?php echo $iconBlackMini; ?>"  style="display:inline-block; vertical-align:middle;" />Giau Plugin Settings</h1>
-	<ul>
-		<li>colors</li>
-		<li></li>
-		<li></li>
-		<li>File Uploading</li>
-		<li>Data Entry</li>
-		<li>Data Backups</li>
-	</ul>
-<?php
-}
-function giau_admin_menu_page_submenu_file(){
-?>
-	<h1>File Upload</h1>
-	<div>...</div>
-	<div class="giauFileBrowser limitedWidth" style="">
-		<div data-icon-key="icon_default" data-icon-value="<?php echo giau_plugin_images_url(); ?>/file_browser/icon_fb_blank.png"></div>
-		<div data-icon-key="icon_folder" data-icon-value="<?php echo giau_plugin_images_url(); ?>/file_browser/icon_fb_folder.png"></div>
-		<div data-icon-key="icon_image_background" data-icon-value="<?php echo giau_plugin_images_url(); ?>/file_browser/icon_fb_image_background.png"></div>
-	</div>
-<?php
-}
 
-function giau_admin_menu_page_submenu_data(){
-	if( !giau_is_current_user_admin() ){
-		return;
-	}
-
-	$selectedTableGetParameter = $_GET['table'];
-
-	$THIS_URL = $_SERVER['REQUEST_URL'];
-	$LANGUAGE_URL = add_query_arg('table','languages');
-	$CALENDAR_URL = add_query_arg('table','calendar');
-	$BIOS_URL = add_query_arg('table','bios');
-	$PAGES_URL = add_query_arg('table','pages');
-	$SECTIONS_URL = add_query_arg('table','sections');
-
-	$TABLE_LIST = [
-		[
-			"display" => 'Language Texts',
-			"url" => $LANGUAGE_URL,
-			"get_table" => "languages",
-			"data_table" => "languagization",
-		],
-		[
-			"display" => 'Calendar Events',
-			"url" => $CALENDAR_URL,
-			"get_table" => "calendar",
-			"data_table" => "calendar",
-		],
-		[
-			"display" => 'Bios',
-			"url" => $BIOS_URL,
-			"get_table" => "bios",
-			"data_table" => "bio",
-		],
-		[
-			"display" => 'Pages',
-			"url" => $PAGES_URL,
-			"get_table" => "pages",
-			"data_table" => "page",
-		],
-		[
-			"display" => 'Sections',
-			"url" => $SECTIONS_URL,
-			"get_table" => "sections",
-			"data_table" => "section",
-		],
-	];
-
-	$selectedTableDisplayName = "";
-	$selectedTableDataName = "";
-?>
-	<h1>Data Entry</h1>
-	
-	<ul>
-		<?php
-			foreach ($TABLE_LIST as $key => $value) {
-				$display = $value["display"];
-				$url = $value["url"];
-				$table = $value["get_table"];
-				echo '<li><a href="'.$url.'">'.$display.'</a></li>';
-				if($selectedTableGetParameter==$table){
-					$selectedTableDataName = $value["data_table"];
-					$selectedTableDisplayName = $display;
-				}
-			}
-			
-		?>
-		<!-- <li>Widgets</li> -->
-		<!-- <li></li> -->
-	</ul>
-	<h2><?php echo $selectedTableDisplayName; ?></h2>
-
-	<!-- table? -->
-		<div class="limitedWidth" style="width:100%; display:block; position:relative;">
-		<div style="width:70%; min-height:600px; display:inline-block; background-color:#F0F; float:left;"><div class="giauCRUD" style=""></div></div><div style="width:30%; display:inline-block; background-color:#0FF; float:left;"><div class="giauLibraryView" style=""></div></div>
-	</div>
-<?php
-}
 
 function giau_action_init_callback(){
 	error_log("giau_action_init_callback");

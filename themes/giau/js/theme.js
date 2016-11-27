@@ -3594,6 +3594,7 @@ giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData, 
 	ajax.context(this);
 	ajax.callback(function(d){
 		var obj = Code.parseJSON(d);
+		console.log(d)
 		//console.log(obj);
 		if(obj["data"]){
 			obj = obj["data"];
@@ -3955,10 +3956,41 @@ giau.CRUD.prototype._handleCreateCompleteFxn = function(e,d){
 	var source = e["source"];
 	var data = e["data"];
 		//this._dataCRUD.create(jsonString, passBack);
+
 	// get back new row
 		//
 	// add row to top of table 
-		//
+	/*
+	view["rows"].push(viewRow);
+		for(j=0; j<editFields.length; ++j){
+			var field = editFields[j];
+			var column = field["column"];
+			var alias = field["alias"];
+			var mapping = this._mappingFromData(field,row,alias);
+			viewRow.push(mapping);
+		}
+	*/
+	var view = this._dataView;
+		var fields = view["data"]["fields"];
+		var editFields = view["data"]["edit_fields"];
+		var rows = view["rows"];
+		var viewRow = [];
+console.log(fields);
+console.log(editFields);
+console.log(rows);
+console.log(viewRow);
+var row = data;
+		var j;
+		for(j=0; j<editFields.length; ++j){
+			var field = editFields[j];
+			var column = field["column"];
+			var alias = field["alias"];
+			var mapping = this._mappingFromData(field,row,alias);
+			viewRow.push(mapping);
+		}
+		rows.unshift(viewRow); // put at beginning
+
+	this._updateLayout();
 }
 giau.CRUD.prototype._handleReloadCompleteFxn = function(e){
 	console.log("READ COMPLETE");
@@ -4442,19 +4474,20 @@ giau.CRUD._fieldEditJSON = function(definition, container, fieldName, elementCon
 	// update mapping
 	mapping.updateElementFxn(giau.CRUD._fieldEditJSONUpdateElementFxn);
 	mapping.updateDataFxn(giau.CRUD._fieldEditJSONUpdateDataFxn);
-
 	var elementJSON = Code.newDiv();
 		Code.addChild(elementContainer,elementJSON);
 	var presentation = definition["presentation"];
 	var jsonModelColumn = presentation["json_model_column"];
 	var modelString = container[jsonModelColumn]; // ALSO: mapping.object()["json_model_column"];
+	console.log("modelString: "+modelString);
 	var model = Code.parseJSON(modelString);
 	var object = Code.parseJSON(mapping.value());
 	// set source to objects instead of strings
 		container[jsonModelColumn] = model;
-		mapping.value(object);
-	//console.log(object);
-	//console.log(model);
+	// 	mapping.value(object);
+	// 	console.log("?????????????????????????????????????????????????????");
+	// console.log(object);
+	// console.log(model);
 	console.log("--------------------------------------------------------------------------------------------------------------- COMPOSER START");
 	var composer = new giau.ObjectComposer(elementJSON, model, object);
 	mapping.value(composer);
@@ -4574,12 +4607,13 @@ giau.CRUD.generateBoxDiv = function(value, ctx, handleFxn, closeFxn){
 		Code.setContent(content,value+""+"&nbsp;");
 		Code.setStyleDisplay(content,"inline");
 		Code.setStyleColor(content,textColor);
-	var closeButton = Code.newDiv();
-		Code.setContent(closeButton,"[x]");
-		Code.setStyleDisplay(closeButton,"inline");
-		Code.setStyleColor(closeButton,textColor);
+	// var closeButton = Code.newDiv();
+	// 	Code.setContent(closeButton,"[x]");
+	// 	Code.setStyleDisplay(closeButton,"inline");
+	// 	Code.setStyleColor(closeButton,textColor);
 	Code.addChild(container,content);
-	Code.addChild(container,closeButton);
+	var closeButton = giau.CRUD._generateSubButton("&times;", container);
+	//Code.addChild(container,closeButton);
 	if(closeFxn){
 		this._jsDispatch.addJSEventListener(closeButton, Code.JS_EVENT_CLICK, closeFxn, ctx);
 	}
@@ -4590,7 +4624,28 @@ giau.CRUD.generateBoxDiv = function(value, ctx, handleFxn, closeFxn){
 	return container;
 }
 
+giau.CRUD._generateSubButton = function(display,element){
+	var div;
+		div = Code.newDiv();
+		Code.setStyleDisplay(div,"inline-block");
+		Code.setStyleFontSize(div, 12+"px");
+		Code.setStyleColor(div,giau.Theme.Color.TextOnDark);
+		Code.setStylePadding(div,4+"px");
+		Code.setStyleBorderWidth(div,1+"px");
+		Code.setStyleBorderColor(div,giau.Theme.Color.MediumRed);
+		Code.setStyleBorder(div,"solid");
+		Code.setStyleMarginLeft(div,4+"px");
+		Code.setStyleBackgroundColor(div,giau.Theme.Color.LightRed);
+		Code.setStyleCursor(div,Code.JS_CURSOR_STYLE_FINGER);
 
+	if(display){
+		Code.setContent(div,display);
+	}
+	if(element){
+		Code.addChild(element,div);
+	}
+	return div;
+}
 
 giau.prototype._resize = function(e){
 	var width = $(window).width();

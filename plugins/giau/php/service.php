@@ -178,7 +178,9 @@ function giau_wordpress_data_service(){
 					$dataConfiguration = $dataCRUD->{'section_configuration'};
 					$dataList = $dataCRUD->{'section_subsections'};
 					$res = giau_create_section($dataName, null, $dataConfiguration, $dataList);
+
 					if($res!==null){
+						error_log("RESULT CONFIG: ".$res["section_configuration"]);
 						$response["data"] = $res;
 						$response["result"] = "success";
 					}
@@ -390,7 +392,7 @@ function giau_wordpress_data_service(){
 				// $offset = 46;
 				// $count = 1;
 				$offset = 50;
-				$count = 5;
+				$count = 1;
 				$requestInfo = [];
 				$requestInfo["offset"] = $offset;
 				$requestInfo["count"] = $count;

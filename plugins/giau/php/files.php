@@ -109,7 +109,7 @@ function getDirectoryListingRecursive($directory,&$array,$limit=null, $trim=null
 	if(!$directory){
 		return;
 	}
-	if($limit==null){
+	if($limit===null){
 		$limit = 10;
 	}
 	if($limit<=0){
@@ -148,9 +148,9 @@ function getDirectoryListingRecursive($directory,&$array,$limit=null, $trim=null
 			$entry["path"] = $path; // relative
 		}
 		array_push($array, $entry);
-		// if($isDir){
-		// 	getDirectoryListingRecursive($entry["path"], $arr, $limit-1, $trim);
-		// }
+		if($isDir){
+			getDirectoryListingRecursive($entry["path"], $arr, $limit-1, $trim);
+		}
 		unset($entry);
 		unset($arr);
 	}

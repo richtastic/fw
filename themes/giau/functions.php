@@ -70,8 +70,8 @@ function myAdminPage(){
 //add_theme_page( $page_title, $menu_title, $capability, $menu_slug, $function);
 
 
-
-
+/// WORKING THEME MENU STUFF
+/*
 function theme_options_panel(){
 	error_log("theme_options_panel");
 	error_log(get_template_directory_uri());
@@ -93,6 +93,7 @@ function wps_theme_func_faq(){
                 <h2>FAQ</h2></div>';
 }
 
+*/
 
 // giau_settings_icon.png
 

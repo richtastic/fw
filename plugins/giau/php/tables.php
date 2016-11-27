@@ -73,6 +73,18 @@ function GIAU_TABLE_DEFINITION_TO_PRESENTATION(&$tableDefinition){
 	return $tableDefinition;
 
 }
+
+function GIAU_TABLE_DEFINITION_ALL_TABLES(){
+	return [
+			GIAU_TABLE_DEFINITION_LANGUAGIZATION(),
+			GIAU_TABLE_DEFINITION_CALENDAR(),
+			GIAU_TABLE_DEFINITION_WIDGET(),
+			GIAU_TABLE_DEFINITION_SECTION(),
+			GIAU_TABLE_DEFINITION_PAGE(),
+			GIAU_TABLE_DEFINITION_BIO(),
+			GIAU_TABLE_DEFINITION_WEBSITE()
+		];
+}
 function GIAU_TABLE_DEFINITION_WIDGET(){
 	return
 	[
@@ -518,7 +530,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 function GIAU_TABLE_DEFINITION_CALENDAR(){
 	return
 	[
-		"table" => GIAU_FULL_TABLE_NAME_SECTION(),
+		"table" => GIAU_FULL_TABLE_NAME_CALENDAR(),
 		"columns" => [
 			"id" =>  [
 				"type" => "string-number",
@@ -1070,7 +1082,9 @@ function giau_insert_widget($widgetName,$widgetConfig){
 function giau_insert_section($sectionName, $widgetID, $sectionConfig, $sectionIDList){
 	$widgetID = $widgetID!==null ? $widgetID : 0;
 	$sectionName = $sectionName!==null ? $sectionName : "";
-	$sectionConfig = json_encode($sectionConfig);
+	if(!is_string($sectionConfig)){
+		$sectionConfig = json_encode($sectionConfig);
+	}
 	if(!$sectionIDList){
 		$sectionIDList = [];
 	}
@@ -1090,7 +1104,7 @@ function giau_insert_section($sectionName, $widgetID, $sectionConfig, $sectionID
 	return $wpdb->insert_id;
 }
 function giau_create_section($sectionName, $widgetID, $sectionConfig, $sectionList){
-	error_log("sectionConfig: ".$sectionConfig);
+	error_log("giau_create_section - sectionConfig: ".$sectionConfig);
 	// to array
 	$sectionList = arrayFromCommaSeparatedString($sectionList);
 	$sectionID = giau_insert_section($sectionName, $widgetID, $sectionConfig, $sectionIDList);
