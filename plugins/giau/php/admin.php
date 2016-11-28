@@ -276,7 +276,7 @@ function giau_admin_menu_page_submenu_data_entry(){
 
 	<!-- table? -->
 		<div class="limitedWidth" style="width:100%; display:block; position:relative;">
-		<div style="width:70%; min-height:600px; display:inline-block; background-color:#F0F; float:left;"><div class="giauCRUD" style=""></div></div><div style="width:30%; display:inline-block; background-color:#0FF; float:left;"><div class="giauLibraryView" style=""></div></div>
+		<div style="width:70%; min-height:600px; display:inline-block; background-color:#F0F; float:left;"><div class="giauCRUD" style=""></div></div><div style="width:30%; display:inline-block; background-color:#0FF; float:left;"><div class="giauLibraryView" style="" data-name="section_id" data-display-value="section_id" data-display-title="widget_name" data-display-subtitle="section_modified"><div  data-key="table" data-value="section"></div></div><div class="giauLibraryView" style="" data-name="widget_id" data-display-value="widget_id" data-display-title="widget_name" data-display-subtitle="widget_modified"><div data-key="table" data-value="widget"></div></div></div>
 	</div>
 <?php
 }

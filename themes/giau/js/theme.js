@@ -177,8 +177,8 @@ giau.ContactView = function(element){ //
 	this._formElements = [];
 	for(i=0; i<Code.numChildren(this._container); ++i){ // UL
 		var div = Code.getChild(this._container,i);
-		for(j=0; i<Code.numChildren(div); ++i){ // LI
-			var child = Code.getChild(div,i);
+		for(j=0; j<Code.numChildren(div); ++j){ // LI
+			var child = Code.getChild(div,j);
 			if(Code.hasProperty(child,propertyDataInput)){
 				var name = Code.getProperty(child, propertyDataName);
 				var title = Code.getProperty(child, propertyDataTitle);
@@ -3243,13 +3243,16 @@ giau.ObjectComposer.prototype._interactActionButton = function(display, element)
 
 
 
-giau.LibraryScroller = function(element, name, url){
+giau.LibraryScroller = function(element, name, url, params){
+	console.log("LibraryScroller");
+	url = url !== undefined ? url : "./";
+	params = params !== undefined ? params : {};
 	this._scrollBarSize = Code.getScrollBarSize();
 
 	this._jsDispatch = new JSDispatch();
 
 	this._container = element;
-	this._name = name !== undefined ? name : "library_scroller";
+	name = name !== undefined ? name : "library_scroller";
 	
 	this._displayHeight = 500;
 	this._displayWidth = 150;
@@ -3280,7 +3283,6 @@ giau.LibraryScroller = function(element, name, url){
 	var paddingInterriorBottom = 5;
 	var scrollerWidth = this._displayWidth - paddingInterriorLeft - paddingInterriorRight;
 	var scrollerHeight = this._displayHeight - paddingInterriorTop - paddingInterriorBottom;
-	
 
 	Code.setStylePosition(this._container,"relative");
 
@@ -3308,7 +3310,6 @@ giau.LibraryScroller = function(element, name, url){
  //    scrollbar-darkshadow-color: #FFFFFF;
  //    scrollbar-track-color: #FFFFFF;
  //    scrollbar-arrow-color: #FFFFFF;
-
 	Code.setStyleWidth(this._elementContents,"100%");
 	Code.setStyleBackgroundColor(this._elementContents,contentBG);
 
@@ -3316,9 +3317,54 @@ giau.LibraryScroller = function(element, name, url){
 	this._getSizeFxn = giau.LibraryScroller._generateSize;
 	this._createElementFxn = giau.LibraryScroller._generateDiv;
 
-	var dataTableName = "section";
 
-	this._dataSource = new giau.DataSource("./",20, {"table":dataTableName});
+
+	var i;
+	// fill out parameters from elements
+	
+	var propertyDataParamKey = "data-key";
+	var propertyDataParamValue = "data-value";
+	var propertyDataName = "data-name";
+	var propertyDataDisplayTitle = "data-display-title";
+	var propertyDataDisplaySubtitle = "data-display-subtitle";
+	var propertyDataDisplayImage = "data-display-image";
+	var propertyDataDisplayValue = "data-display-value";
+
+	if(Code.hasProperty(this._container,propertyDataName)){
+		name = Code.getProperty(this._container, propertyDataName);
+		Code.removeProperty(this._container, propertyDataName);
+	}
+	this._displayData = {};
+	if(Code.hasProperty(this._container,propertyDataDisplayTitle)){
+		this._displayData["title"] = Code.getProperty(this._container, propertyDataDisplayTitle);
+		Code.removeProperty(this._container, propertyDataDisplayTitle);
+	}
+	if(Code.hasProperty(this._container,propertyDataDisplaySubtitle)){
+		this._displayData["subtitle"] = Code.getProperty(this._container, propertyDataDisplaySubtitle);
+		Code.removeProperty(this._container, propertyDataDisplaySubtitle);
+	}
+	if(Code.hasProperty(this._container,propertyDataDisplayImage)){
+		this._displayData["image"] = Code.getProperty(this._container, propertyDataDisplayImage);
+		Code.removeProperty(this._container, propertyDataDisplayImage);
+	}
+	if(Code.hasProperty(this._container,propertyDataDisplayValue)){
+		this._displayData["value"] = Code.getProperty(this._container, propertyDataDisplayValue);
+		Code.removeProperty(this._container, propertyDataDisplayValue);
+	}
+
+	
+	for(i=0; i<Code.numChildren(this._container); ++i){ 
+		var child = Code.getChild(this._container,i);
+		if(Code.hasProperty(child,propertyDataParamKey)){
+			var key = Code.getProperty(child, propertyDataParamKey);
+			var value = Code.getProperty(child, propertyDataParamValue);
+			Code.removeChild(this._container, child);
+			params[key] = value;
+		}
+	}
+	this._name = name;
+
+	this._dataSource = new giau.DataSource(url,20, params);
 	this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
 	this._dataSource.getPage(0);
 }
@@ -3331,15 +3377,18 @@ giau.LibraryScroller._generateSize = function(info, data){
 	return size;
 }
 
-giau.LibraryScroller._generateDiv = function(info, data){
+giau.LibraryScroller._generateDiv = function(info, data, displayData){
 	var bus = giau.MessageBus();
 	this._messageBus = bus;
+	console.log("displayData");
+	console.log(data);
+	console.log(displayData);
 
 	//console.log(data);
 	var dataSectionModified = data["section_modified"];
 		dataSectionModified = Code.getHumanReadableDateString(dataSectionModified);
-	var dateSectionID = data["section_id"];
-	var dataWidgetName = data["widget_name"];
+	var dataValue = data[ displayData["value"] ];
+	var dataTitle = data[ displayData["title"] ];
 	var dataIndex = info["index"];
 
 	var color;
@@ -3391,11 +3440,11 @@ giau.LibraryScroller._generateDiv = function(info, data){
 		
 	
 	var elementID = Code.newDiv();
-		Code.setContent(elementID,"#"+dataIndex+" ("+dateSectionID+")");
+		Code.setContent(elementID,"#"+dataIndex+" ("+dataValue+")");
 		Code.setStyleFontSize(elementID,"10px");
 		Code.setStyleColor(elementID,"#DBB");
 	var elementName = Code.newDiv();
-		Code.setContent(elementName,dataWidgetName);
+		Code.setContent(elementName,dataTitle);
 		Code.setStyleFontSize(elementName,"12px");
 		Code.setStyleColor(elementName,"#FFF");
 	var elementModified = Code.newDiv();
@@ -3413,7 +3462,9 @@ giau.LibraryScroller._generateDiv = function(info, data){
 	return div;
 }
 giau.LibraryScroller.prototype._updateLayout = function(){
-	console.log("_updateLayout");
+	console.log("LibraryScroller - _updateLayout");
+	console.log(this);
+	var displayData = this._displayData;
 	// source vars
 	// var widthContainer = $(this._container).width();
 	// var heightContainer = $(this._container).height();
@@ -3447,18 +3498,22 @@ giau.LibraryScroller.prototype._updateLayout = function(){
 			"x":0,
 			"y":offsetY,
 		};
-		var div = this._createElementFxn(info, row);
+		var div = this._createElementFxn(info, row, displayData);
 		Code.addChild(this._elementScroller,div);
 		offsetY += elementHeight;
 		if(i<data.length-1){
 			offsetY += divSpacingY;
 		}
-
-		//var data = {"model":modelFieldInfo, "array":array, "element":element, "field":"?"}; // modelFieldInfo
 		var datum = {}
 			datum["element"] = div;
-			datum["display"] = row["widget_name"]; // TODO: MAKE THIS A PARAM
-			datum["value"] = row["section_id"]; // TODO: MAKE THIS A PARAM
+			datum["display"] = row[displayData["title"]];
+			datum["value"] = row[displayData["value"]];
+				datum["value"] = // TODO: GET THIS FROM METADATA
+				{"17":{
+						"id": "17",
+						"widget_name": "SOMETHING 17",
+					}
+				};
 			datum["source"] = row;
 		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_MOUSE_DOWN, this._handleElementMouseDownFxn, this, datum);
 		// 
@@ -3481,14 +3536,13 @@ giau.LibraryScroller.prototype._handleElementMouseDownFxn = function(e,data){
 	var element = data["element"];
 	var div = element.cloneNode(true);
 	var off = new V2D(offX,offY);
-	console.log(data);
-
 	var bus = this._messageBus;
 	var datum = {};
 		datum["display"] = data["display"];
 		datum["value"] = data["value"];
 		datum["element"] = data["element"]; // ???
-	var criteria = {"type":"section_id"};
+	//var criteria = {"type":"section_id"};
+		var criteria = {"name":this._name};
 	var obj = {"element":div, "offset":off, "data":datum, "criteria":criteria};
 	bus.alertAll(giau.MessageBus.EVENT_OBJECT_DRAG_START, obj);
 }
@@ -3498,10 +3552,9 @@ giau.LibraryScroller.prototype._updateWithData = function(data){
 	var offset = data["offset"];
 	var count = data["count"];
 	var rows = data["data"];
-	var i;
-	for(i=0; i<count; ++i){
-		
-	}
+	var metadata = data["metadata"];
+	console.log("my meta:");
+	console.log(metadata);
 	//var FA = new FragArray();
 	//this._dataRows = FA;
 	this._dataRows = rows;
@@ -3594,8 +3647,6 @@ giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData, 
 	ajax.context(this);
 	ajax.callback(function(d){
 		var obj = Code.parseJSON(d);
-		console.log(d)
-		//console.log(obj);
 		if(obj["data"]){
 			obj = obj["data"];
 		}
@@ -3955,41 +4006,29 @@ giau.CRUD.prototype._handleCreateCompleteFxn = function(e,d){
 	console.log(d);
 	var source = e["source"];
 	var data = e["data"];
-		//this._dataCRUD.create(jsonString, passBack);
-
 	// get back new row
-		//
-	// add row to top of table 
-	/*
-	view["rows"].push(viewRow);
-		for(j=0; j<editFields.length; ++j){
-			var field = editFields[j];
-			var column = field["column"];
-			var alias = field["alias"];
-			var mapping = this._mappingFromData(field,row,alias);
-			viewRow.push(mapping);
-		}
-	*/
+	var row = data;
+	//
 	var view = this._dataView;
-		var fields = view["data"]["fields"];
-		var editFields = view["data"]["edit_fields"];
-		var rows = view["rows"];
-		var viewRow = [];
-console.log(fields);
-console.log(editFields);
-console.log(rows);
-console.log(viewRow);
-var row = data;
-		var j;
-		for(j=0; j<editFields.length; ++j){
-			var field = editFields[j];
-			var column = field["column"];
-			var alias = field["alias"];
-			var mapping = this._mappingFromData(field,row,alias);
-			viewRow.push(mapping);
-		}
-		rows.unshift(viewRow); // put at beginning
-
+	var fields = view["data"]["fields"];
+	var editFields = view["data"]["edit_fields"];
+	var rows = view["rows"];
+	var viewRow = [];
+// console.log(fields);
+// console.log(editFields);
+// console.log(rows);
+// console.log(viewRow);
+	var j;
+	for(j=0; j<editFields.length; ++j){
+		var field = editFields[j];
+		var column = field["column"];
+		var alias = field["alias"];
+		var mapping = this._mappingFromData(field,row,alias);
+		viewRow.push(mapping);
+	}
+	// add row to top of table 
+	rows.unshift(viewRow);
+	// update display
 	this._updateLayout();
 }
 giau.CRUD.prototype._handleReloadCompleteFxn = function(e){
@@ -4067,6 +4106,7 @@ giau.CRUD.prototype._updateWithData = function(data){
 	var columns = definition["columns"];
 	var presentation = definition["presentation"];
 	var columnPresentations = presentation["columns"];
+	var metadata = data["metadata"];
 
 	view = {};
 	view["data"] = data;
@@ -4098,7 +4138,8 @@ giau.CRUD.prototype._updateWithData = function(data){
 					info["alias"] = key;
 					info["definition"] = column;
 					info["attributes"] = attributes;
-					info["presentation"] =  pres;
+					info["presentation"] = pres;
+					info["metadata"] = metadata;
 					editFields.push(info);
 					lookupFields[key] = info;
 					var sortable = attributes["sort"];
@@ -4109,6 +4150,7 @@ giau.CRUD.prototype._updateWithData = function(data){
 			}
 		}
 	}
+	view["data"]["metadata"] = metadata;
 	view["data"]["fields"] = lookupFields;
 	view["data"]["edit_fields"] = editFields;
 	this._searchFields = searchFields;
@@ -4130,6 +4172,7 @@ giau.CRUD.prototype._updateWithData = function(data){
 }
 giau.CRUD.prototype._updateLayout = function(){
 	console.log("CRUD updateLayout");
+	console.log(this)
 	var searchFields = this._searchFields;
 	var i, j;
 	
@@ -4278,7 +4321,7 @@ giau.CRUD._elementSelectString = function(mapping){
 	return elementContainer;
 }
 
-giau.CRUD._elementSelectDiscrete = function(mapping){
+giau.CRUD._elementSelectDiscrete = function(mapping, dd, metadata){
 	var elementContainer = Code.newDiv();
 		Code.setStyleBackgroundColor(elementContainer,"#EEE");
 		Code.setStyleBorderColor(elementContainer,"#CCC");
@@ -4290,27 +4333,35 @@ giau.CRUD._elementSelectDiscrete = function(mapping){
 	Code.setProperty(elementContainer,"data-value","true");
 
 	var bus = giau.MessageBus();
-	var obj = {"bus":bus, "element":elementContainer, "mapping":mapping};
+	var obj = {"bus":bus, "element":elementContainer, "mapping":mapping};//, "drag_and_drop":dd, "metadata":metadata};
 	bus.addFunction(giau.MessageBus.EVENT_OBJECT_DRAG_SELECT, giau.CRUD._handleDragSelectFxn, this, obj);
 	return elementContainer;
 }
-giau.CRUD._handleDragStartFxn = function(e, b){
-	
-}
+
 giau.CRUD._handleDragSelectFxn = function(e, f){ // e is passed by self, f is passed by alert
+	var mapping = e["mapping"]
+	var myCriteria = mapping._OTHER["drag_and_drop"];
+		var mySource = myCriteria["source"];
+			var myName = mySource["name"];
+	var metadata = e["metadata"];
 	var criteria = f["criteria"];
-	if(criteria && criteria["type"]=="section_id"){
-		var bus = e["bus"];
-		var element = e["element"];
-		var mapping = e["mapping"];
-		var ctx = {"element":element, "mapping":mapping};
-			var lef = $(element).offset().left;
-			var top = $(element).offset().top;
-			var wid = $(element).outerWidth();
-			var hei = $(element).outerHeight();
-		var rect = new Rect(lef,top, wid,hei);
-		var obj = {"rect": rect, "fxn": giau.CRUD._handleDragLifecycleFxn, "ctx": ctx};
-		bus.alertAll(giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE, obj);
+	if(criteria){
+		var name = criteria["name"];
+		console.log(name,myName);
+		if(name===myName){
+			console.log("made it in ....");
+			var bus = e["bus"];
+			var element = e["element"];
+			var mapping = e["mapping"];
+			var ctx = {"element":element, "mapping":mapping};//, "drag_and_drop":myCriteria, "metadata":metadata};
+				var lef = $(element).offset().left;
+				var top = $(element).offset().top;
+				var wid = $(element).outerWidth();
+				var hei = $(element).outerHeight();
+			var rect = new Rect(lef,top, wid,hei);
+			var obj = {"rect": rect, "fxn": giau.CRUD._handleDragLifecycleFxn, "ctx": ctx};
+			bus.alertAll(giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE, obj);
+		}
 	}
 }
 
@@ -4346,8 +4397,8 @@ giau.CRUD._handleDragLifecycleFxn = function(event, data){
 			Code.setProperty(element,"data-value",valueArrayString);
 			//Code.setContent(element,"new value: "+valueArrayString);
 		}
-		data = {"action":"append", "data":data}; // custom addition
-		mapping.updateDataFromAction(data); // op, action, event, CRUD
+		data = {"action":"append", "data":data, "context":this}; // custom addition
+		mapping.updateDataFromAction(data);
 		mapping.updateElementFromData();
 	}
 }
@@ -4371,12 +4422,14 @@ giau.CRUD._fieldEditDate = function(definition, container, fieldName, elementCon
 
 giau.CRUD._fieldEditString = function(definition, container, fieldName, elementContainer, mapping){
 	var presentation = definition["presentation"];
+	var metadata = definition["metadata"];
 	var value = container[fieldName];
 	if(presentation && presentation["drag_and_drop"]){ // DRAG AND DROP
 		// update mapping
 		mapping.updateElementFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateElementFxn);
 		mapping.updateDataFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateDataFxn);
-		var dd = presentation["drag_and_drop"];
+			var dd = presentation["drag_and_drop"];
+			mapping._OTHER = {"metadata":metadata, "drag_and_drop":dd};
 		var elementDrop = giau.CRUD._elementSelectDiscrete(mapping);
 		Code.addChild(elementContainer,elementDrop);
 	}else{ // TEXTFIELD
@@ -4445,28 +4498,71 @@ giau.CRUD._fieldEditCommaSeparatedStringUpdateElementFxn = function(mapping){
 
 giau.CRUD._fieldEditCommaSeparatedStringUpdateDataFxn = function(mapping, action){
 	console.log("_fieldEditCommaSeparatedStringUpdateDataFxn: "+mapping.value());
+	console.log(action);
 	var data = mapping.object();
 	var field = mapping.field();
+		
 	var operation = action["action"];
+	var context = action["context"];
 	var action = action["data"];
+	var dd = mapping._OTHER["drag_and_drop"];;
+	var maxCount = dd//(context!==undefined) ? context["drag_and_drop"] : null;
+	var metadata = mapping._OTHER["metadata"];
+// console.log("_fieldEditCommaSeparatedStringUpdateDataFxn- metadata");
+// console.log(metadata);
+	if(maxCount){
+		maxCount = maxCount["source"];
+		console.log(maxCount);
+		maxCount = maxCount["max_count"];
+		console.log(maxCount);
+		if(maxCount!==null){
+			maxCount = parseInt(maxCount);
+		}
+	}
+		console.log(maxCount);
 	var originalValue = data[field];
 	var array = Code.arrayFromCommaSeparatedString(originalValue);
+
 	console.log(array);
 	if(operation=="append"){
 		var actionValue = action["value"];
+console.log("GOT A VALUE");
+console.log(actionValue);
+console.log(metadata);
+if(dd && dd["metadata"] && dd["metadata"]["source"]){
+	var src = dd["metadata"]["source"];
+	var table = metadata[src];
+	var keys = Code.keys(actionValue);
+	var key = keys[0];
+	console.log("??????????????????????");
+	console.log(key);
+	console.log(table);
+	table[key] = actionValue[key];
+	actionValue = key;	
+}
 			array.push(actionValue);
-		var appendedValue = Code.stringFromCommaSeparatedArray(array);
-		data[field] = appendedValue;
+// UP{DAED}
 	}else if(operation=="remove"){
 		var index = action["index"];
 			Code.removeElementAt(array,index);
-		console.log(array+"");
-		var removedValue = Code.stringFromCommaSeparatedArray(array);
-		mapping.value(removedValue);
+// UP{DAED}
+		// var removedValue = Code.stringFromCommaSeparatedArray(array);
+		// mapping.value(removedValue);
 	}else if(operation=="update"){
 		var updatedValue = action["value"];
-		data[field] = updatedValue;
+		array = Code.arrayFromCommaSeparatedString(updatedValue);
+	// UP{DAED}
 	}
+	console.log("BEFORE");
+	//
+	if(maxCount!==null && maxCount>0){
+		while(array.length>maxCount){
+			array.shift();
+		}
+	}
+	console.log("OUT");
+	var updatedValue = Code.stringFromCommaSeparatedArray(array);
+	mapping.value(updatedValue);
 }
 
 giau.CRUD._fieldEditJSON = function(definition, container, fieldName, elementContainer, mapping){
@@ -4580,11 +4676,31 @@ giau.CRUD.generateBoxDivsFromArray = function(array, ctx, handleFxn, closeFxn){
 	if(!array){
 		return [];
 	}
+	console.log(ctx);
+var mapping = ctx;
+var dd = mapping._OTHER["drag_and_drop"];
+var metadata = mapping._OTHER["metadata"];
+console.log("generateBoxDivsFromArray");
+console.log(metadata);
 	var i, value, len = array.length;
 	var elements = [];
 	for(i=0; i<len; ++i){
 		value = array[i];
 		var obj = {"index":i, "context":ctx};
+		console.log(dd)
+		if(dd && dd["metadata"]){
+			var source = dd["metadata"]["source"];
+			
+			console.log(metadata)
+			console.log(source)
+			console.log(value)
+			if(metadata && source){
+				value = metadata[source][value];
+				if(value){
+					value = value["widget_name"];
+				}
+			}
+		}
 		elements.push( giau.CRUD.generateBoxDiv(value, obj, handleFxn, closeFxn) );
 	}
 	return elements;

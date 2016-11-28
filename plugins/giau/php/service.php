@@ -437,7 +437,30 @@ function giau_wordpress_data_service(){
 					$query = 'SELECT '.GIAU_FULL_TABLE_NAME_SECTION().'.* FROM '.GIAU_FULL_TABLE_NAME_SECTION().' WHERE id IN ('.$subsectionsList.')';
 					$subsections = $wpdb->get_results($query, ARRAY_A);
 				}
+/*
+DATA FROM DRAG SOURCE (LIBRARY) NEEDS TO BE APPENDED/UPDATED TO THE METADATA TABLE
+VALUE => MUST BE AN OBJECT / INDEX TO AN OBJECT
+
+library source ALSO has a metadata field for a lookup
+if data-metadata is present, use this as the metadata lookup 'column'
+	-> return the VALUE/OBJECT at data["metadata"][this._metadataField][value];
+
+*/
 				$metadata["subsections"] = $subsections;
+				$metadata["widgets"] = [
+					"15" => [
+						"id" => "15",
+						"widget_name" => "ORIGINAL WIDGET",
+					],
+					// "17" => [
+					// 	"id" => "17",
+					// 	"widget_name" => "BIO LISTING",
+					// ],
+					// "10" => [
+					// 	"id" => "10",
+					// 	"widget_name" => "SOMETHING ELSE ...",
+					// ],
+				];
 				$response["metadata"] = $metadata;
 				$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( GIAU_TABLE_DEFINITION_SECTION() );
 

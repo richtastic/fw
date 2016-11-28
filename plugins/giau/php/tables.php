@@ -197,9 +197,9 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				"attributes" =>  [
 					"display_name" => "Widget",
 					"order" => "3",
-					"sort" =>  "false",
-					"editable" => "false",
-					"default" => null, // SECECT FROM MENU ???
+					"sort" =>  "true",
+					"editable" => "true",
+					"default" => null, // SELECT FROM MENU ???
 				],
 			],
 			"extend" => [
@@ -244,16 +244,16 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 			],
 
 
-			// not part of the table:
-			"widget_name" => [
-				"type" => "string",
-				"attributes" =>  [
-					"display_name" => "Name(Widget)",
-					"order" => "7",
-					"sort" =>  "false",
-					"editable" => "false",
-				],
-			],
+			// // not part of the table:
+			// "widget_name" => [
+			// 	"type" => "string",
+			// 	"attributes" =>  [
+			// 		"display_name" => "Name(Widget)",
+			// 		"order" => "7",
+			// 		"sort" =>  "false",
+			// 		"editable" => "false",
+			// 	],
+			// ],
 		],
 		"presentation" => [
 			"column_aliases" => [
@@ -265,23 +265,41 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				"section_subsections" => "section_list",
 //				"section_extend_widget_id" => "extend",
 				// unavailable
-				"widget_id" => null,
-				"widget_name" => "widget_name",
+				"widget_id" => "widget",
+//				"widget_name" => "widget_name",
 				"widget_configuration" => null,
+				"widget_info" => null,
 			],
 			"columns" => [
 				"configuration" => [
 					"json_model_column" => "widget_configuration",
 				],
 				"widget" =>  [
-					"box" => "true",
+					//"box" => "true",
+					"drag_and_drop" =>  [
+						"source" =>  [
+							"max_count" => "1",
+							"name" => "widget_id",
+							"url" => "",
+						],
+						"metadata" => [
+							"source" => "widgets",
+						],
+					]
 				],
 				"section_list" =>  [
 					"drag_and_drop" =>  [
 						"source" =>  [
-							"name" => "library_section_list",
+							"max_count" => null,
+							"name" => "section_id",
 							"url" => "",
-						]
+						],
+						// "metadata" => [
+						// 	"column" => "widget_info",
+						// ]
+						"metadata" => [
+							"source" => "widgets",
+						],
 					]
 				],
 			]
