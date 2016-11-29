@@ -4763,10 +4763,212 @@ giau.CRUD._generateSubButton = function(display,element){
 	return div;
 }
 
-giau.prototype._resize = function(e){
-	var width = $(window).width();
-	var height = $(window).height();
+giau.InputFieldDuration = function(element, value){
+	this._container = element;
+	this._dateValue = value;
 }
+
+giau.InputFieldDate = function(element, value){
+	this._container = element;
+	this._dateValue = value;
+	this._daysOfWeek = ["U","M","T","W","R","F","S"];
+	this._monthsOfYear = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+
+	console.log(value);
+	var i, j;
+
+	var arrayHour = []; for(i=0; i<24; ++i){ arrayHour.push([""+i, ""+i]); }
+	var arrayMinute = []; for(i=0; i<59; ++i){ arrayMinute.push([""+i, ""+i]); }
+	var arraySecond = []; for(i=0; i<59; ++i){ arraySecond.push([""+i, ""+i]); }
+	var arrayMillisecond = []; for(i=0; i<9999; ++i){ arrayMillisecond.push([""+i, ""+i]); }
+
+	this._elementLeft = Code.newDiv();
+	this._elementRight = Code.newDiv();
+	this._elementMonth = Code.newDiv();
+		this._elementMonthLeft = Code.newDiv();
+		this._elementMonthName = Code.newDiv();
+		this._elementMonthRight = Code.newDiv();
+		this._elementMonthTop = Code.newDiv();
+		this._elementMonthBottom = Code.newDiv();
+			this._elementMonthGrid = Code.newDiv();
+	this._elementHour = Code.newSelect(arrayHour);
+	this._elementMinute = Code.newSelect(arrayMinute);
+	this._elementSecond = Code.newSelect(arraySecond);
+	this._elementMillisecond = Code.newSelect(arrayMillisecond);
+
+
+	Code.addChild(this._container,this._elementLeft);
+	Code.addChild(this._container,this._elementRight);
+		Code.addChild(this._elementLeft,this._elementMonth);
+			Code.addChild(this._elementMonth, this._elementMonthTop);
+				Code.addChild(this._elementMonthTop, this._elementMonthLeft);
+				Code.addChild(this._elementMonthTop, this._elementMonthName);
+				Code.addChild(this._elementMonthTop, this._elementMonthRight);
+			Code.addChild(this._elementMonth, this._elementMonthBottom);
+				Code.addChild(this._elementMonthBottom, this._elementMonthGrid);
+		Code.addChild(this._elementRight,this._elementHour);
+		Code.addChild(this._elementRight,this._elementMinute);
+		Code.addChild(this._elementRight,this._elementSecond);
+		Code.addChild(this._elementRight,this._elementMillisecond);
+	Code.setStyleDisplay(this._elementLeft,"inline-block");
+	Code.setStyleFloat(this._elementLeft,"left"); // dunno
+	Code.setStyleWidth(this._elementLeft,"60%");
+	Code.setStyleBackgroundColor(this._elementLeft,"#FFF");
+
+	Code.setStyleDisplay(this._elementRight,"inline-block");
+	Code.setStyleWidth(this._elementRight,"40%");
+	Code.setStyleBackgroundColor(this._elementRight,"#F00");
+
+	Code.setStyleDisplay(this._elementMonthTop,"block");
+	Code.setStyleTextAlign(this._elementMonthTop, "center");
+
+	Code.setStyleDisplay(this._elementMonthLeft,"inline-block");
+	Code.setContent(this._elementMonthLeft,"&larr;");
+	Code.setStyleFloat(this._elementMonthLeft,"left");
+
+	Code.setStyleDisplay(this._elementMonthRight,"inline-block");
+	Code.setContent(this._elementMonthRight,"&rarr;");
+	Code.setStyleFloat(this._elementMonthRight,"right");
+
+	Code.setStyleDisplay(this._elementMonthName,"inline-block");
+	//Code.setStyleBackgroundColor(this._elementMonthName,"#0FF");
+	Code.setStyleFontSize(this._elementMonthName,11+"px");
+	Code.setStyleColor(this._elementMonthName,"#000");
+	
+
+	Code.setStyleDisplay(this._elementMonthTop,"block");
+
+	Code.setStyleDisplay(this._elementMonthBottom,"block");
+
+	//this._displayDate = this._dateValue;
+
+	var milliseconds = Code.dateFromString(this._dateValue);
+	//milliseconds = Code.getPrevMonthFirstDay(milliseconds);
+	this._displayDate = Code.getTimeStampFromMilliseconds(milliseconds);
+
+	this._updateLayout();
+}
+
+giau.InputFieldDate.prototype._updateLayout = function(){
+	var milliseconds = Code.dateFromString(this._dateValue);
+
+
+	var selectedMonth = Code.getMonthOfYear(milliseconds); // inherintly start here
+	var selectedDayOfMonth = Code.getDayOfMonth(milliseconds);
+	console.log("selectedDayOfMonth: "+selectedDayOfMonth)
+	
+
+	// CURRENT SELECTED MONTH
+	milliseconds = Code.dateFromString(this._displayDate);
+
+	var monthOfYear = Code.getMonthOfYear(milliseconds);
+	var daysInMonth = Code.getDaysInMonth(milliseconds);
+	var firstDayOfMonth = Code.getFirstDayOfWeekInMonth(milliseconds);
+	var monthDisplay = this._monthsOfYear[monthOfYear];
+
+	var daysInMonthPrev = Code.getDaysInMonth( Code.getPrevMonthFirstDay(milliseconds) );
+	var daysInMonthNext = Code.getDaysInMonth( Code.getNextMonthFirstDay(milliseconds) );
+	Code.setContent(this._elementMonthName,monthDisplay);
+
+	console.log("first day of week in month: "+firstDayOfMonth);
+
+	Code.removeAllChildren(this._elementMonthGrid);
+//Code.setStyleDisplay(this._elementMonthGrid,"table");
+Code.setStyleDisplay(this._elementMonthGrid,"block");
+	Code.setStyleWidth(this._elementMonthGrid,"100%");
+	Code.setStyleBorder(this._elementMonthGrid,0+"px");
+	Code.setStylePadding(this._elementMonthGrid,0+"px");
+	Code.setStyleMargin(this._elementMonthGrid,0+"px");
+	// Code.addStyle(this._elementMonthGrid,"border-spacing",0+"px");
+	// Code.addStyle(this._elementMonthGrid,"border-collapse","collapse");
+	var weekStartIndex = 0;
+
+	var day = 1;
+	var nextMonthDay = 0;
+	var prevMonthDay = 0;
+	var startDays = false;
+	var totalRows = 1+Math.ceil((weekStartIndex+daysInMonth+firstDayOfMonth)/7)
+	console.log(firstDayOfMonth)
+	console.log(daysInMonth)
+	console.log("totalRows: "+totalRows);
+var rowHeight = 14;
+	for(j=0; j<totalRows; ++j){
+		var row = Code.newDiv();
+		//Code.setStyleDisplay(row,"table-row");
+Code.setStyleDisplay(row,"block");
+		Code.setStyleVerticalAlign(row,"middle");
+		Code.setStyleWidth(row,"100%");
+Code.setStyleHeight(row,rowHeight+"px");
+//Code.setStyleHeight(row,"10px");
+		Code.addChild(this._elementMonthGrid,row);
+		Code.setStyleBackgroundColor(row,"#CCC");
+		for(i=0; i<7; ++i){
+			var weekIndex = (i+weekStartIndex)%this._daysOfWeek.length;
+			if(j!==0 && !startDays && weekIndex===firstDayOfMonth){ // flips on first time
+				startDays = true;
+			}
+			var isDayInsideMonth = startDays && day <= daysInMonth;
+			var isCurrentDay = false;
+			var col = Code.newDiv();
+				//Code.setStyleDisplay(col,"table-cell");
+Code.setStyleDisplay(col,"inline-block");
+				Code.setStyleVerticalAlign(col,"top");
+				Code.setStyleTextAlign(col,"center");
+Code.setStyleWidth(col,(100*(1/7))+"%");
+Code.setStyleHeight(col,rowHeight+"px");
+				Code.addChild(row,col);
+			if(j==0){ // DOW
+				Code.setContent(col,this._daysOfWeek[weekIndex]);
+				Code.setStyleFontSize(col,9+"px");
+				Code.setStyleColor(col,"#AAA");
+				Code.setStyleBackgroundColor(col,"#DDD");
+				Code.setStylePadding(col,0+"px");
+			}else{
+				Code.setStyleFontSize(col,11+"px");
+				if(!isDayInsideMonth){ // BLANK
+					Code.setStyleColor(col,"#CCC");
+					Code.setStyleBackgroundColor(col,"#EEE");
+					if(!startDays){ // previous month
+						Code.setContent(col,(daysInMonthPrev-(firstDayOfMonth-i-1))+"");
+					}else{ // next month
+						Code.setContent(col,(day-daysInMonth+nextMonthDay)+"");
+						++nextMonthDay;
+					}
+				}else{
+					Code.setStyleColor(col,"#333");
+					if(day==selectedDayOfMonth && selectedMonth==monthOfYear){
+						Code.setStyleBackgroundColor(col,"#C00");
+						Code.setStyleColor(col,"#FCC");
+						Code.setContent(col,""+day);
+					}else{
+						Code.setStyleBackgroundColor(col,"#FFF");
+						Code.setContent(col,""+day);
+					}
+					++day;
+				}
+			}
+			
+		}
+	}
+
+	// calendar
+	/*
+	Code.getDaysInMonth = function(milliseconds){
+	var d = new Date(milliseconds);
+	d = new Date(d.getFullYear(), d.getMonth()+1, 0, 0,0,0,0);
+	return d.getDate();
+};
+	*/
+}
+giau.InputFieldDate.value = function(){
+	return this._dateValue;
+}
+
+
+// giau.prototype._resize = function(e){
+// 	var width = $(window).width();
+// 	var height = $(window).height();
+// }
 
 
 
