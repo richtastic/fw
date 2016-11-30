@@ -4767,6 +4767,70 @@ giau.InputFieldDuration = function(element, value){
 	this._container = element;
 	this._dateValue = value;
 }
+giau.InputFieldDuration.prototype.value = function(){ // milliseconds
+	return this._dateValue;
+}
+
+giau.InputFieldColor = function(element, value){
+	this._container = element;
+	this._dataValue = Code.getColARGBFromString(value);
+
+	//this._jsDispatch = new JSDispatch();
+
+	this._elementRowRed = Code.newDiv();
+		this._elementSliderRed = Code.newDiv();
+		this._elementValueRed = Code.newDiv();
+		this._colorSliderRed = giau.InputFieldColorSlider(this._elementSliderRed);
+
+	Code.addChild(this._container,this._elementRowRed);
+		Code.addChild(this._elementRowRed, this._elementSliderRed);
+		Code.addChild(this._elementRowRed, this._elementValueRed);
+
+
+	Code.setStyleDisplay(this._elementRowRed,"block");
+	Code.setStyleWidth(this._elementRowRed,"100%");
+	Code.setStyleHeight(this._elementRowRed,32+"px");
+		
+	Code.setStyleDisplay(this._elementSliderRed,"inline-block");
+	Code.setStyleWidth(this._elementSliderRed,"80%");
+	Code.setStyleBackgroundColor(this._elementSliderRed,"#0F0");
+
+	Code.setStyleDisplay(this._elementSliderRed,"inline-block");
+	Code.setStyleWidth(this._elementValueRed,"20%");
+	Code.setStyleBackgroundColor(this._elementValueRed,"#F00");
+
+
+
+}
+giau.InputFieldColor.prototype._updateLayout = function(){
+
+
+	// R G B A sliders / fields / FINAL COLOR SQUARE / value
+}
+giau.InputFieldColor.prototype.value = function(){ // 0xAARRGGBB
+	return this._dateValue;
+}
+
+giau.InputFieldColorSlider = function(element){
+	this._container = element
+	this._background = Code.newDiv();
+	this._indicator = Code.newDiv();
+	Code.addChild(this._container,this._background);
+	Code.addChild(this._container,this._indicator);
+
+	this._jsDispatch = new JSDispatch();
+
+	this._jsDispatch.addJSEventListener(this._background, Code.JS_EVENT_MOUSE_DOWN, this._handleBackgroundMouseDownFxn, this, {});
+}
+giau.InputFieldColorSlider.prototype._handleBackgroundMouseDownFxn = function(e,d){
+	console.log("mouse down");
+	console.log(e,d);
+	// start drag
+	// put element over canvas, keep track of pointer
+}
+giau.InputFieldColorSlider.prototype._updateLayout = function(){
+	//
+}
 
 giau.InputFieldDate = function(element, value){
 	this._container = element;
@@ -4960,7 +5024,7 @@ Code.setStyleHeight(col,rowHeight+"px");
 };
 	*/
 }
-giau.InputFieldDate.value = function(){
+giau.InputFieldDate.prototype.value = function(){
 	return this._dateValue;
 }
 

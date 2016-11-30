@@ -35,14 +35,15 @@ function giau_admin_menu_page_main(){
 		<li><a href="<?php echo $URL_FILE_BACKUP; ?>">File Backup</a></li>
 		<li><a href="<?php echo $URL_DATA_BACKUP; ?>">Data Backup</a></li>
 	</ul>
-	<div class="giauTest" style="width:200px; height:100px; background-color:#CCC;"></div>
+	<div class="giauTestA" style="width:200px; height:100px; background-color:#CCC;"></div>
+	<div class="giauTestB" style="width:200px; height:100px; background-color:#CCC;"></div>
+	<div class="giauTestC" style="width:200px; height:100px; background-color:#CCC;"></div>
 	<script>
 	
 	setTimeout(function afterDelay(){
-		var element = $(".giauTest")[0];
-		console.log(element);
-		var date = new giau.InputFieldDate(element,"2016-11-28 09:04:59.1234");
-		console.log(date);
+		var timestamp = new giau.InputFieldDate($(".giauTestA")[0],"2016-11-28 09:04:59.1234");
+		var color = new giau.InputFieldColor($(".giauTestB")[0],"#CCFF0099");
+		var duration = new giau.InputFieldDuration($(".giauTestC")[0],"1234000");
 	}, 700);
 
 	</script>
