@@ -4780,27 +4780,55 @@ giau.InputFieldColor = function(element, value){
 	this._elementRowRed = Code.newDiv();
 		this._elementSliderRed = Code.newDiv();
 		this._elementValueRed = Code.newDiv();
-		this._colorSliderRed = giau.InputFieldColorSlider(this._elementSliderRed);
 
 	Code.addChild(this._container,this._elementRowRed);
 		Code.addChild(this._elementRowRed, this._elementSliderRed);
 		Code.addChild(this._elementRowRed, this._elementValueRed);
 
 
+	var parentWidth = $(this._container).width();
+	var parentHeight = $(this._container).height();
+	var leftWidth = Math.floor(parentWidth * 0.80);
+	var rightWidth = parentWidth - leftWidth;
+	var rightBreak = 4;
+	var rightField = rightWidth - rightBreak;
+
+	var rowHeight = 24;
+
+
 	Code.setStyleDisplay(this._elementRowRed,"block");
-	Code.setStyleWidth(this._elementRowRed,"100%");
-	Code.setStyleHeight(this._elementRowRed,32+"px");
+	Code.setStyleWidth(this._elementRowRed,parentWidth+"px");
+	Code.setStyleHeight(this._elementRowRed,rowHeight+"px");
+	Code.setStyleBackgroundColor(this._elementRowRed,"#00F");
 		
 	Code.setStyleDisplay(this._elementSliderRed,"inline-block");
-	Code.setStyleWidth(this._elementSliderRed,"80%");
+	Code.setStyleWidth(this._elementSliderRed,leftWidth+"px");
+	Code.setStyleHeight(this._elementSliderRed,rowHeight+"px");
 	Code.setStyleBackgroundColor(this._elementSliderRed,"#0F0");
 
-	Code.setStyleDisplay(this._elementSliderRed,"inline-block");
-	Code.setStyleWidth(this._elementValueRed,"20%");
+	Code.setStyleDisplay(this._elementValueRed,"inline-block");
+	Code.setStyleWidth(this._elementValueRed,rightWidth+"px");
 	Code.setStyleBackgroundColor(this._elementValueRed,"#F00");
+	Code.setStyleHeight(this._elementValueRed,rowHeight+"px");
+	Code.setStyleVerticalAlign(this._elementValueRed,"top");
+
+	this._elementFieldRed = Code.newInputText("??");
+	Code.setStyleDisplay(this._elementFieldRed,"inline-block");
+	Code.setStyleWidth(this._elementFieldRed,rightField+"px");
+	Code.setStyleHeight(this._elementFieldRed,20+"px");
+	Code.setStyleFontSize(this._elementFieldRed,10+"px");
+	Code.setStyleBorderWidth(this._elementFieldRed, 0+"px");
+	Code.setStylePadding(this._elementFieldRed, 0+"px");
+	//Code.setStyleVerticalAlign(this._elementFieldRed,"top");
+	Code.setStyleMargin(this._elementFieldRed,0+"px");
+
+	
+	Code.addChild(this._elementValueRed, this._elementFieldRed);
 
 
+	//console.log(this._container)
 
+	this._colorSliderRed = new giau.InputFieldColorSlider(this._elementSliderRed);
 
 }
 giau.InputFieldColor.prototype._updateLayout = function(){
@@ -4819,27 +4847,102 @@ giau.InputFieldColorSlider = function(element){
 	Code.addChild(this._container,this._background);
 	Code.addChild(this._container,this._indicator);
 
+	Code.setStylePosition(this._container, "relative");
+
+
+	var area = Code.newDiv();
+	var indi = Code.newDiv();
+
+	var indicatorInnerWidth = 3;
+	var indicatorBorderWidth = 2;
+	var indicatorHeight = 44;
+	var indicatorWidth = indicatorInnerWidth + 2*indicatorBorderWidth;
+
+	var areaPaddingSides = 10;
+	var areaPaddingEnds = 2;
+
+	Code.addChild(this._indicator, indi);
+	Code.addChild(this._indicator, area);
+
+	var areaWidth = indicatorWidth + 2*areaPaddingSides;
+	var areaHeight = indicatorHeight + 2*areaPaddingEnds;
+	Code.setStyleWidth(area, areaWidth+"px");
+	Code.setStyleHeight(area, areaHeight+"px");
+	Code.setStyleBackgroundColor(area, Code.getJSColorFromARGB(0x66FF0000));
+
+	Code.setStylePosition(this._indicator, "absolute");
+	Code.setStyleLeft(this._indicator, 0+"px");
+	Code.setStyleTop(this._indicator, 0+"px");
+
+		Code.setStyleHeight(indi, indicatorHeight+"px");
+		Code.setStyleWidth(indi, indicatorInnerWidth+"px");
+		Code.setStylePosition(indi, "absolute");
+		Code.setStyleDisplay(indi, "block");
+		Code.setStyleBorderColor(indi, "#0F0");
+		Code.setStyleBorderWidth(indi, indicatorBorderWidth+"px");
+		Code.setStyleBorder(indi, "solid");
+		Code.setStyleLeft(indi, 0+"px");
+		Code.setStyleTop(indi, 0+"px");
+		Code.setStyleBackgroundColor(indi, "#FFF");
+
+		/*
+		Code.setStyleHeight(this._indicator, 44+"px");
+		Code.setStyleWidth(this._indicator, 3+"px");
+		Code.setStylePosition(this._indicator, "absolute");
+		Code.setStyleDisplay(this._indicator, "block");
+		Code.setStyleBorderColor(this._indicator, "#0F0");
+		Code.setStyleBorderWidth(this._indicator, 2+"px");
+		Code.setStyleBorder(this._indicator, "solid");
+		Code.setStyleLeft(this._indicator, 0+"px");
+		Code.setStyleTop(this._indicator, 0+"px");
+		Code.setStyleBackgroundColor(this._indicator, "#FFF");
+		*/
+
+	Code.setStyleDisplay(this._background,"inline-block");
+	//Code.setStyleDisplay(this._background,"inline-block");
+
+	this._hitArea = Code.newDiv();
+	Code.addChild(this._container,this._hitArea);
+	Code.setStylePosition(this._hitArea, "absolute");
+	Code.setStyleBackgroundColor(this._hitArea, Code.getJSColorFromARGB(0x66FF0000));
+
+
 	this._jsDispatch = new JSDispatch();
 
-	this._jsDispatch.addJSEventListener(this._background, Code.JS_EVENT_MOUSE_DOWN, this._handleBackgroundMouseDownFxn, this, {});
+	this._jsDispatch.addJSEventListener(this._hitArea, Code.JS_EVENT_MOUSE_DOWN, this._handleBackgroundMouseDownFxn, this, {});
 
 	this._updateLayout();
 }
 giau.InputFieldColorSlider.prototype._handleBackgroundMouseDownFxn = function(e,d){
-	console.log("mouse down");
-	console.log(e,d);
+	if(!Code.getMouseLeftClick(e)){
+		return;
+	}
+	//var pos = Code.getMousePosition(e);
+	var pos = Code.getMousePositionLocal(e);
 	// start drag
 	// put element over canvas, keep track of pointer
+
+	var padding = 3;
+	var areaWidth = $(this._background).width();
+	var percent = Math.min(Math.max(pos.x-padding,0),areaWidth) / areaWidth;
+	var indicatorPositionX = Math.round(percent*areaWidth);
+	Code.setStyleLeft(this._indicator, indicatorPositionX+"px");
+	Code.setStyleTop(this._indicator, 0+"px");
+
+	//
+	var outputAmount = Math.min(Math.floor(percent*256),255)
+	console.log(outputAmount)
 }
 giau.InputFieldColorSlider.prototype._updateLayout = function(){
 	var wid = 100;
 	var hei = 100;
-	var canvas = new Canvas(null,0,0);
+	var canvas = new Canvas(null,0,0, null, true);
 	var stage = new Stage(canvas);
 	var d = new DO();
 	var colors = [0xFF000000,0xFFFF0000];
 	var locations = [0,1];
-	d.graphics().setFillGradientLinear(0,0, wid,0,  locations, colors);
+	//d.graphics().setFillGradientLinear(0,5, wid,5,  locations, colors);
+	d.graphics().setLinearFill(0,0, wid,0,  locations, colors);
 	d.graphics().beginPath();
 	d.graphics().moveTo(0,0);
 	d.graphics().lineTo(wid,0);
@@ -4851,12 +4954,39 @@ giau.InputFieldColorSlider.prototype._updateLayout = function(){
 	
 	var img = stage.getDOAsImage(d, wid,hei, null);
 	console.log(img);
+
+	//Code.addChild(this._container,img);
 	
 	// create bg to fit:
 	var bgImage = img.src;
-	console.log(bgImage);
-	var base64RL = "url('"+bgImage+"'";
-	Code.setStyleBackgroundImage(this._background,base64RL);
+//	console.log(bgImage);
+	var base64URL = "url('"+bgImage+"')";
+//		console.log(base64URL);
+	//Code.setStyleBackgroundImage(this._background,base64RL);
+	//Code.setStyleBackgroundImage(this._background,base64URL);
+	Code.setStyleHeight(this._background,"100%");
+	Code.setStyleWidth(this._background,"100%");
+	//Code.setStyleBackgroundImage(this._background,"url('http://www.twogag.com/comics/2016-11-30-TGAG_712_Meant_To_be.jpg')");
+//	Code.setStyleBackgroundImage(this._background,base64URL);	
+//	Code.addStyle(this._background,"background-size","cover");
+
+	//???
+
+	var backgroundWidth = $(this._background).width();
+	var backgroundHeight = $(this._background).height();
+	var padding = 3;
+	var areaWidth = backgroundWidth + padding*2;
+	var areaHeight = backgroundHeight + padding*2;
+	console.log(backgroundWidth,backgroundHeight)
+	
+
+	Code.setStyleWidth(this._hitArea, areaWidth+"px");
+	Code.setStyleHeight(this._hitArea, areaHeight+"px");
+	Code.setStyleLeft(this._hitArea, -padding+"px");
+	Code.setStyleTop(this._hitArea, -padding+"px");
+
+	console.log(this._background)
+	console.log(this._hitArea)
 }
 
 giau.InputFieldDate = function(element, value){
@@ -4925,6 +5055,12 @@ giau.InputFieldDate = function(element, value){
 	//Code.setStyleBackgroundColor(this._elementMonthName,"#0FF");
 	Code.setStyleFontSize(this._elementMonthName,11+"px");
 	Code.setStyleColor(this._elementMonthName,"#000");
+
+
+	Code.setStyleHeight(this._elementHour,"20px");
+	Code.setStyleHeight(this._elementMinute,"20px");
+	Code.setStyleHeight(this._elementSecond,"20px");
+	Code.setStyleHeight(this._elementMillisecond,"20px");
 	
 
 	Code.setStyleDisplay(this._elementMonthTop,"block");
