@@ -4801,6 +4801,7 @@ giau.InputFieldColor = function(element, value){
 
 
 
+
 }
 giau.InputFieldColor.prototype._updateLayout = function(){
 
@@ -4821,6 +4822,8 @@ giau.InputFieldColorSlider = function(element){
 	this._jsDispatch = new JSDispatch();
 
 	this._jsDispatch.addJSEventListener(this._background, Code.JS_EVENT_MOUSE_DOWN, this._handleBackgroundMouseDownFxn, this, {});
+
+	this._updateLayout();
 }
 giau.InputFieldColorSlider.prototype._handleBackgroundMouseDownFxn = function(e,d){
 	console.log("mouse down");
@@ -4829,7 +4832,31 @@ giau.InputFieldColorSlider.prototype._handleBackgroundMouseDownFxn = function(e,
 	// put element over canvas, keep track of pointer
 }
 giau.InputFieldColorSlider.prototype._updateLayout = function(){
-	//
+	var wid = 100;
+	var hei = 100;
+	var canvas = new Canvas(null,0,0);
+	var stage = new Stage(canvas);
+	var d = new DO();
+	var colors = [0xFF000000,0xFFFF0000];
+	var locations = [0,1];
+	d.graphics().setFillGradientLinear(0,0, wid,0,  locations, colors);
+	d.graphics().beginPath();
+	d.graphics().moveTo(0,0);
+	d.graphics().lineTo(wid,0);
+	d.graphics().lineTo(wid,hei);
+	d.graphics().lineTo(0,hei);
+	d.graphics().lineTo(0,0);
+	d.graphics().endPath();
+	d.graphics().fill();
+	
+	var img = stage.getDOAsImage(d, wid,hei, null);
+	console.log(img);
+	
+	// create bg to fit:
+	var bgImage = img.src;
+	console.log(bgImage);
+	var base64RL = "url('"+bgImage+"'";
+	Code.setStyleBackgroundImage(this._background,base64RL);
 }
 
 giau.InputFieldDate = function(element, value){
