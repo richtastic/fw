@@ -161,7 +161,7 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT","Christmas Celebration");
 	giau_insert_languagization($langKor,"CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT","크리스마스 축하");
 
-	giau_insert_languagization($langEng,"CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","Junior High & High School Winter Retreat");
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","Faith in Action (Junior High and High School Retreat)");
 	giau_insert_languagization($langKor,"CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","중학교 과 고등학교 겨울 수련회");
 
 	$calendar_tag_front_page = "frontpage";//"fp";
@@ -190,9 +190,9 @@ function giau_data_default_insert_into_database(){
 	giau_insert_calendar("event_hallelujah_2016","CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT","CALENDAR_EVENT_HALLELUJAH_NIGHT_2016_TITLE_TEXT", stringFromHumanTime(2016,10,31, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
 	giau_insert_calendar("event_pastor_retreat_2016","CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT","CALENDAR_EVENT_CE_PASTOR_RETREAT_2016_TITLE_TEXT", stringFromHumanTime(2016,11,18, 0, 0, 0, 0), 1*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
 	giau_insert_calendar("event_thanksgiving_worship_2016","CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT","CALENDAR_EVENT_CE_THANKSGIVING_WORSHIP_2016_TITLE_TEXT", stringFromHumanTime(2016,11,20, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
-	giau_insert_calendar("event_teacher_appreciation_2016","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT", stringFromHumanTime(2016,12,10, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_teacher_appreciation_2016","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT", stringFromHumanTime(2016,12,17, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
 	giau_insert_calendar("event_christmas_celebration_2016","CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT","CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT", stringFromHumanTime(2016,12,23, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
-	giau_insert_calendar("event_jh_hs_winter_retreat_2017","CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT", stringFromHumanTime(2017, 1, 2, 0, 0, 0, 0), 3*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
+	giau_insert_calendar("event_jh_hs_winter_retreat_2017","CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT", stringFromHumanTime(2016,12,26, 0, 0, 0, 0), 2*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
 
 	// ?
 	giau_insert_languagization($langEng,"","");

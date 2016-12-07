@@ -246,6 +246,7 @@ chmod -R 755 giau/
 cd /www/ce/wp-content/plugins/
 lcd ~/universe/repo/fw/plugins
 # COPY GIAU
+# chmod -R 777 ./uploads
 rm -rf ./giau
 mirror -R giau giau
 # CODE ... ?

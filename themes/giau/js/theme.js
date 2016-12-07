@@ -5171,7 +5171,6 @@ giau.InputFieldColorSlider.prototype._updateColorFromElement = function(){
 	var offsetX = Code.getElementLeftRelative(this._indicator); //$(this._indicator).position().left;
 	var percent = offsetX/areaWidth; //Math.min(Math.max(offsetX-padding,0),areaWidth) / areaWidth;
 	var color = Math.min(Math.floor(percent*256),255)
-	console.log(offsetX,areaWidth,offsetX/areaWidth," == ",percent,color);
 	this.color(color);
 }
 giau.InputFieldColorSlider.prototype._handleBackgroundMouseDownFxn = function(e,d){
@@ -5209,7 +5208,6 @@ giau.InputFieldColorSlider.prototype._handleBackgroundMouseUpFxn = function(e,d)
 	this._removeDragCover();
 }
 giau.InputFieldColorSlider.prototype._handleCoverMouseUpFxn = function(e,d){
-	console.log("cover up");
 	this._updateIndicatorFromEvent(e);
 	this._updateColorFromElement();
 	this._removeDragCover();
@@ -5270,8 +5268,6 @@ giau.InputFieldColorSlider.prototype._updateLayout = function(){
 	d.graphics().fill();
 	
 	var img = stage.getDOAsImage(d, wid,hei, null);
-	console.log(img);
-
 	//Code.addChild(this._container,img);
 	
 	// create bg to fit:
