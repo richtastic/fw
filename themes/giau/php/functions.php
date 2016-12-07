@@ -120,6 +120,7 @@ function create_page(){
 	$fileJavaScriptFFMinified = relativePathJS()."code/FF.min.js";
 	$fileCSSMain = relativePathCSS()."theme.css";
 	$fileJavaScriptMain = relativePathJS()."theme.js";
+	$fileJQueryLcoal = relativePathJS()."jquery-2.2.3.min.js";
 
 	$pageRequest = getPageRequest();
 
@@ -128,7 +129,8 @@ function create_page(){
 	<head>
 		<title>The Father's House | <?php echo $headingTitleDisplay; ?></title>
 		<link rel="stylesheet" href="<?php echo $fileCSSMain; ?>">
-		<script rel="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+		<!-- <script rel="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script> -->
+		<script rel="text/javascript" src="<?php echo $fileJQueryLcoal; ?>"></script>
 		<script rel="text/javascript" src="<?php echo $fileJavaScriptFF; ?>"></script>
 		<!--<script rel="text/javascript" src="<?php echo $fileJavaScriptFF; ?>"></script>-->
 		<!--<script rel="text/javascript" src="<?php echo $fileJavaScriptFFMinified; ?>"></script>-->

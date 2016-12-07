@@ -40,12 +40,19 @@ function giau_admin_menu_page_main(){
 	<div class="giauTestC" style="width:200px; height:100px; background-color:#CCC;"></div>
 	<script>
 	
-	setTimeout(function afterDelay(){
-		var timestamp = new giau.InputFieldDate($(".giauTestA")[0],"2016-11-28 09:04:59.1234");
-		var color = new giau.InputFieldColor($(".giauTestB")[0],"#CCFF0099");
-		var duration = new giau.InputFieldDuration($(".giauTestC")[0],"1234000");
-	}, 800);
-
+	function afterDelay(){
+		console.log("afterDelay");
+		// console.log(giau)
+		// console.log(window.giau)
+		if(window.giau){
+			var timestamp = new giau.InputFieldDate($(".giauTestA")[0],"2016-11-28 09:04:59.1234");
+			var color = new giau.InputFieldColor($(".giauTestB")[0],"0xFFCC9966"); // 0xFFCC9966
+			var duration = new giau.InputFieldDuration($(".giauTestC")[0],"1234000");
+		}else{
+			setTimeout(afterDelay, 200);
+		}
+	}
+	setTimeout(afterDelay, 800);
 	</script>
 <?php
 }
@@ -54,7 +61,7 @@ function giau_admin_menu_page_submenu_file_upload(){
 	<h1>File Upload</h1>
 	<div></div>
 	<div class="giauFileBrowser limitedWidth" style="">
-		<div data-icon-key="icon_default" data-icon-value="<?php echo giau_plugin_images_url(); ?>/flie_browser/icon_fb_blank.png"></div>
+		<div data-icon-key="icon_default" data-icon-value="<?php echo giau_plugin_images_url(); ?>/file_browser/icon_fb_blank.png"></div>
 		<div data-icon-key="icon_folder" data-icon-value="<?php echo giau_plugin_images_url(); ?>/file_browser/icon_fb_folder.png"></div>
 		<div data-icon-key="icon_image_background" data-icon-value="<?php echo giau_plugin_images_url(); ?>/file_browser/icon_fb_image_background.png"></div>
 	</div>

@@ -552,8 +552,8 @@ giau.BioView.prototype.updateLayout = function(){
 	var maximumColumnCount = 2;
 	var elementMinWidth = 300;
 	var elementMaxWidth = 350; // to next row size
-	var widthContainer = $(this._container).width();
-	var heightContainer = $(this._container).height();
+	var widthContainer = Code.getElementWidth(this._container);
+	var heightContainer = Code.getElementHeight(this._container);
 
 	var outerPadding = 10;
 	var innerPadding = 14;
@@ -4773,16 +4773,7 @@ giau.InputFieldDuration.prototype.value = function(){ // milliseconds
 
 giau.InputFieldColor = function(element, value){
 	this._container = element;
-	this._dataValue = Code.getColARGBFromString(value);
-
-	this._elementRowRed = Code.newDiv();
-		this._elementSliderRed = Code.newDiv();
-		this._elementValueRed = Code.newDiv();
-
-	Code.addChild(this._container,this._elementRowRed);
-		Code.addChild(this._elementRowRed, this._elementSliderRed);
-		Code.addChild(this._elementRowRed, this._elementValueRed);
-
+	this._colorValue = Code.isString(value) ? Code.getColARGBFromString(value) : value;
 
 	var parentWidth = $(this._container).width();
 	var parentHeight = $(this._container).height();
@@ -4794,91 +4785,285 @@ giau.InputFieldColor = function(element, value){
 	var rowHeight = 20;
 	var fieldHeight = 20;
 	var fieldTop = Math.round((rowHeight - fieldHeight)*0.5);
-	console.log(fieldTop)
-
-
-	Code.setStyleDisplay(this._elementRowRed,"block");
-	Code.setStyleWidth(this._elementRowRed,parentWidth+"px");
-	Code.setStyleHeight(this._elementRowRed,rowHeight+"px");
-	//Code.setStyleBackgroundColor(this._elementRowRed,"#00F");
-		
-	Code.setStyleDisplay(this._elementSliderRed,"inline-block");
-	Code.setStyleWidth(this._elementSliderRed,leftWidth+"px");
-	Code.setStyleHeight(this._elementSliderRed,rowHeight+"px");
-	//Code.setStyleBackgroundColor(this._elementSliderRed,"#0F0");
-
-	Code.setStyleDisplay(this._elementValueRed,"inline-block");
-	Code.setStyleWidth(this._elementValueRed,rightWidth+"px");
-	//Code.setStyleBackgroundColor(this._elementValueRed,"#F00");
-	Code.setStyleHeight(this._elementValueRed,rowHeight+"px");
-	Code.setStyleVerticalAlign(this._elementValueRed,"top");
-
-	this._elementFieldRed = Code.newInputText("??");
-	Code.setStyleDisplay(this._elementFieldRed,"inline-block");
-	Code.setStyleWidth(this._elementFieldRed,rightField+"px");
-	Code.setStyleHeight(this._elementFieldRed,fieldHeight+"px");
-	Code.setStyleFontSize(this._elementFieldRed,12+"px");
-	Code.setStyleBorderWidth(this._elementFieldRed, 0+"px");
-	Code.setStylePadding(this._elementFieldRed, 0+"px");
-	Code.setStyleMargin(this._elementFieldRed,0+"px");
-	//Code.setStyleVerticalAlign(this._elementFieldRed,"top");
-
-	Code.setStylePosition(this._elementFieldRed,"relative");
-	Code.setStyleLeft(this._elementFieldRed,rightBreak+"px");
-	Code.setStyleTop(this._elementFieldRed, fieldTop+"px");
-	Code.setStyleTextAlign(this._elementFieldRed,"center");
-	//Code.setStyleVerticalAlign(this._elementFieldRed,"top");
-
-	
-	Code.addChild(this._elementValueRed, this._elementFieldRed);
-
 
 	this._jsDispatch = new JSDispatch();
 
+	var finalColor = this.value();
+	var squareSize = 20;
+	this._colorRow = Code.newDiv();
+	this._colorSquare = Code.newDiv();
+	this._colorField = Code.newInputText("???");
+	Code.addChild(this._container,this._colorRow);
+		Code.addChild(this._colorRow,this._colorSquare);
+		Code.addChild(this._colorRow,this._colorField);
 
-	this._colorSliderRed = new giau.InputFieldColorSlider(this._elementSliderRed, 0xCC);
-	this._colorSliderRed.addFunction(giau.InputFieldColorSlider.EVENT_COLOR_UPDATE, this._handleColorChangeRed, this);
+		Code.setStyleWidth(this._colorSquare, squareSize+"px");
+		Code.setStyleHeight(this._colorSquare, squareSize+"px");
+//		Code.setStyleBackgroundColor(this._colorSquare, Code.getJSColorFromARGB(finalColor));
 
-	this._jsDispatch.addJSEventListener(this._elementFieldRed, Code.JS_EVENT_INPUT_CHANGE, this._handleInputFieldChangeRed, this, {});
+	this._jsDispatch.addJSEventListener(this._colorField, Code.JS_EVENT_INPUT_CHANGE, this._handleFinalColorFieldChange, this, {});
 
+	var rows = [];
+	var sliders = [];
+	var fields = [];
+	var cursors = [];
+	var colorFields = [Code.getRedARGB(finalColor),Code.getGrnARGB(finalColor),Code.getBluARGB(finalColor),Code.getAlpARGB(finalColor)];
+	var colorRanges = [[0xFF000000,0xFFFF0000], [0xFF000000,0xFF00FF00], [0xFF000000,0xFF0000FF], [0xFF000000,0xFFFFFFFF]];
+	var i, len;
+	len = colorFields.length;
+	for(i=0; i<len; ++i){
+		var color = colorFields[i];
+		var range = colorRanges[i];
+
+		var elementRow = Code.newDiv();
+			var elementSlider = Code.newDiv();
+			var elementValue = Code.newDiv();
+
+		Code.addChild(this._container,elementRow);
+			Code.addChild(elementRow, elementSlider);
+			Code.addChild(elementRow, elementValue);
+
+		Code.setStyleDisplay(elementRow,"block");
+		Code.setStyleWidth(elementRow,parentWidth+"px");
+		Code.setStyleHeight(elementRow,rowHeight+"px");
+		//Code.setStyleBackgroundColor(this._elementRowRed,"#00F");
+			
+		Code.setStyleDisplay(elementSlider,"inline-block");
+		Code.setStyleWidth(elementSlider,leftWidth+"px");
+		Code.setStyleHeight(elementSlider,rowHeight+"px");
+		//Code.setStyleBackgroundColor(this._elementSliderRed,"#0F0");
+
+		Code.setStyleDisplay(elementValue,"inline-block");
+		Code.setStyleWidth(elementValue,rightWidth+"px");
+		//Code.setStyleBackgroundColor(this._elementValueRed,"#F00");
+		Code.setStyleHeight(elementValue,rowHeight+"px");
+		Code.setStyleVerticalAlign(elementValue,"top");
+
+		var elementField = Code.newInputText("??");
+		Code.setStyleDisplay(elementField,"inline-block");
+		Code.setStyleWidth(elementField,rightField+"px");
+		Code.setStyleHeight(elementField,fieldHeight+"px");
+		Code.setStyleFontSize(elementField,12+"px");
+		Code.setStyleBorderWidth(elementField, 0+"px");
+		Code.setStylePadding(elementField, 0+"px");
+		Code.setStyleMargin(elementField,0+"px");
+		//Code.setStyleVerticalAlign(this._elementFieldRed,"top");
+
+		Code.setStylePosition(elementField,"relative");
+		Code.setStyleLeft(elementField,rightBreak+"px");
+		Code.setStyleTop(elementField, fieldTop+"px");
+		Code.setStyleTextAlign(elementField,"center");
+		//Code.setStyleVerticalAlign(this._elementFieldRed,"top");
+		
+		Code.addChild(elementValue, elementField);
+
+		var hex = Code.getHexNumber(color, 2);
+		console.log(color,hex)
+		Code.setInputTextValue(elementField, hex);
+		var colorSlider = new giau.InputFieldColorSlider(elementSlider, color, range);
+		colorSlider.addFunction(giau.InputFieldColorSlider.EVENT_COLOR_UPDATE, this._handleColorChange, this, {"index":i});
+		this._jsDispatch.addJSEventListener(elementField, Code.JS_EVENT_INPUT_CHANGE, this._handleInputFieldChange, this, {"index":i});
+		//this._previousCursorPos = 0;
+		this._jsDispatch.addJSEventListener(elementField, Code.JS_EVENT_KEY_UP, this._handleInputFieldKeyUp, this, {"index":i});
+		cursors.push(0);
+		rows.push(elementRow);
+		fields.push(elementField);
+		sliders.push(colorSlider);
+	}
+
+	this._elementRows = rows; // this._elementRowRed
+	this._elementFields = fields;
+	this._colorSliders = sliders;
+	this._cursors = cursors;
+
+	this.updateFinalColorFromColors();
 }
-giau.InputFieldColor.prototype._handleInputFieldChangeRed = function(e,f){
-	var value = Code.getInputTextValue(this._elementFieldRed);
 
-	var newValue = value.substring(0,2);
-	newValue = parseInt(value,16);
+giau.InputFieldColor.prototype._handleFinalColorFieldChange = function(e){
+
+	var col = giau.InputFieldColor.hexFieldUpdateOverwrite(this._colorField, 8);
+/*
+	var value = Code.getInputTextValue(this._colorField);
+	//var string = Code.getHexNumber(value,8);
+	//console.log(value);
+	var oldPosStart = this._colorField.selectionStart;
+	var oldPosEnd = this._colorField.selectionEnd;
+	console.log(this._colorField);
+	console.log(this._colorField.selectionStart);
+	//var color = Code.getHexNumber(value,8);
+// substring to 8
+// verify text is same as number value
+// 
+*/
+	// var color = newValue+"";
+	// console.log(color+"");
+	// var col = parseInt(color,16) >>> 0;
+	//console.log(col);
+	var alp = Code.getAlpARGB(col);
+	var red = Code.getRedARGB(col);
+	var grn = Code.getGrnARGB(col);
+	var blu = Code.getBluARGB(col);
+	this._colorSliders[3].color(alp);
+	this._colorSliders[0].color(red);
+	this._colorSliders[1].color(grn);
+	this._colorSliders[2].color(blu);
+	// this._colorField.selectionStart = oldPosStart;
+	// this._colorField.selectionEnd = oldPosEnd;
+	// this._colorField.selectionStart = oldPosStart-1;
+	// this._colorField.selectionEnd = oldPosEnd-1;
+}
+giau.InputFieldColor.prototype._handleInputFieldKeyUp = function(e,f){
+	var index = f["index"];
+	var elementField = this._elementFields[index];
+	var cursorRange = Code.getInputTextSelectedRange(elementField);
+	var cursorLocation = cursorRange.start;
+	console.log(cursorLocation);
+	this._cursors[index] = this._colorField.selectionStart;
+}
+giau.InputFieldColor.prototype._handleInputFieldChange = function(e,f){
+	console.log("_handleInputFieldChange")
+	//console.log(e)
+	//console.log(f)
+	var index = f["index"];
+	var elementField = this._elementFields[index];
+	var cursorLocationPrev = this._cursors[index];
+	var colorSlider = this._colorSliders[index];
+
+
+	var newValue = giau.InputFieldColor.hexFieldUpdateOverwrite(elementField, 2);
+	colorSlider.color(newValue);
+}
+giau.InputFieldColor.hexFieldUpdateOverwrite = function(elementField,count){
+	// IF MULTIPLE VALUES WERE PREVIOUSLY SELECTED, THEY SHOULD ALL BE CUT OUT (not just the 1 assumed or the one to the right)
+	var value = Code.getInputTextValue(elementField);
+	var newValue = value;
+	console.log("VALUE: '"+value+"'")
+
+	// var oldPosStart = this._colorField.selectionStart;
+	// var oldPosEnd = this._colorField.selectionEnd;
+	// console.log(this._colorField);
+	// console.log(this._colorField.selectionStart);
+
+	var cursorRange = Code.getInputTextSelectedRange(elementField);
+	console.log(cursorRange);
+	var cursorPosition = Math.max(cursorRange.start,cursorRange.end);
+
+
+	var newValue = "";
+	var newCursorLocation = 0;
+	if(cursorPosition==value.length){
+		// if(cursorLocationPrev==value.length-1){//
+		console.log("END");
+		newValue = value.substring(1,cursorPosition);
+		newCursorLocation = newValue.length;
+	}else{
+		console.log("POSITION: "+cursorPosition);
+		var stringA = value.substring(0,cursorPosition);
+		var stringB = value.substring(cursorPosition+1,value.length);
+		console.log(stringA);
+		console.log(stringB);
+		var newString = stringA+""+stringB;
+		console.log(newString);
+		newValue = newString;
+		newCursorLocation = cursorPosition;
+	}
+	console.log("NEW STIRNG: '"+newValue+"'");
+	// CONVERT TO NUMBER
+	if(newValue.length>=count){ // get right end
+		newValue = newValue.substring(newValue.length-count,newValue.length);
+	}else{ // pad left end
+		newValue = Code.prependFixed(newValue,"0",count)
+	}
+	console.log("HEX VALUE: "+newValue)
+	newValue = parseInt(newValue,16);
+	console.log("INT VALUE: "+newValue)
+	if(Code.isNaN(newValue)){
+		newValue = 0;
+	}
+	//var maxValue = Math.pow(2,count)-1//(0x1 << (count*4-1)) >>> 0;
+	var hexBinDigits = count*4;
+	var maxValue = 0;
+	for(var i=0; i<hexBinDigits; ++i){
+		maxValue = (maxValue << 1) | 0x01;
+	}
+	maxValue = maxValue >>> 0;
+	console.log("maxValue: "+maxValue);
+	// 8 digits = 8*4
+	// 8 = 0xAARRGGBB 
+	console.log("PRE: "+newValue);
+	newValue = Math.min(Math.max(newValue,0),maxValue);
+	console.log("PST: "+newValue);
+	// RE-DISPLAY:
+	var displayValue = Code.getHexNumber(newValue, count);
+	console.log("displayValue: 0x"+displayValue)
+	//if(displayValue!==value){
+		console.log("newCursorLocation: "+newCursorLocation)
+		Code.setInputTextValue(elementField,displayValue);
+		Code.setInputTextSelectedRange(elementField,newCursorLocation,newCursorLocation);
+		//Code.setInputTextSelectedRange(elementField,1,1);
+	//}
+
+	/*
+	// IF THE CURSOR IS ON THE LEFT -- 
+	// IF CURSOR IS ON THE RIGHT --
+	if(newValue.length>=2){ // get right end
+		//newValue = value.substring(0,2);
+		newValue = value.substring(value.length-2,value.length);
+	}else{ // pad left end
+		newValue = Code.prependFixed(newValue,"0",2)
+	}
+	console.log(newValue)
+	newValue = parseInt(newValue,16);
 	if(Code.isNaN(newValue)){
 		newValue = 0;
 	}
 	newValue = Math.min(Math.max(newValue,0),255);
 
-	var displayValue = Code.getHexNumber(newValue, 2)+"";
+	var displayValue = Code.getHexNumber(newValue, 2);
 	if(displayValue!==value){
-		Code.setInputTextValue(this._elementFieldRed,displayValue);
+		Code.setInputTextValue(elementField,displayValue);
 	}
-	// var a, r, g, b, col = parseInt(hexString,16);
-	this._colorSliderRed.color(newValue);
-
+	colorSlider.color(newValue);
+	*/
+	return newValue;
 }
-giau.InputFieldColor.prototype._handleColorChangeRed = function(){
-	console.log("color: "+this._colorSliderRed.color());
-	var hexValue = Code.getHexNumber(this._colorSliderRed.color(), 2);
-	Code.setInputTextValue(this._elementFieldRed, hexValue);
+giau.InputFieldColor.prototype._handleColorChange = function(e,f){
+	var index = e["index"];
+	// console.log("index: "+index)
+	var elementField = this._elementFields[index];
+	var colorSlider = this._colorSliders[index];
+	var hexValue = Code.getHexNumber(colorSlider.color(), 2);
+	Code.setInputTextValue(elementField, hexValue);
+
+	this.updateFinalColorFromColors();
+}
+giau.InputFieldColor.prototype.updateFinalColorFromColors = function(){
+	var alp = this._colorSliders[3].color();
+	var red = this._colorSliders[0].color();
+	var grn = this._colorSliders[1].color();
+	var blu = this._colorSliders[2].color();
+	var finalColor = Code.getColARGB(alp,red,grn,blu);
+	this._dataValue = finalColor;
+	Code.setStyleBackgroundColor(this._colorSquare, Code.getJSColorFromARGB(finalColor));
+	var colorHex = Code.getHexNumber(finalColor,8);
+	colorHex = colorHex;
+	Code.setInputTextValue(this._colorField, colorHex);
 }
 giau.InputFieldColor.prototype._updateLayout = function(){
-
 
 	// R G B A sliders / fields / FINAL COLOR SQUARE / value
 }
 giau.InputFieldColor.prototype.value = function(){ // 0xAARRGGBB
-	return this._dateValue;
+	return this._colorValue;
 }
 
-giau.InputFieldColorSlider = function(element, color){
+giau.InputFieldColorSlider = function(element, color, ranges){
 	giau.InputFieldColorSlider._.constructor.call(this);
 
+	this._colorRanges = ranges;
+
 	this._container = element
-	this._colorValue = color!==undefined ? color : 0;
+	this._colorValue = 0 //color!==undefined ? color : 0;
 	this._background = Code.newDiv();
 	this._indicator = Code.newDiv();
 	Code.addChild(this._container,this._background);
@@ -4891,12 +5076,16 @@ giau.InputFieldColorSlider = function(element, color){
 	var indi = Code.newDiv();
 
 	var indicatorInnerWidth = 3;
-	var indicatorBorderWidth = 2;
-	var indicatorHeight = 44;
+	var indicatorBorderWidth = 1;
+	var indicatorHeight = 20; // TODO - get from parent
 	var indicatorWidth = indicatorInnerWidth + 2*indicatorBorderWidth;
 
-	var areaPaddingSides = 10;
-	var areaPaddingEnds = 2;
+	var areaPaddingSides = 0;
+	var areaPaddingEnds = 0;
+	var colorBorder = 0xFF999999;
+		colorBorder = Code.getJSColorFromARGB(colorBorder);
+	var colorBG = 0xFF00FFFF;
+		colorBG = Code.getJSColorFromARGB(colorBG);
 
 	Code.addChild(this._indicator, indi);
 	Code.addChild(this._indicator, area);
@@ -4905,7 +5094,7 @@ giau.InputFieldColorSlider = function(element, color){
 	var areaHeight = indicatorHeight + 2*areaPaddingEnds;
 	Code.setStyleWidth(area, areaWidth+"px");
 	Code.setStyleHeight(area, areaHeight+"px");
-	Code.setStyleBackgroundColor(area, Code.getJSColorFromARGB(0x00FF0000));
+	Code.setStyleBackgroundColor(area, colorBG);
 
 	Code.setStylePosition(this._indicator, "absolute");
 	Code.setStyleLeft(this._indicator, 0+"px");
@@ -4915,7 +5104,8 @@ giau.InputFieldColorSlider = function(element, color){
 		Code.setStyleWidth(indi, indicatorInnerWidth+"px");
 		Code.setStylePosition(indi, "absolute");
 		Code.setStyleDisplay(indi, "block");
-		Code.setStyleBorderColor(indi, "#0F0");
+
+		Code.setStyleBorderColor(indi, colorBorder);
 		Code.setStyleBorderWidth(indi, indicatorBorderWidth+"px");
 		Code.setStyleBorder(indi, "solid");
 		Code.setStyleLeft(indi, 0+"px");
@@ -4949,8 +5139,10 @@ this._padding = 3;
 	this._jsDispatch = new JSDispatch();
 
 	this._jsDispatch.addJSEventListener(this._hitArea, Code.JS_EVENT_MOUSE_DOWN, this._handleBackgroundMouseDownFxn, this, {});
+	this._jsDispatch.addJSEventListener(this._hitArea, Code.JS_EVENT_MOUSE_UP, this._handleBackgroundMouseUpFxn, this, {});
 
 	this._updateLayout();
+	this.color(color);
 }
 Code.inheritClass(giau.InputFieldColorSlider, Dispatchable);
 
@@ -4975,28 +5167,88 @@ giau.InputFieldColorSlider.prototype._updateElementFromColor = function(){
 }
 giau.InputFieldColorSlider.prototype._updateColorFromElement = function(){
 	var padding = this._padding;
-	var areaWidth = $(this._background).width();
-	var offsetX = $(this._indicator).position().left;
-	var percent = Math.min(Math.max(offsetX-padding,0),areaWidth) / areaWidth;
+	var areaWidth = Code.getElementWidth(this._background); //$(this._background).width();
+	var offsetX = Code.getElementLeftRelative(this._indicator); //$(this._indicator).position().left;
+	var percent = offsetX/areaWidth; //Math.min(Math.max(offsetX-padding,0),areaWidth) / areaWidth;
 	var color = Math.min(Math.floor(percent*256),255)
+	console.log(offsetX,areaWidth,offsetX/areaWidth," == ",percent,color);
 	this.color(color);
 }
 giau.InputFieldColorSlider.prototype._handleBackgroundMouseDownFxn = function(e,d){
 	if(!Code.getMouseLeftClick(e)){
 		return;
 	}
+	this._addDragCover();
+	
+	// start drag
+	// put element over canvas, keep track of pointer
+	this._updateIndicatorFromEvent(e);
+	this._updateColorFromElement();
+}
+giau.InputFieldColorSlider.prototype._updateIndicatorFromEvent = function(e){
+	//var pos = Code.getMousePositionLocal(e);
+	var mousePos = Code.getMousePositionAbsolute(e);
 
 	var areaHeight = $(this._background).height();
 	var indiHeight = $(this._indicator).height();
-	var indiTop = Math.round((areaHeight-indiHeight)*0.5);
-
-	var pos = Code.getMousePositionLocal(e);
-	Code.setStyleLeft(this._indicator, pos.x+"px");
+	var indiWidth = Code.getElementWidth(this._indicator);
+	var areaWidth = Code.getElementWidth(this._background);
+	var areaPos = Code.getElementPositionAbsolute(this._background);
+	//var indiPos = Code.getElementPositionAbsolute(this._indicator);
+	var offsetInd = V2D.sub(mousePos,areaPos);
+	offsetInd.x = Math.min(Math.max(offsetInd.x,0),areaWidth)
+		var indiTop = Math.round((areaHeight-indiHeight)*0.5);
+	//Code.setStyleLeft(this._indicator, pos.x+"px");
+	Code.setStyleLeft(this._indicator, offsetInd.x+"px");
 	Code.setStyleTop(this._indicator, indiTop+"px");
-	// start drag
-	// put element over canvas, keep track of pointer
-
+}
+giau.InputFieldColorSlider.prototype._handleBackgroundMouseUpFxn = function(e,d){
+	console.log("bg up");
+	this._updateIndicatorFromEvent(e);
 	this._updateColorFromElement();
+	this._removeDragCover();
+}
+giau.InputFieldColorSlider.prototype._handleCoverMouseUpFxn = function(e,d){
+	console.log("cover up");
+	this._updateIndicatorFromEvent(e);
+	this._updateColorFromElement();
+	this._removeDragCover();
+}
+giau.InputFieldColorSlider.prototype._handleCoverMouseMoveFxn = function(e,d){
+	this._updateIndicatorFromEvent(e);
+	this._updateColorFromElement();
+}
+giau.InputFieldColorSlider.prototype._addDragCover = function(){
+	this._removeDragCover();
+	var screenWidth = Code.getElementWidth(Code.documentBody());//$(document).width();
+	var screenHeight = Code.getElementHeight(Code.documentBody());//$(document).height();
+
+	var cover = Code.newDiv();
+	Code.setStyleWidth(cover,screenWidth+"px");
+	Code.setStyleHeight(cover,screenHeight+"px");
+	Code.setStylePosition(cover,"absolute");
+	Code.setStyleLeft(cover,0+"px");
+	Code.setStyleTop(cover,0+"px");
+	var coverColor = 0x00000000;
+	coverColor = Code.getJSColorFromARGB(coverColor);
+	Code.setStyleBackgroundColor(cover,coverColor);
+	Code.setStyleZIndex(cover,Code.INT_MAX_VALUE+"");
+	Code.addChild(document.body,cover);
+	this._cover = cover;
+
+	this._jsDispatch.addJSEventListener(this._cover, Code.JS_EVENT_MOUSE_MOVE, this._handleCoverMouseMoveFxn, this);
+	this._jsDispatch.addJSEventListener(this._cover, Code.JS_EVENT_MOUSE_UP, this._handleCoverMouseUpFxn, this);
+
+	return this._cover;
+}
+giau.InputFieldColorSlider.prototype._removeDragCover = function(){
+	// remove listeners ...
+	if(this._cover){
+		this._jsDispatch.removeJSEventListener(this._cover, Code.JS_EVENT_MOUSE_MOVE, this._handleCoverMouseMoveFxn, this);
+		this._jsDispatch.removeJSEventListener(this._cover, Code.JS_EVENT_MOUSE_UP, this._handleCoverMouseUpFxn, this);
+		Code.removeFromParent(this._cover);
+		this._cover = null;
+	}
 }
 giau.InputFieldColorSlider.prototype._updateLayout = function(){
 	var wid = 100;
@@ -5004,7 +5256,7 @@ giau.InputFieldColorSlider.prototype._updateLayout = function(){
 	var canvas = new Canvas(null,0,0, null, true);
 	var stage = new Stage(canvas);
 	var d = new DO();
-	var colors = [0xFF000000,0xFFFF0000];
+	var colors = this._colorRanges;
 	var locations = [0,1];
 	//d.graphics().setFillGradientLinear(0,5, wid,5,  locations, colors);
 	d.graphics().setLinearFill(0,0, wid,0,  locations, colors);
@@ -5029,6 +5281,7 @@ giau.InputFieldColorSlider.prototype._updateLayout = function(){
 //		console.log(base64URL);
 	//Code.setStyleBackgroundImage(this._background,base64RL);
 	//Code.setStyleBackgroundImage(this._background,base64URL);
+// ranges[0]
 	Code.setStyleHeight(this._background,"100%");
 	Code.setStyleWidth(this._background,"100%");
 	//Code.setStyleBackgroundImage(this._background,"url('http://www.twogag.com/comics/2016-11-30-TGAG_712_Meant_To_be.jpg')");
@@ -5036,10 +5289,8 @@ giau.InputFieldColorSlider.prototype._updateLayout = function(){
 	Code.setStyleBackgroundImageFill(this._background);
 	Code.setStyleBackgroundImageRepeat(this._background);
 
-	//???
-
-	var backgroundWidth = $(this._background).width();
-	var backgroundHeight = $(this._background).height();
+	var backgroundWidth = Code.getElementWidth(this._background);
+	var backgroundHeight =  Code.getElementHeight(this._background);
 	var padding = 3;
 	var areaWidth = backgroundWidth + padding*2;
 	var areaHeight = backgroundHeight + padding*2;
