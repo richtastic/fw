@@ -4,6 +4,11 @@
 
 ###TODO
 
+calendar date picker
+	- choose between different months
+	- select different date
+	- time selection
+
 ADMIN PAGES:
 	- choose from library of widgets
 	- color picker
