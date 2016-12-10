@@ -4763,13 +4763,228 @@ giau.CRUD._generateSubButton = function(display,element){
 	return div;
 }
 
+giau.InputFieldBoolean = function(element, value){
+	console.log("BOOLEAN");
+	this._container = element;
+	this.value(value);
+	this._elementCheckbox = Code.newDiv();
+	this._elementRect = Code.newDiv();
+	this._elementCover = Code.newDiv();
+	Code.addChild(this._container, this._elementRect);
+		Code.addChild(this._elementRect, this._elementCheckbox);
+		Code.addChild(this._elementRect, this._elementCover);
+
+	Code.setStylePosition(this._elementRect,"relative");
+	Code.setStyleDisplay(this._elementRect,"inline-block");
+	Code.setStyleWidth(this._elementRect,40+"px");
+	Code.setStyleHeight(this._elementRect,20+"px");
+	Code.setStyleBackgroundColor(this._elementRect,Code.getJSColorFromARGB(0x99000000));
+	Code.setStyleTextAlign(this._elementRect,"center");
+
+	var checkSize = 24;
+	Code.setStyleDisplay(this._elementCheckbox,"inline-block");
+	Code.setStyleVerticalAlign(this._elementCheckbox,"middle");
+	Code.setStyleFontSize(this._elementCheckbox,checkSize+"px");
+
+	Code.setStylePosition(this._elementCover,"absolute");
+	Code.setStyleLeft(this._elementCover,0+"px");
+	Code.setStyleTop(this._elementCover,0+"px");
+	Code.setStyleDisplay(this._elementCover,"block");
+	Code.setStyleWidth(this._elementCover,"100%");
+	Code.setStyleHeight(this._elementCover,"100%");
+	Code.setStyleBackgroundColor(this._elementCover,Code.getJSColorFromARGB(0x00000000));
+
+	this._updateFieldFromValue();
+	
+	// 
+	this._jsDispatch = new JSDispatch();
+	this._jsDispatch.addJSEventListener(this._elementCover, Code.JS_EVENT_MOUSE_DOWN, this._handleRectMouseDownFxn, this, {});
+}
+giau.InputFieldBoolean.prototype._handleRectMouseDownFxn = function(e,f){
+	console.log(e);
+	console.log(f);
+	var value = this._valueBoolean();
+	if(value){
+		this.value("false");
+	}else{
+		this.value("true");
+	}
+	this._updateFieldFromValue();
+}
+giau.InputFieldBoolean.prototype._updateFieldFromValue = function(){
+	var value = this._dataValue;
+	var content = "?";
+	if(value=="true"){
+		content = "&check;";
+		Code.setStyleColor(this._elementCheckbox,"#11AA33");
+	}else if(value=="false"){
+		content = "&cross;";
+		Code.setStyleColor(this._elementCheckbox,"#CC2233");
+	}
+	Code.setContent(this._elementCheckbox,content);
+}
+
+giau.InputFieldBoolean.prototype._valueBoolean = function(){
+	return this._dataValue == "true" ? true : false;
+}
+giau.InputFieldBoolean.prototype.value = function(v){
+	console.log(v)
+	if(v!==undefined){
+		if(Code.isString(v)){
+			v = v==="true" ? "true" : "false";
+		}else{
+			v = v ? "true" : "false";
+		}
+		this._dataValue = v;
+	}
+	return this._dataValue;
+}
 giau.InputFieldDuration = function(element, value){
 	this._container = element;
-	this._dateValue = value;
+	this.value(value);
+	this._fieldYears = Code.newInputText("years");
+	this._fieldDays = Code.newInputText("days");
+	this._fieldHours = Code.newInputText("hours");
+	this._fieldMinutes = Code.newInputText("minutes");
+	this._fieldSeconds = Code.newInputText("seconds");
+	this._fieldMilliseconds = Code.newInputText("milli");
+
+	this._jsDispatch = new JSDispatch();
+
+	var i;
+	var rows = [];
+	for(i=0; i<3; ++i){
+		var row = Code.newDiv();
+		Code.addChild(this._container, row);
+		rows.push(row);
+	}
+	this._rows = rows;
+
+	var fields = [this._fieldYears,this._fieldMinutes, this._fieldDays,this._fieldSeconds ,this._fieldHours,this._fieldMilliseconds];
+	var titleTexts = ["YEAR","MINS", "DAYS","SECS", "HOUR","MILI"];
+	var titles = [];
+	for(i=0; i<6; ++i){
+		var field = fields[i];
+		var t = titleTexts[i];
+		var col = Code.newDiv();
+		var row = rows[Math.floor(i/2)];
+		var title = Code.newDiv();
+			Code.setContent(title,t);
+		Code.addChild(row,col);
+		if(i%2==0){
+			Code.addChild(col, title);
+			Code.addChild(col, field);
+			Code.setStyleTextAlign(title,"left");
+		}else{
+			Code.addChild(col, field);
+			Code.addChild(col, title);
+			Code.setStyleTextAlign(title,"right");
+		}
+		Code.setStyleDisplay(col,"inline-block");
+
+		Code.setStyleDisplay(title,"inline-block");
+		Code.setStyleFontSize(title,12+"px");
+
+		Code.setStyleDisplay(field,"inline-block");
+		Code.setStyleFontSize(field,12+"px");
+		Code.setStylePadding(field,0+"px");
+		Code.setStyleMargin(field,0+"px");
+		Code.setStyleBorder(field,0+"px");
+
+		Code.setStyleWidth(col,"50%");
+
+		Code.setStyleWidth(title,"40%");
+		Code.setStyleWidth(field,"60%");
+		this._jsDispatch.addJSEventListener(field, Code.JS_EVENT_INPUT_CHANGE, this._handleFieldChangeFxn, this, {"index":i});
+		titles.push(title);
+	}
+	this._titles = titles;
+	this._updateFieldsFromValue();
+	this._updateValueFromFields();
 }
-giau.InputFieldDuration.prototype.value = function(){ // milliseconds
-	return this._dateValue;
+giau.InputFieldDuration.prototype._handleFieldChangeFxn = function(e,f){
+	var index = f["index"];
+	this._updateFilterFields();
+	this._updateValueFromFields();	
+	console.log(this.value());
 }
+giau.InputFieldDuration.prototype._updateFilterFields = function(){
+	this._filterField(this._fieldMilliseconds);
+	this._filterField(this._fieldSeconds);
+	this._filterField(this._fieldMinutes);
+	this._filterField(this._fieldHours);
+	this._filterField(this._fieldDays);
+	this._filterField(this._fieldYears);
+}
+giau.InputFieldDuration.prototype._filterField = function(field){
+	var value = Code.getInputTextValue(field);
+	console.log("before: "+value);
+	value = Code.stringFilterNumbersOnly(value);
+	value = Code.stringRemovePrefix(value,"0");
+	value = value.length>0 ? value : "0";
+	console.log("after: "+value);
+	Code.setInputTextValue(field,value);
+}
+giau.InputFieldDuration.prototype._updateValueFromFields = function(){
+	var millis = Code.getInputTextValue(this._fieldMilliseconds);
+		millis = parseInt(millis);
+	var seconds = Code.getInputTextValue(this._fieldSeconds);
+		seconds = parseInt(seconds);
+	var minutes = Code.getInputTextValue(this._fieldMinutes);
+		minutes = parseInt(minutes);
+	var hours = Code.getInputTextValue(this._fieldHours);
+		hours = parseInt(hours);
+	var days = Code.getInputTextValue(this._fieldDays);
+		days = parseInt(days);
+	var years = Code.getInputTextValue(this._fieldYears);
+		years = parseInt(years);
+	var value = 0;
+	value += millis;
+	value += seconds*1000;
+	value += minutes*1000*60;
+	value += hours*1000*60*60;
+	value += days*1000*60*60*24;
+	value += years*1000*60*60*24*365;
+	var maximumValue = Math.pow(2,52) - 1; // 1 bit sign 11 bits exponent 52 bits precision
+	if(value>=maximumValue){ // 2^52 millis == 142808 years
+		console.log("precision error -- maximum duration = "+(maximumValue));
+		value = maximumValue;
+	}
+	this._dataValue = value;
+	
+}
+giau.InputFieldDuration.prototype._updateFieldsFromValue = function(){
+	var value = this._dataValue;
+	var years = Math.floor(value/(1000*60*60*24*365));
+		value -= years*1000*60*60*24*365;
+	var days = Math.floor(value/(1000*60*60*24));
+		value -= days*1000*60*60*24;
+	var hours = Math.floor(value/(1000*60*60));
+		value -= days*1000*60*60;
+	var minutes = Math.floor(value/(1000*60));
+		value -= minutes*1000*60;
+	var seconds = Math.floor(value/(1000));
+		value -= seconds*1000;
+	var millis = value;
+	Code.setInputTextValue(this._fieldYears, ""+years);
+	Code.setInputTextValue(this._fieldDays, ""+days);
+	Code.setInputTextValue(this._fieldHours, ""+hours);
+	Code.setInputTextValue(this._fieldMinutes, ""+minutes);
+	Code.setInputTextValue(this._fieldSeconds, ""+seconds);
+	Code.setInputTextValue(this._fieldMilliseconds, ""+millis);
+}
+giau.InputFieldDuration.prototype.value = function(v){
+	if(v!==undefined){
+		if(Code.isString(v)){
+			this._dataValue = parseInt(v);
+		} // else assume int
+		this._dataValue = v;
+	}
+	return this._dataValue;
+}
+// giau.InputFieldDuration.prototype.value = function(){ // milliseconds
+// 	return this._dateValue;
+// }
 
 giau.InputFieldColor = function(element, value){
 	this._container = element;
@@ -4896,7 +5111,7 @@ giau.InputFieldColor = function(element, value){
 		sliders.push(colorSlider);
 	}
 
-	this._elementRows = rows; // this._elementRowRed
+	this._elementRows = rows;
 	this._elementFields = fields;
 	this._colorSliders = sliders;
 	this._cursors = cursors;
@@ -4905,25 +5120,7 @@ giau.InputFieldColor = function(element, value){
 }
 
 giau.InputFieldColor.prototype._handleFinalColorFieldChange = function(e){
-
 	var col = giau.InputFieldColor.hexFieldUpdateOverwrite(this._colorField, 8);
-/*
-	var value = Code.getInputTextValue(this._colorField);
-	//var string = Code.getHexNumber(value,8);
-	//console.log(value);
-	var oldPosStart = this._colorField.selectionStart;
-	var oldPosEnd = this._colorField.selectionEnd;
-	console.log(this._colorField);
-	console.log(this._colorField.selectionStart);
-	//var color = Code.getHexNumber(value,8);
-// substring to 8
-// verify text is same as number value
-// 
-*/
-	// var color = newValue+"";
-	// console.log(color+"");
-	// var col = parseInt(color,16) >>> 0;
-	//console.log(col);
 	var alp = Code.getAlpARGB(col);
 	var red = Code.getRedARGB(col);
 	var grn = Code.getGrnARGB(col);
@@ -4932,10 +5129,6 @@ giau.InputFieldColor.prototype._handleFinalColorFieldChange = function(e){
 	this._colorSliders[0].color(red);
 	this._colorSliders[1].color(grn);
 	this._colorSliders[2].color(blu);
-	// this._colorField.selectionStart = oldPosStart;
-	// this._colorField.selectionEnd = oldPosEnd;
-	// this._colorField.selectionStart = oldPosStart-1;
-	// this._colorField.selectionEnd = oldPosEnd-1;
 }
 giau.InputFieldColor.prototype._handleInputFieldKeyUp = function(e,f){
 	var index = f["index"];
@@ -5336,37 +5529,30 @@ giau.InputFieldDate = function(element, value){
 
 
 	this._daysOfWeek = ["U","M","T","W","R","F","S"];
-	this._monthsOfYear = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+	this._monthsOfYear = [["JAN",0],["FEB",1],["MAR",2],["APR",3],["MAY",4],["JUN",5],["JUL",6],["AUG",7],["SEP",8],["OCT",9],["NOV",10],["DEC",11]];
 
-	console.log(value);
 	var i, j;
-
-	// var arrayHour = []; for(i=0; i<24; ++i){ arrayHour.push([""+i, ""+i]); }
-	// var arrayMinute = []; for(i=0; i<59; ++i){ arrayMinute.push([""+i, ""+i]); }
-	// var arraySecond = []; for(i=0; i<59; ++i){ arraySecond.push([""+i, ""+i]); }
-	// var arrayMillisecond = []; for(i=0; i<9999; ++i){ arrayMillisecond.push([""+i, ""+i]); }
 
 	this._elementLeft = Code.newDiv();
 	this._elementRight = Code.newDiv();
 	this._elementMonth = Code.newDiv();
 		this._elementMonthLeft = Code.newDiv();
-		this._elementMonthName = Code.newDiv();
+		this._elementMonthName = Code.newSelect(this._monthsOfYear); // Code.newDiv();
 		this._elementMonthRight = Code.newDiv();
 		this._elementMonthTop = Code.newDiv();
 		this._elementMonthBottom = Code.newDiv();
 			this._elementMonthGrid = Code.newDiv();
-	// this._elementHour = Code.newSelect(arrayHour);
-	// this._elementMinute = Code.newSelect(arrayMinute);
-	// this._elementSecond = Code.newSelect(arraySecond);
-	// this._elementMillisecond = Code.newSelect(arrayMillisecond);
+	this._elementYear = Code.newInputText("????");
 
 	this._elementHour = Code.newInputText("00");
 	this._elementMinute = Code.newInputText("00");
 	this._elementSecond = Code.newInputText("00");
 	this._elementMillisecond = Code.newInputText("0000");
 
-	// Code.stringFilterNumbersOnly
-	// 
+	var value = Code.getInputTextValue(this._elementHour);
+	value = Code.stringFilterNumbersOnly(value);
+
+	// limit count
 
 
 	Code.addChild(this._container,this._elementLeft);
@@ -5375,6 +5561,7 @@ giau.InputFieldDate = function(element, value){
 			Code.addChild(this._elementMonth, this._elementMonthTop);
 				Code.addChild(this._elementMonthTop, this._elementMonthLeft);
 				Code.addChild(this._elementMonthTop, this._elementMonthName);
+				Code.addChild(this._elementMonthTop, this._elementYear);
 				Code.addChild(this._elementMonthTop, this._elementMonthRight);
 			Code.addChild(this._elementMonth, this._elementMonthBottom);
 				Code.addChild(this._elementMonthBottom, this._elementMonthGrid);
@@ -5406,6 +5593,16 @@ giau.InputFieldDate = function(element, value){
 	//Code.setStyleBackgroundColor(this._elementMonthName,"#0FF");
 	Code.setStyleFontSize(this._elementMonthName,11+"px");
 	Code.setStyleColor(this._elementMonthName,"#000");
+	Code.setStylePadding(this._elementMonthName,0+"px");
+	Code.setStyleMargin(this._elementMonthName,0+"px");
+	Code.setStyleBorder(this._elementMonthName,0+"px");
+
+	Code.setStyleDisplay(this._elementYear,"inline-block");
+	Code.setStyleFontSize(this._elementYear,11+"px");
+	Code.setStyleWidth(this._elementYear,32+"px");
+	Code.setStylePadding(this._elementYear,0+"px");
+	Code.setStyleMargin(this._elementYear,0+"px");
+	Code.setStyleBorder(this._elementYear,0+"px");
 
 
 	Code.setStyleHeight(this._elementHour,"20px");
@@ -5422,11 +5619,29 @@ giau.InputFieldDate = function(element, value){
 	this._jsDispatch = new JSDispatch();
 	this._jsDispatch.addJSEventListener(this._elementMonthLeft, Code.JS_EVENT_MOUSE_DOWN, this._handleMonthLeftMouseDownFxn, this);
 	this._jsDispatch.addJSEventListener(this._elementMonthRight, Code.JS_EVENT_MOUSE_DOWN, this._handleMonthRightMouseDownFxn, this);
-	
+	this._jsDispatch.addJSEventListener(this._elementMonthName, Code.JS_EVENT_CHANGE, this._handleMonthSelectFxn, this);
+	this._jsDispatch.addJSEventListener(this._elementYear, Code.JS_EVENT_INPUT_CHANGE, this._handleYearSelectFxn, this);
 
 	this._updateLayout();
 }
-
+giau.InputFieldDate.prototype._handleYearSelectFxn = function(e){
+	var year = Code.getInputTextValue(this._elementYear);
+	year = parseInt(year);
+	console.log(year);
+	// TODO: filter digits & range
+	var milliseconds = Code.dateFromString(this._displayDate);
+	milliseconds = Code.getSetYear(milliseconds, year);
+	this._displayDate = Code.getTimeStampFromMilliseconds(milliseconds);
+	this._updateLayout();
+}
+giau.InputFieldDate.prototype._handleMonthSelectFxn = function(e){
+	var month = Code.getSelected(this._elementMonthName);
+	month = parseInt(month);
+	var milliseconds = Code.dateFromString(this._displayDate);
+	milliseconds = Code.getSetMonth(milliseconds, month);
+	this._displayDate = Code.getTimeStampFromMilliseconds(milliseconds);
+	this._updateLayout();
+}
 giau.InputFieldDate.prototype._handleMonthLeftMouseDownFxn = function(e){ // subtract month
 	var milliseconds = Code.dateFromString(this._displayDate);
 	milliseconds = Code.getPrevMonth(milliseconds);
@@ -5440,14 +5655,11 @@ giau.InputFieldDate.prototype._handleMonthRightMouseDownFxn = function(e){ // ad
 	this._updateLayout();
 }
 giau.InputFieldDate.prototype._handleDayMouseDownFxn = function(e, f){ // new date
-	console.log(e)
-	console.log(f)
 	var year = f["year"];
 	var month = f["month"];
 	var day = f["day"];
 	// get hour, min, sec, milli 
 	var milliseconds = Code.getTimeStamp(year, month, day);
-	// Code.getTimeStamp = function(year, month, day, hour, min, sec, ms){
 	this._dateValue = Code.getTimeStampFromMilliseconds(milliseconds);
 	this._updateLayout();
 }
@@ -5468,12 +5680,15 @@ giau.InputFieldDate.prototype._updateLayout = function(){
 	var displayMonth = Code.getMonthOfYear(milliseconds);
 	var daysInMonth = Code.getDaysInMonth(milliseconds);
 	var firstDayOfMonth = Code.getFirstDayOfWeekInMonth(milliseconds);
-	var monthDisplay = this._monthsOfYear[displayMonth];
+var monthDisplay = this._monthsOfYear[displayMonth];
+var monthDisplayValue = monthDisplay[1];
+Code.setInputTextValue(this._elementYear,displayYear+"");
 	console.log("display date: "+this._dateValue);
 
 	var daysInMonthPrev = Code.getDaysInMonth( Code.getPrevMonthFirstDay(milliseconds) );
 	var daysInMonthNext = Code.getDaysInMonth( Code.getNextMonthFirstDay(milliseconds) );
-	Code.setContent(this._elementMonthName,monthDisplay);
+	//Code.setContent(this._elementMonthName,monthDisplay);
+	Code.setSelected(this._elementMonthName,monthDisplayValue+"");
 
 	console.log("first day of week in month: "+firstDayOfMonth);
 

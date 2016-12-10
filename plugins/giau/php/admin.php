@@ -38,6 +38,7 @@ function giau_admin_menu_page_main(){
 	<div class="giauTestA" style="width:200px; height:120px; background-color:#CCC;"></div>
 	<div class="giauTestB" style="width:200px; height:100px; background-color:#CCC;"></div>
 	<div class="giauTestC" style="width:200px; height:100px; background-color:#CCC;"></div>
+	<div class="giauTestD" style="width:200px; height:100px; background-color:#CCC;"></div>
 	<script>
 	
 	function afterDelay(){
@@ -48,6 +49,7 @@ function giau_admin_menu_page_main(){
 			var timestamp = new giau.InputFieldDate($(".giauTestA")[0],"2016-11-28 09:04:59.1234");
 			var color = new giau.InputFieldColor($(".giauTestB")[0],"0xFFCC9966"); // 0xFFCC9966
 			var duration = new giau.InputFieldDuration($(".giauTestC")[0],"1234000");
+			var bool = new giau.InputFieldBoolean($(".giauTestD")[0],"false");
 		}else{
 			setTimeout(afterDelay, 200);
 		}

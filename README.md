@@ -8,6 +8,7 @@ calendar date picker
 	- choose between different months
 	- select different date
 	- time selection
+	- choose year
 
 ADMIN PAGES:
 	- choose from library of widgets
