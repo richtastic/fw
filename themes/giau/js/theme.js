@@ -5524,20 +5524,20 @@ giau.InputFieldDate = function(element, value){
 	this._container = element;
 	this._dateValue = value; // ACTUAL RETURN VALUE
 	var milliseconds = Code.dateFromString(this._dateValue);
-	//milliseconds = Code.getPrevMonthFirstDay(milliseconds);
 	this._displayDate = Code.getTimeStampFromMilliseconds(milliseconds); // CURRENT DISPLAY CONTEXT
 
+	this._jsDispatch = new JSDispatch();
 
 	this._daysOfWeek = ["U","M","T","W","R","F","S"];
 	this._monthsOfYear = [["JAN",0],["FEB",1],["MAR",2],["APR",3],["MAY",4],["JUN",5],["JUL",6],["AUG",7],["SEP",8],["OCT",9],["NOV",10],["DEC",11]];
 
-	var i, j;
+	var i, j, child;
 
 	this._elementLeft = Code.newDiv();
 	this._elementRight = Code.newDiv();
 	this._elementMonth = Code.newDiv();
 		this._elementMonthLeft = Code.newDiv();
-		this._elementMonthName = Code.newSelect(this._monthsOfYear); // Code.newDiv();
+		this._elementMonthName = Code.newSelect(this._monthsOfYear);
 		this._elementMonthRight = Code.newDiv();
 		this._elementMonthTop = Code.newDiv();
 		this._elementMonthBottom = Code.newDiv();
@@ -5548,6 +5548,17 @@ giau.InputFieldDate = function(element, value){
 	this._elementMinute = Code.newInputText("00");
 	this._elementSecond = Code.newInputText("00");
 	this._elementMillisecond = Code.newInputText("0000");
+
+	var fields = [this._elementHour, this._elementMinute, this._elementSecond, this._elementMillisecond];
+	for(i=0; i<fields.length; ++i){
+		field = fields[i];
+		Code.setStyleWidth(field,40+"px");
+		Code.setStyleFontSize(field,11+"px");
+		Code.setStyleHeight(field,20+"px");
+		Code.setStyleBorderWidth(field,0+"px");
+		this._jsDispatch.addJSEventListener(field, Code.JS_EVENT_INPUT_CHANGE, this._handleFieldChange, this, {"field":field});
+		//this._jsDispatch.addJSEventListener(field, Code.JS_EVENT_CHANGE, this._handleFieldChange, this, {"field":field});
+	}
 
 	var value = Code.getInputTextValue(this._elementHour);
 	value = Code.stringFilterNumbersOnly(value);
@@ -5576,7 +5587,7 @@ giau.InputFieldDate = function(element, value){
 
 	Code.setStyleDisplay(this._elementRight,"inline-block");
 	Code.setStyleWidth(this._elementRight,"40%");
-	Code.setStyleBackgroundColor(this._elementRight,"#F00");
+	//Code.setStyleBackgroundColor(this._elementRight,"#F00");
 
 	Code.setStyleDisplay(this._elementMonthTop,"block");
 	Code.setStyleTextAlign(this._elementMonthTop, "center");
@@ -5596,19 +5607,32 @@ giau.InputFieldDate = function(element, value){
 	Code.setStylePadding(this._elementMonthName,0+"px");
 	Code.setStyleMargin(this._elementMonthName,0+"px");
 	Code.setStyleBorder(this._elementMonthName,0+"px");
+	Code.setStyleBorderWidth(this._elementMonthName,0+"px");
+
+	Code.addStyle(this._elementMonthName,"text-indent: 0px");
+	
+
+	// select options
+	for(i=0; i<Code.numChildren(this._elementMonthName); ++i){
+		child = Code.getChild(this._elementMonthName,i);
+		Code.setStyleColor(child,"#0F0");
+		Code.setStylePadding(child,0+"px");
+	}
+	
+	
 
 	Code.setStyleDisplay(this._elementYear,"inline-block");
 	Code.setStyleFontSize(this._elementYear,11+"px");
 	Code.setStyleWidth(this._elementYear,32+"px");
 	Code.setStylePadding(this._elementYear,0+"px");
 	Code.setStyleMargin(this._elementYear,0+"px");
-	Code.setStyleBorder(this._elementYear,0+"px");
+	Code.setStyleBorderWidth(this._elementYear,0+"px");
 
 
-	Code.setStyleHeight(this._elementHour,"20px");
-	Code.setStyleHeight(this._elementMinute,"20px");
-	Code.setStyleHeight(this._elementSecond,"20px");
-	Code.setStyleHeight(this._elementMillisecond,"20px");
+	// Code.setStyleHeight(this._elementHour,"20px");
+	// Code.setStyleHeight(this._elementMinute,"20px");
+	// Code.setStyleHeight(this._elementSecond,"20px");
+	// Code.setStyleHeight(this._elementMillisecond,"20px");
 	
 
 	Code.setStyleDisplay(this._elementMonthTop,"block");
@@ -5616,18 +5640,64 @@ giau.InputFieldDate = function(element, value){
 	Code.setStyleDisplay(this._elementMonthBottom,"block");
 
 	// listeners
-	this._jsDispatch = new JSDispatch();
 	this._jsDispatch.addJSEventListener(this._elementMonthLeft, Code.JS_EVENT_MOUSE_DOWN, this._handleMonthLeftMouseDownFxn, this);
 	this._jsDispatch.addJSEventListener(this._elementMonthRight, Code.JS_EVENT_MOUSE_DOWN, this._handleMonthRightMouseDownFxn, this);
 	this._jsDispatch.addJSEventListener(this._elementMonthName, Code.JS_EVENT_CHANGE, this._handleMonthSelectFxn, this);
 	this._jsDispatch.addJSEventListener(this._elementYear, Code.JS_EVENT_INPUT_CHANGE, this._handleYearSelectFxn, this);
+	//this._jsDispatch.addJSEventListener(this._elementYear, Code.JS_EVENT_CHANGE, this._handleYearSelectFxn, this);
 
 	this._updateLayout();
 }
+giau.InputFieldDate.prototype._handleFieldChange = function(e,f){
+	var field = f["field"];
+	//this._updateValueFromFields();
+	var value = Code.getInputTextValue(field);
+	var newValue = value;
+	newValue = Code.stringFilterNumbersOnly(value);
+	var numValue = Math.round(parseInt(newValue));
+	var digitCount = 0;
+	if(field==this._elementHour){
+		numValue = Code.rangeForceMinMax(numValue,0,23);
+		digitCount = 2;
+	}else if(field==this._elementMinute){
+		numValue = Code.rangeForceMinMax(numValue,0,59);
+		digitCount = 2;
+	}else if(field==this._elementSecond){
+		numValue = Code.rangeForceMinMax(numValue,0,59);
+		digitCount = 2;
+	}else if(field==this._elementMillisecond){
+		numValue = Code.rangeForceMinMax(numValue,0,9999);
+		digitCount = 4;
+	}
+	newValue = Code.prependFixed(numValue+"","0",digitCount);
+	console.log(value,numValue,newValue);
+	if(value!==newValue){
+		console.log("CHANGING VALUE: "+newValue);
+		console.log(field);
+		Code.setInputTextValue(field, newValue);
+	}
+	//var milliseconds = Code.dateFromString(this._displayDate);
+	var milliseconds = Code.dateFromString(this._dateValue);
+		var hour = parseInt(Code.getInputTextValue(this._elementHour));
+		var minute = parseInt(Code.getInputTextValue(this._elementMinute));
+		var second = parseInt(Code.getInputTextValue(this._elementSecond));
+		var milli = parseInt(Code.getInputTextValue(this._elementMillisecond));
+		milliseconds = Code.getSetHour(milliseconds, hour);
+		milliseconds = Code.getSetMinute(milliseconds, minute);
+		milliseconds = Code.getSetSecond(milliseconds, second);
+		milliseconds = Code.getSetMillisecond(milliseconds, milli);
+	//this._displayDate = Code.getTimeStampFromMilliseconds(milliseconds);
+	this._dateValue = Code.getTimeStampFromMilliseconds(milliseconds);
+	console.log("time date: "+this._dateValue);
+	this._updateLayout();
+}
+
 giau.InputFieldDate.prototype._handleYearSelectFxn = function(e){
-	var year = Code.getInputTextValue(this._elementYear);
+	var field = this._elementYear;
+	var year = Code.getInputTextValue(field);
 	year = parseInt(year);
-	console.log(year);
+	year = Code.rangeForceMinMax(year,1900,3000); // year maxes out somewhere
+	Code.setInputTextValue(this._elementYear,""+year);
 	// TODO: filter digits & range
 	var milliseconds = Code.dateFromString(this._displayDate);
 	milliseconds = Code.getSetYear(milliseconds, year);
@@ -5655,24 +5725,52 @@ giau.InputFieldDate.prototype._handleMonthRightMouseDownFxn = function(e){ // ad
 	this._updateLayout();
 }
 giau.InputFieldDate.prototype._handleDayMouseDownFxn = function(e, f){ // new date
+	/*
+	this._dateValue = "2016-11-28 20:40:59.6710";
+	console.log("mouse down date 1: "+this._dateValue);
+	var milliseconds = Code.dateFromString(this._dateValue);
+	this._dateValue = Code.getTimeStampFromMilliseconds(milliseconds);
+	console.log("mouse down date 2: "+this._dateValue);
+	this._updateLayout();
+	*/
 	var year = f["year"];
 	var month = f["month"];
 	var day = f["day"];
-	// get hour, min, sec, milli 
-	var milliseconds = Code.getTimeStamp(year, month, day);
+	// hour, min, sec, milli already set
+	var milliseconds = Code.dateFromString(this._dateValue);
+		milliseconds = Code.getSetDay(milliseconds, day);
+		milliseconds = Code.getSetMonth(milliseconds, month-1);
+		milliseconds = Code.getSetYear(milliseconds, year);
 	this._dateValue = Code.getTimeStampFromMilliseconds(milliseconds);
 	this._updateLayout();
 }
 
 giau.InputFieldDate.prototype._updateLayout = function(){
 	var milliseconds;
+	console.log("layout date: "+this._dateValue);
 
 	// SELECTED VALUES
 	milliseconds = Code.dateFromString(this._dateValue);
 	var selectedYear = Code.getYear(milliseconds);
 	var selectedMonth = Code.getMonthOfYear(milliseconds);
 	var selectedDayOfMonth = Code.getDayOfMonth(milliseconds);
+	var selectedHour = Code.getHour(milliseconds);
+	var selectedMinute = Code.getMinute(milliseconds);
+	var selectedSecond = Code.getSecond(milliseconds);
+	var selectedMillisecond = Code.getMillisecond(milliseconds);
 	console.log("selected date: "+this._dateValue);
+
+	// HH MM SS NNNN
+
+		// var hour = parseInt(Code.getInputTextValue(this._elementHour));
+		// var minute = parseInt(Code.getInputTextValue(this._elementMinute));
+		// var second = parseInt(Code.getInputTextValue(this._elementSecond));
+		// var milli = parseInt(Code.getInputTextValue(this._elementMillisecond));
+		Code.setInputTextValue(this._elementHour, Code.prependFixed(selectedHour+"","0",2));
+		Code.setInputTextValue(this._elementMinute, Code.prependFixed(selectedMinute+"","0",2));
+		Code.setInputTextValue(this._elementSecond, Code.prependFixed(selectedSecond+"","0",2));
+		Code.setInputTextValue(this._elementMillisecond, Code.prependFixed(selectedMillisecond+"","0",4));
+		
 
 	// CURRENT MONTH VALUES
 	milliseconds = Code.dateFromString(this._displayDate);
@@ -5680,7 +5778,9 @@ giau.InputFieldDate.prototype._updateLayout = function(){
 	var displayMonth = Code.getMonthOfYear(milliseconds);
 	var daysInMonth = Code.getDaysInMonth(milliseconds);
 	var firstDayOfMonth = Code.getFirstDayOfWeekInMonth(milliseconds);
+console.log(displayMonth)
 var monthDisplay = this._monthsOfYear[displayMonth];
+console.log(monthDisplay);
 var monthDisplayValue = monthDisplay[1];
 Code.setInputTextValue(this._elementYear,displayYear+"");
 	console.log("display date: "+this._dateValue);
@@ -5780,18 +5880,110 @@ Code.setStyleHeight(col,rowHeight+"px");
 			
 		}
 	}
-
-	// calendar
-	/*
-	Code.getDaysInMonth = function(milliseconds){
-	var d = new Date(milliseconds);
-	d = new Date(d.getFullYear(), d.getMonth()+1, 0, 0,0,0,0);
-	return d.getDate();
-};
-	*/
 }
+
 giau.InputFieldDate.prototype.value = function(){
 	return this._dateValue;
+}
+
+
+
+
+
+
+
+
+/*
+handle approve
+handle cancel
+*/
+
+giau.InputOverlay = function(){
+	giau.InputOverlay._.constructor.call(this);
+	this._jsDispatch = new JSDispatch();
+	this._elementCover = Code.newDiv();
+	this._elementContent = Code.newDiv();
+	this._parent = Code.documentBody();
+	this._scrollLocation = new V2D();
+}
+Code.inheritClass(giau.InputOverlay, Dispatchable);
+giau.InputOverlay.EVENT_SHOW = "SHOW";
+giau.InputOverlay.EVENT_HIDE = "HIDE";
+giau.InputOverlay.EVENT_EXIT_OUTSIDE = "EXIT_OUTSIDE";
+giau.InputOverlay.EVENT_LAYOUT_CHANGE = "LAYOUT_CHANGE";
+
+giau.InputOverlay.prototype._handleScrollFxn = function(e,f){
+	Code.stopEventPropagation(e);
+	Code.eventPreventDefault(e);
+	var left = this._scrollLocation.x;
+	var top = this._scrollLocation.y;
+	// disable swiping:
+	window.scrollTo(left,top); // reposition to before-scroll location
+}
+giau.InputOverlay.prototype._handleCoverMouseDownFxn = function(e,f){
+	this.alertAll(giau.InputOverlay.EVENT_EXIT_OUTSIDE, this);
+	this.hide();
+}
+giau.InputOverlay.prototype.show = function(){
+	// record state
+	var location = Code.getPageScrollLocation();
+	var left = location["left"];
+	var top = location["top"];
+	this._scrollLocation.set(left,top);
+	// add elements
+	var parent = this._parent;
+	Code.addChild(parent,this._elementCover);
+		Code.addChild(this._elementCover,this._elementContent);
+	this._addListeners();
+	this.alertAll(giau.InputOverlay.EVENT_SHOW, this);
+	this._updateLayout();
+}
+giau.InputOverlay.prototype.hide = function(){
+	Code.removeFromParent(this._elementCover);
+	// let client do any removing ??
+	// for(var i=0; i<Code.numChildren(this._elementContent); ++i){
+	// 	var child = Code.getChild(this._elementContent, i);
+	// }
+	this._removeListeners();
+	this.alertAll(giau.InputOverlay.EVENT_HIDE, this);
+}
+giau.InputOverlay.prototype.updateLayout = function(){
+	this._updateLayout();
+	this.alertAll(giau.InputOverlay.EVENT_LAYOUT_CHANGE, this);
+}
+giau.InputOverlay.prototype.centerContent = function(){
+	this._updateLayout();
+	// now do centering:
+	//Code.setStyleMarginLeft(this._content,"");
+}
+giau.InputOverlay.prototype._updateLayout = function(){
+	var parent = this._parent;
+	var parentWidth = Code.getElementWidth(parent);
+	var parentHeight = Code.getElementHeight(parent);
+	Code.setStyleBackgroundColor(this._elementCover,Code.getJSColorFromARGB(0xCC000000));
+	Code.setStylePosition(this._elementCover,"absolute");
+	Code.setStyleLeft(this._elementCover,0+"px");
+	Code.setStyleTop(this._elementCover,0+"px");
+	Code.setStyleWidth(this._elementCover,parentWidth+"px");
+	Code.setStyleHeight(this._elementCover,parentHeight+"px");
+	Code.setStyleZIndex(this._elementCover,Code.INT_MAX_VALUE+"");
+}
+giau.InputOverlay.prototype._addListeners = function(){
+	this._jsDispatch.addJSEventListener(Code.getWindow(), Code.JS_EVENT_SCROLL, this._handleScrollFxn, this);
+	this._jsDispatch.addJSEventListener(this._elementCover, Code.JS_EVENT_MOUSE_DOWN, this._handleCoverMouseDownFxn, this);
+}
+giau.InputOverlay.prototype._removeListeners = function(){
+	this._jsDispatch.removeJSEventListener(Code.getWindow(), Code.JS_EVENT_SCROLL, this._handleScrollFxn, this);
+	this._jsDispatch.removeJSEventListener(this._elementCover, Code.JS_EVENT_MOUSE_DOWN, this._handleCoverMouseDownFxn, this);
+}
+giau.InputOverlay.prototype.kill = function(){
+	Code.removeChild(this._elementContent);
+	Code.removeChild(this._elementCover);
+	this._jsDispatch.kill();
+	this._elementContent = null;
+	this._elementCover = null;
+	this._jsDispatch = null;
+	Stage._.kill.call(this);
 }
 
 

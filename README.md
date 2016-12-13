@@ -4,11 +4,12 @@
 
 ###TODO
 
-calendar date picker
-	- choose between different months
-	- select different date
-	- time selection
-	- choose year
+- primitive picking
+	- click on input => overlay
+		- click away => cancel
+			=> handle cancel
+		- click OK => update
+			=> handle ok
 
 ADMIN PAGES:
 	- choose from library of widgets
