@@ -54,14 +54,63 @@ function giau_admin_menu_page_main(){
 			var testOverlay = $(".giauTestOverlay")[0];
 			var dispatch = new JSDispatch();
 			dispatch.addJSEventListener(testOverlay, Code.JS_EVENT_MOUSE_DOWN, function(e){
-				console.log("tapped");
 				var overlay = new giau.InputOverlay();
+				var object = {};
+				overlay.addFunction(giau.InputOverlay.EVENT_SHOW, handleOverlayShow, object);
+				overlay.addFunction(giau.InputOverlay.EVENT_HIDE, handleOverlayHide, object);
+				overlay.addFunction(giau.InputOverlay.EVENT_LAYOUT, handleOverlayLayout, object);
+				overlay.addFunction(giau.InputOverlay.EVENT_EXIT, handleOverlayExit, object);
 				overlay.show();
 			}, window, {"element":testOverlay});
 				
 		}else{
 			setTimeout(afterDelay, 200);
 		}
+	}
+	function handleOverlayShow(e){
+		var element = e.elementContainer();
+		
+		var container = Code.newDiv();
+			Code.addChild(element, container);
+		var content = new giau.InputFieldDate(container,null); 
+		this.content = content;
+		this.container = container;
+		//
+		var timestamp = "2016-11-28 09:04:59.1234";
+		this.content.value(timestamp);
+		console.log("FIRST VALUE: "+this.content.value());
+	}
+	function handleOverlayHide(e){
+		console.log("hide");
+	}
+	function handleOverlayLayout(e){
+		// center self
+		var container = this.container;
+		var calendarWidth = 200;
+		var calendarHeight = 120;
+		var containerWidth = Code.getElementWidth(e.elementContainer());
+		var containerHeight = Code.getElementHeight(e.elementContainer());
+		var left = Math.floor((containerWidth - calendarWidth)*0.5);
+		var top = Math.floor((containerHeight - calendarHeight)*0.5);
+		Code.setStyleDisplay(container,"inline-block");
+		Code.setStylePosition(container,"relative");
+		Code.setStyleTop(container,top+"px");
+		Code.setStyleWidth(container,calendarWidth+"px");
+		Code.setStyleHeight(container,calendarHeight+"px");
+		Code.setStyleMargin(container,0+"px");
+		Code.setStylePadding(container,0+"px");
+		Code.setStyleBorderWidth(container,0+"px");
+		Code.setStyleBackgroundColor(container,Code.getJSColorFromARGB(0x990000FF));
+		//
+
+		// layout subelements
+		this.content._updateLayout();
+	}
+	function handleOverlayExit(e){
+		console.log("exit");
+		var timestamp = this.content.value();
+		console.log("FINAL VALUE: "+timestamp);
+		//e.kill();
 	}
 	setTimeout(afterDelay, 800);
 	</script>

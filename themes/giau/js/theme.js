@@ -2954,7 +2954,7 @@ giau.ObjectComposer.prototype._handleNewArrayItem = function(e,d){
 		console.log("new object");
 		array.push({});
 	}else{ // create default primitive
-		console.log("primitive?");
+		console.log("primitive?: "+type+" | "+subtype);
 		array.push("");
 	}
 
@@ -2978,6 +2978,7 @@ giau.ObjectComposer.prototype._handleDeleteArrayItem = function(e,d){
 }
 
 giau.ObjectComposer.prototype._handlePrimitiveUpdate = function(e,d){
+	console.log("_handlePrimitiveUpdate");
 	var element = d["element"];
 	var container = d["container"];
 	var field = d["field"];
@@ -3065,12 +3066,23 @@ giau.ObjectComposer.prototype.newSubElement = function(element,name,type, contai
 		holder = element;
 	}else if(type=="primitive"){
 		var value = container[field];
-		var input = this._inputTextField(div,field, value);
-		label = input["container"];
-		var textElement = input["input"];
-			var data = {"element": element, "input":textElement, "container": container, "field": field};
-			this._jsDispatch.addJSEventListener(textElement, Code.JS_EVENT_INPUT_CHANGE, this._handlePrimitiveUpdate, this, data);
-		holder = element;
+
+		console.log(container);
+		var fieldType = model[field]["type"];
+		var fieldValue = container[field];
+		console.log(fieldValue);
+		if(giau.ObjectComposer.isFieldTypeBoolean(fieldType)){
+			console.log("BOOLEAN");
+			var input = this._inputBooleanField(div,field, value);
+			holder = element;
+		} else {
+			var input = this._inputTextField(div,field, value);
+			label = input["container"];
+			var textElement = input["input"];
+				var data = {"element": element, "input":textElement, "container": container, "field": field};
+				this._jsDispatch.addJSEventListener(textElement, Code.JS_EVENT_INPUT_CHANGE, this._handlePrimitiveUpdate, this, data);
+			holder = element;
+		}
 	}
 	if(label && holder && isReallyArray){
 		var button = this._interactActionButton("&nbsp;-&nbsp;");
@@ -3084,12 +3096,17 @@ giau.ObjectComposer.prototype.newSubElement = function(element,name,type, contai
 // (element,modelFieldInfo, array,                null, modelSubType, array, superModel
 // element, modelObject,instanceObject, modelFieldName,modelFieldType, isArray
 giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(element, modelObject,instanceObject, modelFieldName,modelFieldType, isArray, superModel){
+	console.log("_fillOutWithPrimitiveType  "+modelFieldType);
 	var found = false;
 	if( giau.ObjectComposer.isFieldTypeString(modelFieldType) ){
 		found = true;
 	}else if( giau.ObjectComposer.isFieldTypeBoolean(modelFieldType) ){
 		found = true;
 	}else if( giau.ObjectComposer.isFieldTypeNumber(modelFieldType) ){
+		found = true;
+	}else if( giau.ObjectComposer.isFieldTypeColor(modelFieldType) ){
+		found = true;
+	}else if( giau.ObjectComposer.isFieldTypeDate(modelFieldType) ){
 		found = true;
 	}
 	if(found && instanceObject){
@@ -3115,7 +3132,15 @@ giau.ObjectComposer.isFieldTypeBoolean = function(s){ // boolean or string-boole
 	return isBoolean;
 }
 giau.ObjectComposer.isFieldTypeNumber = function(s){ // number or string-number
-	var isBoolean = s=="number" || giau.ObjectComposer.fieldTypeStringSubtype(s)=="numbner";
+	var isBoolean = s=="number" || giau.ObjectComposer.fieldTypeStringSubtype(s)=="number";
+	return isBoolean;
+}
+giau.ObjectComposer.isFieldTypeDate = function(s){ // number or string-number
+	var isBoolean = s=="date" || giau.ObjectComposer.fieldTypeStringSubtype(s)=="date";
+	return isBoolean;
+}
+giau.ObjectComposer.isFieldTypeColor = function(s){ // number or string-number
+	var isBoolean = s=="color" || giau.ObjectComposer.fieldTypeStringSubtype(s)=="color";
 	return isBoolean;
 }
 giau.ObjectComposer.isFieldTypeString = function(s){ // string or string-SUBTYPE
@@ -3140,15 +3165,29 @@ giau.ObjectComposer.fieldTypeArraySubtype = function(s){
 	return arraySubType;
 }
 
+giau.ObjectComposer.prototype._handlePrimitiveBooleanUpdate = function(e,f){
+	console.log("_handlePrimitiveBooleanUpdate");
+	console.log(e);
+	console.log(f);
+}
 
+giau.ObjectComposer.prototype._inputBooleanField = function(element, key,value){
+	var input = Code.newDiv();
+		Code.setStyleWidth(input,100+"px");
+		Code.setStyleHeight(input,20+"px");
+		Code.setStyleBackgroundColor(input,"#F00");
+		Code.setStyleDisplay(input,"inline-block");
+		var jsObject = new giau.InputFieldBoolean(input,value);
+			var data = {};
+			jsObject.addFunction(giau.InputFieldBoolean.EVENT_CHANGE, this._handlePrimitiveBooleanUpdate, this, data);
+		//this._jsDispatch.addJSEventListener(textElement, Code.JS_EVENT_INPUT_CHANGE, this._handlePrimitiveUpdate, this, data);
 
-
+	var content = this._inputField(element,input, key);
+	return {"container":content, "input":input};
+}
 
 giau.ObjectComposer.prototype._inputTextField = function(element, key,value){
 	var radius = 4;
-	var div = element;
-	var content = Code.newDiv();
-	var label = this.defaultInputRowLabelPrimitive(div, ""+key);
 	var input = Code.newInputText();
 		Code.setStyleBorder(input,"solid");
 		Code.setStyleBorderWidth(input,1+"px");
@@ -3160,13 +3199,22 @@ giau.ObjectComposer.prototype._inputTextField = function(element, key,value){
 		Code.setStylePadding(input,"2px");
 		Code.setStyleFontSize(input,11+"px");
 		Code.setTextPlaceholder(input,"(empty)");
-	Code.addChild(content,label);
-	Code.addChild(content,input);
-	Code.addChild(div,content);
 	if(value){
+		console.log("SET  "+value);
 		Code.setInputTextValue(input,value);
 	}
+
+	var content = this._inputField(element,input, key);
 	return {"container":content, "input":input};
+}
+giau.ObjectComposer.prototype._inputField = function(element,input, key){
+	var radius = 4;
+	var content = Code.newDiv();
+	var label = this.defaultInputRowLabelPrimitive(element, ""+key);
+	Code.addChild(content,label);
+	Code.addChild(content,input);
+	Code.addChild(element,content);
+	return content;
 }
 giau.ObjectComposer.prototype.defaultInputRowObject = function(element){
 	var color = 0x11110000;
@@ -4416,6 +4464,13 @@ giau.CRUD._boxActionClose = function(event){
 }
 
 giau.CRUD._fieldEditDate = function(definition, container, fieldName, elementContainer, mapping){
+	console.log("RICHIE - _fieldEditDate");
+	var elementText = giau.CRUD._elementSelectDate(mapping);
+		Code.addChild(elementContainer,elementText);
+}
+
+giau.CRUD._fieldEditColor = function(definition, container, fieldName, elementContainer, mapping){
+	console.log("RICHIE - _fieldEditColor");
 	var elementText = giau.CRUD._elementSelectDate(mapping);
 		Code.addChild(elementContainer,elementText);
 }
@@ -4584,6 +4639,49 @@ giau.CRUD._fieldEditJSON = function(definition, container, fieldName, elementCon
 	// 	console.log("?????????????????????????????????????????????????????");
 	// console.log(object);
 	// console.log(model);
+
+// FAKE MODEL
+	model = {
+		"fields" : {
+			"string" : {
+				"type": "string"
+			},
+			"number" : {
+				"type": "string-number"
+			},
+			"boolean" : {
+				"type": "string-boolean"
+			},
+			"date": {
+				"type": "string-date"
+			},
+			"color" : {
+				"type": "string-color"
+			}
+		}
+	};
+// FAKE OBJECT
+	object = {
+		"string": "STRING",
+		"number": "3.141",
+		"boolean": "false",
+		"date": "2016-11-12 12:34:56.7890",
+		"color": "0x99AABBCC",
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	console.log("--------------------------------------------------------------------------------------------------------------- COMPOSER START");
 	var composer = new giau.ObjectComposer(elementJSON, model, object);
 	mapping.value(composer);
@@ -4645,10 +4743,10 @@ giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, 
 	//console.log(mapping)
 	var operationFxn = {};
 		operationFxn["string"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
-		operationFxn["string-number"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
+		operationFxn["string-number"] = [giau.CRUD._fieldEditNumber,giau.CRUD._fieldEditString];
 		operationFxn["string-date"] = [giau.CRUD._fieldEditDate,giau.CRUD._fieldEditDate];
-		operationFxn["string-color"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
-		operationFxn["string-array"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
+		operationFxn["string-color"] = [giau.CRUD._fieldEditColor,giau.CRUD._fieldEditColor];
+//		operationFxn["string-array"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
 		operationFxn["string-json"] = [giau.CRUD._fieldEditJSON,giau.CRUD._fieldEditJSON];
 	var operation = operationFxn[fieldType];
 	var updateElementFunction = null;
@@ -4764,7 +4862,7 @@ giau.CRUD._generateSubButton = function(display,element){
 }
 
 giau.InputFieldBoolean = function(element, value){
-	console.log("BOOLEAN");
+	giau.InputFieldBoolean._.constructor.call(this);
 	this._container = element;
 	this.value(value);
 	this._elementCheckbox = Code.newDiv();
@@ -4800,9 +4898,11 @@ giau.InputFieldBoolean = function(element, value){
 	this._jsDispatch = new JSDispatch();
 	this._jsDispatch.addJSEventListener(this._elementCover, Code.JS_EVENT_MOUSE_DOWN, this._handleRectMouseDownFxn, this, {});
 }
+Code.inheritClass(giau.InputFieldBoolean, Dispatchable);
+
+giau.InputFieldBoolean.EVENT_CHANGE = "EVENT_CHANGE";
+
 giau.InputFieldBoolean.prototype._handleRectMouseDownFxn = function(e,f){
-	console.log(e);
-	console.log(f);
 	var value = this._valueBoolean();
 	if(value){
 		this.value("false");
@@ -4810,6 +4910,7 @@ giau.InputFieldBoolean.prototype._handleRectMouseDownFxn = function(e,f){
 		this.value("true");
 	}
 	this._updateFieldFromValue();
+	this.alertAll(giau.InputFieldBoolean.EVENT_CHANGE, this);
 }
 giau.InputFieldBoolean.prototype._updateFieldFromValue = function(){
 	var value = this._dataValue;
@@ -4828,7 +4929,6 @@ giau.InputFieldBoolean.prototype._valueBoolean = function(){
 	return this._dataValue == "true" ? true : false;
 }
 giau.InputFieldBoolean.prototype.value = function(v){
-	console.log(v)
 	if(v!==undefined){
 		if(Code.isString(v)){
 			v = v==="true" ? "true" : "false";
@@ -5042,6 +5142,7 @@ giau.InputFieldColor = function(element, value){
 //		Code.setStyleBackgroundColor(this._colorSquare, Code.getJSColorFromARGB(finalColor));
 
 	this._jsDispatch.addJSEventListener(this._colorField, Code.JS_EVENT_INPUT_CHANGE, this._handleFinalColorFieldChange, this, {});
+		Code.startTrackInputRange(this._colorField, this._jsDispatch);
 
 	var rows = [];
 	var sliders = [];
@@ -5102,9 +5203,8 @@ giau.InputFieldColor = function(element, value){
 		Code.setInputTextValue(elementField, hex);
 		var colorSlider = new giau.InputFieldColorSlider(elementSlider, color, range);
 		colorSlider.addFunction(giau.InputFieldColorSlider.EVENT_COLOR_UPDATE, this._handleColorChange, this, {"index":i});
+			Code.startTrackInputRange(elementField, this._jsDispatch);
 		this._jsDispatch.addJSEventListener(elementField, Code.JS_EVENT_INPUT_CHANGE, this._handleInputFieldChange, this, {"index":i});
-		//this._previousCursorPos = 0;
-		this._jsDispatch.addJSEventListener(elementField, Code.JS_EVENT_KEY_UP, this._handleInputFieldKeyUp, this, {"index":i});
 		cursors.push(0);
 		rows.push(elementRow);
 		fields.push(elementField);
@@ -5130,14 +5230,6 @@ giau.InputFieldColor.prototype._handleFinalColorFieldChange = function(e){
 	this._colorSliders[1].color(grn);
 	this._colorSliders[2].color(blu);
 }
-giau.InputFieldColor.prototype._handleInputFieldKeyUp = function(e,f){
-	var index = f["index"];
-	var elementField = this._elementFields[index];
-	var cursorRange = Code.getInputTextSelectedRange(elementField);
-	var cursorLocation = cursorRange.start;
-	console.log(cursorLocation);
-	this._cursors[index] = this._colorField.selectionStart;
-}
 giau.InputFieldColor.prototype._handleInputFieldChange = function(e,f){
 	console.log("_handleInputFieldChange")
 	//console.log(e)
@@ -5152,16 +5244,31 @@ giau.InputFieldColor.prototype._handleInputFieldChange = function(e,f){
 	colorSlider.color(newValue);
 }
 giau.InputFieldColor.hexFieldUpdateOverwrite = function(elementField,count){
+	var hexBinDigits = count*4;
+	var maxValue = 0;
+	for(var i=0; i<hexBinDigits; ++i){
+		maxValue = (maxValue << 1) | 0x01;
+	}
+	maxValue = maxValue >>> 0;
+
+	var value = Code.inputTextUpdateWithLength(elementField, count, "0", false);
+	// TO HEX
+	var newValue = parseInt(value,16);
+	newValue = Math.min(Math.max(newValue,0),maxValue);
+	if(Code.isNaN(newValue)){
+		newValue = 0;
+	}
+	var displayValue = Code.getHexNumber(newValue, count);
+	Code.setInputTextValue(elementField,displayValue);
+
+return;
+
+
+
 	// IF MULTIPLE VALUES WERE PREVIOUSLY SELECTED, THEY SHOULD ALL BE CUT OUT (not just the 1 assumed or the one to the right)
 	var value = Code.getInputTextValue(elementField);
 	var newValue = value;
 	console.log("VALUE: '"+value+"'")
-
-	// var oldPosStart = this._colorField.selectionStart;
-	// var oldPosEnd = this._colorField.selectionEnd;
-	// console.log(this._colorField);
-	// console.log(this._colorField.selectionStart);
-
 	var cursorRange = Code.getInputTextSelectedRange(elementField);
 	console.log(cursorRange);
 	var cursorPosition = Math.max(cursorRange.start,cursorRange.end);
@@ -5252,7 +5359,6 @@ giau.InputFieldColor.prototype._handleColorChange = function(e,f){
 	var colorSlider = this._colorSliders[index];
 	var hexValue = Code.getHexNumber(colorSlider.color(), 2);
 	Code.setInputTextValue(elementField, hexValue);
-
 	this.updateFinalColorFromColors();
 }
 giau.InputFieldColor.prototype.updateFinalColorFromColors = function(){
@@ -5522,6 +5628,9 @@ giau.InputFieldColorSlider.prototype._updateLayout = function(){
 
 giau.InputFieldDate = function(element, value){
 	this._container = element;
+	if(!value){
+		value = Code.getTimeStampFromMilliseconds();// default to now
+	}
 	this._dateValue = value; // ACTUAL RETURN VALUE
 	var milliseconds = Code.dateFromString(this._dateValue);
 	this._displayDate = Code.getTimeStampFromMilliseconds(milliseconds); // CURRENT DISPLAY CONTEXT
@@ -5627,12 +5736,6 @@ giau.InputFieldDate = function(element, value){
 	Code.setStylePadding(this._elementYear,0+"px");
 	Code.setStyleMargin(this._elementYear,0+"px");
 	Code.setStyleBorderWidth(this._elementYear,0+"px");
-
-
-	// Code.setStyleHeight(this._elementHour,"20px");
-	// Code.setStyleHeight(this._elementMinute,"20px");
-	// Code.setStyleHeight(this._elementSecond,"20px");
-	// Code.setStyleHeight(this._elementMillisecond,"20px");
 	
 
 	Code.setStyleDisplay(this._elementMonthTop,"block");
@@ -5644,7 +5747,11 @@ giau.InputFieldDate = function(element, value){
 	this._jsDispatch.addJSEventListener(this._elementMonthRight, Code.JS_EVENT_MOUSE_DOWN, this._handleMonthRightMouseDownFxn, this);
 	this._jsDispatch.addJSEventListener(this._elementMonthName, Code.JS_EVENT_CHANGE, this._handleMonthSelectFxn, this);
 	this._jsDispatch.addJSEventListener(this._elementYear, Code.JS_EVENT_INPUT_CHANGE, this._handleYearSelectFxn, this);
-	//this._jsDispatch.addJSEventListener(this._elementYear, Code.JS_EVENT_CHANGE, this._handleYearSelectFxn, this);
+	Code.startTrackInputRange(this._elementYear, this._jsDispatch);
+	Code.startTrackInputRange(this._elementHour, this._jsDispatch);
+	Code.startTrackInputRange(this._elementMinute, this._jsDispatch);
+	Code.startTrackInputRange(this._elementSecond, this._jsDispatch);
+	Code.startTrackInputRange(this._elementMillisecond, this._jsDispatch);
 
 	this._updateLayout();
 }
@@ -5691,13 +5798,12 @@ giau.InputFieldDate.prototype._handleFieldChange = function(e,f){
 	console.log("time date: "+this._dateValue);
 	this._updateLayout();
 }
-
 giau.InputFieldDate.prototype._handleYearSelectFxn = function(e){
 	var field = this._elementYear;
-	var year = Code.getInputTextValue(field);
-	year = parseInt(year);
+	var value = Code.inputTextUpdateWithLength(field, 4, "0", true);
+	var year = parseInt(value);
 	year = Code.rangeForceMinMax(year,1900,3000); // year maxes out somewhere
-	Code.setInputTextValue(this._elementYear,""+year);
+	Code.setInputTextValue(field,""+year);
 	// TODO: filter digits & range
 	var milliseconds = Code.dateFromString(this._displayDate);
 	milliseconds = Code.getSetYear(milliseconds, year);
@@ -5882,7 +5988,12 @@ Code.setStyleHeight(col,rowHeight+"px");
 	}
 }
 
-giau.InputFieldDate.prototype.value = function(){
+giau.InputFieldDate.prototype.value = function(v){
+	if(v!==undefined){
+		this._dateValue = v;
+		this._displayDate = this._dateValue; // display the selected date
+		this._updateLayout();
+	}
 	return this._dateValue;
 }
 
@@ -5905,24 +6016,37 @@ giau.InputOverlay = function(){
 	this._elementContent = Code.newDiv();
 	this._parent = Code.documentBody();
 	this._scrollLocation = new V2D();
+	this._killOnExit = false;
 }
 Code.inheritClass(giau.InputOverlay, Dispatchable);
 giau.InputOverlay.EVENT_SHOW = "SHOW";
 giau.InputOverlay.EVENT_HIDE = "HIDE";
-giau.InputOverlay.EVENT_EXIT_OUTSIDE = "EXIT_OUTSIDE";
-giau.InputOverlay.EVENT_LAYOUT_CHANGE = "LAYOUT_CHANGE";
+giau.InputOverlay.EVENT_EXIT = "EXIT_OUTSIDE";
+giau.InputOverlay.EVENT_LAYOUT = "LAYOUT_CHANGE";
 
 giau.InputOverlay.prototype._handleScrollFxn = function(e,f){
-	Code.stopEventPropagation(e);
-	Code.eventPreventDefault(e);
+	return;
+	// does nothing
+	// Code.stopEventPropagation(e);
+	// Code.eventPreventDefault(e);
 	var left = this._scrollLocation.x;
 	var top = this._scrollLocation.y;
 	// disable swiping:
 	window.scrollTo(left,top); // reposition to before-scroll location
 }
 giau.InputOverlay.prototype._handleCoverMouseDownFxn = function(e,f){
-	this.alertAll(giau.InputOverlay.EVENT_EXIT_OUTSIDE, this);
+	var target = Code.getTargetFromEvent(e);
+	if(target!==this._elementCover && target!==this._elementContent){
+		return;
+	}
+	this.alertAll(giau.InputOverlay.EVENT_EXIT, this);
 	this.hide();
+	if(this._killOnExit){
+		this.kill();
+	}
+}
+giau.InputOverlay.prototype.elementContainer = function(){
+	return this._elementContent;
 }
 giau.InputOverlay.prototype.show = function(){
 	// record state
@@ -5936,7 +6060,7 @@ giau.InputOverlay.prototype.show = function(){
 		Code.addChild(this._elementCover,this._elementContent);
 	this._addListeners();
 	this.alertAll(giau.InputOverlay.EVENT_SHOW, this);
-	this._updateLayout();
+	this.updateLayout();
 }
 giau.InputOverlay.prototype.hide = function(){
 	Code.removeFromParent(this._elementCover);
@@ -5949,17 +6073,26 @@ giau.InputOverlay.prototype.hide = function(){
 }
 giau.InputOverlay.prototype.updateLayout = function(){
 	this._updateLayout();
-	this.alertAll(giau.InputOverlay.EVENT_LAYOUT_CHANGE, this);
+	this.alertAll(giau.InputOverlay.EVENT_LAYOUT, this);
 }
 giau.InputOverlay.prototype.centerContent = function(){
-	this._updateLayout();
+	this.updateLayout();
 	// now do centering:
 	//Code.setStyleMarginLeft(this._content,"");
 }
 giau.InputOverlay.prototype._updateLayout = function(){
+	// set to 0 pre-test
+	Code.removeFromParent(this._elementCover);
+	// Code.setStyleLeft(this._elementCover,0+"px");
+	// Code.setStyleTop(this._elementCover,0+"px");
+	// Code.setStyleWidth(this._elementCover,0+"px");
+	// Code.setStyleHeight(this._elementCover,0+"px");
+	// get real size
 	var parent = this._parent;
 	var parentWidth = Code.getElementWidth(parent);
 	var parentHeight = Code.getElementHeight(parent);
+	// apply
+		Code.addChild(parent,this._elementCover);
 	Code.setStyleBackgroundColor(this._elementCover,Code.getJSColorFromARGB(0xCC000000));
 	Code.setStylePosition(this._elementCover,"absolute");
 	Code.setStyleLeft(this._elementCover,0+"px");
@@ -5967,14 +6100,56 @@ giau.InputOverlay.prototype._updateLayout = function(){
 	Code.setStyleWidth(this._elementCover,parentWidth+"px");
 	Code.setStyleHeight(this._elementCover,parentHeight+"px");
 	Code.setStyleZIndex(this._elementCover,Code.INT_MAX_VALUE+"");
+	//
+	this._setContentToViewport();
+}
+giau.InputOverlay.prototype._setContentToViewport = function(){
+		var insetSize = 10;
+		var windowSize = Code.getWindowSize();
+		var pageSize = Code.getPageSize();
+		var scrollLocation = Code.getPageScrollLocation();
+			var left = scrollLocation["left"];
+			var top = scrollLocation["top"];
+		
+//		console.log("con siz "+contentWidth+" "+contentHeight);
+		var pageWidth = pageSize["width"];
+		var pageHeight = pageSize["height"];
+//		console.log("pag siz "+pageWidth+" "+pageHeight);
+		var windowWidth = windowSize["width"];
+		var windowHeight = windowSize["height"];
+//		console.log("win siz "+windowWidth+" "+windowHeight);
+		var windowOffsetLeft = scrollLocation["left"];
+		var windowOffsetTop = scrollLocation["top"];
+//		console.log("win off "+windowOffsetLeft+" "+windowOffsetTop);
+
+		var offsetLeft = windowOffsetLeft + insetSize; // windowOffsetLeft + Math.floor((windowWidth-contentWidth)*0.5);
+		var offsetTop = windowOffsetTop + insetSize; // windowOffsetTop + Math.floor((windowHeight-contentHeight)*0.5);
+		var contentWidth = windowWidth - insetSize*2;
+		var contentHeight = windowHeight - insetSize*2;
+		var element = this._elementContent;
+		Code.setStyleWidth(element,contentWidth+"px");
+		Code.setStyleHeight(element,contentHeight+"px");
+		Code.setStyleBackgroundColor(element,Code.getJSColorFromARGB(0x00000000));
+		Code.setStyleDisplay(element,"inline-block");
+		Code.setStylePosition(element,"relative");
+		Code.setStyleTop(element,offsetTop+"px");
+		Code.setStyleLeft(element,offsetLeft+"px");
+		Code.setStyleTextAlign(element,"center");
+		Code.setStyleVerticalAlign(element,"middle");
 }
 giau.InputOverlay.prototype._addListeners = function(){
 	this._jsDispatch.addJSEventListener(Code.getWindow(), Code.JS_EVENT_SCROLL, this._handleScrollFxn, this);
 	this._jsDispatch.addJSEventListener(this._elementCover, Code.JS_EVENT_MOUSE_DOWN, this._handleCoverMouseDownFxn, this);
+	this._jsDispatch.addJSEventListener(Code.getWindow(), Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
 }
 giau.InputOverlay.prototype._removeListeners = function(){
 	this._jsDispatch.removeJSEventListener(Code.getWindow(), Code.JS_EVENT_SCROLL, this._handleScrollFxn, this);
 	this._jsDispatch.removeJSEventListener(this._elementCover, Code.JS_EVENT_MOUSE_DOWN, this._handleCoverMouseDownFxn, this);
+	this._jsDispatch.removeJSEventListener(Code.getWindow(), Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
+}
+giau.InputOverlay.prototype._handleWindowResizedFxn = function(e){
+	console.log("_handleWindowResizedFxn")
+	this.updateLayout();
 }
 giau.InputOverlay.prototype.kill = function(){
 	Code.removeChild(this._elementContent);

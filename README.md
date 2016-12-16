@@ -4,12 +4,9 @@
 
 ###TODO
 
-- primitive picking
-	- click on input => overlay
-		- click away => cancel
-			=> handle cancel
-		- click OK => update
-			=> handle ok
+	- add new type handling for primitives
+		=> rows
+		=> config
 
 ADMIN PAGES:
 	- choose from library of widgets
