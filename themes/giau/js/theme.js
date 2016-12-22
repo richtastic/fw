@@ -3066,7 +3066,6 @@ giau.ObjectComposer.prototype.newSubElement = function(element,name,type, contai
 		holder = element;
 	}else if(type=="primitive"){
 		var value = container[field];
-
 		console.log(container);
 		var fieldType = model[field]["type"];
 		var fieldValue = container[field];
@@ -3075,7 +3074,16 @@ giau.ObjectComposer.prototype.newSubElement = function(element,name,type, contai
 			console.log("BOOLEAN");
 			var input = this._inputBooleanField(div,field, value);
 			holder = element;
-		} else {
+		}else if(giau.ObjectComposer.isFieldTypeColor(fieldType)){
+			console.log("COLOR");
+			var input = this._inputColorField(div,field, value);
+			holder = element;
+		}else if(giau.ObjectComposer.isFieldTypeDate(fieldType)){
+			console.log("RICHIE - DATE A");
+			var input = this._inputDateField(div,field, value);
+			console.log("RICHIE - DATE B");
+			holder = element;
+		}else{
 			var input = this._inputTextField(div,field, value);
 			label = input["container"];
 			var textElement = input["input"];
@@ -3084,6 +3092,7 @@ giau.ObjectComposer.prototype.newSubElement = function(element,name,type, contai
 			holder = element;
 		}
 	}
+
 	if(label && holder && isReallyArray){
 		var button = this._interactActionButton("&nbsp;-&nbsp;");
 			Code.addChild(label,button);
@@ -3165,10 +3174,48 @@ giau.ObjectComposer.fieldTypeArraySubtype = function(s){
 	return arraySubType;
 }
 
+giau.ObjectComposer.prototype._handlePrimitiveDateUpdate = function(e,f){
+	console.log("_handlePrimitiveColorUpdate");
+	console.log(e);
+	console.log(f);
+}
+
+giau.ObjectComposer.prototype._handlePrimitiveColorUpdate = function(e,f){
+	console.log("_handlePrimitiveColorUpdate");
+	console.log(e);
+	console.log(f);
+}
+
 giau.ObjectComposer.prototype._handlePrimitiveBooleanUpdate = function(e,f){
 	console.log("_handlePrimitiveBooleanUpdate");
 	console.log(e);
 	console.log(f);
+}
+
+giau.ObjectComposer.prototype._inputDateField = function(element, key,value){
+	var input = Code.newDiv();
+		Code.setStyleWidth(input,200+"px");
+		Code.setStyleHeight(input,80+"px");
+		Code.setStyleBackgroundColor(input,"#F00");
+		Code.setStyleDisplay(input,"inline-block");
+		var jsObject = new giau.InputFieldDate(input,value);
+			var data = {};
+//			jsObject.addFunction(giau.InputFieldBoolean.EVENT_CHANGE, this._handlePrimitiveDateUpdate, this, data);
+	var content = this._inputField(element,input, key);
+	return {"container":content, "input":input};
+}
+
+giau.ObjectComposer.prototype._inputColorField = function(element, key,value){
+	var input = Code.newDiv();
+		Code.setStyleWidth(input,200+"px");
+		Code.setStyleHeight(input,80+"px");
+		Code.setStyleBackgroundColor(input,"#F00");
+		Code.setStyleDisplay(input,"inline-block");
+		var jsObject = new giau.InputFieldColor(input,value);
+			var data = {};
+//			jsObject.addFunction(giau.InputFieldBoolean.EVENT_CHANGE, this._handlePrimitiveColorUpdate, this, data);
+	var content = this._inputField(element,input, key);
+	return {"container":content, "input":input};
 }
 
 giau.ObjectComposer.prototype._inputBooleanField = function(element, key,value){
@@ -3180,8 +3227,6 @@ giau.ObjectComposer.prototype._inputBooleanField = function(element, key,value){
 		var jsObject = new giau.InputFieldBoolean(input,value);
 			var data = {};
 			jsObject.addFunction(giau.InputFieldBoolean.EVENT_CHANGE, this._handlePrimitiveBooleanUpdate, this, data);
-		//this._jsDispatch.addJSEventListener(textElement, Code.JS_EVENT_INPUT_CHANGE, this._handlePrimitiveUpdate, this, data);
-
 	var content = this._inputField(element,input, key);
 	return {"container":content, "input":input};
 }
@@ -3249,6 +3294,9 @@ giau.ObjectComposer.prototype.defaultInputRowLabel = function(element, title){
 	Code.setStyleDisplay(div,"inline-block");
 	Code.setStyleColor(div,"#FFF");
 	Code.setStyleFontSize(div,12+"px");
+
+	Code.setStyleVerticalAlign(div,"top");
+
 	if(element){
 		Code.addChild(element,div);
 	}
@@ -4862,6 +4910,7 @@ giau.CRUD._generateSubButton = function(display,element){
 }
 
 giau.InputFieldBoolean = function(element, value){
+	console.log(this)
 	giau.InputFieldBoolean._.constructor.call(this);
 	this._container = element;
 	this.value(value);
@@ -4940,6 +4989,8 @@ giau.InputFieldBoolean.prototype.value = function(v){
 	return this._dataValue;
 }
 giau.InputFieldDuration = function(element, value){
+	console.log(this)
+	giau.InputFieldDuration._.constructor.call(this);
 	this._container = element;
 	this.value(value);
 	this._fieldYears = Code.newInputText("years");
@@ -5002,6 +5053,7 @@ giau.InputFieldDuration = function(element, value){
 	this._updateFieldsFromValue();
 	this._updateValueFromFields();
 }
+Code.inheritClass(giau.InputFieldDuration, Dispatchable);
 giau.InputFieldDuration.prototype._handleFieldChangeFxn = function(e,f){
 	var index = f["index"];
 	this._updateFilterFields();
@@ -5087,6 +5139,9 @@ giau.InputFieldDuration.prototype.value = function(v){
 // }
 
 giau.InputFieldColor = function(element, value){
+	console.log(this)
+	giau.InputFieldColor._.constructor.call(this);
+	console.log("NEXT")
 	this._container = element;
 	this._colorValue = Code.isString(value) ? Code.getColARGBFromString(value) : value;
 
@@ -5102,7 +5157,7 @@ giau.InputFieldColor = function(element, value){
 	var fieldTop = Math.round((rowHeight - fieldHeight)*0.5);
 
 	this._jsDispatch = new JSDispatch();
-
+console.log("...")
 	var finalColor = this.value();
 	var squareSize = 20;
 	this._colorRow = Code.newDiv();
@@ -5153,6 +5208,7 @@ giau.InputFieldColor = function(element, value){
 	var i, len;
 	len = colorFields.length;
 	for(i=0; i<len; ++i){
+console.log("FIELD: "+i)
 		var color = colorFields[i];
 		var range = colorRanges[i];
 
@@ -5210,7 +5266,6 @@ giau.InputFieldColor = function(element, value){
 		fields.push(elementField);
 		sliders.push(colorSlider);
 	}
-
 	this._elementRows = rows;
 	this._elementFields = fields;
 	this._colorSliders = sliders;
@@ -5218,6 +5273,7 @@ giau.InputFieldColor = function(element, value){
 
 	this.updateFinalColorFromColors();
 }
+Code.inheritClass(giau.InputFieldColor, Dispatchable);
 
 giau.InputFieldColor.prototype._handleFinalColorFieldChange = function(e){
 	var col = giau.InputFieldColor.hexFieldUpdateOverwrite(this._colorField, 8);
@@ -5232,8 +5288,6 @@ giau.InputFieldColor.prototype._handleFinalColorFieldChange = function(e){
 }
 giau.InputFieldColor.prototype._handleInputFieldChange = function(e,f){
 	console.log("_handleInputFieldChange")
-	//console.log(e)
-	//console.log(f)
 	var index = f["index"];
 	var elementField = this._elementFields[index];
 	var cursorLocationPrev = this._cursors[index];
@@ -5261,10 +5315,8 @@ giau.InputFieldColor.hexFieldUpdateOverwrite = function(elementField,count){
 	var displayValue = Code.getHexNumber(newValue, count);
 	Code.setInputTextValue(elementField,displayValue);
 
-return;
-
-
-
+return newValue;
+/*
 	// IF MULTIPLE VALUES WERE PREVIOUSLY SELECTED, THEY SHOULD ALL BE CUT OUT (not just the 1 assumed or the one to the right)
 	var value = Code.getInputTextValue(elementField);
 	var newValue = value;
@@ -5327,29 +5379,7 @@ return;
 		Code.setInputTextSelectedRange(elementField,newCursorLocation,newCursorLocation);
 		//Code.setInputTextSelectedRange(elementField,1,1);
 	//}
-
-	/*
-	// IF THE CURSOR IS ON THE LEFT -- 
-	// IF CURSOR IS ON THE RIGHT --
-	if(newValue.length>=2){ // get right end
-		//newValue = value.substring(0,2);
-		newValue = value.substring(value.length-2,value.length);
-	}else{ // pad left end
-		newValue = Code.prependFixed(newValue,"0",2)
-	}
-	console.log(newValue)
-	newValue = parseInt(newValue,16);
-	if(Code.isNaN(newValue)){
-		newValue = 0;
-	}
-	newValue = Math.min(Math.max(newValue,0),255);
-
-	var displayValue = Code.getHexNumber(newValue, 2);
-	if(displayValue!==value){
-		Code.setInputTextValue(elementField,displayValue);
-	}
-	colorSlider.color(newValue);
-	*/
+*/
 	return newValue;
 }
 giau.InputFieldColor.prototype._handleColorChange = function(e,f){
@@ -5627,6 +5657,8 @@ giau.InputFieldColorSlider.prototype._updateLayout = function(){
 }
 
 giau.InputFieldDate = function(element, value){
+	console.log(this)
+	giau.InputFieldDate._.constructor.call(this);
 	this._container = element;
 	if(!value){
 		value = Code.getTimeStampFromMilliseconds();// default to now
@@ -5755,6 +5787,8 @@ giau.InputFieldDate = function(element, value){
 
 	this._updateLayout();
 }
+Code.inheritClass(giau.InputFieldDate, Dispatchable);
+
 giau.InputFieldDate.prototype._handleFieldChange = function(e,f){
 	var field = f["field"];
 	//this._updateValueFromFields();
