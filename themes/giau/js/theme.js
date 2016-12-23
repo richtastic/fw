@@ -2977,18 +2977,6 @@ giau.ObjectComposer.prototype._handleDeleteArrayItem = function(e,d){
 	this.fillOutModelFromElement(superModel[0],superModel[1],superModel[2],superModel[3]);
 }
 
-giau.ObjectComposer.prototype._handlePrimitiveUpdate = function(e,d){
-	console.log("_handlePrimitiveUpdate");
-	var element = d["element"];
-	var container = d["container"];
-	var field = d["field"];
-	var model = d["model"];
-	var inputElement = d["input"];
-	var value = Code.getInputTextValue(inputElement);
-	container[field] = value; // update data object
-	console.log(this._dataInstance);
-}
-
 giau.ObjectComposer.prototype.fillOutModelFromElementArray = function(element,modelFieldInfo,array,field, superModel){
 	var modelFieldType = modelFieldInfo["type"];
 	var modelSubType = giau.ObjectComposer.fieldTypeArraySubtype(modelFieldType);
@@ -3071,24 +3059,20 @@ giau.ObjectComposer.prototype.newSubElement = function(element,name,type, contai
 		var fieldValue = container[field];
 		console.log(fieldValue);
 		if(giau.ObjectComposer.isFieldTypeBoolean(fieldType)){
-			console.log("BOOLEAN");
-			var input = this._inputBooleanField(div,field, value);
+			console.log("BOOLEAN "+value);
+			var input = this._inputBooleanField(div,field, value, container);
 			holder = element;
 		}else if(giau.ObjectComposer.isFieldTypeColor(fieldType)){
-			console.log("COLOR");
-			var input = this._inputColorField(div,field, value);
+			console.log("COLOR "+value);
+			var input = this._inputColorField(div,field, value, container);
 			holder = element;
 		}else if(giau.ObjectComposer.isFieldTypeDate(fieldType)){
-			console.log("RICHIE - DATE A");
-			var input = this._inputDateField(div,field, value);
-			console.log("RICHIE - DATE B");
+			console.log("DATE "+value);
+			var input = this._inputDateField(div,field, value, container);
 			holder = element;
 		}else{
-			var input = this._inputTextField(div,field, value);
-			label = input["container"];
-			var textElement = input["input"];
-				var data = {"element": element, "input":textElement, "container": container, "field": field};
-				this._jsDispatch.addJSEventListener(textElement, Code.JS_EVENT_INPUT_CHANGE, this._handlePrimitiveUpdate, this, data);
+			var input = this._inputTextField(div,field, value, container);
+			// label = ?
 			holder = element;
 		}
 	}
@@ -3174,64 +3158,96 @@ giau.ObjectComposer.fieldTypeArraySubtype = function(s){
 	return arraySubType;
 }
 
+
+giau.ObjectComposer.prototype._handlePrimitiveTextUpdate = function(e,d){
+	// console.log("_handlePrimitiveUpdate");
+	// var element = d["element"];
+	// var container = d["container"];
+	// var field = d["field"];
+	// var model = d["model"];
+	// var inputElement = d["input"];
+	// var value = Code.getInputTextValue(inputElement);
+	// container[field] = value; // update data object
+	// console.log(this._dataInstance);
+	console.log("_handlePrimitiveTextUpdate");
+	this._handlePrimitiveUpdateAny(d);
+}
+
+
 giau.ObjectComposer.prototype._handlePrimitiveDateUpdate = function(e,f){
 	console.log("_handlePrimitiveColorUpdate");
-	console.log(e);
-	console.log(f);
+	this._handlePrimitiveUpdateAny(e);
 }
 
 giau.ObjectComposer.prototype._handlePrimitiveColorUpdate = function(e,f){
 	console.log("_handlePrimitiveColorUpdate");
-	console.log(e);
-	console.log(f);
+	this._handlePrimitiveUpdateAny(e);
 }
 
 giau.ObjectComposer.prototype._handlePrimitiveBooleanUpdate = function(e,f){
 	console.log("_handlePrimitiveBooleanUpdate");
-	console.log(e);
-	console.log(f);
+	this._handlePrimitiveUpdateAny(e);
+}
+giau.ObjectComposer.prototype._handlePrimitiveUpdateAny = function(e){
+	var control = e["control"];
+	var object = e["object"];
+	var key = e["key"];
+	var value = e["value"]; // beginning old value
+	var newValue = null;
+	console.log(control)
+	console.log( control.value )
+	if( e["isElement"] ){//!Code.isObject(control) ){ // text field has no object
+		var input = control;
+		newValue = Code.getInputTextValue(input);
+	}else{
+		newValue = control.value();
+	}
+	object[key] = newValue;
+	console.log("NEW VALUE: "+newValue);
+	console.log(object);
 }
 
-giau.ObjectComposer.prototype._inputDateField = function(element, key,value){
+giau.ObjectComposer.prototype._inputDateField = function(element, key,value, container){
 	var input = Code.newDiv();
 		Code.setStyleWidth(input,200+"px");
-		Code.setStyleHeight(input,80+"px");
+		Code.setStyleHeight(input,120+"px");
 		Code.setStyleBackgroundColor(input,"#F00");
 		Code.setStyleDisplay(input,"inline-block");
 		var jsObject = new giau.InputFieldDate(input,value);
-			var data = {};
-//			jsObject.addFunction(giau.InputFieldBoolean.EVENT_CHANGE, this._handlePrimitiveDateUpdate, this, data);
+			var data = {"object":container, "key":key, "value":value, "control":jsObject};
+			jsObject.addFunction(giau.InputFieldDate.EVENT_CHANGE, this._handlePrimitiveDateUpdate, this, data);
 	var content = this._inputField(element,input, key);
 	return {"container":content, "input":input};
 }
 
-giau.ObjectComposer.prototype._inputColorField = function(element, key,value){
+giau.ObjectComposer.prototype._inputColorField = function(element, key,value, container){
 	var input = Code.newDiv();
 		Code.setStyleWidth(input,200+"px");
 		Code.setStyleHeight(input,80+"px");
 		Code.setStyleBackgroundColor(input,"#F00");
 		Code.setStyleDisplay(input,"inline-block");
 		var jsObject = new giau.InputFieldColor(input,value);
-			var data = {};
-//			jsObject.addFunction(giau.InputFieldBoolean.EVENT_CHANGE, this._handlePrimitiveColorUpdate, this, data);
+			var data = {"object":container, "key":key, "value":value, "control":jsObject};
+jsObject.addFunction(giau.InputFieldColor.EVENT_CHANGE, this._handlePrimitiveColorUpdate, this, data);
 	var content = this._inputField(element,input, key);
 	return {"container":content, "input":input};
 }
 
-giau.ObjectComposer.prototype._inputBooleanField = function(element, key,value){
+giau.ObjectComposer.prototype._inputBooleanField = function(element, key,value, container){
+	// MAPPING?
 	var input = Code.newDiv();
 		Code.setStyleWidth(input,100+"px");
 		Code.setStyleHeight(input,20+"px");
 		Code.setStyleBackgroundColor(input,"#F00");
 		Code.setStyleDisplay(input,"inline-block");
 		var jsObject = new giau.InputFieldBoolean(input,value);
-			var data = {};
+			var data = {"object":container, "key":key, "value":value, "control":jsObject};
 			jsObject.addFunction(giau.InputFieldBoolean.EVENT_CHANGE, this._handlePrimitiveBooleanUpdate, this, data);
 	var content = this._inputField(element,input, key);
 	return {"container":content, "input":input};
 }
 
-giau.ObjectComposer.prototype._inputTextField = function(element, key,value){
+giau.ObjectComposer.prototype._inputTextField = function(element, key,value, container){
 	var radius = 4;
 	var input = Code.newInputText();
 		Code.setStyleBorder(input,"solid");
@@ -3245,9 +3261,17 @@ giau.ObjectComposer.prototype._inputTextField = function(element, key,value){
 		Code.setStyleFontSize(input,11+"px");
 		Code.setTextPlaceholder(input,"(empty)");
 	if(value){
-		console.log("SET  "+value);
 		Code.setInputTextValue(input,value);
 	}
+
+			//label = input["container"];
+			// var textElement = input["input"];
+			// 	var data = {"element": element, "input":textElement, "container": container, "field": field};
+			// 	this._jsDispatch.addJSEventListener(textElement, Code.JS_EVENT_INPUT_CHANGE, this._handlePrimitiveTextUpdate, this, data);
+				var jsObject = input;
+				var data = {"object":container, "key":key, "value":value, "control":jsObject};
+					data["isElement"] = true;
+				this._jsDispatch.addJSEventListener(input, Code.JS_EVENT_INPUT_CHANGE, this._handlePrimitiveTextUpdate, this, data);
 
 	var content = this._inputField(element,input, key);
 	return {"container":content, "input":input};
@@ -4512,13 +4536,11 @@ giau.CRUD._boxActionClose = function(event){
 }
 
 giau.CRUD._fieldEditDate = function(definition, container, fieldName, elementContainer, mapping){
-	console.log("RICHIE - _fieldEditDate");
 	var elementText = giau.CRUD._elementSelectDate(mapping);
 		Code.addChild(elementContainer,elementText);
 }
 
 giau.CRUD._fieldEditColor = function(definition, container, fieldName, elementContainer, mapping){
-	console.log("RICHIE - _fieldEditColor");
 	var elementText = giau.CRUD._elementSelectDate(mapping);
 		Code.addChild(elementContainer,elementText);
 }
@@ -4909,6 +4931,30 @@ giau.CRUD._generateSubButton = function(display,element){
 	return div;
 }
 
+
+giau.InputFieldText = function(element, value){ // string, string-number
+	// [0-9]+(\.[0-9]+)?(E|e)?(\+|\-)?([0-9]+)?
+
+HERE
+
+	this._criteria = 0;
+	this._criteriaMinLength = 2; // alert?
+	this._criteriaMaxLength = 10; // chop
+	this._criteriaNumber = 0; // either:
+		this._criteriaFloat = 0; // A.B[e|E[]]
+		this._criteriaInteger = 0; // A^
+	console.log("InputFieldText");
+	console.log(this)
+	giau.InputFieldText._.constructor.call(this);
+	this._container = element;
+}
+Code.inheritClass(giau.InputFieldText, Dispatchable);
+
+giau.InputFieldText.EVENT_CHANGE = "giau.InputFieldText.EVENT_CHANGE";
+
+
+
+
 giau.InputFieldBoolean = function(element, value){
 	console.log(this)
 	giau.InputFieldBoolean._.constructor.call(this);
@@ -5139,9 +5185,8 @@ giau.InputFieldDuration.prototype.value = function(v){
 // }
 
 giau.InputFieldColor = function(element, value){
-	console.log(this)
+	console.log("giau.InputFieldColor")
 	giau.InputFieldColor._.constructor.call(this);
-	console.log("NEXT")
 	this._container = element;
 	this._colorValue = Code.isString(value) ? Code.getColARGBFromString(value) : value;
 
@@ -5157,7 +5202,6 @@ giau.InputFieldColor = function(element, value){
 	var fieldTop = Math.round((rowHeight - fieldHeight)*0.5);
 
 	this._jsDispatch = new JSDispatch();
-console.log("...")
 	var finalColor = this.value();
 	var squareSize = 20;
 	this._colorRow = Code.newDiv();
@@ -5261,6 +5305,7 @@ console.log("FIELD: "+i)
 		colorSlider.addFunction(giau.InputFieldColorSlider.EVENT_COLOR_UPDATE, this._handleColorChange, this, {"index":i});
 			Code.startTrackInputRange(elementField, this._jsDispatch);
 		this._jsDispatch.addJSEventListener(elementField, Code.JS_EVENT_INPUT_CHANGE, this._handleInputFieldChange, this, {"index":i});
+
 		cursors.push(0);
 		rows.push(elementRow);
 		fields.push(elementField);
@@ -5274,6 +5319,8 @@ console.log("FIELD: "+i)
 	this.updateFinalColorFromColors();
 }
 Code.inheritClass(giau.InputFieldColor, Dispatchable);
+
+giau.InputFieldColor.EVENT_CHANGE = "giau.InputFieldColor.EVENT_CHANGE";
 
 giau.InputFieldColor.prototype._handleFinalColorFieldChange = function(e){
 	var col = giau.InputFieldColor.hexFieldUpdateOverwrite(this._colorField, 8);
@@ -5292,10 +5339,9 @@ giau.InputFieldColor.prototype._handleInputFieldChange = function(e,f){
 	var elementField = this._elementFields[index];
 	var cursorLocationPrev = this._cursors[index];
 	var colorSlider = this._colorSliders[index];
-
-
 	var newValue = giau.InputFieldColor.hexFieldUpdateOverwrite(elementField, 2);
 	colorSlider.color(newValue);
+this.alertAll(giau.InputFieldColor.EVENT_CHANGE, this);
 }
 giau.InputFieldColor.hexFieldUpdateOverwrite = function(elementField,count){
 	var hexBinDigits = count*4;
@@ -5390,6 +5436,7 @@ giau.InputFieldColor.prototype._handleColorChange = function(e,f){
 	var hexValue = Code.getHexNumber(colorSlider.color(), 2);
 	Code.setInputTextValue(elementField, hexValue);
 	this.updateFinalColorFromColors();
+this.alertAll(giau.InputFieldColor.EVENT_CHANGE, this);
 }
 giau.InputFieldColor.prototype.updateFinalColorFromColors = function(){
 	var alp = this._colorSliders[3].color();
@@ -5484,14 +5531,17 @@ giau.InputFieldColorSlider = function(element, color, ranges){
 
 	this._hitArea = Code.newDiv();
 	Code.addChild(this._container,this._hitArea);
+	// or this._background
 	Code.setStylePosition(this._hitArea, "absolute");
 	Code.setStyleBackgroundColor(this._hitArea, Code.getJSColorFromARGB(0x00FF0000));
+	Code.setStyleLeft(this._hitArea, 0+"px");
+	Code.setStyleTop(this._hitArea, 0+"px");
+	Code.setStyleWidth(this._hitArea, "100%");
+	Code.setStyleHeight(this._hitArea, "100%");
 
-
-this._padding = 3;
+	this._padding = 3;
 
 	this._jsDispatch = new JSDispatch();
-
 	this._jsDispatch.addJSEventListener(this._hitArea, Code.JS_EVENT_MOUSE_DOWN, this._handleBackgroundMouseDownFxn, this, {});
 	this._jsDispatch.addJSEventListener(this._hitArea, Code.JS_EVENT_MOUSE_UP, this._handleBackgroundMouseUpFxn, this, {});
 
@@ -5500,7 +5550,7 @@ this._padding = 3;
 }
 Code.inheritClass(giau.InputFieldColorSlider, Dispatchable);
 
-giau.InputFieldColorSlider.EVENT_COLOR_UPDATE = "color";
+giau.InputFieldColorSlider.EVENT_COLOR_UPDATE = "EVENT_COLOR_UPDATE";
 giau.InputFieldColorSlider.prototype.color = function(c){
 	if(c!==undefined){
 		if(c!==this._color){
@@ -5622,19 +5672,11 @@ giau.InputFieldColorSlider.prototype._updateLayout = function(){
 	d.graphics().fill();
 	
 	var img = stage.getDOAsImage(d, wid,hei, null);
-	//Code.addChild(this._container,img);
-	
 	// create bg to fit:
 	var bgImage = img.src;
-//	console.log(bgImage);
 	var base64URL = "url('"+bgImage+"')";
-//		console.log(base64URL);
-	//Code.setStyleBackgroundImage(this._background,base64RL);
-	//Code.setStyleBackgroundImage(this._background,base64URL);
-// ranges[0]
 	Code.setStyleHeight(this._background,"100%");
 	Code.setStyleWidth(this._background,"100%");
-	//Code.setStyleBackgroundImage(this._background,"url('http://www.twogag.com/comics/2016-11-30-TGAG_712_Meant_To_be.jpg')");
 	Code.setStyleBackgroundImage(this._background,base64URL);	
 	Code.setStyleBackgroundImageFill(this._background);
 	Code.setStyleBackgroundImageRepeat(this._background);
@@ -5644,16 +5686,12 @@ giau.InputFieldColorSlider.prototype._updateLayout = function(){
 	var padding = 3;
 	var areaWidth = backgroundWidth + padding*2;
 	var areaHeight = backgroundHeight + padding*2;
-	console.log(backgroundWidth,backgroundHeight)
 	
 
-	Code.setStyleWidth(this._hitArea, areaWidth+"px");
-	Code.setStyleHeight(this._hitArea, areaHeight+"px");
-	Code.setStyleLeft(this._hitArea, -padding+"px");
-	Code.setStyleTop(this._hitArea, -padding+"px");
-
-	console.log(this._background)
-	console.log(this._hitArea)
+	// Code.setStyleWidth(this._hitArea, areaWidth+"px");
+	// Code.setStyleHeight(this._hitArea, areaHeight+"px");
+	// Code.setStyleLeft(this._hitArea, -padding+"px");
+	// Code.setStyleTop(this._hitArea, -padding+"px");
 }
 
 giau.InputFieldDate = function(element, value){
@@ -5789,6 +5827,8 @@ giau.InputFieldDate = function(element, value){
 }
 Code.inheritClass(giau.InputFieldDate, Dispatchable);
 
+giau.InputFieldDate.EVENT_CHANGE = "giau.InputFieldDate.EVENT_CHANGE"
+
 giau.InputFieldDate.prototype._handleFieldChange = function(e,f){
 	var field = f["field"];
 	//this._updateValueFromFields();
@@ -5831,6 +5871,11 @@ giau.InputFieldDate.prototype._handleFieldChange = function(e,f){
 	this._dateValue = Code.getTimeStampFromMilliseconds(milliseconds);
 	console.log("time date: "+this._dateValue);
 	this._updateLayout();
+
+	this._alertChanged();	
+}
+giau.InputFieldDate.prototype._alertChanged = function(){
+	this.alertAll(giau.InputFieldDate.EVENT_CHANGE, this);
 }
 giau.InputFieldDate.prototype._handleYearSelectFxn = function(e){
 	var field = this._elementYear;
@@ -5843,6 +5888,8 @@ giau.InputFieldDate.prototype._handleYearSelectFxn = function(e){
 	milliseconds = Code.getSetYear(milliseconds, year);
 	this._displayDate = Code.getTimeStampFromMilliseconds(milliseconds);
 	this._updateLayout();
+
+	this._alertChanged();
 }
 giau.InputFieldDate.prototype._handleMonthSelectFxn = function(e){
 	var month = Code.getSelected(this._elementMonthName);
@@ -5851,6 +5898,8 @@ giau.InputFieldDate.prototype._handleMonthSelectFxn = function(e){
 	milliseconds = Code.getSetMonth(milliseconds, month);
 	this._displayDate = Code.getTimeStampFromMilliseconds(milliseconds);
 	this._updateLayout();
+
+	this._alertChanged();
 }
 giau.InputFieldDate.prototype._handleMonthLeftMouseDownFxn = function(e){ // subtract month
 	var milliseconds = Code.dateFromString(this._displayDate);
@@ -5865,14 +5914,6 @@ giau.InputFieldDate.prototype._handleMonthRightMouseDownFxn = function(e){ // ad
 	this._updateLayout();
 }
 giau.InputFieldDate.prototype._handleDayMouseDownFxn = function(e, f){ // new date
-	/*
-	this._dateValue = "2016-11-28 20:40:59.6710";
-	console.log("mouse down date 1: "+this._dateValue);
-	var milliseconds = Code.dateFromString(this._dateValue);
-	this._dateValue = Code.getTimeStampFromMilliseconds(milliseconds);
-	console.log("mouse down date 2: "+this._dateValue);
-	this._updateLayout();
-	*/
 	var year = f["year"];
 	var month = f["month"];
 	var day = f["day"];
@@ -5883,6 +5924,8 @@ giau.InputFieldDate.prototype._handleDayMouseDownFxn = function(e, f){ // new da
 		milliseconds = Code.getSetYear(milliseconds, year);
 	this._dateValue = Code.getTimeStampFromMilliseconds(milliseconds);
 	this._updateLayout();
+
+	this._alertChanged();
 }
 
 giau.InputFieldDate.prototype._updateLayout = function(){
@@ -5918,19 +5961,14 @@ giau.InputFieldDate.prototype._updateLayout = function(){
 	var displayMonth = Code.getMonthOfYear(milliseconds);
 	var daysInMonth = Code.getDaysInMonth(milliseconds);
 	var firstDayOfMonth = Code.getFirstDayOfWeekInMonth(milliseconds);
-console.log(displayMonth)
-var monthDisplay = this._monthsOfYear[displayMonth];
-console.log(monthDisplay);
-var monthDisplayValue = monthDisplay[1];
-Code.setInputTextValue(this._elementYear,displayYear+"");
-	console.log("display date: "+this._dateValue);
+	var monthDisplay = this._monthsOfYear[displayMonth];
+	var monthDisplayValue = monthDisplay[1];
+	Code.setInputTextValue(this._elementYear,displayYear+"");
 
 	var daysInMonthPrev = Code.getDaysInMonth( Code.getPrevMonthFirstDay(milliseconds) );
 	var daysInMonthNext = Code.getDaysInMonth( Code.getNextMonthFirstDay(milliseconds) );
 	//Code.setContent(this._elementMonthName,monthDisplay);
 	Code.setSelected(this._elementMonthName,monthDisplayValue+"");
-
-	console.log("first day of week in month: "+firstDayOfMonth);
 
 	Code.removeAllChildren(this._elementMonthGrid);
 	//Code.setStyleDisplay(this._elementMonthGrid,"table");
@@ -5948,9 +5986,6 @@ Code.setInputTextValue(this._elementYear,displayYear+"");
 	var prevMonthDay = 0;
 	var startDays = false;
 	var totalRows = 1+Math.ceil((weekStartIndex+daysInMonth+firstDayOfMonth)/7)
-	console.log(firstDayOfMonth)
-	console.log(daysInMonth)
-	console.log("totalRows: "+totalRows);
 var rowHeight = 14;
 	for(j=0; j<totalRows; ++j){
 		var row = Code.newDiv();
