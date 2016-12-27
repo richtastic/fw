@@ -682,7 +682,7 @@ function handle_widget_calendar_listing($widget,$section){
 				if($isRelative){
 					$dateNow = getDateNow();
 					$dateLimit = addTimeToSeconds($dateNow, 0,0,0, 0,0,$rangeStart/1000, 0);
-					$startDate = stringFromDate($dateNow);
+					$startDate = stringFromDate($dateLimit);
 					$dateLimit = addTimeToSeconds($dateNow, 0,0,0, 0,0,$rangeEnd/1000, 0);
 					$endDate = stringFromDate($dateLimit);
 				}else{ // absolute
