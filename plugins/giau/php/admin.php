@@ -40,6 +40,8 @@ function giau_admin_menu_page_main(){
 	<div class="giauTestC" style="width:200px; height:100px; background-color:#CCC;"></div>
 	<div class="giauTestD" style="width:200px; height:100px; background-color:#CCC;"></div>
 	<div class="giauTestE" style="width:200px; height:100px; background-color:#CCC;"></div>
+	<div class="giauTestF" style="width:200px; height:100px; background-color:#CCC;"></div>
+	<div class="giauTestG" style="width:200px; height:100px; background-color:#CCC;"></div>
 	<div class="giauTestOverlay" style="width:400px; height:80px; background-color:#AAA;">Click me</div>
 	<script>
 	
@@ -52,7 +54,11 @@ function giau_admin_menu_page_main(){
 			var color = new giau.InputFieldColor($(".giauTestB")[0],"0xFFCC9966"); // 0xFFCC9966
 			var duration = new giau.InputFieldDuration($(".giauTestC")[0],"1234000");
 			var bool = new giau.InputFieldBoolean($(".giauTestD")[0],"false");
-var timestill = new giau.InputFieldDateMini($(".giauTestE")[0],"false");
+//var timestill = new giau.InputFieldDateMini($(".giauTestE")[0],"false");
+var colorstill = new giau.InputFieldColorMini($(".giauTestE")[0],"0x99FF0000");
+var timestill = new giau.InputFieldDateMini($(".giauTestF")[0],"2016-11-28 09:04:59.1234");
+
+var timeall = new giau.InputFieldDateModal($(".giauTestG")[0],"2016-11-28 09:04:59.1234");
 			var testOverlay = $(".giauTestOverlay")[0];
 			var dispatch = new JSDispatch();
 			dispatch.addJSEventListener(testOverlay, Code.JS_EVENT_MOUSE_DOWN, function(e){

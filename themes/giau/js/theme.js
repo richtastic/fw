@@ -5304,7 +5304,6 @@ giau.InputFieldColor = function(element, value){
 	var i, len;
 	len = colorFields.length;
 	for(i=0; i<len; ++i){
-console.log("FIELD: "+i)
 		var color = colorFields[i];
 		var range = colorRanges[i];
 
@@ -5351,7 +5350,7 @@ console.log("FIELD: "+i)
 		Code.addChild(elementValue, elementField);
 
 		var hex = Code.getHexNumber(color, 2);
-		console.log(color,hex)
+
 		Code.setInputTextValue(elementField, hex);
 		var colorSlider = new giau.InputFieldColorSlider(elementSlider, color, range);
 		colorSlider.addFunction(giau.InputFieldColorSlider.EVENT_COLOR_UPDATE, this._handleColorChange, this, {"index":i});
@@ -5707,8 +5706,7 @@ giau.InputFieldColorSlider.prototype._removeDragCover = function(){
 giau.InputFieldColorSlider.prototype._updateLayout = function(){
 	var wid = 100;
 	var hei = 100;
-	var canvas = new Canvas(null,0,0, null, true);
-	var stage = new Stage(canvas);
+	var stage = Stage.instance();
 	var d = new DO();
 	var colors = this._colorRanges;
 	var locations = [0,1];
@@ -6116,55 +6114,254 @@ giau.InputFieldDate.prototype.value = function(v){
 }
 
 
+// ------------------------------------------------------------------------------------------------------------------------ COLOR MINI
+
+giau.InputFieldColorMini = function(element, value){
+	giau.InputFieldColorMini._.constructor.call(this);
+	this._container = element;
+	this._value = 0x00000000;
+	this._jsDispatch = new JSDispatch();
+
+	var size = 20;
+	var fontSize = 12;
+	var fontColor = 0xFF000000;
+		fontColor = Code.getJSColorFromARGB(fontColor);
+	var textBGColor = 0xFFFFFFFF;
+		textBGColor = Code.getJSColorFromARGB(textBGColor);
+
+	var rowElement = Code.newDiv();
+	var textElement = Code.newDiv();
+	var squareElement = Code.newDiv();
+	var colorElement = Code.newDiv();
+	var checkerElement = Code.newDiv();
+	Code.addChild(this._container, rowElement);
+	Code.addChild(rowElement, squareElement);
+		Code.addChild(squareElement, checkerElement);
+		Code.addChild(squareElement, colorElement);
+	Code.addChild(rowElement, textElement);
+	
+	
+	Code.setStyleDisplay(rowElement,"table-row");
+	Code.setStyleDisplay(textElement,"table-cell");
+	Code.setStyleVerticalAlign(textElement,"middle");
+	Code.setStylePaddingLeft(textElement,5+"px");
+	Code.setStylePaddingRight(textElement,5+"px");
+	Code.setStyleFontMonospace(textElement);
+	Code.setStyleFontSize(textElement,fontSize+"px");
+	Code.setStyleColor(textElement,fontColor);
+	Code.setStyleBackgroundColor(textElement,textBGColor);
+	
+	
+	Code.setStyleDisplay(squareElement,"table-cell");
+	Code.setStyleWidth(squareElement,size+"px");
+	Code.setStyleHeight(squareElement,size+"px");
+	Code.setStylePosition(squareElement,"relative");
+	
+	Code.setStyleDisplay(colorElement,"inline-block");
+	Code.setStyleHeight(colorElement,"100%");
+	Code.setStyleWidth(colorElement,"100%");
+	Code.setStylePosition(colorElement,"absolute");
+
+	var checkerImage = this.createCheckerboardImage();
+	var base64URL = "url('"+checkerImage+"')";
+	Code.setStyleHeight(checkerElement,"100%");
+	Code.setStyleWidth(checkerElement,"100%");
+	Code.setStylePosition(checkerElement,"absolute");
+	Code.setStyleBackgroundImage(checkerElement,base64URL);
+
+	this._colorElement = colorElement;
+	this._textElement = textElement;
+
+	this._jsDispatch.addJSEventListener(rowElement, Code.JS_EVENT_MOUSE_DOWN, this._handleMouseDownFxn, this);
+	
+	this.value(value);
+	this._updateLayout();
+}
+Code.inheritClass(giau.InputFieldColorMini, Dispatchable);
+
+giau.InputFieldColorMini.EVENT_CHANGE = "giau.InputFieldColorMini.EVENT_CHANGE";
+giau.InputFieldColorMini.EVENT_SELECT = "giau.InputFieldColorMini.EVENT_SELECT";
+
+
+giau.InputFieldColorMini.prototype._handleMouseDownFxn = function(e){
+	this.alertAll(giau.InputFieldColorMini.EVENT_SELECT,this);
+};
+
+giau.InputFieldColorMini.prototype.value = function(v){
+	if(v!==undefined){
+		if(Code.isString(v)){
+			v = Code.getColARGBFromString(v);
+		}
+		this._value = v;
+		this._updateLayout();
+		this.alertAll(giau.InputFieldColorMini.EVENT_CHANGE,this);
+	}
+	return this._value;
+};
+
+giau.InputFieldColorMini.prototype.createCheckerboardImage = function(){
+	var size = 2;
+	var colors = [0xFF000000,0xFFFFFFFF]; // var colors = [0xFF000000,0xFFFFFFFF,0xFFFF0000,0xFF00FF00,0xFF0000FF];
+	var wid = size*colors.length;
+	var hei = wid;
+
+	var stage = Stage.instance();
+	var d = new DO();
+	
+	var i, j;
+	for(j=0; j<colors.length;++j){
+		for(i=0; i<colors.length;++i){
+			var offsetX = i*size;
+			var offsetY = j*size;
+			var color = colors[(i + j)%colors.length];
+			d.graphics().setFill(color);
+			d.graphics().beginPath();
+			d.graphics().drawRect(offsetX,offsetY,size,size);
+			d.graphics().endPath();
+			d.graphics().fill();
+		}
+	}
+	
+	var img = stage.getDOAsImage(d, wid,hei, null);
+	var bgImage = img.src;
+	return bgImage;
+};
+
+giau.InputFieldColorMini.prototype._updateLayout = function(){
+	var colorValue = this._value;
+	var color = Code.getJSColorFromARGB(colorValue);
+	var colorText = Code.getHexNumber(colorValue,8,true);
+
+	Code.setStyleBackgroundColor(this._colorElement,color);
+	Code.setContent(this._textElement,colorText);
+};
+
+
+// ------------------------------------------------------------------------------------------------------------------------ DATE MINI
 
 giau.InputFieldDateMini = function(element, value){
 	giau.InputFieldDateMini._.constructor.call(this);
 	this._container = element;
+	this._value = Code.getTimeStampFromMilliseconds();
+	console.log(value)
+	this._jsDispatch = new JSDispatch();
 
+	var size = 20;
+	var fontSize = 10;
+	var fontColor = 0xFF000000;
+		fontColor = Code.getJSColorFromARGB(fontColor);
+	var textBGColor = 0xFFFFFFFF;
+		textBGColor = Code.getJSColorFromARGB(textBGColor);
+
+	var rowElement = Code.newDiv();
 	var textElement = Code.newDiv();
+	var squareElement = Code.newDiv();
 	var colorElement = Code.newDiv();
-	Code.addChild(this._container, textElement);
-	Code.addChild(this._container, colorElement);
+	var checkerElement = Code.newDiv();
+	Code.addChild(this._container, rowElement);
+	Code.addChild(rowElement, squareElement);
+	Code.addChild(rowElement, textElement);
+	
+	Code.setStyleDisplay(rowElement,"table-row");
+	Code.setStyleDisplay(textElement,"table-cell");
+	Code.setStyleVerticalAlign(textElement,"middle");
+	Code.setStylePaddingLeft(textElement,5+"px");
+	Code.setStylePaddingRight(textElement,5+"px");
+	Code.setStyleFontMonospace(textElement);
+	//Code.setStyleFontFamily(textElement,"monospace"); // sans-serif
+	Code.setStyleFontSize(textElement,fontSize+"px");
+	Code.setStyleColor(textElement,fontColor);
+	Code.setStyleBackgroundColor(textElement,textBGColor);
+	
+	this._textElement = textElement;
 
-	var colorValue = 0xFF00FF00;
-	var colorText = Code.getHexNumber(colorValue,8,true);
-	Code.setContent(textElement,colorText);
-	Code.setStyleDisplay(textElement,"inline-block");
-	//Code.setContent(colorElement,"color");
-
-	var size = 25;
-	var color = Code.getJSColorFromARGB(colorValue);
-	Code.setStyleDisplay(colorElement,"inline-block");
-	Code.setStyleWidth(colorElement,size+"px");
-	Code.setStyleHeight(colorElement,size+"px");
-	Code.setStyleBackgroundColor(colorElement,color);
-
+	this._jsDispatch.addJSEventListener(rowElement, Code.JS_EVENT_MOUSE_DOWN, this._handleMouseDownFxn, this);
+	
+	this.value(value);
 	this._updateLayout();
-
-	// if(!value){
-	// 	value = Code.getTimeStampFromMilliseconds();// default to now
-	// }
 }
 Code.inheritClass(giau.InputFieldDateMini, Dispatchable);
 
-giau.InputFieldDateMini.EVENT_CHANGE = "giau.InputFieldDate.EVENT_CHANGE"
+giau.InputFieldDateMini.EVENT_CHANGE = "giau.InputFieldDate.EVENT_CHANGE";
+giau.InputFieldDateMini.EVENT_SELECT = "giau.InputFieldDateMini.EVENT_SELECT";
 
-
-giau.InputFieldDateMini.prototype._updateLayout = function(){
-
-	//
-}
+giau.InputFieldDateMini.prototype._handleMouseDownFxn = function(e){
+	this.alertAll(giau.InputFieldDateMini.EVENT_SELECT,this);
+};
 
 giau.InputFieldDateMini.prototype.value = function(v){
 	if(v!==undefined){
-		this._dateValue = v;
-		this._displayDate = this._dateValue; // display the selected date
-		//this._updateLayout();
+		this._value = v;
+		this._updateLayout();
+		this.alertAll(giau.InputFieldDateMini.EVENT_CHANGE,this);
 	}
-	return this._dateValue;
-}
+	return this._value;
+};
+
+giau.InputFieldDateMini.prototype._updateLayout = function(){
+	var milli = this.value();
+	var year = Code.getYear(milli);
+	var month = Code.getMonthOfYear(milli);
+	var day = Code.getDayOfMonth(milli);
+	var hour = Code.getHour(milli);
+	var min = Code.getMinute(milli);
+	var sec = Code.getSecond(milli);
+	var ms = Code.getMillisecond(milli);
+
+	var mon = Code.monthsShort[month];
+	var dow = Code.getDayOfWeek(milli);
+		dow = Code.daysOfWeekShort[dow];
+
+	day = Code.prependFixed(""+day,"0",2);
+	hour = Code.prependFixed(""+hour,"0",2);
+	min = Code.prependFixed(""+min,"0",2);
+	sec = Code.prependFixed(""+sec,"0",2);
+	ms = Code.prependFixed(""+ms,"0",4);
+
+	var displayText = dow+" "+day+" "+mon+" "+year+" "+hour+":"+min+":"+sec+'.'+ms;
+	console.log(displayText);
+
+	Code.setContent(this._textElement,displayText);
+};
 
 
+
+
+
+
+giau.InputFieldDateModal = function(element, value){
+	this._container = element;
+	this._miniElement = Code.newDiv();
+	this._maxiElement = Code.newDiv();
+		Code.setStyleWidth(this._maxiElement,250+"px");
+		Code.setStyleHeight(this._maxiElement,150+"px");
+	this._value = value;
+	this._mode = 0; // mini
+	this._mini = new giau.InputFieldDateMini(this._miniElement, value);
+	this._maxi = new giau.InputFieldDate(this._maxiElement, value);
+	this.gotoMin();
+	//this.gotoMax();
+	this._overlay = new giau.InputOverlay();
+	this._overlay.show(this._maxiElement);
+};
+giau.InputFieldDateModal.prototype.gotoMin = function(v){
+	console.log("goto mini");
+	Code.removeAllChildren(this._container);
+	Code.addChild(this._container, this._miniElement);
+};
+giau.InputFieldDateModal.prototype.gotoMax = function(v){
+	console.log("goto maxi");
+	Code.removeAllChildren(this._container);
+	Code.addChild(this._container, this._maxiElement);
+};
+giau.InputFieldDateModal.prototype.value = function(v){
+	if(v!==undefined){
+		this._value = v;
+//		this._updateLayout();
+//		this.alertAll(giau.InputFieldDateMini.EVENT_CHANGE,this);
+	}
+	return this._value;
+};
 
 
 /*
@@ -6210,9 +6407,16 @@ giau.InputOverlay.prototype._handleCoverMouseDownFxn = function(e,f){
 }
 giau.InputOverlay.prototype.elementContainer = function(){
 	return this._elementContent;
-}
-giau.InputOverlay.prototype.show = function(){
+};
+giau.InputOverlay.prototype.setContent = function(ele){
+	Code.removeAllChildren(this._elementContent);
+	Code.addChild(this._elementContent,ele);
+};
+giau.InputOverlay.prototype.show = function(ele){
 	// record state
+	if(ele){
+		this.setContent(ele);
+	}
 	var location = Code.getPageScrollLocation();
 	var left = location["left"];
 	var top = location["top"];
@@ -6321,7 +6525,7 @@ giau.InputOverlay.prototype.kill = function(){
 	this._elementContent = null;
 	this._elementCover = null;
 	this._jsDispatch = null;
-	Stage._.kill.call(this);
+	this._.kill.call(this);
 }
 
 
