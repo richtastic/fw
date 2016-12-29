@@ -3071,8 +3071,18 @@ giau.ObjectComposer.prototype.newSubElement = function(element,name,type, contai
 			var input = this._inputDateField(div,field, value, container);
 			holder = element;
 		}else{
+			var criteria = {};
+//criteria[giau.InputFieldText.CRITERIA_MAX_CHARACTERS] = 9;
+// giau.InputFieldText.EVENT_CHANGE = "giau.InputFieldText.EVENT_CHANGE";
+// giau.InputFieldText.CRITERIA_MAX_CHARACTERS = "max_characters";
+// giau.InputFieldText.CRITERIA_FIELD_TYPE = "type";
+// giau.InputFieldText.CRITERIA_FIELD_VALUE_SINT = "signed_integer";
+// giau.InputFieldText.CRITERIA_FIELD_VALUE_NUM = "number";
+// giau.InputFieldText.CRITERIA_FIELD_VALUE_UINT = "unsigned_integer";
+			if(giau.ObjectComposer.isFieldTypeNumber(fieldType)){
+				criteria[giau.InputFieldText.CRITERIA_FIELD_VALUE_NUM] = true;
+			}
 			var input = this._inputTextField(div,field, value, container);
-			// label = ?
 			holder = element;
 		}
 	}
@@ -3244,6 +3254,19 @@ jsObject.addFunction(giau.InputFieldCompositeModal.EVENT_CHANGE, this._handlePri
 	return {"container":content, "input":input};
 }
 
+giau.ObjectComposer.prototype._inputTextField = function(element, key,value, container, criteria){
+	var input = Code.newDiv();
+		Code.setStyleWidth(input,100+"%");
+		Code.setStyleHeight(input,50+"px");
+		Code.setStyleBackgroundColor(input,"#F00");
+		Code.setStyleDisplay(input,"inline-block");
+		var jsObject = new giau.InputFieldTextModal(input,value, criteria);
+			var data = {"object":container, "key":key, "value":value, "control":jsObject};
+			jsObject.addFunction(giau.InputFieldCompositeModal.EVENT_CHANGE, this._handlePrimitiveTextUpdate, this, data);
+	var content = this._inputField(element,input, key);
+	return {"container":content, "input":input};
+}
+
 giau.ObjectComposer.prototype._inputBooleanField = function(element, key,value, container){
 	// MAPPING?
 	var input = Code.newDiv();
@@ -3256,50 +3279,6 @@ giau.ObjectComposer.prototype._inputBooleanField = function(element, key,value, 
 			jsObject.addFunction(giau.InputFieldBoolean.EVENT_CHANGE, this._handlePrimitiveBooleanUpdate, this, data);
 	var content = this._inputField(element,input, key);
 	return {"container":content, "input":input};
-}
-
-giau.ObjectComposer.prototype._inputTextField = function(element, key,value, container){
-	var input = Code.newDiv();
-		Code.setStyleWidth(input,100+"%");
-		Code.setStyleHeight(input,50+"px");
-		Code.setStyleBackgroundColor(input,"#F00");
-		Code.setStyleDisplay(input,"inline-block");
-		var jsObject = new giau.InputFieldText(input,value);
-			var data = {"object":container, "key":key, "value":value, "control":jsObject};
-			jsObject.addFunction(giau.InputFieldText.EVENT_CHANGE, this._handlePrimitiveTextUpdate, this, data);
-	var content = this._inputField(element,input, key);
-	return {"container":content, "input":input};
-
-
-/*
-	var radius = 4;
-	var input = Code.newInputText();
-		Code.setStyleBorder(input,"solid");
-		Code.setStyleBorderWidth(input,1+"px");
-		Code.setStyleBorderColor(input,"#CCC");
-		Code.setStyleBorderRadius(input,0+"px "+radius+"px "+radius+"px "+0+"px");
-		Code.setStyleBackgroundColor(input,"#FFF");
-		Code.setStyleDisplay(input,"inline-block");
-		Code.setStyleColor(input,"#000");
-		Code.setStylePadding(input,"2px");
-		Code.setStyleFontSize(input,11+"px");
-		Code.setTextPlaceholder(input,"(empty)");
-	if(value){
-		Code.setInputTextValue(input,value);
-	}
-
-			//label = input["container"];
-			// var textElement = input["input"];
-			// 	var data = {"element": element, "input":textElement, "container": container, "field": field};
-			// 	this._jsDispatch.addJSEventListener(textElement, Code.JS_EVENT_INPUT_CHANGE, this._handlePrimitiveTextUpdate, this, data);
-				var jsObject = input;
-				var data = {"object":container, "key":key, "value":value, "control":jsObject};
-					data["isElement"] = true;
-				this._jsDispatch.addJSEventListener(input, Code.JS_EVENT_INPUT_CHANGE, this._handlePrimitiveTextUpdate, this, data);
-
-	var content = this._inputField(element,input, key);
-	return {"container":content, "input":input};
-*/
 }
 giau.ObjectComposer.prototype._inputField = function(element,input, key){
 	var radius = 4;
@@ -4456,31 +4435,11 @@ console.log(mapping.field());
 console.log(mapping.value());
 	var elementContainer = Code.newDiv();
 	var jsObject = new giau.InputFieldDateModal(elementContainer, value);
-	//mapping.object(jsObject);
 	mapping.value(jsObject);
-	mapping.updateElementFxn(giau.CRUD._fieldEditJSONUpdateElementFxn);
-	mapping.updateDataFxn(giau.CRUD._fieldEditJSONUpdateDataFxn);
+	mapping.updateElementFxn(giau.CRUD._fieldEditStringUpdateElementFxn);
+	mapping.updateDataFxn(giau.CRUD._fieldEditStringUpdateDataFxn);
 
 	return elementContainer;
-
-
-/*
-	console.log("BEFORE: "+value);
-	value = Code.getHumanReadableDateString(value);
-	console.log("AFTER: "+value);
-
-	var elementContainer = Code.newInputTextArea();
-	Code.setStyleFontFamily(elementContainer,"monospace");
-	Code.setStyleFontSize(elementContainer,11+"px");
-	Code.setStyleColor(elementContainer,"#000");
-	Code.setStyleWidth(elementContainer,"100%");
-	Code.setStyleBackgroundColor(elementContainer,"#FFF");
-	Code.setStyleBorderColor(elementContainer,"#CCC");
-	Code.setStyleBorderWidth(elementContainer,1+"px");
-	Code.setTextAreaValue(elementContainer,""+value);
-	return elementContainer;
-*/
-
 }
 
 giau.CRUD._elementSelectString = function(mapping){
@@ -4488,20 +4447,15 @@ giau.CRUD._elementSelectString = function(mapping){
 	var field = mapping.field();
 	var value = object[field];
 
-	console.log("_elementSelectString")
-	console.log(mapping)
-	console.log(object)
-	console.log(field)
-	console.log(value)
-	var elementContainer = Code.newInputTextArea();
-	Code.setStyleFontFamily(elementContainer,"monospace");
-	Code.setStyleFontSize(elementContainer,11+"px");
-	Code.setStyleColor(elementContainer,"#000");
-	Code.setStyleWidth(elementContainer,"100%");
-	Code.setStyleBackgroundColor(elementContainer,"#FFF");
-	Code.setStyleBorderColor(elementContainer,"#CCC");
-	Code.setStyleBorderWidth(elementContainer,1+"px");
-	Code.setTextAreaValue(elementContainer,""+value);
+	var elementContainer = Code.newDiv();
+		Code.setStyleWidth(elementContainer,"100%");
+		Code.setStyleHeight(elementContainer,50+"px");
+	var jsObject = new giau.InputFieldTextModal(elementContainer, value);
+
+	mapping.value(jsObject);
+	mapping.updateElementFxn(giau.CRUD._fieldEditStringUpdateElementFxn);
+	mapping.updateDataFxn(giau.CRUD._fieldEditStringUpdateDataFxn);
+
 	return elementContainer;
 }
 
@@ -4846,15 +4800,41 @@ giau.CRUD._fieldEditJSONUpdateDataFxn = function(mapping, action){
 		var updatedValue = action["value"];
 		composer.instance(updatedValue);
 	}
-	
 }
 
 giau.CRUD._fieldEditJSONUpdateElementFxn = function(mapping){
-	console.log("_fieldEditJSONUpdateDataFxn");
+	console.log("_fieldEditJSONUpdateElementFxn");
 	var data = mapping.object();
 	var field = mapping.field();
 	var element = mapping.element();
 }
+
+
+
+giau.CRUD._fieldEditDateUpdateDataFxn = function(mapping, action){
+	console.log("_fieldEditDateUpdateDataFxn");
+	// var field = mapping.field();
+	// var operation = action["action"];
+	// var action = action["data"];
+	// var element = mapping.element();
+	// var composer = mapping.value(composer);
+	// if(operation=="update"){
+	// 	var updatedValue = action["value"];
+	// 	composer.instance(updatedValue);
+	// }
+}
+giau.CRUD._fieldEditDateUpdateElementFxn = function(mapping){
+	console.log("_fieldEditDateUpdateDataFxn");
+}
+
+
+giau.CRUD._fieldEditStringUpdateDataFxn = function(mapping, action){
+	console.log("_fieldEditDateUpdateDataFxn");
+}
+giau.CRUD._fieldEditStringUpdateElementFxn = function(mapping){
+	console.log("_fieldEditDateUpdateDataFxn");
+}
+
 
 giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, itemIndex){
 	//
@@ -5009,10 +4989,69 @@ giau.CRUD._generateSubButton = function(display,element){
 }
 
 
-giau.InputFieldText = function(element, value){ // string, string-number
-	giau.InputFieldText._.constructor.call(this);
-
+giau.InputFieldTextMini = function(element, value){
+	giau.InputFieldTextMini._.constructor.call(this);
 	this._container = element;
+	this._value = "";
+	var textElement = Code.newDiv();
+// Code.setStyleDisplay(this._container,"block");
+Code.setStyleOverflow(this._container,"hidden");
+		Code.setStyleWidth(this._container,"100%");
+		Code.setStyleHeight(this._container,"100%");
+
+
+		Code.setStyleDisplay(textElement,"inline-block");
+		Code.setStylePadding(textElement,0+"px");
+		Code.setStyleBorderWidth(textElement,0+"px");
+		Code.setStyleBorder(textElement,0+"px");
+		
+		Code.setStyleColor(textElement,"#000");
+		Code.setStyleFontSize(textElement,11+"px");
+		
+		Code.setStyleWidth(textElement,"100%");
+		Code.setStyleHeight(textElement,"100%");
+		Code.setStyleBackgroundColor(textElement,"#FFF");
+		//Code.setStyleOverflow(textElement,"hidden");
+		//Code.setStylePadding(textElement,"2px");
+		//Code.setTextPlaceholder(textElement,"(empty)");
+	Code.addChild(this._container,textElement);
+
+	this._jsDispatch = new JSDispatch();
+	this._jsDispatch.addJSEventListener(textElement, Code.JS_EVENT_MOUSE_DOWN, this._handleMouseDownFxn, this, {});
+
+	this._textElement = textElement;
+	this.value(value);
+}
+
+Code.inheritClass(giau.InputFieldTextMini, Dispatchable);
+
+giau.InputFieldTextMini.EVENT_CHANGE = "giau.InputFieldTextMini.EVENT_CHANGE";
+giau.InputFieldTextMini.EVENT_SELECT = "giau.InputFieldTextMini.EVENT_SELECT";
+
+giau.InputFieldTextMini.prototype._handleMouseDownFxn = function(e){
+	console.log("down");
+	this.alertAll(giau.InputFieldTextMini.EVENT_SELECT,this);
+};
+giau.InputFieldTextMini.prototype._updateLayout = function(v){
+	var value = this._value;
+	var textElement = this._textElement;
+	var value = Code.escapeHTML(value);
+		value = value.replace( new RegExp(/\n/,"g") ,"<br/>");
+	Code.setContent(textElement,value);
+};
+giau.InputFieldTextMini.prototype.value = function(v){
+	if(v!==undefined){
+		this._value = v;
+		this._updateLayout();
+		this.alertAll(giau.InputFieldTextMini.EVENT_CHANGE,this);
+	}
+	return this._value;
+};
+
+giau.InputFieldText = function(element, value, criteria){ // string, string-number
+	giau.InputFieldText._.constructor.call(this);
+	this._container = element;
+	this._criteria = criteria!==undefined ? criteria : {};
 	var radius = 4;
 	//var input = Code.newInputText();
 	var input = Code.newInputTextArea();
@@ -5038,12 +5077,12 @@ giau.InputFieldText = function(element, value){ // string, string-number
 
 	// [0-9]+(\.[0-9]+)?(E|e)?(\+|\-)?([0-9]+)?
 
-	this._criteria = 0;
-	this._criteriaMinLength = 2; // alert?
-	this._criteriaMaxLength = 10; // chop
-	this._criteriaNumber = 0; // either:
-		this._criteriaFloat = 0; // A.B[e|E[]]
-		this._criteriaInteger = 0; // A^
+	// this._criteria = 0;
+	// this._criteriaMinLength = 2; // alert?
+	// this._criteriaMaxLength = 10; // chop
+	// this._criteriaNumber = 0; // either:
+	// 	this._criteriaFloat = 0; // A.B[e|E[]]
+	// 	this._criteriaInteger = 0; // A^
 
 
 	this._input = input;
@@ -5053,43 +5092,91 @@ giau.InputFieldText = function(element, value){ // string, string-number
 Code.inheritClass(giau.InputFieldText, Dispatchable);
 
 giau.InputFieldText.EVENT_CHANGE = "giau.InputFieldText.EVENT_CHANGE";
+giau.InputFieldText.CRITERIA_MAX_CHARACTERS = "max_characters";
+giau.InputFieldText.CRITERIA_FIELD_TYPE = "type";
+giau.InputFieldText.CRITERIA_FIELD_VALUE_SINT = "signed_integer";
+giau.InputFieldText.CRITERIA_FIELD_VALUE_NUM = "number";
+giau.InputFieldText.CRITERIA_FIELD_VALUE_UINT = "unsigned_integer";
+giau.InputFieldText.CRITERIA_FIELD_VALUE_SINGLE_LINE = "single_line";
 
 giau.InputFieldText.prototype._handleInputTextChangeFxn = function(e){
 	var newText = Code.getTextAreaValue(this._input);
-	newText = this._filterNumberOnly(newText);
 	this._dataValue = newText;
 	this._alertChanged();
-}
-giau.InputFieldText.prototype._filterNumberOnly = function(n){
-	var numbers = ["1","12","3.141","3.141E4","3.141E+3","3.141E-25",   "asd452345","2344.6455+343"]
+};
+giau.InputFieldText.prototype._filterMaxCharacters = function(s, max){
+	if(s.length>max){
+		return s.substring(0,max-1);
+	}
+	return s;
+};
+giau.InputFieldText.prototype._filterSingleLineOnly = function(s){
+	var regExLine = new RegExp('\n','g');
+	return s.replace(regExLine,"");
+};
+giau.InputFieldText.prototype._filterPlay = function(n){
+	var numbers = ["1","12","0.0",".09","3.141","3.141E4","3.141E+3","3.141E-25",   "asd452345","2344.6455+343"]
+	//var regex = new RegExp('([0-9]+(\.[0-9]+)?(E(\\+|\-)?[0-9]+))','i');
+	//var regex = new RegExp('[0-9]+(\.([0-9]+)?)?','i');
+	var regex = new RegExp('[0-9]+(\.([0-9]+(E((\\+|\-)?[0-9]+))?)?)?','i');
 	for(var i=0; i<numbers.length; ++i){
 		var number = numbers[i];
-		console.log( number + "  ===  " + number.search( new RegExp('([0-9]+(\.[0-9]+)?(E(\\+|\-)?[0-9]+))','i') ) );
+		//console.log( number + "  ===  " + number.search( new RegExp('([0-9]+(\.[0-9]+)?(E(\\+|\-)?[0-9]+))','i') ) );
+		//console.log( number + "  ===  " + number.search( regex ) );
+		console.log( number + "  ===  " + number.match( regex ) );
 	}
-
-
-	HERE 
-	// "23423432.51234E+34".match( new RegExp('([0-9]+(\.[0-9]+)?(E(\\+|\-)?[0-9]+))','i') )
-	// .search
-	// [0-9]+(\.[0-9]+)?(E|e)?(\+|\-)?([0-9]+)?
-	var regExNumber = new RegExp('[0-9]','i');
-	console.log("n1: '"+n+"'");
-	var matches = n.matches();
-	//var n = n.replace(regExNumber, "");
-	console.log("n2: '"+n+"'");
-	return n;
-
-	// var regexStringPrefix = new RegExp('^string-','i');
-	// var isString = s=="string" || s.match(regexStringPrefix);
+};
+giau.InputFieldText.prototype._filterSignedIntegerOnly = function(n){
+	var regExInteger = new RegExp('(\\+|\-)?[0-9]+','i');
+	return this._filterRegExOnly(n,regExNumber,"0");
+};
+giau.InputFieldText.prototype._filterUnsignedIntegerOnly = function(n){
+	var regExInteger = new RegExp('[0-9]+','i');
+	return this._filterRegExOnly(n,regExNumber,"0");
+};
+giau.InputFieldText.prototype._filterNumberOnly = function(n){
+	var regExNumber = new RegExp('(\\+|\-)?[0-9]+(\.([0-9]+(E((\\+|\-)?[0-9]+))?)?)?','i');
+	return this._filterRegExOnly(n,regExNumber,"0");
+};
+giau.InputFieldText.prototype._filterRegExOnly = function(n,r,d){
+	var matches = n.match(r);
+	var value = d!==undefined ? d : "";
+	if(matches && matches.length>0){
+		var match = matches[0];
+		if(match==n){
+			value = match;
+		}
+	}
+	return value;
+};
+giau.InputFieldText.prototype.applyFilters = function(){
+	var criteria = this._criteria;
+	var keys = Code.keys(criteria);
+	var text = this._dataValue;
+	for(var i=0; i<keys.length; ++i){
+		var key = keys[i];
+		var value = criteria[key];
+		if(key==giau.InputFieldText.CRITERIA_MAX_CHARACTERS){
+			var maxChars = value;
+			text = this._filterMaxCharacters(text,maxChars);
+		}else if(key==giau.InputFieldText.CRITERIA_FIELD_VALUE_NUM){
+			text = this._filterNumberOnly(text);
+		}else if(key==giau.InputFieldText.CRITERIA_FIELD_VALUE_SINGLE_LINE){
+			text = this._filterSingleLineOnly(text);
+		}
+		
+	}
+	this._dataValue = text;
+	this._updateLayout();
 }
+
 giau.InputFieldText.prototype._updateLayout = function(v){
 	var value = this._dataValue;
 	var input = this._input;
 	Code.setInputTextValue(input,value);
-}
+};
 giau.InputFieldText.prototype._alertChanged = function(){
 	this.alertAll(giau.InputFieldText.EVENT_CHANGE,this);
-
 }
 giau.InputFieldText.prototype.value = function(v){
 	if(v!==undefined){
@@ -5100,7 +5187,6 @@ giau.InputFieldText.prototype.value = function(v){
 }
 
 giau.InputFieldBoolean = function(element, value){
-	console.log(this)
 	giau.InputFieldBoolean._.constructor.call(this);
 	this._container = element;
 	this.value(value);
@@ -5995,7 +6081,6 @@ giau.InputFieldDate.prototype._handleFieldChange = function(e,f){
 		digitCount = 4;
 	}
 	newValue = Code.prependFixed(numValue+"","0",digitCount);
-	console.log(value,numValue,newValue);
 	if(value!==newValue){
 		Code.setInputTextValue(field, newValue);
 	}
@@ -6011,7 +6096,6 @@ giau.InputFieldDate.prototype._handleFieldChange = function(e,f){
 		milliseconds = Code.getSetMillisecond(milliseconds, milli);
 	//this._displayDate = Code.getTimeStampFromMilliseconds(milliseconds);
 	this._dateValue = Code.getTimeStampFromMilliseconds(milliseconds);
-	console.log("time date: "+this._dateValue);
 	this._updateLayout();
 
 	this._alertChanged();	
@@ -6072,7 +6156,6 @@ giau.InputFieldDate.prototype._handleDayMouseDownFxn = function(e, f){ // new da
 
 giau.InputFieldDate.prototype._updateLayout = function(){
 	var milliseconds;
-	console.log("layout date: "+this._dateValue);
 	var i, j;
 	// SELECTED VALUES
 	milliseconds = Code.dateFromString(this._dateValue);
@@ -6083,10 +6166,6 @@ giau.InputFieldDate.prototype._updateLayout = function(){
 	var selectedMinute = Code.getMinute(milliseconds);
 	var selectedSecond = Code.getSecond(milliseconds);
 	var selectedMillisecond = Code.getMillisecond(milliseconds);
-	console.log("selected date: "+this._dateValue);
-
-	// HH MM SS NNNN
-
 		// var hour = parseInt(Code.getInputTextValue(this._elementHour));
 		// var minute = parseInt(Code.getInputTextValue(this._elementMinute));
 		// var second = parseInt(Code.getInputTextValue(this._elementSecond));
@@ -6427,13 +6506,28 @@ giau.InputFieldCompositeModal = function(element, value){
 	this._miniElement = Code.newDiv();
 	this._maxiElement = Code.newDiv();
 	this._overlay = new giau.InputOverlay();
+	this._overlay.addFunction(giau.InputOverlay.EVENT_SHOW, this._handleOverlayShowFxn, this);
+	this._overlay.addFunction(giau.InputOverlay.EVENT_EXIT, this._handleOverlayExitFxn, this);
+	this._overlay.addFunction(giau.InputOverlay.EVENT_HIDE, this._handleOverlayHideFxn, this);
+	this._overlay.addFunction(giau.InputOverlay.EVENT_LAYOUT, this._handleOverlayLayoutFxn, this);
 };
 Code.inheritClass(giau.InputFieldCompositeModal, Dispatchable);
 
 giau.InputFieldCompositeModal.EVENT_CHANGE = "giau.InputFieldCompositeModal.EVENT_CHANGE";
 
+giau.InputFieldCompositeModal.prototype._handleOverlayShowFxn = function(e){
+	
+};
+giau.InputFieldCompositeModal.prototype._handleOverlayExitFxn = function(e){
+	
+};
+giau.InputFieldCompositeModal.prototype._handleOverlayHideFxn = function(e){
+	
+};
+giau.InputFieldCompositeModal.prototype._handleOverlayLayoutFxn = function(e){
+	
+};
 giau.InputFieldCompositeModal.prototype._handleMiniSelectFxn = function(e){
-	console.log("select")
 	this.show();
 };
 giau.InputFieldCompositeModal.prototype.show = function(e){
@@ -6535,6 +6629,38 @@ giau.InputFieldColorModal = function(element, value){
 	this.gotoMin();
 };
 Code.inheritClass(giau.InputFieldColorModal, giau.InputFieldCompositeModal);
+
+
+giau.InputFieldTextModal = function(element, value, criteria){
+	Code.constructorClass(giau.InputFieldColorModal, this, element, value);
+	
+	Code.setStyleWidth(this._maxiElement,400+"px");
+	Code.setStyleHeight(this._maxiElement,200+"px");
+
+	this._mini = new giau.InputFieldTextMini(this._miniElement, value);
+		this._mini.addFunction(giau.InputFieldTextMini.EVENT_SELECT, this._handleMiniSelectFxn, this);
+	var max = this._maxiElement;
+	this._maxi = new giau.InputFieldText(max, value, criteria);
+		//this._maxi.addFunction(giau.InputFieldText.EVENT_CHANGE, this._handleMaxiChangeFxn, this);
+	
+	this.gotoMin();
+};
+giau.InputFieldTextModal.prototype._handleOverlayExitFxn = function(e){
+	// ChildClassName._.kill.call(this); // super method
+	//Code.methodClass(giau.InputFieldTextModal,"_handleOverlayExitFxn");
+	giau.InputFieldTextModal._._handleOverlayExitFxn.call(this,e);
+	//Code.methodClass(giau.InputFieldTextModal,);
+	this._handleMaxiChangeFxn(null);
+};
+// giau.InputFieldTextModal.prototype.handleExit = function(){
+// 	this._handleMaxiChangeFxn(null);
+// }
+giau.InputFieldTextModal.prototype._handleMaxiChangeFxn = function(e){
+	this._maxi.applyFilters();
+	giau.InputFieldTextModal._._handleMaxiChangeFxn.call(this,e);
+
+};
+Code.inheritClass(giau.InputFieldTextModal, giau.InputFieldCompositeModal);
 
 
 
@@ -6671,16 +6797,14 @@ giau.InputOverlay.prototype._setContentToViewport = function(){
 			var left = scrollLocation["left"];
 			var top = scrollLocation["top"];
 		
-//		console.log("con siz "+contentWidth+" "+contentHeight);
 		var pageWidth = pageSize["width"];
 		var pageHeight = pageSize["height"];
-//		console.log("pag siz "+pageWidth+" "+pageHeight);
+
 		var windowWidth = windowSize["width"];
 		var windowHeight = windowSize["height"];
-//		console.log("win siz "+windowWidth+" "+windowHeight);
+
 		var windowOffsetLeft = scrollLocation["left"];
 		var windowOffsetTop = scrollLocation["top"];
-//		console.log("win off "+windowOffsetLeft+" "+windowOffsetTop);
 
 		var offsetLeft = windowOffsetLeft + insetSize; // windowOffsetLeft + Math.floor((windowWidth-contentWidth)*0.5);
 		var offsetTop = windowOffsetTop + insetSize; // windowOffsetTop + Math.floor((windowHeight-contentHeight)*0.5);
@@ -6708,7 +6832,6 @@ giau.InputOverlay.prototype._removeListeners = function(){
 	this._jsDispatch.removeJSEventListener(Code.getWindow(), Code.JS_EVENT_RESIZE, this._handleWindowResizedFxn, this);
 }
 giau.InputOverlay.prototype._handleWindowResizedFxn = function(e){
-	console.log("_handleWindowResizedFxn")
 	this.updateLayout();
 }
 giau.InputOverlay.prototype.kill = function(){
