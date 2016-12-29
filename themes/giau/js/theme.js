@@ -6282,7 +6282,7 @@ giau.InputFieldDateMini = function(element, value){
 }
 Code.inheritClass(giau.InputFieldDateMini, Dispatchable);
 
-giau.InputFieldDateMini.EVENT_CHANGE = "giau.InputFieldDate.EVENT_CHANGE";
+giau.InputFieldDateMini.EVENT_CHANGE = "giau.InputFieldDateMini.EVENT_CHANGE";
 giau.InputFieldDateMini.EVENT_SELECT = "giau.InputFieldDateMini.EVENT_SELECT";
 
 giau.InputFieldDateMini.prototype._handleMouseDownFxn = function(e){
@@ -6310,7 +6310,7 @@ giau.InputFieldDateMini.prototype._updateLayout = function(){
 
 	var mon = Code.monthsShort[month];
 	var dow = Code.getDayOfWeek(milli);
-		dow = Code.daysOfWeekShort[dow];
+		dow = Code.daysOfWeekShort[ (dow+Code.daysOfWeekShort.length-1)%Code.daysOfWeekShort.length ];
 
 	day = Code.prependFixed(""+day,"0",2);
 	hour = Code.prependFixed(""+hour,"0",2);
@@ -6319,7 +6319,6 @@ giau.InputFieldDateMini.prototype._updateLayout = function(){
 	ms = Code.prependFixed(""+ms,"0",4);
 
 	var displayText = dow+" "+day+" "+mon+" "+year+" "+hour+":"+min+":"+sec+'.'+ms;
-	console.log(displayText);
 
 	Code.setContent(this._textElement,displayText);
 };
@@ -6330,19 +6329,43 @@ giau.InputFieldDateMini.prototype._updateLayout = function(){
 
 
 giau.InputFieldDateModal = function(element, value){
+	giau.InputFieldDateMini._.constructor.call(this);
 	this._container = element;
 	this._miniElement = Code.newDiv();
 	this._maxiElement = Code.newDiv();
+
+
 		Code.setStyleWidth(this._maxiElement,250+"px");
 		Code.setStyleHeight(this._maxiElement,150+"px");
-	this._value = value;
-	this._mode = 0; // mini
 	this._mini = new giau.InputFieldDateMini(this._miniElement, value);
-	this._maxi = new giau.InputFieldDate(this._maxiElement, value);
+		this._mini.addFunction(giau.InputFieldDateMini.EVENT_SELECT, this._handleMiniSelectFxn, this);
+	var max = this._maxiElement;
+	this._maxi = new giau.InputFieldDate(max, value);
+		this._maxi.addFunction(giau.InputFieldDate.EVENT_CHANGE, this._handleMaxiChangeFxn, this);
+	
 	this.gotoMin();
-	//this.gotoMax();
+	
 	this._overlay = new giau.InputOverlay();
+	this.show();
+};
+Code.inheritClass(giau.InputFieldDateModal, Dispatchable);
+
+giau.InputFieldDateModal.EVENT_CHANGE = "giau.InputFieldDateModal.EVENT_CHANGE";
+giau.InputFieldDateModal.EVENT_SELECT = "giau.InputFieldDateModal.EVENT_SELECT";
+
+giau.InputFieldDateModal.prototype._handleMiniSelectFxn = function(e){
+	this.show();
+};
+giau.InputFieldDateModal.prototype.show = function(e){
+	var value = this._mini.value();
+	this._maxi.value(value);
 	this._overlay.show(this._maxiElement);
+	//this._layoutMaxi();
+	this._overlay.centerContent();
+};
+giau.InputFieldDateModal.prototype._handleMaxiChangeFxn = function(e){
+	var value = this._maxi.value();
+	this._mini.value(value);
 };
 giau.InputFieldDateModal.prototype.gotoMin = function(v){
 	console.log("goto mini");
@@ -6354,13 +6377,40 @@ giau.InputFieldDateModal.prototype.gotoMax = function(v){
 	Code.removeAllChildren(this._container);
 	Code.addChild(this._container, this._maxiElement);
 };
+giau.InputFieldDateModal.prototype._layoutMaxi = function(v){ // place next to the mini element
+	/*
+	var maxi = this._maxiElement;
+	var mini = this._miniElement;
+		Code.setStyleBackgroundColor(maxi,"#FF0000");
+	
+	var parent = Code.getParent(maxi);
+	
+	var topMini = Code.getElementTopAbsolute(mini);
+	var leftMini = Code.getElementLeftAbsolute(mini);
+	var widthMini = Code.getElementWidth(mini);
+	var heightMini = Code.getElementHeight(mini);
+
+	var widthParent = Code.getElementWidth(parent);
+	var heightParent = Code.getElementHeight(parent);
+
+	var widthMaxi = Code.getElementWidth(maxi);
+	var heightMaxi = Code.getElementHeight(maxi);
+	
+	// center
+	offX = (widthParent - widthMaxi) * 0.5;
+	offY = (heightParent - heightMaxi) * 0.5;
+		offX = Math.floor(offX);
+		offY = Math.floor(offY);
+	Code.setStyleLeft(maxi,offX+"px");
+	Code.setStyleTop(maxi,offY+"px");
+	Code.setStylePosition(parent,"relative");
+	Code.setStylePosition(maxi,"absolute");
+	*/
+};
 giau.InputFieldDateModal.prototype.value = function(v){
-	if(v!==undefined){
-		this._value = v;
-//		this._updateLayout();
-//		this.alertAll(giau.InputFieldDateMini.EVENT_CHANGE,this);
-	}
-	return this._value;
+	this._mini.value(value);
+	this._maxi.value(value);
+	return this._mini.value();
 };
 
 
@@ -6385,7 +6435,7 @@ giau.InputOverlay.EVENT_EXIT = "EXIT_OUTSIDE";
 giau.InputOverlay.EVENT_LAYOUT = "LAYOUT_CHANGE";
 
 giau.InputOverlay.prototype._handleScrollFxn = function(e,f){
-	return;
+	//return;
 	// does nothing
 	// Code.stopEventPropagation(e);
 	// Code.eventPreventDefault(e);
@@ -6446,6 +6496,21 @@ giau.InputOverlay.prototype.centerContent = function(){
 	this.updateLayout();
 	// now do centering:
 	//Code.setStyleMarginLeft(this._content,"");
+	var child = Code.getChild(this._elementContent, 0);
+	var parent = Code.getParent(child);
+	var widthParent = Code.getElementWidth(parent);
+	var heightParent = Code.getElementHeight(parent);
+	var widthChild = Code.getElementWidth(child);
+	var heightChild = Code.getElementHeight(child);
+
+	offX = (widthParent - widthChild) * 0.5;
+	offY = (heightParent - heightChild) * 0.5;
+		offX = Math.floor(offX);
+		offY = Math.floor(offY);
+	Code.setStyleLeft(child,offX+"px");
+	Code.setStyleTop(child,offY+"px");
+	Code.setStylePosition(parent,"relative");
+	Code.setStylePosition(child,"absolute");
 }
 giau.InputOverlay.prototype._updateLayout = function(){
 	// set to 0 pre-test
