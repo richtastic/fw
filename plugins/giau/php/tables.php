@@ -233,7 +233,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				],
 			],
 			"section_list" => [
-				"type" => "string-array",
+				"type" => "string", // "string-array",
 				"attributes" =>  [
 					"display_name" => "Subsections",
 					"order" => "6",
@@ -606,7 +606,7 @@ function GIAU_TABLE_DEFINITION_CALENDAR(){
 				],
 			],
 			"start_date" => [
-				"type" => "string",
+				"type" => "string-date",
 				"attributes" =>  [
 					"display_name" => "Start Date",
 					"order" => "6",
@@ -615,7 +615,7 @@ function GIAU_TABLE_DEFINITION_CALENDAR(){
 				],
 			],
 			"duration" => [
-				"type" => "string-seconds",
+				"type" => "string-duration",
 				"attributes" =>  [
 					"display_name" => "Duration",
 					"order" => "6",
@@ -624,7 +624,7 @@ function GIAU_TABLE_DEFINITION_CALENDAR(){
 				],
 			],
 			"tags" => [
-				"type" => "string",
+				"type" => "string-array",
 				"attributes" => [
 					"display_name" => "Tags",
 					"order" => "5",
@@ -722,8 +722,20 @@ function GIAU_TABLE_DEFINITION_PAGE(){
 				"page_tags" => "tags",
 			],
 			"columns" => [
-				//
+				"section_list" =>  [
+					"drag_and_drop" =>  [
+						"source" =>  [
+							"max_count" => null,
+							"name" => "section_id",
+							"url" => "",
+						],
+						// "metadata" => [
+						// 	"source" => "widgets",
+						// ],
+					]
+				],
 			],
+
 		]
 	];
 }

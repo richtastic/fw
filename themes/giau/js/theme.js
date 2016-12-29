@@ -3784,6 +3784,23 @@ giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData, 
 
 
 giau.CRUD = function(element){
+	var propertyDataTableName = "data-table-name";
+	var valueTableName = Code.getProperty(element,propertyDataTableName);
+	console.log("CRUD TABLE NAME: "+valueTableName);
+
+
+	// simulate got data:
+/*
+	section
+	languagization
+	bio
+	calendar
+	page
+	widget
+*/
+	//var dataTableName = "section";
+	var dataTableName = valueTableName;
+
 	/*
 	var model = {
 		"fields": {
@@ -3953,16 +3970,6 @@ return;
 	// Code.setStyleTop(this._elementTable,interriorPadding+"px");
 
 
-	// simulate got data:
-/*
-	section
-	languagization
-	bio
-	calendar
-	page
-	widget
-*/
-	var dataTableName = "section";
 	
 	this._dataSource = new giau.DataSource("./",20, {"table":dataTableName} );
 	this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
@@ -4043,7 +4050,7 @@ giau.CRUD.prototype._handleCreateFxn = function(e,data){
 	this._dataCRUD.create(jsonString, passBack);
 }
 giau.CRUD.prototype._handleReloadFxn = function(e,data){
-	console.log("READ");
+	console.log("CRUD - READ");
 	console.log(data);
 	// get primary key index value
 	var passBack = {};
@@ -4259,6 +4266,8 @@ giau.CRUD.prototype._updateWithData = function(data){
 					pres = columnPresentations[alias];
 					//
 					var info = {};
+console.log(i);
+console.log(column+" = "+alias);
 					info["column"] = alias;
 					info["alias"] = key;
 					info["definition"] = column;
@@ -4290,6 +4299,8 @@ giau.CRUD.prototype._updateWithData = function(data){
 			var column = field["column"];
 			var alias = field["alias"];
 			var mapping = this._mappingFromData(field,row,alias);
+console.log(column+"==========================================================================================================");
+console.log(field);
 console.log("RICHIE GOT MAPPING 2: "+j+"/"+editFields.length);			
 			viewRow.push(mapping);
 		}
@@ -4385,16 +4396,6 @@ giau.CRUD.prototype._updateLayout = function(){
 
 	console.log(FA.toString());
 }
-
-/*
-		id int NOT NULL AUTO_INCREMENT,
-		created VARCHAR(32) NOT NULL,
-		modified VARCHAR(32) NOT NULL,
-		hash_index VARCHAR(255) NOT NULL,
-		language VARCHAR(16) NOT NULL,
-		phrase_value TEXT NOT NULL,
-		UNIQUE KEY id (id)
-*/
 
 giau.CRUD._elementSelectDuration = function(){
 	var elementContainer = Code.newDiv();
@@ -4580,6 +4581,7 @@ giau.CRUD._fieldEditString = function(definition, container, fieldName, elementC
 	var metadata = definition["metadata"];
 	var value = container[fieldName];
 	if(presentation && presentation["drag_and_drop"]){ // DRAG AND DROP
+console.log("FOUND A DRAG AND DROP: "+fieldName);
 		// update mapping
 		mapping.updateElementFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateElementFxn);
 		mapping.updateDataFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateDataFxn);
@@ -4827,7 +4829,6 @@ giau.CRUD._fieldEditDateUpdateElementFxn = function(mapping){
 	console.log("_fieldEditDateUpdateDataFxn");
 }
 
-
 giau.CRUD._fieldEditStringUpdateDataFxn = function(mapping, action){
 	console.log("_fieldEditDateUpdateDataFxn");
 }
@@ -4872,8 +4873,11 @@ giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, 
 		operationFxn["string-number"] = [giau.CRUD._fieldEditNumber,giau.CRUD._fieldEditString];
 		operationFxn["string-date"] = [giau.CRUD._fieldEditDate,giau.CRUD._fieldEditDate];
 		operationFxn["string-color"] = [giau.CRUD._fieldEditColor,giau.CRUD._fieldEditColor];
-//		operationFxn["string-array"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString];
 		operationFxn["string-json"] = [giau.CRUD._fieldEditJSON,giau.CRUD._fieldEditJSON];
+operationFxn["string-duration"] = [giau.CRUD._fieldEditDuration,giau.CRUD._fieldEditDuration];
+operationFxn["string-array"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString]; // comma separated
+operationFxn["string-option"] = [giau.CRUD._fieldEditDuration,giau.CRUD._fieldEditDuration]; // select list
+		
 	var operation = operationFxn[fieldType];
 	var updateElementFunction = null;
 console.log("OPERATING ON .... "+fieldType);
@@ -5136,6 +5140,7 @@ giau.InputFieldText.prototype._filterUnsignedIntegerOnly = function(n){
 };
 giau.InputFieldText.prototype._filterNumberOnly = function(n){
 	var regExNumber = new RegExp('(\\+|\-)?[0-9]+(\.([0-9]+(E((\\+|\-)?[0-9]+))?)?)?','i');
+	// 
 	return this._filterRegExOnly(n,regExNumber,"0");
 };
 giau.InputFieldText.prototype._filterRegExOnly = function(n,r,d){
@@ -5571,9 +5576,9 @@ giau.InputFieldColor.prototype._handleInputFieldChange = function(e,f){
 	var colorSlider = this._colorSliders[index];
 	var newValue = giau.InputFieldColor.hexFieldUpdateOverwrite(elementField, 2);
 	colorSlider.color(newValue);
-	this._value = 
-this.alertAll(giau.InputFieldColor.EVENT_CHANGE, this);
-}
+	// this._colorValue =  ???
+	this.alertAll(giau.InputFieldColor.EVENT_CHANGE, this);
+};
 giau.InputFieldColor.hexFieldUpdateOverwrite = function(elementField,count){
 	var hexBinDigits = count*4;
 	var maxValue = 0;
@@ -5592,71 +5597,6 @@ giau.InputFieldColor.hexFieldUpdateOverwrite = function(elementField,count){
 	var displayValue = Code.getHexNumber(newValue, count);
 	Code.setInputTextValue(elementField,displayValue);
 
-return newValue;
-/*
-	// IF MULTIPLE VALUES WERE PREVIOUSLY SELECTED, THEY SHOULD ALL BE CUT OUT (not just the 1 assumed or the one to the right)
-	var value = Code.getInputTextValue(elementField);
-	var newValue = value;
-	console.log("VALUE: '"+value+"'")
-	var cursorRange = Code.getInputTextSelectedRange(elementField);
-	console.log(cursorRange);
-	var cursorPosition = Math.max(cursorRange.start,cursorRange.end);
-
-
-	var newValue = "";
-	var newCursorLocation = 0;
-	if(cursorPosition==value.length){
-		// if(cursorLocationPrev==value.length-1){//
-		console.log("END");
-		newValue = value.substring(1,cursorPosition);
-		newCursorLocation = newValue.length;
-	}else{
-		console.log("POSITION: "+cursorPosition);
-		var stringA = value.substring(0,cursorPosition);
-		var stringB = value.substring(cursorPosition+1,value.length);
-		console.log(stringA);
-		console.log(stringB);
-		var newString = stringA+""+stringB;
-		console.log(newString);
-		newValue = newString;
-		newCursorLocation = cursorPosition;
-	}
-	console.log("NEW STIRNG: '"+newValue+"'");
-	// CONVERT TO NUMBER
-	if(newValue.length>=count){ // get right end
-		newValue = newValue.substring(newValue.length-count,newValue.length);
-	}else{ // pad left end
-		newValue = Code.prependFixed(newValue,"0",count)
-	}
-	console.log("HEX VALUE: "+newValue)
-	newValue = parseInt(newValue,16);
-	console.log("INT VALUE: "+newValue)
-	if(Code.isNaN(newValue)){
-		newValue = 0;
-	}
-	//var maxValue = Math.pow(2,count)-1//(0x1 << (count*4-1)) >>> 0;
-	var hexBinDigits = count*4;
-	var maxValue = 0;
-	for(var i=0; i<hexBinDigits; ++i){
-		maxValue = (maxValue << 1) | 0x01;
-	}
-	maxValue = maxValue >>> 0;
-	console.log("maxValue: "+maxValue);
-	// 8 digits = 8*4
-	// 8 = 0xAARRGGBB 
-	console.log("PRE: "+newValue);
-	newValue = Math.min(Math.max(newValue,0),maxValue);
-	console.log("PST: "+newValue);
-	// RE-DISPLAY:
-	var displayValue = Code.getHexNumber(newValue, count);
-	console.log("displayValue: 0x"+displayValue)
-	//if(displayValue!==value){
-		console.log("newCursorLocation: "+newCursorLocation)
-		Code.setInputTextValue(elementField,displayValue);
-		Code.setInputTextSelectedRange(elementField,newCursorLocation,newCursorLocation);
-		//Code.setInputTextSelectedRange(elementField,1,1);
-	//}
-*/
 	return newValue;
 }
 giau.InputFieldColor.prototype._handleColorChange = function(e,f){
