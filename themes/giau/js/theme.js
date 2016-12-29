@@ -3188,6 +3188,12 @@ giau.ObjectComposer.prototype._handlePrimitiveBooleanUpdate = function(e,f){
 	console.log("_handlePrimitiveBooleanUpdate");
 	this._handlePrimitiveUpdateAny(e);
 }
+
+giau.ObjectComposer.prototype._handlePrimitiveTextUpdate = function(e,f){
+	console.log("_handlePrimitiveTextUpdate");
+	this._handlePrimitiveUpdateAny(e);
+}
+
 giau.ObjectComposer.prototype._handlePrimitiveUpdateAny = function(e){
 	var control = e["control"];
 	var object = e["object"];
@@ -3209,26 +3215,31 @@ giau.ObjectComposer.prototype._handlePrimitiveUpdateAny = function(e){
 
 giau.ObjectComposer.prototype._inputDateField = function(element, key,value, container){
 	var input = Code.newDiv();
-		Code.setStyleWidth(input,200+"px");
-		Code.setStyleHeight(input,120+"px");
+		// Code.setStyleWidth(input,200+"px");
+		// Code.setStyleHeight(input,120+"px");
+		//Code.setStyleHeight(input,100+"%");
 		Code.setStyleBackgroundColor(input,"#F00");
 		Code.setStyleDisplay(input,"inline-block");
-		var jsObject = new giau.InputFieldDate(input,value);
+		//var jsObject = new giau.InputFieldDate(input,value);
+var jsObject = new giau.InputFieldDateModal(input,value);
 			var data = {"object":container, "key":key, "value":value, "control":jsObject};
-			jsObject.addFunction(giau.InputFieldDate.EVENT_CHANGE, this._handlePrimitiveDateUpdate, this, data);
+jsObject.addFunction(giau.InputFieldCompositeModal.EVENT_CHANGE, this._handlePrimitiveColorUpdate, this, data);
+			//jsObject.addFunction(giau.InputFieldDate.EVENT_CHANGE, this._handlePrimitiveDateUpdate, this, data);
 	var content = this._inputField(element,input, key);
 	return {"container":content, "input":input};
 }
 
 giau.ObjectComposer.prototype._inputColorField = function(element, key,value, container){
 	var input = Code.newDiv();
-		Code.setStyleWidth(input,200+"px");
-		Code.setStyleHeight(input,80+"px");
+		// Code.setStyleWidth(input,200+"px");
+		// Code.setStyleHeight(input,80+"px");
 		Code.setStyleBackgroundColor(input,"#F00");
 		Code.setStyleDisplay(input,"inline-block");
-		var jsObject = new giau.InputFieldColor(input,value);
+// var jsObject = new giau.InputFieldColor(input,value);
+var jsObject = new giau.InputFieldColorModal(input,value);
 			var data = {"object":container, "key":key, "value":value, "control":jsObject};
-jsObject.addFunction(giau.InputFieldColor.EVENT_CHANGE, this._handlePrimitiveColorUpdate, this, data);
+// jsObject.addFunction(giau.InputFieldColor.EVENT_CHANGE, this._handlePrimitiveColorUpdate, this, data);
+jsObject.addFunction(giau.InputFieldCompositeModal.EVENT_CHANGE, this._handlePrimitiveColorUpdate, this, data);
 	var content = this._inputField(element,input, key);
 	return {"container":content, "input":input};
 }
@@ -3236,8 +3247,8 @@ jsObject.addFunction(giau.InputFieldColor.EVENT_CHANGE, this._handlePrimitiveCol
 giau.ObjectComposer.prototype._inputBooleanField = function(element, key,value, container){
 	// MAPPING?
 	var input = Code.newDiv();
-		Code.setStyleWidth(input,100+"px");
-		Code.setStyleHeight(input,20+"px");
+		// Code.setStyleWidth(input,100+"px");
+		// Code.setStyleHeight(input,20+"px");
 		Code.setStyleBackgroundColor(input,"#F00");
 		Code.setStyleDisplay(input,"inline-block");
 		var jsObject = new giau.InputFieldBoolean(input,value);
@@ -3248,6 +3259,19 @@ giau.ObjectComposer.prototype._inputBooleanField = function(element, key,value, 
 }
 
 giau.ObjectComposer.prototype._inputTextField = function(element, key,value, container){
+	var input = Code.newDiv();
+		Code.setStyleWidth(input,100+"%");
+		Code.setStyleHeight(input,50+"px");
+		Code.setStyleBackgroundColor(input,"#F00");
+		Code.setStyleDisplay(input,"inline-block");
+		var jsObject = new giau.InputFieldText(input,value);
+			var data = {"object":container, "key":key, "value":value, "control":jsObject};
+			jsObject.addFunction(giau.InputFieldText.EVENT_CHANGE, this._handlePrimitiveTextUpdate, this, data);
+	var content = this._inputField(element,input, key);
+	return {"container":content, "input":input};
+
+
+/*
 	var radius = 4;
 	var input = Code.newInputText();
 		Code.setStyleBorder(input,"solid");
@@ -3275,6 +3299,7 @@ giau.ObjectComposer.prototype._inputTextField = function(element, key,value, con
 
 	var content = this._inputField(element,input, key);
 	return {"container":content, "input":input};
+*/
 }
 giau.ObjectComposer.prototype._inputField = function(element,input, key){
 	var radius = 4;
@@ -4430,7 +4455,7 @@ console.log(mapping.object());
 console.log(mapping.field());
 console.log(mapping.value());
 	var elementContainer = Code.newDiv();
-	var jsObject = new giau.InputFieldDate(elementContainer, value);
+	var jsObject = new giau.InputFieldDateModal(elementContainer, value);
 	//mapping.object(jsObject);
 	mapping.value(jsObject);
 	mapping.updateElementFxn(giau.CRUD._fieldEditJSONUpdateElementFxn);
@@ -4985,9 +5010,33 @@ giau.CRUD._generateSubButton = function(display,element){
 
 
 giau.InputFieldText = function(element, value){ // string, string-number
-	// [0-9]+(\.[0-9]+)?(E|e)?(\+|\-)?([0-9]+)?
+	giau.InputFieldText._.constructor.call(this);
 
-//HERE
+	this._container = element;
+	var radius = 4;
+	//var input = Code.newInputText();
+	var input = Code.newInputTextArea();
+		Code.setStyleBorder(input,"solid");
+		Code.setStyleBorderWidth(input,1+"px");
+		Code.setStyleBorderColor(input,"#CCC");
+		Code.setStyleBorderRadius(input,0+"px "+radius+"px "+radius+"px "+0+"px");
+		Code.setStyleBackgroundColor(input,"#FFF");
+		Code.setStyleDisplay(input,"inline-block");
+		Code.setStyleColor(input,"#000");
+		Code.setStylePadding(input,"2px");
+		Code.setStyleFontSize(input,11+"px");
+		Code.setTextPlaceholder(input,"(empty)");
+
+		Code.setStyleWidth(input,"100%");
+		Code.setStyleHeight(input,"100%");
+
+	Code.addChild(this._container,input);
+
+
+	this._jsDispatch = new JSDispatch();
+	this._jsDispatch.addJSEventListener(input, Code.JS_EVENT_INPUT_CHANGE, this._handleInputTextChangeFxn, this, {});
+
+	// [0-9]+(\.[0-9]+)?(E|e)?(\+|\-)?([0-9]+)?
 
 	this._criteria = 0;
 	this._criteriaMinLength = 2; // alert?
@@ -4995,17 +5044,60 @@ giau.InputFieldText = function(element, value){ // string, string-number
 	this._criteriaNumber = 0; // either:
 		this._criteriaFloat = 0; // A.B[e|E[]]
 		this._criteriaInteger = 0; // A^
-	console.log("InputFieldText");
-	console.log(this)
-	giau.InputFieldText._.constructor.call(this);
-	this._container = element;
+
+
+	this._input = input;
+	
+	this.value(value);
 }
 Code.inheritClass(giau.InputFieldText, Dispatchable);
 
 giau.InputFieldText.EVENT_CHANGE = "giau.InputFieldText.EVENT_CHANGE";
 
+giau.InputFieldText.prototype._handleInputTextChangeFxn = function(e){
+	var newText = Code.getTextAreaValue(this._input);
+	newText = this._filterNumberOnly(newText);
+	this._dataValue = newText;
+	this._alertChanged();
+}
+giau.InputFieldText.prototype._filterNumberOnly = function(n){
+	var numbers = ["1","12","3.141","3.141E4","3.141E+3","3.141E-25",   "asd452345","2344.6455+343"]
+	for(var i=0; i<numbers.length; ++i){
+		var number = numbers[i];
+		console.log( number + "  ===  " + number.search( new RegExp('([0-9]+(\.[0-9]+)?(E(\\+|\-)?[0-9]+))','i') ) );
+	}
 
 
+	HERE 
+	// "23423432.51234E+34".match( new RegExp('([0-9]+(\.[0-9]+)?(E(\\+|\-)?[0-9]+))','i') )
+	// .search
+	// [0-9]+(\.[0-9]+)?(E|e)?(\+|\-)?([0-9]+)?
+	var regExNumber = new RegExp('[0-9]','i');
+	console.log("n1: '"+n+"'");
+	var matches = n.matches();
+	//var n = n.replace(regExNumber, "");
+	console.log("n2: '"+n+"'");
+	return n;
+
+	// var regexStringPrefix = new RegExp('^string-','i');
+	// var isString = s=="string" || s.match(regexStringPrefix);
+}
+giau.InputFieldText.prototype._updateLayout = function(v){
+	var value = this._dataValue;
+	var input = this._input;
+	Code.setInputTextValue(input,value);
+}
+giau.InputFieldText.prototype._alertChanged = function(){
+	this.alertAll(giau.InputFieldText.EVENT_CHANGE,this);
+
+}
+giau.InputFieldText.prototype.value = function(v){
+	if(v!==undefined){
+		this._dataValue = v;
+		this._updateLayout();
+	}
+	return this._dataValue;
+}
 
 giau.InputFieldBoolean = function(element, value){
 	console.log(this)
@@ -5240,7 +5332,8 @@ giau.InputFieldColor = function(element, value){
 	console.log("giau.InputFieldColor")
 	giau.InputFieldColor._.constructor.call(this);
 	this._container = element;
-	this._colorValue = Code.isString(value) ? Code.getColARGBFromString(value) : value;
+	this._colorValue = 0x00000000;
+	this.value(value);
 
 	var parentWidth = $(this._container).width();
 	var parentHeight = $(this._container).height();
@@ -5392,6 +5485,7 @@ giau.InputFieldColor.prototype._handleInputFieldChange = function(e,f){
 	var colorSlider = this._colorSliders[index];
 	var newValue = giau.InputFieldColor.hexFieldUpdateOverwrite(elementField, 2);
 	colorSlider.color(newValue);
+	this._value = 
 this.alertAll(giau.InputFieldColor.EVENT_CHANGE, this);
 }
 giau.InputFieldColor.hexFieldUpdateOverwrite = function(elementField,count){
@@ -5481,13 +5575,12 @@ return newValue;
 }
 giau.InputFieldColor.prototype._handleColorChange = function(e,f){
 	var index = e["index"];
-	// console.log("index: "+index)
 	var elementField = this._elementFields[index];
 	var colorSlider = this._colorSliders[index];
 	var hexValue = Code.getHexNumber(colorSlider.color(), 2);
 	Code.setInputTextValue(elementField, hexValue);
 	this.updateFinalColorFromColors();
-this.alertAll(giau.InputFieldColor.EVENT_CHANGE, this);
+	this.alertAll(giau.InputFieldColor.EVENT_CHANGE, this);
 }
 giau.InputFieldColor.prototype.updateFinalColorFromColors = function(){
 	var alp = this._colorSliders[3].color();
@@ -5495,17 +5588,22 @@ giau.InputFieldColor.prototype.updateFinalColorFromColors = function(){
 	var grn = this._colorSliders[1].color();
 	var blu = this._colorSliders[2].color();
 	var finalColor = Code.getColARGB(alp,red,grn,blu);
-	this._dataValue = finalColor;
+	this.value(finalColor);
 	Code.setStyleBackgroundColor(this._colorSquare, Code.getJSColorFromARGB(finalColor));
 	var colorHex = Code.getHexNumber(finalColor,8);
-	colorHex = colorHex;
 	Code.setInputTextValue(this._colorField, colorHex);
 }
 giau.InputFieldColor.prototype._updateLayout = function(){
 
 	// R G B A sliders / fields / FINAL COLOR SQUARE / value
 }
-giau.InputFieldColor.prototype.value = function(){ // 0xAARRGGBB
+giau.InputFieldColor.prototype.value = function(value){ // 0xAARRGGBB
+	if(value != undefined){
+		if(Code.isString(value)){
+			value = Code.getColARGBFromString(value);
+		}
+		this._colorValue = value;
+	}
 	return this._colorValue;
 }
 
@@ -5657,7 +5755,6 @@ giau.InputFieldColorSlider.prototype._updateIndicatorFromEvent = function(e){
 	Code.setStyleTop(this._indicator, indiTop+"px");
 }
 giau.InputFieldColorSlider.prototype._handleBackgroundMouseUpFxn = function(e,d){
-	console.log("bg up");
 	this._updateIndicatorFromEvent(e);
 	this._updateColorFromElement();
 	this._removeDragCover();
@@ -5900,8 +5997,6 @@ giau.InputFieldDate.prototype._handleFieldChange = function(e,f){
 	newValue = Code.prependFixed(numValue+"","0",digitCount);
 	console.log(value,numValue,newValue);
 	if(value!==newValue){
-		console.log("CHANGING VALUE: "+newValue);
-		console.log(field);
 		Code.setInputTextValue(field, newValue);
 	}
 	//var milliseconds = Code.dateFromString(this._displayDate);
@@ -6231,7 +6326,6 @@ giau.InputFieldColorMini.prototype._updateLayout = function(){
 	var colorValue = this._value;
 	var color = Code.getJSColorFromARGB(colorValue);
 	var colorText = Code.getHexNumber(colorValue,8,true);
-
 	Code.setStyleBackgroundColor(this._colorElement,color);
 	Code.setContent(this._textElement,colorText);
 };
@@ -6243,7 +6337,6 @@ giau.InputFieldDateMini = function(element, value){
 	giau.InputFieldDateMini._.constructor.call(this);
 	this._container = element;
 	this._value = Code.getTimeStampFromMilliseconds();
-	console.log(value)
 	this._jsDispatch = new JSDispatch();
 
 	var size = 20;
@@ -6328,56 +6421,41 @@ giau.InputFieldDateMini.prototype._updateLayout = function(){
 
 
 
-giau.InputFieldDateModal = function(element, value){
+giau.InputFieldCompositeModal = function(element, value){
 	giau.InputFieldDateMini._.constructor.call(this);
 	this._container = element;
 	this._miniElement = Code.newDiv();
 	this._maxiElement = Code.newDiv();
-
-
-		Code.setStyleWidth(this._maxiElement,250+"px");
-		Code.setStyleHeight(this._maxiElement,150+"px");
-	this._mini = new giau.InputFieldDateMini(this._miniElement, value);
-		this._mini.addFunction(giau.InputFieldDateMini.EVENT_SELECT, this._handleMiniSelectFxn, this);
-	var max = this._maxiElement;
-	this._maxi = new giau.InputFieldDate(max, value);
-		this._maxi.addFunction(giau.InputFieldDate.EVENT_CHANGE, this._handleMaxiChangeFxn, this);
-	
-	this.gotoMin();
-	
 	this._overlay = new giau.InputOverlay();
+};
+Code.inheritClass(giau.InputFieldCompositeModal, Dispatchable);
+
+giau.InputFieldCompositeModal.EVENT_CHANGE = "giau.InputFieldCompositeModal.EVENT_CHANGE";
+
+giau.InputFieldCompositeModal.prototype._handleMiniSelectFxn = function(e){
+	console.log("select")
 	this.show();
 };
-Code.inheritClass(giau.InputFieldDateModal, Dispatchable);
-
-giau.InputFieldDateModal.EVENT_CHANGE = "giau.InputFieldDateModal.EVENT_CHANGE";
-giau.InputFieldDateModal.EVENT_SELECT = "giau.InputFieldDateModal.EVENT_SELECT";
-
-giau.InputFieldDateModal.prototype._handleMiniSelectFxn = function(e){
-	this.show();
-};
-giau.InputFieldDateModal.prototype.show = function(e){
+giau.InputFieldCompositeModal.prototype.show = function(e){
 	var value = this._mini.value();
 	this._maxi.value(value);
 	this._overlay.show(this._maxiElement);
 	//this._layoutMaxi();
 	this._overlay.centerContent();
 };
-giau.InputFieldDateModal.prototype._handleMaxiChangeFxn = function(e){
+giau.InputFieldCompositeModal.prototype._handleMaxiChangeFxn = function(e){
 	var value = this._maxi.value();
 	this._mini.value(value);
 };
-giau.InputFieldDateModal.prototype.gotoMin = function(v){
-	console.log("goto mini");
+giau.InputFieldCompositeModal.prototype.gotoMin = function(v){
 	Code.removeAllChildren(this._container);
 	Code.addChild(this._container, this._miniElement);
 };
-giau.InputFieldDateModal.prototype.gotoMax = function(v){
-	console.log("goto maxi");
+giau.InputFieldCompositeModal.prototype.gotoMax = function(v){
 	Code.removeAllChildren(this._container);
 	Code.addChild(this._container, this._maxiElement);
 };
-giau.InputFieldDateModal.prototype._layoutMaxi = function(v){ // place next to the mini element
+giau.InputFieldCompositeModal.prototype._layoutMaxi = function(v){ // place next to the mini element: start at below, above, right, left, center-to-screen
 	/*
 	var maxi = this._maxiElement;
 	var mini = this._miniElement;
@@ -6407,11 +6485,61 @@ giau.InputFieldDateModal.prototype._layoutMaxi = function(v){ // place next to t
 	Code.setStylePosition(maxi,"absolute");
 	*/
 };
-giau.InputFieldDateModal.prototype.value = function(v){
-	this._mini.value(value);
-	this._maxi.value(value);
-	return this._mini.value();
+giau.InputFieldCompositeModal.prototype.alertChange = function(){
+	this.alertAll(giau.InputFieldCompositeModal.EVENT_CHANGE,this);
+}
+giau.InputFieldCompositeModal.prototype.value = function(value){
+	if(this._maxi){
+		this._maxi.value(value);
+	}
+	if(this._mini){
+		this._mini.value(value);
+		return this._mini.value();
+	}
+	return null;
 };
+
+
+
+
+
+giau.InputFieldDateModal = function(element, value){
+	Code.constructorClass(giau.InputFieldDateModal, this, element, value);
+
+	Code.setStyleWidth(this._maxiElement,250+"px");
+	Code.setStyleHeight(this._maxiElement,150+"px");
+
+	this._mini = new giau.InputFieldDateMini(this._miniElement, value);
+		this._mini.addFunction(giau.InputFieldDateMini.EVENT_SELECT, this._handleMiniSelectFxn, this);
+	var max = this._maxiElement;
+	this._maxi = new giau.InputFieldDate(max, value);
+		this._maxi.addFunction(giau.InputFieldDate.EVENT_CHANGE, this._handleMaxiChangeFxn, this);
+	
+	this.gotoMin();
+};
+Code.inheritClass(giau.InputFieldDateModal, giau.InputFieldCompositeModal);
+
+
+giau.InputFieldColorModal = function(element, value){
+	Code.constructorClass(giau.InputFieldColorModal, this, element, value);
+	
+	Code.setStyleWidth(this._maxiElement,250+"px");
+	Code.setStyleHeight(this._maxiElement,150+"px");
+
+	this._mini = new giau.InputFieldColorMini(this._miniElement, value);
+		this._mini.addFunction(giau.InputFieldColorMini.EVENT_SELECT, this._handleMiniSelectFxn, this);
+	var max = this._maxiElement;
+	this._maxi = new giau.InputFieldColor(max, value);
+		this._maxi.addFunction(giau.InputFieldColor.EVENT_CHANGE, this._handleMaxiChangeFxn, this);
+	
+	this.gotoMin();
+};
+Code.inheritClass(giau.InputFieldColorModal, giau.InputFieldCompositeModal);
+
+
+
+
+
 
 
 /*

@@ -42,6 +42,7 @@ function giau_admin_menu_page_main(){
 	<div class="giauTestE" style="width:200px; height:100px; background-color:#CCC;"></div>
 	<div class="giauTestF" style="width:200px; height:100px; background-color:#CCC;"></div>
 	<div class="giauTestG" style="width:200px; height:100px; background-color:#CCC;"></div>
+	<div class="giauTestH" style="width:200px; height:100px; background-color:#CCC;"></div>
 	<div class="giauTestOverlay" style="width:400px; height:80px; background-color:#AAA;">Click me</div>
 	<script>
 	
@@ -59,6 +60,7 @@ var colorstill = new giau.InputFieldColorMini($(".giauTestE")[0],"0x99FF0000");
 var timestill = new giau.InputFieldDateMini($(".giauTestF")[0],"2016-11-28 09:04:59.1234");
 
 var timeall = new giau.InputFieldDateModal($(".giauTestG")[0],"2016-11-28 09:04:59.1234");
+var colorall = new giau.InputFieldColorModal($(".giauTestH")[0],0xCC00FF00);
 			var testOverlay = $(".giauTestOverlay")[0];
 			var dispatch = new JSDispatch();
 			dispatch.addJSEventListener(testOverlay, Code.JS_EVENT_MOUSE_DOWN, function(e){
