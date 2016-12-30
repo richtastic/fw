@@ -39,11 +39,13 @@ function giau_admin_menu_page_main(){
 	<div class="giauTestB" style="width:200px; height:100px; background-color:#CCC;"></div>
 	<div class="giauTestC" style="width:200px; height:100px; background-color:#CCC;"></div>
 	<div class="giauTestD" style="width:200px; height:100px; background-color:#CCC;"></div>
-	<div class="giauTestE" style="width:200px; height:100px; background-color:#CCC;"></div>
-	<div class="giauTestF" style="width:200px; height:100px; background-color:#CCC;"></div>
-	<div class="giauTestG" style="width:200px; height:100px; background-color:#CCC;"></div>
-	<div class="giauTestH" style="width:200px; height:100px; background-color:#CCC;"></div>
-	<div class="giauTestOverlay" style="width:400px; height:80px; background-color:#AAA;">Click me</div>
+	<div class="giauTestE" style="width:200px; height:30px; background-color:#CCC;"></div>
+	<div class="giauTestF" style="width:200px; height:30px; background-color:#CCC;"></div>
+	<div class="giauTestG" style="width:200px; height:30px; background-color:#CCC;"></div>
+	<div class="giauTestH" style="width:200px; height:30px; background-color:#CCC;"></div>
+	<div class="giauTestI" style="width:200px; min-height:30px; background-color:#CCC; display:block; "></div>
+	<div class="giauTestJ" style="width:200px; min-height:30px; background-color:#CCC; display:block; "></div>
+	<div class="giauTestOverlay" style="width:400px; height:30px; background-color:#AAA;">Click me</div>
 	<script>
 	
 	function afterDelay(){
@@ -61,6 +63,16 @@ var timestill = new giau.InputFieldDateMini($(".giauTestF")[0],"2016-11-28 09:04
 
 var timeall = new giau.InputFieldDateModal($(".giauTestG")[0],"2016-11-28 09:04:59.1234");
 var colorall = new giau.InputFieldColorModal($(".giauTestH")[0],0xCC00FF00);
+
+
+//var tags = new giau.InputFieldTags($(".giauTestI")[0],"comma,,,separated,fields,,,yay,,");
+var tags = new giau.InputFieldTags($(".giauTestI")[0],"comma\\,,\\,separated,fields,\\,\\,yay\\,\\,\\\\");
+var select = new giau.InputFieldDiscrete($(".giauTestJ")[0],[
+	{"value":"val0", "display":"value 0"},
+	{"value":"val1", "display":"value 1"},
+	{"value":"val2", "display":"value 2"},
+],1);
+
 			var testOverlay = $(".giauTestOverlay")[0];
 			var dispatch = new JSDispatch();
 			dispatch.addJSEventListener(testOverlay, Code.JS_EVENT_MOUSE_DOWN, function(e){

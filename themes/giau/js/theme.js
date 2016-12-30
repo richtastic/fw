@@ -5867,6 +5867,131 @@ giau.InputFieldColorSlider.prototype._updateLayout = function(){
 	// Code.setStyleTop(this._hitArea, -padding+"px");
 }
 
+// --------------------------------------------------------------------------------------------------------------------------------------- INPUT TAGS
+giau.InputFieldTags = function(element, value){
+	giau.InputFieldTags._.constructor.call(this);
+	this._container = element;
+	this._tagElements = [];
+	this._inputElement = Code.newInputText();
+	this._jsDispatch = new JSDispatch();
+	this.value(value);
+	this._updateLayout();
+}
+Code.inheritClass(giau.InputFieldTags, Dispatchable);
+
+giau.InputFieldTags.EVENT_CHANGE = "giau.InputFieldTags.EVENT_CHANGE";
+
+giau.InputFieldTags.prototype._updateLayout = function(v){
+	var tagString = this.value();
+	console.log(tagString);
+	var tags = Code.arrayFromCommaSeparatedString(tagString);
+	var i, len;
+	var tag, div;
+	// remove current tags
+	var elements = this._tagElements;
+	var element;
+	len = elements.length;
+	for(i=0; i<len; ++i){
+		element = elements[i];
+		console.log(element);
+		Code.removeFromParent(element);
+	}
+	// add new tags
+	Code.emptyArray(elements);
+	len = tags.length;
+	for(i=0; i<len; ++i){
+		tag = tags[i];
+		div = Code.newDiv();
+			Code.setContent(div,""+tag);
+			Code.setStyleDisplay(div,"inline-block");
+			Code.setStylePadding(div,4+"px");
+			Code.setStyleBackgroundColor(div,"#FFF");
+				this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_MOUSE_DOWN, this._handleTagSelectRemove, this, {"index":i});
+		Code.addChild(this._container,div);
+		elements.push(div);
+	}
+
+};
+giau.InputFieldTags.prototype._handleTagSelectRemove = function(e,d){
+	console.log(e);
+	console.log(d);
+	//var index = d===undefined ? null : ();
+	var index = Code.recursiveProperty(d,null, "index");
+	this._removeIndex(index);
+};
+giau.InputFieldTags.prototype._removeIndex = function(index){
+	console.log("remove: "+index);
+	if(index!==undefined && index!==null){
+		var tagString = this.value();
+		console.log(tagString);
+		var tags = Code.arrayFromCommaSeparatedString(tagString);
+		if(tags.length>index){
+			Code.removeElementAt(tags,index);
+			console.log("BEFORE");
+			console.log(tags);
+			tags = Code.commaSeparatedStringFromArray(tags);
+			console.log("AFTER");
+			console.log(tags);
+			this.value(tags);
+		}
+	}
+};
+giau.InputFieldTags.prototype.value = function(v){
+	if(v!==undefined){
+		this._value = v;
+		this._updateLayout();
+	}
+	return this._value;
+};
+
+// --------------------------------------------------------------------------------------------------------------------------------------- INPUT SELECT OPTIONS
+giau.InputFieldDiscrete = function(element, options, index){
+	giau.InputFieldDiscrete._.constructor.call(this);
+	this._container = element;
+	this._tagElements = [];
+	this._jsDispatch = new JSDispatch();
+	this._index = 0;
+	this._selectElement = Code.newSelect();
+		Code.addChild(this._container,this._selectElement);
+	this.options(options);
+	this.index(index);
+}
+Code.inheritClass(giau.InputFieldDiscrete, Dispatchable);
+
+giau.InputFieldDiscrete.EVENT_CHANGE = "giau.InputFieldDiscrete.EVENT_CHANGE";
+
+giau.InputFieldDiscrete.prototype._updateLayout = function(v){
+	var array = this.options();
+	var select = this._selectElement;
+	Code.removeAllChildren(select);
+	var i, len = array.length;
+	for(i=0; i<len; ++i){
+		var item = array[i];
+		var value = item["value"];
+		var display = item["display"];
+		var option = Code.newOption(value,display,i==this._index);
+		Code.addChild(select,option);
+	}
+}
+giau.InputFieldDiscrete.prototype.options = function(options){
+	if(options!==undefined){
+		this._options = options;
+	}
+	return this._options;
+}
+giau.InputFieldDiscrete.prototype.index = function(index){
+	if(index!==undefined){
+		this._index = index;
+		this._updateLayout();
+	}
+	return this._index;
+}
+giau.InputFieldDiscrete.prototype.value = function(){
+	return this._value;
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------- INPUT DATE
+
 giau.InputFieldDate = function(element, value){
 	giau.InputFieldDate._.constructor.call(this);
 	this._container = element;
