@@ -3280,6 +3280,32 @@ giau.ObjectComposer.prototype._inputBooleanField = function(element, key,value, 
 	var content = this._inputField(element,input, key);
 	return {"container":content, "input":input};
 }
+
+
+
+giau.ObjectComposer.prototype._inputSelectField = function(element, key,value, container){
+	// MAPPING?
+	var input = Code.newDiv();
+		// Code.setStyleWidth(input,100+"px");
+		// Code.setStyleHeight(input,20+"px");
+		Code.setStyleBackgroundColor(input,"#0F0");
+		Code.setStyleDisplay(input,"inline-block");
+var options = [{"value":"val0", "display":"value 0"},
+	{"value":"val1", "display":"value 1"},
+	{"value":"val2", "display":"value 2"},
+];
+var optionSelectedIndex = 2;
+		var jsObject = new giau.InputFieldDiscrete(input,options,optionSelectedIndex);
+			//var data = {"object":container, "key":key, "value":value, "control":jsObject};
+			//jsObject.addFunction(giau.InputFieldBoolean.EVENT_CHANGE, this._handlePrimitiveBooleanUpdate, this, data);
+	var content = this._inputField(element,input, key);
+	return {"container":content, "input":input};
+}
+
+
+//giau.InputFieldTags
+//giau.InputFieldDiscrete
+
 giau.ObjectComposer.prototype._inputField = function(element,input, key){
 	var radius = 4;
 	var content = Code.newDiv();
@@ -4397,30 +4423,75 @@ giau.CRUD.prototype._updateLayout = function(){
 	console.log(FA.toString());
 }
 
-giau.CRUD._elementSelectDuration = function(){
-	var elementContainer = Code.newDiv();
-	return elementContainer;
-}
-giau.CRUD._elementSelectColor = function(){
+giau.CRUD._elementSelectColor = function(mapping){
 	var elementContainer = Code.newDiv();
 	return elementContainer;
 }
 
-
-
-giau.CRUD._fieldEditDateUpdateElementFxn = function(mapping){
-	console.log("_fieldEditDateUpdateElementFxn");
-	var data = mapping.object();
+giau.CRUD._elementSelectDuration = function(mapping){
+	var object = mapping.object();
 	var field = mapping.field();
-	var element = mapping.element();
+	var value = object[field];
+
+	var elementContainer = Code.newDiv();
+	var jsObject = new giau.InputFieldDurationModal(elementContainer, value);
+	mapping.value(jsObject);
+	mapping.updateElementFxn(giau.CRUD._fieldEditDurationUpdateElementFxn);
+	mapping.updateDataFxn(giau.CRUD._fieldEditDurationUpdateDataFxn);
+
+	return elementContainer;
 }
 
-giau.CRUD._fieldEditDateUpdateDataFxn = function(mapping, action){
-	console.log("_fieldEditDateUpdateDataFxn");
-	var data = mapping.object();
+giau.CRUD._elementSelectStringArray = function(mapping){
+		var object = mapping.object();
 	var field = mapping.field();
-	var element = mapping.element();
+	var value = object[field];
+
+	var elementContainer = Code.newDiv();
+	var jsObject = new giau.InputFieldTags(elementContainer, value);
+	mapping.value(jsObject);
+	mapping.updateElementFxn(giau.CRUD._fieldEditStringArrayElementFxn);
+	mapping.updateDataFxn(giau.CRUD._fieldEditStringArrayUpdateDataFxn);
+
+	return elementContainer;
 }
+
+giau.CRUD._elementSelectOption = function(mapping){
+	var object = mapping.object();
+	var field = mapping.field();
+	var value = object[field];
+
+	var elementContainer = Code.newDiv();
+// TODO: get options and index from value
+var options = [
+	{"value":"val0", "display":"value 0"},
+	{"value":"val1", "display":"value 1"},
+	{"value":"val2", "display":"value 2"},
+]
+var optionIndex = 2;
+	var jsObject = new giau.InputFieldDiscrete(elementContainer, options, optionIndex);
+	mapping.value(jsObject);
+	mapping.updateElementFxn(giau.CRUD._fieldEditOptionUpdateElementFxn);
+	mapping.updateDataFxn(giau.CRUD._fieldEditOptionUpdateDataFxn);
+
+	return elementContainer;
+}
+
+
+
+// giau.CRUD._fieldEditDateUpdateElementFxn = function(mapping){
+// 	console.log("_fieldEditDateUpdateElementFxn");
+// 	var data = mapping.object();
+// 	var field = mapping.field();
+// 	var element = mapping.element();
+// }
+
+// giau.CRUD._fieldEditDateUpdateDataFxn = function(mapping, action){
+// 	console.log("_fieldEditDateUpdateDataFxn");
+// 	var data = mapping.object();
+// 	var field = mapping.field();
+// 	var element = mapping.element();
+// }
 
 
 giau.CRUD._elementSelectDate = function(mapping){
@@ -4437,8 +4508,8 @@ console.log(mapping.value());
 	var elementContainer = Code.newDiv();
 	var jsObject = new giau.InputFieldDateModal(elementContainer, value);
 	mapping.value(jsObject);
-	mapping.updateElementFxn(giau.CRUD._fieldEditStringUpdateElementFxn);
-	mapping.updateDataFxn(giau.CRUD._fieldEditStringUpdateDataFxn);
+	mapping.updateElementFxn(giau.CRUD._fieldEditDateUpdateElementFxn);
+	mapping.updateDataFxn(giau.CRUD._fieldEditDateUpdateDataFxn);
 
 	return elementContainer;
 }
@@ -4554,10 +4625,6 @@ giau.CRUD._boxActionClose = function(event){
 	mapping.updateElementFromData();
 }
 
-giau.CRUD._fieldEditDuration = function(definition, container, fieldName, elementContainer, mapping){
-	var elementText = giau.CRUD._elementSelectDuration(mapping);
-		Code.addChild(elementContainer,elementText);
-}
 giau.CRUD._fieldEditBoolean = function(definition, container, fieldName, elementContainer, mapping){
 	var elementText = giau.CRUD._elementSelectBoolean(mapping);
 		Code.addChild(elementContainer,elementText);
@@ -4569,13 +4636,50 @@ giau.CRUD._fieldEditDate = function(definition, container, fieldName, elementCon
 }
 
 giau.CRUD._fieldEditColor = function(definition, container, fieldName, elementContainer, mapping){
-
-
-
 	var elementText = giau.CRUD._elementSelectColor(mapping);
 		Code.addChild(elementContainer,elementText);
 }
 
+
+giau.CRUD._fieldEditDuration = function(definition, container, fieldName, elementContainer, mapping){
+	var elementText = giau.CRUD._elementSelectDuration(mapping);
+		Code.addChild(elementContainer,elementText);
+}
+
+
+giau.CRUD._fieldEditStringArray = function(definition, container, fieldName, elementContainer, mapping){
+	var elementText = giau.CRUD._elementSelectStringArray(mapping);
+		Code.addChild(elementContainer,elementText);
+}
+
+giau.CRUD._fieldEditOption = function(definition, container, fieldName, elementContainer, mapping){
+	var elementText = giau.CRUD._elementSelectOption(mapping);
+		Code.addChild(elementContainer,elementText);
+}
+
+
+/*
+
+giau.ObjectComposer.prototype._inputSelectField = function(element, key,value, container){
+	// MAPPING?
+	var input = Code.newDiv();
+		// Code.setStyleWidth(input,100+"px");
+		// Code.setStyleHeight(input,20+"px");
+		Code.setStyleBackgroundColor(input,"#0F0");
+		Code.setStyleDisplay(input,"inline-block");
+var options = [{"value":"val0", "display":"value 0"},
+	{"value":"val1", "display":"value 1"},
+	{"value":"val2", "display":"value 2"},
+];
+var optionSelectedIndex = 2;
+		var jsObject = new giau.InputFieldDiscrete(input,options,optionSelectedIndex);
+			//var data = {"object":container, "key":key, "value":value, "control":jsObject};
+			//jsObject.addFunction(giau.InputFieldBoolean.EVENT_CHANGE, this._handlePrimitiveBooleanUpdate, this, data);
+	var content = this._inputField(element,input, key);
+	return {"container":content, "input":input};
+}
+
+*/
 giau.CRUD._fieldEditString = function(definition, container, fieldName, elementContainer, mapping){
 	var presentation = definition["presentation"];
 	var metadata = definition["metadata"];
@@ -4874,9 +4978,11 @@ giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, 
 		operationFxn["string-date"] = [giau.CRUD._fieldEditDate,giau.CRUD._fieldEditDate];
 		operationFxn["string-color"] = [giau.CRUD._fieldEditColor,giau.CRUD._fieldEditColor];
 		operationFxn["string-json"] = [giau.CRUD._fieldEditJSON,giau.CRUD._fieldEditJSON];
+
+		// 
 operationFxn["string-duration"] = [giau.CRUD._fieldEditDuration,giau.CRUD._fieldEditDuration];
-operationFxn["string-array"] = [giau.CRUD._fieldEditString,giau.CRUD._fieldEditString]; // comma separated
-operationFxn["string-option"] = [giau.CRUD._fieldEditDuration,giau.CRUD._fieldEditDuration]; // select list
+operationFxn["string-array"] = [giau.CRUD._fieldEditStringArray,giau.CRUD._fieldEditStringArray]; // comma separated
+operationFxn["string-option"] = [giau.CRUD._fieldEditOption,giau.CRUD._fieldEditOption]; // select list
 		
 	var operation = operationFxn[fieldType];
 	var updateElementFunction = null;
@@ -5387,18 +5493,13 @@ giau.InputFieldDuration.prototype._updateValueFromFields = function(){
 	
 }
 giau.InputFieldDuration.prototype._updateFieldsFromValue = function(){
-	var value = this._dataValue;
-	var years = Math.floor(value/(1000*60*60*24*365));
-		value -= years*1000*60*60*24*365;
-	var days = Math.floor(value/(1000*60*60*24));
-		value -= days*1000*60*60*24;
-	var hours = Math.floor(value/(1000*60*60));
-		value -= days*1000*60*60;
-	var minutes = Math.floor(value/(1000*60));
-		value -= minutes*1000*60;
-	var seconds = Math.floor(value/(1000));
-		value -= seconds*1000;
-	var millis = value;
+	var timeInfo = Code.getTimeDivisionsFromMilliseconds(this._dataValue);
+	var years = timeInfo["years"];
+	var days = timeInfo["days"];
+	var hours = timeInfo["hours"];
+	var minutes = timeInfo["minutes"];
+	var seconds = timeInfo["seconds"];
+	var millis = timeInfo["milliseconds"];
 	Code.setInputTextValue(this._fieldYears, ""+years);
 	Code.setInputTextValue(this._fieldDays, ""+days);
 	Code.setInputTextValue(this._fieldHours, ""+hours);
@@ -5418,6 +5519,30 @@ giau.InputFieldDuration.prototype.value = function(v){
 // giau.InputFieldDuration.prototype.value = function(){ // milliseconds
 // 	return this._dateValue;
 // }
+
+giau.InputFieldDurationMini = function(element, value){
+	this._container = element;
+	this.value(value);
+};
+giau.InputFieldDurationMini.prototype._updateLayout = function(v){
+	var timeInfo = Code.getTimeDivisionsFromMilliseconds(this._dataValue);
+	var years = timeInfo["years"];
+	var days = timeInfo["days"];
+	var hours = timeInfo["hours"];
+	var minutes = timeInfo["minutes"];
+	var seconds = timeInfo["seconds"];
+	var millis = timeInfo["milliseconds"];
+	Code.setContent(this._container,"TIEM GOES HERE");
+	HERE
+};
+giau.InputFieldDurationMini.prototype.value = function(v){
+	if(v!==undefined){
+		this._value = v;
+		this._updateLayout();
+	}
+	return this._value;
+};
+
 
 giau.InputFieldColor = function(element, value){
 	console.log("giau.InputFieldColor")
@@ -6697,7 +6822,7 @@ Code.inheritClass(giau.InputFieldColorModal, giau.InputFieldCompositeModal);
 
 
 giau.InputFieldTextModal = function(element, value, criteria){
-	Code.constructorClass(giau.InputFieldColorModal, this, element, value);
+	Code.constructorClass(giau.InputFieldTextModal, this, element, value);
 	
 	Code.setStyleWidth(this._maxiElement,400+"px");
 	Code.setStyleHeight(this._maxiElement,200+"px");
@@ -6710,6 +6835,7 @@ giau.InputFieldTextModal = function(element, value, criteria){
 	
 	this.gotoMin();
 };
+
 giau.InputFieldTextModal.prototype._handleOverlayExitFxn = function(e){
 	// ChildClassName._.kill.call(this); // super method
 	//Code.methodClass(giau.InputFieldTextModal,"_handleOverlayExitFxn");
@@ -6726,6 +6852,24 @@ giau.InputFieldTextModal.prototype._handleMaxiChangeFxn = function(e){
 
 };
 Code.inheritClass(giau.InputFieldTextModal, giau.InputFieldCompositeModal);
+
+
+
+giau.InputFieldDurationModal = function(element, value){
+	Code.constructorClass(giau.InputFieldDurationModal, this, element, value);
+	
+	Code.setStyleWidth(this._maxiElement,250+"px");
+	Code.setStyleHeight(this._maxiElement,150+"px");
+
+	this._mini = new giau.InputFieldDurationMini(this._miniElement, value);
+		//this._mini.addFunction(giau.InputFieldDurationMini.EVENT_SELECT, this._handleMiniSelectFxn, this);
+	var max = this._maxiElement;
+	this._maxi = new giau.InputFieldDuration(max, value);
+		//this._maxi.addFunction(giau.InputFieldColor.EVENT_CHANGE, this._handleMaxiChangeFxn, this);
+	
+	this.gotoMin();
+};
+Code.inheritClass(giau.InputFieldDurationModal, giau.InputFieldCompositeModal);
 
 
 
