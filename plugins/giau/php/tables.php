@@ -233,7 +233,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				],
 			],
 			"section_list" => [
-				"type" => "string", // "string-array",
+				"type" => "string",
 				"attributes" =>  [
 					"display_name" => "Subsections",
 					"order" => "6",
@@ -513,7 +513,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				],
 			],
 			"tags" => [
-				"type" => "string",
+				"type" => "string-array",
 				"attributes" => [
 					"display_name" => "Tags",
 					"order" => "5",
@@ -694,7 +694,7 @@ function GIAU_TABLE_DEFINITION_PAGE(){
 				],
 			],
 			"section_list" => [
-				"type" => "string-array",
+				"type" => "string",
 				"attributes" =>  [
 					"display_name" => "Sections",
 					"order" => "6",
@@ -703,7 +703,7 @@ function GIAU_TABLE_DEFINITION_PAGE(){
 				],
 			],
 			"tags" => [
-				"type" => "string",
+				"type" => "string-array",
 				"attributes" => [
 					"display_name" => "Tags",
 					"order" => "5",

@@ -5521,19 +5521,43 @@ giau.InputFieldDuration.prototype.value = function(v){
 // }
 
 giau.InputFieldDurationMini = function(element, value){
+	console.log("InputFieldDurationMini "+value)
 	this._container = element;
 	this.value(value);
 };
 giau.InputFieldDurationMini.prototype._updateLayout = function(v){
-	var timeInfo = Code.getTimeDivisionsFromMilliseconds(this._dataValue);
+	var milliseconds = this._value;
+	var timeInfo = Code.getTimeDivisionsFromMilliseconds(milliseconds);
+	console.log(timeInfo);
 	var years = timeInfo["years"];
 	var days = timeInfo["days"];
 	var hours = timeInfo["hours"];
 	var minutes = timeInfo["minutes"];
 	var seconds = timeInfo["seconds"];
 	var millis = timeInfo["milliseconds"];
-	Code.setContent(this._container,"TIEM GOES HERE");
-	HERE
+	var displayText = "";
+	if(milliseconds==0){
+		displayText = "0s"; // no time
+	}
+	if(millis>0){
+		displayText = millis+"ms "+displayText;
+	}
+	if(seconds>0){
+		displayText = seconds+"s "+displayText;
+	}
+	if(minutes>0){
+		displayText = minutes+"m "+displayText;
+	}
+	if(hours>0){
+		displayText = hours+"h "+displayText;
+	}
+	if(days>0){
+		displayText = days+"d "+displayText;
+	}
+	if(years>0){
+		displayText = years+"y "+displayText;
+	}
+	Code.setContent(this._container,displayText);
 };
 giau.InputFieldDurationMini.prototype.value = function(v){
 	if(v!==undefined){
@@ -5545,7 +5569,6 @@ giau.InputFieldDurationMini.prototype.value = function(v){
 
 
 giau.InputFieldColor = function(element, value){
-	console.log("giau.InputFieldColor")
 	giau.InputFieldColor._.constructor.call(this);
 	this._container = element;
 	this._colorValue = 0x00000000;
@@ -5694,14 +5717,12 @@ giau.InputFieldColor.prototype._handleFinalColorFieldChange = function(e){
 	this._colorSliders[2].color(blu);
 }
 giau.InputFieldColor.prototype._handleInputFieldChange = function(e,f){
-	console.log("_handleInputFieldChange")
 	var index = f["index"];
 	var elementField = this._elementFields[index];
 	var cursorLocationPrev = this._cursors[index];
 	var colorSlider = this._colorSliders[index];
 	var newValue = giau.InputFieldColor.hexFieldUpdateOverwrite(elementField, 2);
 	colorSlider.color(newValue);
-	// this._colorValue =  ???
 	this.alertAll(giau.InputFieldColor.EVENT_CHANGE, this);
 };
 giau.InputFieldColor.hexFieldUpdateOverwrite = function(elementField,count){
@@ -5995,10 +6016,21 @@ giau.InputFieldColorSlider.prototype._updateLayout = function(){
 // --------------------------------------------------------------------------------------------------------------------------------------- INPUT TAGS
 giau.InputFieldTags = function(element, value){
 	giau.InputFieldTags._.constructor.call(this);
+	this._jsDispatch = new JSDispatch();
+	this._inputTimer = new Ticker(1000); // 1 second waiting period
+		this._inputTimer.addFunction(Ticker.EVENT_TICK,this._handleInputTextTimerTickFxn, this);
 	this._container = element;
 	this._tagElements = [];
-	this._inputElement = Code.newInputText();
-	this._jsDispatch = new JSDispatch();
+	var hint = "|";
+		this._inputElement = Code.newInputText();
+		Code.setStylePadding(this._inputElement,1+"px");
+		Code.setStyleBorderWidth(this._inputElement,1+"px");
+		Code.setStyleBorderColor(this._inputElement,"#CCC");
+		Code.setStyleBackgroundColor(this._inputElement,"#FFF");
+		Code.setTextPlaceholder(this._inputElement,hint);
+		this._jsDispatch.addJSEventListener(this._inputElement, Code.JS_EVENT_INPUT_CHANGE, this._handleInputTextChangeFxn, this);
+		this._jsDispatch.addJSEventListener(this._inputElement, Code.JS_EVENT_KEY_DOWN, this._handleInputTextKeyDownFxn, this);
+	
 	this.value(value);
 	this._updateLayout();
 }
@@ -6007,9 +6039,8 @@ Code.inheritClass(giau.InputFieldTags, Dispatchable);
 giau.InputFieldTags.EVENT_CHANGE = "giau.InputFieldTags.EVENT_CHANGE";
 
 giau.InputFieldTags.prototype._updateLayout = function(v){
-	var tagString = this.value();
-	console.log(tagString);
-	var tags = Code.arrayFromCommaSeparatedString(tagString);
+	var tags = this.value();
+	tags = Code.arrayFromCommaSeparatedString(tags);
 	var i, len;
 	var tag, div;
 	// remove current tags
@@ -6018,7 +6049,6 @@ giau.InputFieldTags.prototype._updateLayout = function(v){
 	len = elements.length;
 	for(i=0; i<len; ++i){
 		element = elements[i];
-		console.log(element);
 		Code.removeFromParent(element);
 	}
 	// add new tags
@@ -6026,37 +6056,91 @@ giau.InputFieldTags.prototype._updateLayout = function(v){
 	len = tags.length;
 	for(i=0; i<len; ++i){
 		tag = tags[i];
+		// var container =
+		// var div = giau.CRUD._generateSubButton("&times;", container);
+			var value = tag;
+			var obj = {"context":this, "index":i};
+			var closeFxn = this._handleTagSelectRemove;
+			var handleFxn = null;
+		var div = giau.CRUD.generateBoxDiv(value, obj, handleFxn, closeFxn);
+		/*
+		var closeButton = giau.CRUD._generateSubButton("&times;", container);
+	//Code.addChild(container,closeButton);
+	if(closeFxn){
+		this._jsDispatch.addJSEventListener(closeButton, Code.JS_EVENT_CLICK, closeFxn, ctx);
+	}
+	if(handleFxn){
+		this._jsDispatch.addJSEventListener(content, Code.JS_EVENT_CLICK, handleFxn, ctx);
+	}
+
 		div = Code.newDiv();
 			Code.setContent(div,""+tag);
 			Code.setStyleDisplay(div,"inline-block");
 			Code.setStylePadding(div,4+"px");
 			Code.setStyleBackgroundColor(div,"#FFF");
 				this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_MOUSE_DOWN, this._handleTagSelectRemove, this, {"index":i});
+			
+				*/
 		Code.addChild(this._container,div);
 		elements.push(div);
 	}
-
+	Code.removeFromParent(this._inputElement);
+	Code.addChild(this._container, this._inputElement);
 };
+giau.InputFieldTags.prototype._handleInputTextKeyDownFxn = function(e){
+	var key = Code.getKeyCodeFromKeyboardEvent(e);
+	if(key==Keyboard.KEY_ENTER){
+		this._inputTimer.stop();
+		this._addCurrentInputTextValue();
+		this._setTextInputFocused();
+	}else if(key==Keyboard.KEY_ESC){
+		this._inputTimer.stop();
+		this._clearCurrentInputTextValue();
+	}
+}
+giau.InputFieldTags.prototype._setTextInputFocused = function(){
+	this._inputElement.focus();
+}
+giau.InputFieldTags.prototype._handleInputTextChangeFxn = function(e){
+	this._inputTimer.stop();
+	this._inputTimer.start();
+};
+giau.InputFieldTags.prototype._handleInputTextTimerTickFxn = function(e){
+	this._inputTimer.stop();
+	this._addCurrentInputTextValue();
+};
+giau.InputFieldTags.prototype._addCurrentInputTextValue = function(){
+	var value = Code.getInputTextValue(this._inputElement);
+	this._clearCurrentInputTextValue();
+	this.addTag(value);
+	this._setTextInputFocused();
+};
+giau.InputFieldTags.prototype._clearCurrentInputTextValue = function(){
+	Code.setInputTextValue(this._inputElement,"");
+}
 giau.InputFieldTags.prototype._handleTagSelectRemove = function(e,d){
-	console.log(e);
-	console.log(d);
-	//var index = d===undefined ? null : ();
-	var index = Code.recursiveProperty(d,null, "index");
-	this._removeIndex(index);
+	var self = this["context"];
+	var index = this["index"]; // Code.recursiveProperty(self,null, "index");
+	self._removeIndex(index);
 };
+giau.InputFieldTags.prototype.addTag = function(tag){
+	if(tag && tag.length>0){
+		var tags = this.value();
+		tags = Code.arrayFromCommaSeparatedString(tags);
+		tags.push(tag);
+		tags = Code.commaSeparatedStringFromArray(tags);
+		this.value(tags);
+		return true;
+	}
+	return false;
+}
 giau.InputFieldTags.prototype._removeIndex = function(index){
-	console.log("remove: "+index);
 	if(index!==undefined && index!==null){
 		var tagString = this.value();
-		console.log(tagString);
 		var tags = Code.arrayFromCommaSeparatedString(tagString);
 		if(tags.length>index){
 			Code.removeElementAt(tags,index);
-			console.log("BEFORE");
-			console.log(tags);
 			tags = Code.commaSeparatedStringFromArray(tags);
-			console.log("AFTER");
-			console.log(tags);
 			this.value(tags);
 		}
 	}
