@@ -4,6 +4,8 @@
 
 ###TODO
 
+- drag_and_drop needs to be a csv not just a string
+
 	- add new type handling for primitives
 		=> rows
 		=> config

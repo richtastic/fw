@@ -193,7 +193,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				],
 			],
 			"widget" => [
-				"type" => "string",
+				"type" => "string-array",
 				"attributes" =>  [
 					"display_name" => "Widget",
 					"order" => "3",
@@ -233,7 +233,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				],
 			],
 			"section_list" => [
-				"type" => "string",
+				"type" => "string-array",
 				"attributes" =>  [
 					"display_name" => "Subsections",
 					"order" => "6",
