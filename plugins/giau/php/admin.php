@@ -29,7 +29,6 @@ function giau_admin_menu_page_main(){
 ?>
 	<h1 style="vertical-align:middle;"><img src="<?php echo $iconBlackMini; ?>"  style="display:inline-block; vertical-align:middle;" />Giau Plugin</h1>
 	<ul>
-		<!-- <li>colors</li> -->
 		<li><a href="<?php echo $URL_FILE_UPLOAD; ?>">File Uploading</a></li>
 		<li><a href="<?php echo $URL_DATA_ENTRY; ?>">Data Entry</a></li>
 		<li><a href="<?php echo $URL_FILE_BACKUP; ?>">File Backup</a></li>
@@ -150,54 +149,33 @@ function giau_admin_menu_page_submenu_file_upload(){
 <?php
 }
 
-function giau_admin_menu_page_submenu_data_backup(){
-	?>
-	<h1>Data Backup</h1>
-	<ul>
-		<li>DOWNLOAD BACKUP</li>
-		<li>UPLOAD BACKUP</li>
-	</ul>
+function giau_admin_menu_page_submenu_data_backup(){	
+	$URL_BACKUP_DOWNLOAD = add_query_arg('page','giau-plugin-submenu-data-download');
+	$URL_BACKUP_UPLOAD = add_query_arg('page','giau-plugin-submenu-data-upload');
+?>
+	<!-- <h1 style="vertical-align:middle;"><img src="<?php echo $iconBlackMini; ?>"  style="display:inline-block; vertical-align:middle;" />Giau Plugin</h1> -->
+	<h1>Database Backup</h1>
+	<!-- <ul>
+		<li><a href="<?php echo $URL_BACKUP_DOWNLOAD; ?>">Download Backup</a></li>
+		<li><a href="<?php echo $URL_BACKUP_UPLOAD; ?>">Upload Backup</a></li> -->
+	<h2>Download Backup</h1>
+	- click button to trigger save | download
 	<?php
-	// SAVE DOWNLOAD FILE TO LOCATION?
-	// UPLOAD FILE TO LOCATION?
-	global $wpdb;
+	//$fileLocation = giau_database_backup_url();
+	// delete file after time
+	?>
+	<h2>Upload Backup</h1>
+	- upload drop location
+	<?php
+	//giau_insert_database_from_json($returnJSON, true);
 
-	$returnData = [];
-	$allTables = GIAU_TABLE_DEFINITION_ALL_TABLES();
-	$tableCount = count($allTables);
-	//echo "<br/>".$tableCount;
-	for($i=0; $i<$tableCount; ++$i){
-		$tableDefinition = $allTables[$i];
-		$tableName = $tableDefinition["table"];
-		$tableColumns = $tableDefinition["columns"];
-		$columnCount = count($tableColumns);
-			$returnData[$tableName] = [];
-		// create array of column names
-		$columnNames = [];
-		foreach ($tableColumns as $columnName => $columnDefinition){
-			array_push($columnNames, $columnName);
-		}
-		// get database info -- TODO: PAGING
-		$query = 'SELECT * FROM '.$tableName.' LIMIT 1';
-		$rows = $wpdb->get_results($query, ARRAY_A);
-		$rowCount = count($rows);
-		$backupRow = [];
-		// copy contents into return data
-		for($j=0; $j<$rowCount; ++$j){
-			$backupRow = [];
-			for($k=0; $k<$columnCount; ++$k){
-				$columnName = $columnNames[$k];
-				$backupRow[$columnName] = $rows[$j][$columnName];
-			}
-			$returnData[$tableName][] = $backupRow;
-		}
-		//echo $query."<br/>".count($rows);
-	}
-	// print out return data:
-	$returnJSON = json_encode($returnData);
-	echo "<br/>".$returnJSON;
-	// PUT INTO FILE URL
-	giau_insert_database_from_json($returnJSON, true);
+
+
+	//async_fxn(giau_test, 2);
+	async_fxn();
+}
+function giau_test(){
+	error_log("GIAU TEST");
 }
 
 function giau_insert_database_from_json($jsonSource, $deleteTables){
@@ -234,12 +212,14 @@ function giau_insert_database_from_json($jsonSource, $deleteTables){
 }
 
 function giau_admin_menu_page_submenu_file_backup(){
-	?>
+	$URL_BACKUP_DOWNLOAD = add_query_arg('page','giau-plugin-submenu-file-download');
+	$URL_BACKUP_UPLOAD = add_query_arg('page','giau-plugin-submenu-file-upload');
+?>
+	<h1 style="vertical-align:middle;"><img src="<?php echo $iconBlackMini; ?>"  style="display:inline-block; vertical-align:middle;" />Giau Plugin</h1>
 	<h1>File Backup</h1>
 	<ul>
-		<li>DOWNLOAD BACKUP</li>
-		<li>UPLOAD BACKUP</li>
-	</ul>
+		<li><a href="<?php echo $URL_BACKUP_DOWNLOAD; ?>">Download Backup</a></li>
+		<li><a href="<?php echo $URL_BACKUP_UPLOAD; ?>">Upload Backup</a></li>
 	<?php
 	return;
 	$zipDirectory = giau_plugin_upload_root_dir();
@@ -377,7 +357,13 @@ function giau_admin_menu_page_submenu_data_entry(){
 
 	<!-- table? -->
 		<div class="limitedWidth" style="width:100%; display:block; position:relative;">
-		<div style="width:70%; min-height:600px; display:inline-block; background-color:#F0F; float:left;"><div class="giauCRUD" style="" data-table-name="<?php echo $selectedTableDataName; ?>"></div></div><div style="width:30%; display:inline-block; background-color:#0FF; float:left;"><div class="giauLibraryView" style="" data-name="section_id" data-display-value="section_id" data-display-title="widget_name" data-display-subtitle="section_modified"><div  data-key="table" data-value="section"></div></div><div class="giauLibraryView" style="" data-name="widget_id" data-display-value="widget_id" data-display-title="widget_name" data-display-subtitle="widget_modified"><div data-key="table" data-value="widget"></div></div></div>
+		<div style="width:70%; min-height:600px; display:inline-block; background-color:#F0F; float:left;"><div class="giauCRUD" style="" data-table-name="<?php echo $selectedTableDataName; ?>"></div></div><div style="width:30%; display:inline-block; background-color:#0FF; float:left;"><div class="giauLibraryView" style="" data-name="section_id" data-display-value="section_id" data-display-title="widget_name" data-display-subtitle="section_modified">
+		<div data-key="table" data-value="section"></div>
+		<div data-key="library" data-value="true"></div>
+		</div><div class="giauLibraryView" style="" data-name="widget_id" data-display-value="widget_id" data-display-title="widget_name" data-display-subtitle="widget_modified">
+		<div data-key="table" data-value="widget"></div>
+		<div data-key="library" data-value="true"></div>
+		</div></div>
 	</div>
 <?php
 }

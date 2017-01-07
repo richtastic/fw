@@ -3416,6 +3416,7 @@ giau.ObjectComposer.prototype._interactActionButton = function(display, element)
 
 giau.LibraryScroller = function(element, name, url, params){
 	console.log("LibraryScroller");
+	console.log(element);
 	url = url !== undefined ? url : "./";
 	params = params !== undefined ? params : {};
 	this._scrollBarSize = Code.getScrollBarSize();
@@ -3489,7 +3490,6 @@ giau.LibraryScroller = function(element, name, url, params){
 	this._createElementFxn = giau.LibraryScroller._generateDiv;
 
 
-
 	var i;
 	// fill out parameters from elements
 	
@@ -3505,6 +3505,7 @@ giau.LibraryScroller = function(element, name, url, params){
 		name = Code.getProperty(this._container, propertyDataName);
 		Code.removeProperty(this._container, propertyDataName);
 	}
+	/*
 	this._displayData = {};
 	if(Code.hasProperty(this._container,propertyDataDisplayTitle)){
 		this._displayData["title"] = Code.getProperty(this._container, propertyDataDisplayTitle);
@@ -3522,19 +3523,22 @@ giau.LibraryScroller = function(element, name, url, params){
 		this._displayData["value"] = Code.getProperty(this._container, propertyDataDisplayValue);
 		Code.removeProperty(this._container, propertyDataDisplayValue);
 	}
+	*/
 
 	
 	for(i=0; i<Code.numChildren(this._container); ++i){ 
 		var child = Code.getChild(this._container,i);
+		console.log(child);
 		if(Code.hasProperty(child,propertyDataParamKey)){
 			var key = Code.getProperty(child, propertyDataParamKey);
 			var value = Code.getProperty(child, propertyDataParamValue);
-			Code.removeChild(this._container, child);
+			console.log(key,value);
 			params[key] = value;
+			Code.removeChild(this._container, child);
+			--i;
 		}
 	}
 	this._name = name;
-
 	this._dataSource = new giau.DataSource(url,20, params);
 	this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
 	this._dataSource.getPage(0);
@@ -3548,19 +3552,26 @@ giau.LibraryScroller._generateSize = function(info, data){
 	return size;
 }
 
-giau.LibraryScroller._generateDiv = function(info, data, displayData){
+giau.LibraryScroller._generateDiv = function(info, data){//, displayData){
 	var bus = giau.MessageBus();
 	this._messageBus = bus;
-	console.log("displayData");
-	console.log(data);
-	console.log(displayData);
-
-	//console.log(data);
-	var dataSectionModified = data["section_modified"];
-		dataSectionModified = Code.getHumanReadableDateString(dataSectionModified);
-	var dataValue = data[ displayData["value"] ];
-	var dataTitle = data[ displayData["title"] ];
+	// display data from metadata
+		var meta = this._metaData;
+		var displayFields = meta["display_fields"];
+		var i, j;
+		var displayData = [];
+		var row = data;
+		for(j=0; j<displayFields.length; ++j){
+			var field = displayFields[j];
+			var name = field["name"];
+			var value = row[name];
+			displayData.push(value);
+		}
 	var dataIndex = info["index"];
+	var dataA = displayData.length>0 ? displayData[0] : "";
+	var dataB = displayData.length>1 ? displayData[1] : "";
+	var dataC = displayData.length>2 ? displayData[2] : "";
+	// 
 
 	var color;
 	var index = info["index"];
@@ -3595,6 +3606,9 @@ giau.LibraryScroller._generateDiv = function(info, data, displayData){
 		color = giau.Theme.Color.MediumRed;
 	Code.setStyleBackgroundColor(elementExterrior,color);
 
+	Code.setStyleOverflow(elementExterrior,"hidden");
+
+
 	var radiusContainer = 4;
 	var interriorPadding = 4;
 	var interriorWidth = (exterriorWidth-2*interriorPadding);
@@ -3611,15 +3625,17 @@ giau.LibraryScroller._generateDiv = function(info, data, displayData){
 		
 	
 	var elementID = Code.newDiv();
-		Code.setContent(elementID,"#"+dataIndex+" ("+dataValue+")");
+		Code.setContent(elementID,"#"+dataIndex);
 		Code.setStyleFontSize(elementID,"10px");
 		Code.setStyleColor(elementID,"#DBB");
+		Code.setStyleMarginTop(elementID,-4+"px");
+		Code.setStyleMarginBottom(elementID,-4+"px");
 	var elementName = Code.newDiv();
-		Code.setContent(elementName,dataTitle);
+		Code.setContent(elementName,dataA);
 		Code.setStyleFontSize(elementName,"12px");
 		Code.setStyleColor(elementName,"#FFF");
 	var elementModified = Code.newDiv();
-		Code.setContent(elementModified,dataSectionModified);
+		Code.setContent(elementModified,dataB);
 		Code.setStyleFontSize(elementModified,"9px");
 		Code.setStyleColor(elementModified,"#C99");
 	
@@ -3635,7 +3651,7 @@ giau.LibraryScroller._generateDiv = function(info, data, displayData){
 giau.LibraryScroller.prototype._updateLayout = function(){
 	console.log("LibraryScroller - _updateLayout");
 	console.log(this);
-	var displayData = this._displayData;
+//	var displayData = this._displayData;
 	// source vars
 	// var widthContainer = $(this._container).width();
 	// var heightContainer = $(this._container).height();
@@ -3649,7 +3665,7 @@ giau.LibraryScroller.prototype._updateLayout = function(){
 
 	// derived vars
 	var data = this._dataRows;
-	var i;
+	var i, j;
 	var offsetY = 0;
 	var info;
 	for(i=0; i<data.length; ++i){
@@ -3669,31 +3685,35 @@ giau.LibraryScroller.prototype._updateLayout = function(){
 			"x":0,
 			"y":offsetY,
 		};
-		var div = this._createElementFxn(info, row, displayData);
+		var div = this._createElementFxn(info, row);//, displayData);
 		Code.addChild(this._elementScroller,div);
 		offsetY += elementHeight;
 		if(i<data.length-1){
 			offsetY += divSpacingY;
 		}
-console.log("RICHIE - "+i+"--------------");
-console.log(row);
-HERE
-		var datum = {}
-			datum["element"] = div;
-			datum["display"] = row[displayData["title"]];
-			datum["value"] = row[displayData["value"]];
-				datum["value"] = // TODO: GET THIS FROM METADATA
-				{"17":{
-						"id": "17",
-						"widget_name": "SOMETHING 17",
-					}
-				};
-			datum["source"] = row;
+		var meta = this._metaData;
+		var indexField = meta["index_field"];
+		var displayFields = meta["display_fields"];
+		var dataFields = meta["data_fields"];
+		var datum = {};
+		var object = {};
+		var internal = {};
+		datum["element"] = div;
+		//datum["source"] = row;
+		//datum["display"] = row[displayData["title"]];
+		datum["value"] = object;
+			indexValue = row[indexField];
+			object[indexValue] = internal;
+			var fieldKeys = Code.keys(dataFields);
+			//for(j=0; j<dataFields.length; ++j){
+			for(j=0; j<fieldKeys.length; ++j){
+				var field = fieldKeys[j];
+				var index = dataFields[field];
+				var value = row[field];
+				internal[index] = value;
+			}
 		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_MOUSE_DOWN, this._handleElementMouseDownFxn, this, datum);
-		// 
-
 	}
-	//Code.setStyleWidth(this._elementContents,120+"px");
 	Code.setStyleHeight(this._elementContents,offsetY+"px");
 }
 
@@ -3722,24 +3742,18 @@ giau.LibraryScroller.prototype._handleElementMouseDownFxn = function(e,data){
 }
 
 giau.LibraryScroller.prototype._updateWithData = function(data){
-	console.log("_updateWithData");
 	var offset = data["offset"];
 	var count = data["count"];
 	var rows = data["data"];
 	var metadata = data["metadata"];
-	console.log("my meta:");
-	console.log(metadata);
-	//var FA = new FragArray();
-	//this._dataRows = FA;
+	this._metaData = metadata;
 	this._dataRows = rows;
 	this._updateLayout();
 }
 giau.LibraryScroller.prototype._scrollTo = function(){
 	//
 }
-giau.LibraryScroller.prototype._scrollTo = function(){
-	//
-}
+
 
 
 
@@ -3837,8 +3851,6 @@ giau.CRUD = function(element){
 	var propertyDataTableName = "data-table-name";
 	var valueTableName = Code.getProperty(element,propertyDataTableName);
 	console.log("CRUD TABLE NAME: "+valueTableName);
-
-
 	// simulate got data:
 /*
 	section
@@ -4148,8 +4160,6 @@ console.log("field: "+index);
 					updateData[index] = str;
 					console.log(str);
 				}else{
-console.log("RICHIE SET FROM MAPPING VALUE: "+index);
-console.log(mapping);
 // console.log(mapping.value());
 					// FROM OBJECTS GET DATA:
 					var mappingValue = mapping.value();
@@ -4228,7 +4238,6 @@ giau.CRUD.prototype._handleCreateCompleteFxn = function(e,d){
 		var column = field["column"];
 		var alias = field["alias"];
 		var mapping = this._mappingFromData(field,row,alias);
-console.log("RICHIE GOT MAPPING: "+j+"/"+editFields.length);
 		viewRow.push(mapping);
 	}
 	// add row to top of table 
@@ -4302,8 +4311,6 @@ giau.CRUD.prototype._dataRowFromKeyValue = function(criteriaIndex, criteriaValue
 }
 
 giau.CRUD.prototype._updateWithData = function(data){
-	console.log("CRUD._updateWithData");
-	console.log(data);
 	var offset = data["offset"];
 	var count = data["count"];
 	var rows = data["data"];
@@ -4339,7 +4346,7 @@ giau.CRUD.prototype._updateWithData = function(data){
 					pres = columnPresentations[alias];
 					//
 					var info = {};
-console.log(i+": "+column+" = "+alias);
+// console.log(i+": "+column+" = "+alias);
 					info["column"] = alias;
 					info["alias"] = key;
 					info["definition"] = column;
@@ -4357,7 +4364,7 @@ console.log(i+": "+column+" = "+alias);
 			}
 		}
 	}
-	console.log(editFields);
+	// console.log(editFields);
 	view["data"]["metadata"] = metadata;
 	view["data"]["fields"] = lookupFields;
 	view["data"]["edit_fields"] = editFields;
@@ -4373,17 +4380,14 @@ console.log(i+": "+column+" = "+alias);
 			var column = field["column"];
 			var alias = field["alias"];
 			var mapping = this._mappingFromData(field,row,alias);
-console.log(column+"==========================================================================================================");
-console.log(field);
-console.log("RICHIE GOT MAPPING 2: "+j+"/"+editFields.length);			
+// console.log(column+"==========================================================================================================");
+// console.log(field);
 			viewRow.push(mapping);
 		}
 	}
 	this._updateLayout();
 }
 giau.CRUD.prototype._updateLayout = function(){
-	console.log("CRUD updateLayout");
-	console.log(this)
 	var searchFields = this._searchFields;
 	var i, j;
 	
@@ -4404,7 +4408,6 @@ giau.CRUD.prototype._updateLayout = function(){
 	var rows = view["rows"];
 	var data = view["data"];
 	var fields = data["fields"];
-	console.log(fields);
 	//var i, dataCount = data.length;
 	for(i=0; i<rows.length; ++i){
 		var row = rows[i];
@@ -4592,10 +4595,6 @@ giau.InputFieldDragAndDrop = function(element, bus, value, table, dd){
 	this._lookupTable = table;
 	this._ddInfo = dd;
 	this._value = value;
-	console.log("RICHIE LOOKUP:");
-	console.log( this._lookupTable );
-	console.log( this._ddInfo );
-
 	this._bus.addFunction(giau.MessageBus.EVENT_OBJECT_DRAG_SELECT, this._handleDragSelectFxn, this);
 
 	this._container = element;
@@ -4614,23 +4613,15 @@ Code.inheritClass(giau.InputFieldDragAndDrop, Dispatchable);
 
 
 giau.InputFieldDragAndDrop.prototype._handleDragSelectFxn = function(e){ // e is passed by self, f is passed by alert
-	console.log("_handleDragSelectFxn");
-	console.log(e);
 	var myCriteria = this._ddInfo;
 		var mySource = myCriteria["source"];
 			var myName = mySource["name"];
-	//var metadata = e["metadata"];
 	var criteria = e["criteria"];
-	console.log(criteria);
 	if(criteria){
 		var name = criteria["name"];
-		console.log(name,myName);
 		if(name===myName){
-			console.log("made it in ....");
 			var bus = this._bus;
 			var element = this._container;
-			//var mapping = e["mapping"];
-			//var ctx = {"element":element, "mapping":mapping};//, "drag_and_drop":myCriteria, "metadata":metadata};
 				var lef = $(element).offset().left;
 				var top = $(element).offset().top;
 				var wid = $(element).outerWidth();
@@ -4655,11 +4646,30 @@ giau.InputFieldDragAndDrop.prototype._handleDragLifecycleFxn = function(event, d
 	}else if(event==DragNDrop.EVENT_DRAG_INTERSECT_AREA_STOP){
 		// 
 	}else if(event==DragNDrop.EVENT_DRAG_INTERSECT_AREA_DROP){
-		console.log("DROP");
-		console.log(data);
 		var source = this._lookupTable;
 		var value = this._value;
 		var array = Code.arrayFromCommaSeparatedString(value);
+
+		// MAX COUNT
+		var maxCount = null;
+		var replaceOnAdd = false;
+		var dndInfo = this._ddInfo;
+		if(dndInfo){
+			var sourceInfo = dndInfo["source"];
+			var infoMaxCount = sourceInfo["max_count"];
+			if(infoMaxCount!==null){
+				maxCount = parseInt(infoMaxCount);
+			}
+			var infoReplace = sourceInfo["replace_on_add"];
+			if(infoReplace && infoReplace==="true"){
+				replaceOnAdd = true;
+				maxCount = null;
+			}
+		}
+
+		if(maxCount!==null && maxCount!==undefined && maxCount>=array.length){
+			return;
+		}
 
 		var i, key, val;
 		var dataObject = data["value"];
@@ -4667,56 +4677,28 @@ giau.InputFieldDragAndDrop.prototype._handleDragLifecycleFxn = function(event, d
 		for(i=0; i<keys.length; ++i){
 			key = keys[i];
 			val = dataObject[key];
-			console.log(key);
-			console.log(val);
 			array.push(key);
-			//source[key] = val;
-			source.push(val);
+			source.push(val); // should replace if already exists
+		}
+		if(replaceOnAdd){ // should shift out source if no longer need that index
+			array.shift();
 		}
 
 		value = Code.stringFromCommaSeparatedArray(array);
 		this.value(value);
-
-		// 	var src = dd["metadata"]["source"];
-	// 	var table = metadata[src];
-	// 	var keys = Code.keys(actionValue);
-	// 	var key = keys[0];
-	// 	console.log("??????????????????????");
-	// 	console.log(key);
-	// 	console.log(table);
-	// 	table[key] = actionValue[key];
-
-		// var element = this._container;
-		// if(element){
-		// 	var valueArrayString = Code.getProperty(element,"data-value");
-		// 	valueArray = Code.arrayFromCommaSeparatedString(valueArrayString);
-		// 	valueArrayString = valueArray.join(",");
-		// 	Code.setProperty(element,"data-value",valueArrayString);
-		// 	//Code.setContent(element,"new value: "+valueArrayString);
-		// }
-		
-		// APPEND
-		
 	}
 }
 
 giau.InputFieldDragAndDrop.prototype._updateLayout = function(){
-	// var data = mapping.object();
-	// var field = mapping.field();
-	// var element = mapping.element();
-	// var value = mapping.value();
-var value = this._value;
-var element = this._container;
-console.log("RICHIE - value: "+value);
+	var value = this._value;
+	var element = this._container;
 	var ele = Code.getElementsWithFunction(element, function(e){
 			return Code.hasProperty(e,"data-value");
 		}, true);
 	ele = ele.length > 0 ? ele[0] : null;
 	if(ele!==null && value!==null){
 		var array = Code.arrayFromCommaSeparatedString(value);
-		console.log(array);
-		//var elements = giau.CRUD.generateBoxDivsFromArray(array, mapping, giau.CRUD._boxActionHandle, giau.CRUD._boxActionClose);
-		var elements = this.generateBoxDivsFromArray(array);//, mapping, giau.CRUD._boxActionHandle, giau.CRUD._boxActionClose);
+		var elements = this.generateBoxDivsFromArray(array);
 		Code.removeAllChildren(ele);
 		for(var i=0; i<elements.length; ++i){
 			Code.addChild(ele,elements[i]);
@@ -4724,80 +4706,28 @@ console.log("RICHIE - value: "+value);
 	}
 }
 
-// update data ...
-giau.InputFieldDragAndDrop.prototype._fieldEditCommaSeparatedStringUpdateDataFxn = function(mapping, action){
-	console.log("_fieldEditCommaSeparatedStringUpdateDataFxn: "+mapping.value());
-	console.log(action);
-	var data = mapping.object();
-	var field = mapping.field();
-		
-	var operation = action["action"];
-	var context = action["context"];
-	var action = action["data"];
-console.log("RICHIE -- DD IS INTERNAL NOW");
-console.log("RICHIE - _OTHER 2");
-	var dd = mapping._OTHER["drag_and_drop"];;
-	var maxCount = dd//(context!==undefined) ? context["drag_and_drop"] : null;
-	var metadata = mapping._OTHER["metadata"];
-	if(maxCount){
-		maxCount = maxCount["source"];
-		console.log(maxCount);
-		maxCount = maxCount["max_count"];
-		console.log(maxCount);
-		if(maxCount!==null){
-			maxCount = parseInt(maxCount);
-		}
-	}
-		console.log(maxCount);
-	var originalValue = data[field];
-	var array = Code.arrayFromCommaSeparatedString(originalValue);
-
-	console.log(array);
-	if(operation=="append"){
-// 		var actionValue = action["value"];
-// console.log("GOT A VALUE --- METADATA");
-// console.log(actionValue);
-// console.log(metadata);
-// if(dd && dd["metadata"] && dd["metadata"]["source"]){
-// 	var src = dd["metadata"]["source"];
-// 	var table = metadata[src];
-// 	var keys = Code.keys(actionValue);
-// 	var key = keys[0];
-// 	console.log("??????????????????????");
-// 	console.log(key);
-// 	console.log(table);
-// 	table[key] = actionValue[key];
-// 	actionValue = key;	
-// }
-			// array.push(actionValue);
-	// }else if(operation=="remove"){
-	// 	var index = action["index"];
-	// 		Code.removeElementAt(array,index);
-	// 	// var removedValue = Code.stringFromCommaSeparatedArray(array);
-	// 	// mapping.value(removedValue);
-	}else if(operation=="update"){
-		//var updatedValue = action["value"];
-		//array = Code.arrayFromCommaSeparatedString(updatedValue);
-	}
-	console.log("BEFORE");
-	//
-	if(maxCount!==null && maxCount>0){
-		while(array.length>maxCount){
-			array.shift();
-		}
-	}
-	console.log("OUT");
-	var updatedValue = Code.stringFromCommaSeparatedArray(array);
-	mapping.value(updatedValue);
-}
-
 giau.InputFieldDragAndDrop.prototype._boxActionHandle = function(event){
-	console.log("handle")
+	// N/A
 }
 giau.InputFieldDragAndDrop.prototype._boxActionClose = function(e){
 	var self = this["context"];
 	var index = this["index"];
 	var array = Code.arrayFromCommaSeparatedString(self._value);
+
+	// MIN COUNT
+	var minCount = null;
+	var dndInfo = self._ddInfo;
+	if(dndInfo){
+		var sourceInfo = dndInfo["source"];
+		var infoMinCount = sourceInfo["min_count"];
+		if(infoMinCount!==null){
+			minCount = parseInt(infoMinCount);
+		}
+	}
+	if(minCount!==null && minCount!==undefined && minCount<=array.length){
+		return;
+	}
+
 	Code.removeElementAt(array,index);
 	var value = Code.stringFromCommaSeparatedArray(array);
 	self.value(value);
@@ -4808,15 +4738,11 @@ giau.InputFieldDragAndDrop.prototype.generateBoxDivsFromArray = function(array){
 	if(!array){
 		return [];
 	}
-var dd = this._ddInfo;
-console.log("generateBoxDivsFromArray -- METADATA");
-console.log(dd);
-var indexMatch = dd["metadata"]["match_index"];
-var indexDisplay = dd["metadata"]["display_index"];
-	indexDisplay = indexDisplay ? indexDisplay : indexMatch;
-var source = this._lookupTable;
-// console.log(indexDisplay+" ? "+indexMatch);
-// console.log(source);
+	var dd = this._ddInfo;
+	var indexMatch = dd["metadata"]["match_index"];
+	var indexDisplay = dd["metadata"]["display_index"];
+		indexDisplay = indexDisplay ? indexDisplay : indexMatch;
+	var source = this._lookupTable;
 	var handleFxn = this._boxActionHandle;
 	var closeFxn = this._boxActionClose;
 	var i, j, value, displayValue, len = array.length;
@@ -4838,8 +4764,6 @@ var source = this._lookupTable;
 	}
 	return elements;
 }
-
-
 
 
 giau.CRUD._elementSelectDiscrete = function(mapping, table, dd){
@@ -4881,18 +4805,16 @@ giau.CRUD._fieldEditStringArray = function(definition, container, fieldName, ele
 	var presentation = definition["presentation"];
 	var metadata = definition["metadata"];
 	var value = container[fieldName];
-
 	if(presentation && presentation["drag_and_drop"]){ // DRAG AND DROP
-		console.log("FOUND A DRAG AND DROP: "+fieldName);
 			var dd = presentation["drag_and_drop"];
 			var table = null;
 			if(dd["metadata"]){
 				var index_name = dd["metadata"]["source"];
 				table = metadata[index_name];
 			}
-			// update mapping
-			//mapping.updateElementFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateElementFxn);
-			//mapping.updateDataFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateDataFxn);
+		// update mapping
+		//mapping.updateElementFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateElementFxn);
+		//mapping.updateDataFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateDataFxn);
 		var elementDrop = giau.CRUD._elementSelectDiscrete(mapping, table, dd);
 		Code.addChild(elementContainer,elementDrop);
 
@@ -4924,9 +4846,7 @@ giau.CRUD._fieldEditString = function(definition, container, fieldName, elementC
 		mapping.updateDataFxn(giau.CRUD._fieldEditStringPrimitiveUpdateDataFxn);
 		var elementText = giau.CRUD._elementSelectString(mapping,value);
 		Code.addChild(elementContainer,elementText);
-		console.log(mapping.element());
 		var data = {"mapping":mapping};
-		console.log(mapping);
 		giau.CRUD._jsDispatch.addJSEventListener(mapping.element(), Code.JS_EVENT_INPUT_CHANGE, giau.CRUD._handleInputStringDidChange, null, data);
 	}
 }
@@ -4978,12 +4898,8 @@ giau.CRUD._fieldEditJSON = function(definition, container, fieldName, elementCon
 	var model = Code.parseJSON(modelString);
 	var object = Code.parseJSON(mapping.value());
 	// set source to objects instead of strings
-		container[jsonModelColumn] = model;
-	// 	mapping.value(object);
-	// 	console.log("?????????????????????????????????????????????????????");
-	// console.log(object);
-	// console.log(model);
-
+	container[jsonModelColumn] = model;
+/*
 // FAKE MODEL
 	model = {
 		"fields" : {
@@ -5017,18 +4933,17 @@ giau.CRUD._fieldEditJSON = function(definition, container, fieldName, elementCon
 		"color": "0x99AABBCC",
 		"duration": "1234567890",
 	}
-
-
-	console.log("--------------------------------------------------------------------------------------------------------------- COMPOSER START");
+*/
+//	console.log("--------------------------------------------------------------------------------------------------------------- COMPOSER START");
 	var composer = new giau.ObjectComposer(elementJSON, model, object);
 	mapping.value(composer);
-	console.log("--------------------------------------------------------------------------------------------------------------- COMPOSER END");
+//	console.log("--------------------------------------------------------------------------------------------------------------- COMPOSER END");
 	//console.log(composer);
 	return elementJSON;
 }
 
 giau.CRUD._fieldEditJSONUpdateDataFxn = function(mapping, action){
-	console.log("_fieldEditJSONUpdateDataFxn");
+	// console.log("_fieldEditJSONUpdateDataFxn");
 	var field = mapping.field();
 	var operation = action["action"];
 	var action = action["data"];
@@ -5041,7 +4956,7 @@ giau.CRUD._fieldEditJSONUpdateDataFxn = function(mapping, action){
 }
 
 giau.CRUD._fieldEditJSONUpdateElementFxn = function(mapping){
-	console.log("_fieldEditJSONUpdateElementFxn");
+	// console.log("_fieldEditJSONUpdateElementFxn");
 	var data = mapping.object();
 	var field = mapping.field();
 	var element = mapping.element();
@@ -5062,9 +4977,7 @@ giau.CRUD._fieldEditDateUpdateDataFxn = function(mapping, action){
 	dateModal.value(dateValue);
 }
 giau.CRUD._fieldEditDateUpdateElementFxn = function(mapping){
-	console.log("_fieldEditDateUpdateElementFxn");
-	console.log("RICHIE HERE");
-	//var dateModal = mapping.updateLayout();
+	// N/A
 }
 
 // -------------------------------------------------------------------------------- MAPPING STRING
@@ -5558,11 +5471,9 @@ giau.InputFieldDuration.prototype._updateFilterFields = function(){
 }
 giau.InputFieldDuration.prototype._filterField = function(field){
 	var value = Code.getInputTextValue(field);
-	console.log("before: "+value);
 	value = Code.stringFilterNumbersOnly(value);
 	value = Code.stringRemovePrefix(value,"0");
 	value = value.length>0 ? value : "0";
-	console.log("after: "+value);
 	Code.setInputTextValue(field,value);
 }
 giau.InputFieldDuration.prototype._updateValueFromFields = function(){

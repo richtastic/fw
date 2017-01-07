@@ -192,7 +192,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"default" => null,
 				],
 			],
-			"widget" => [
+			"widget_id" => [
 				"type" => "string-array",
 				"attributes" =>  [
 					"display_name" => "Widget",
@@ -242,18 +242,6 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"default" => "",
 				],
 			],
-
-
-			// // not part of the table:
-			// "widget_name" => [
-			// 	"type" => "string",
-			// 	"attributes" =>  [
-			// 		"display_name" => "Name(Widget)",
-			// 		"order" => "7",
-			// 		"sort" =>  "false",
-			// 		"editable" => "false",
-			// 	],
-			// ],
 		],
 		"presentation" => [
 			"column_aliases" => [
@@ -263,29 +251,13 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				"section_configuration" => "configuration",
 				"section_name" => "name",
 				"section_subsections" => "section_list",
-//				"section_extend_widget_id" => "extend",
-				// unavailable
-				"widget_id" => "widget",
-//				"widget_name" => "widget_name",
+				"widget_id" => "widget_id",
 				"widget_configuration" => null,
 				"widget_info" => null,
 			],
 			"columns" => [
 				"configuration" => [
 					"json_model_column" => "widget_configuration",
-				],
-				"widget" =>  [
-					//"box" => "true",
-					"drag_and_drop" =>  [
-						"source" =>  [
-							"max_count" => "1",
-							"name" => "widget_id",
-							"url" => "",
-						],
-						"metadata" => [
-							"source" => "widget_list",
-						],
-					]
 				],
 				"section_list" =>  [
 					"drag_and_drop" =>  [
@@ -299,7 +271,23 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 							"match_index" => "section_id",
 							"display_index" => "section_name",
 						],
-					]
+					],
+				],
+				"widget_id" =>  [
+					"drag_and_drop" =>  [
+						"source" =>  [
+							"min_count" => "1",
+							"max_count" => "1",
+							"replace_on_add" => "true",
+							"name" => "widget_id",
+							"url" => "",
+						],
+						"metadata" => [ // reference
+							"source" => "widget_list",
+							"match_index" => "widget_id",
+							"display_index" => "widget_name",
+						],
+					],
 				],
 			]
 		]
@@ -726,6 +714,18 @@ function GIAU_TABLE_DEFINITION_PAGE(){
 				"page_tags" => "tags",
 			],
 			"columns" => [
+				// "section_list" =>  [
+				// 	"drag_and_drop" =>  [
+				// 		"source" =>  [
+				// 			"max_count" => null,
+				// 			"name" => "section_id",
+				// 			"url" => "",
+				// 		],
+				// 		// "metadata" => [
+				// 		// 	"source" => "widgets",
+				// 		// ],
+				// 	]
+				// ],
 				"section_list" =>  [
 					"drag_and_drop" =>  [
 						"source" =>  [
@@ -733,10 +733,12 @@ function GIAU_TABLE_DEFINITION_PAGE(){
 							"name" => "section_id",
 							"url" => "",
 						],
-						// "metadata" => [
-						// 	"source" => "widgets",
-						// ],
-					]
+						"metadata" => [ // reference
+							"source" => "section_list",
+							"match_index" => "section_id",
+							"display_index" => "section_name",
+						],
+					],
 				],
 			],
 
@@ -1239,15 +1241,63 @@ function giau_insert_page($pageName, $sectionIDList, $tags){
 	return $wpdb->insert_id;
 }
 
+function giau_database_backup_json(){
+	global $wpdb;
 
-// UPDATE
+	$returnData = [];
+	$allTables = GIAU_TABLE_DEFINITION_ALL_TABLES();
+	$tableCount = count($allTables);
+	//echo "<br/>".$tableCount;
+	for($i=0; $i<$tableCount; ++$i){
+		$tableDefinition = $allTables[$i];
+		$tableName = $tableDefinition["table"];
+		$tableColumns = $tableDefinition["columns"];
+		$columnCount = count($tableColumns);
+			$returnData[$tableName] = [];
+		// create array of column names
+		$columnNames = [];
+		foreach ($tableColumns as $columnName => $columnDefinition){
+			array_push($columnNames, $columnName);
+		}
+		// get database info -- TODO: PAGING
+		$query = 'SELECT * FROM '.$tableName;//.' LIMIT 1';
+		$rows = $wpdb->get_results($query, ARRAY_A);
+		$rowCount = count($rows);
+		$backupRow = [];
+		// copy contents into return data
+		for($j=0; $j<$rowCount; ++$j){
+			$backupRow = [];
+			for($k=0; $k<$columnCount; ++$k){
+				$columnName = $columnNames[$k];
+				$backupRow[$columnName] = $rows[$j][$columnName];
+			}
+			$returnData[$tableName][] = $backupRow;
+		}
+	}
+	$returnJSON = json_encode($returnData);
+	return $returnJSON;
+}
 
+function giau_database_backup_file(){
+	$endName = "database.txt";
+	$jsonData = giau_database_backup_json();
+	$tempDirectory = giau_plugin_temp_dir();
+	//createDirectoryAtLocation($tempDirectory);
+	$fileName = $tempDirectory."/".$endName;
+	error_log("fileName: ".$fileName);
+	$result = file_put_contents($fileName, $jsonData);
+	setFilePermissionsReadOnly($fileName);
+	error_log("result: ".$result);
+	return $endName;
+}
 
-// READ
+function giau_database_backup_url(){
+	$fileURL = giau_database_backup_file();
+	$fileURL = giau_plugin_temp_url()."/".$fileURL;
+	error_log("fileURL: ".$fileURL);
+	return $fileURL;
+}
 
-
-// DELETE
-
-
+// $fileName = tempnam(sys_get_temp_dir(), 'prefix');
 
 ?>

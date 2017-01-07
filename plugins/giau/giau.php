@@ -26,6 +26,7 @@ $GIAU_ROOT_PATH = dirname(__FILE__);
 //error_log("GIAU_ROOT_PATH: ".$GIAU_ROOT_PATH);
 require_once($GIAU_ROOT_PATH.'/php/widgets.php');
 require_once($GIAU_ROOT_PATH.'/php/functions.php');
+require_once($GIAU_ROOT_PATH.'/php/async.php');
 require_once($GIAU_ROOT_PATH.'/php/tables.php');
 require_once($GIAU_ROOT_PATH.'/php/data.php');
 require_once($GIAU_ROOT_PATH.'/php/files.php');
@@ -38,12 +39,21 @@ function giau_plugin_directory_root(){
 function giau_plugin_upload_root_dir(){
 	return giau_plugin_directory_root()."uploads";
 }
+function giau_plugin_temp_dir(){ // sudo chown www-data ../repo/fw/plugins/giau/tmp
+	return giau_plugin_directory_root()."tmp";
+}
 function giau_plugin_url(){
 	return plugins_url()."/giau";
+}
+function giau_plugin_temp_url(){
+	return giau_plugin_url()."/tmp";
 }
 function giau_plugin_images_url(){
 	return giau_plugin_url()."/images";
 }
+// function giau_plugin_temp_url(){
+// 	return giau_plugin_url()."/temp";
+// }
 function giau_plugin_upload_root_url(){
 	return giau_plugin_url()."/uploads";
 }
