@@ -283,7 +283,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 							"url" => "",
 						],
 						"metadata" => [
-							"source" => "widgets",
+							"source" => "widget_list",
 						],
 					]
 				],
@@ -294,11 +294,10 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 							"name" => "section_id",
 							"url" => "",
 						],
-						// "metadata" => [
-						// 	"column" => "widget_info",
-						// ]
-						"metadata" => [
-							"source" => "widgets",
+						"metadata" => [ // reference
+							"source" => "section_list",
+							"match_index" => "section_id",
+							"display_index" => "section_name",
 						],
 					]
 				],
@@ -351,17 +350,6 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 			],
 			"language" => [
 				"type" => "string-option",
-				"options" => [
-					[
-						"display" => "english",
-						"value" => "en-US",
-						"default" => "true",
-					],
-					[
-						"display" => "korean",
-						"value" => "ko-KP",
-					]
-				],
 				"attributes" => [
 					"display_name" => "Language",
 					"order" => "4",
@@ -393,8 +381,24 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 					"row_grouping" => [
 						//
 					]
+				],
+				"language" => [
+					"options" => GIAU_METADATA_LANGUAGE(),
 				]
 			]
+		]
+	];
+}
+function GIAU_METADATA_LANGUAGE(){
+	return [
+		[
+			"display" => "English",
+			"value" => "en-US",
+			"default" => "true",
+		],
+		[
+			"display" => "Korean",
+			"value" => "ko-KP",
 		]
 	];
 }
@@ -690,11 +694,11 @@ function GIAU_TABLE_DEFINITION_PAGE(){
 					"display_name" => "Name",
 					"order" => "3",
 					"sort" =>  "false",
-					"editable" => "false",
+					"editable" => "true",
 				],
 			],
 			"section_list" => [
-				"type" => "string",
+				"type" => "string-array",
 				"attributes" =>  [
 					"display_name" => "Sections",
 					"order" => "6",

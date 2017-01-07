@@ -123,7 +123,7 @@ giau.prototype.initialize = function(){
 	// }
 	// var _jsDispatch = new JSDispatch();
 	// _jsDispatch.addJSEventListener(document.body, Code.JS_EVENT_MOUSE_MOVE, listener);
-THIS = this;
+//THIS = this;
 }
 
 giau.ElementFloater = function(element){ //
@@ -3675,6 +3675,9 @@ giau.LibraryScroller.prototype._updateLayout = function(){
 		if(i<data.length-1){
 			offsetY += divSpacingY;
 		}
+console.log("RICHIE - "+i+"--------------");
+console.log(row);
+HERE
 		var datum = {}
 			datum["element"] = div;
 			datum["display"] = row[displayData["title"]];
@@ -4117,7 +4120,7 @@ console.log(textValue);
 	this._dataCRUD.read(jsonString, passBack);
 }
 giau.CRUD.prototype._handleUpdateFxn = function(e,data){
-	// console.log("UPDATE");
+	console.log("UPDATE +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 	// console.log(data);
 		var dataInfo = this._dataView["data"];
 		var dataFields = dataInfo["fields"];
@@ -4129,7 +4132,6 @@ giau.CRUD.prototype._handleUpdateFxn = function(e,data){
 		var row = rowData["row"];
 		var updateData = {};
 		for(var i=0; i<row.length; ++i){
-console.log("row: "+i);
 			var mapping = row[i];
 			var index = mapping.field();
 			var field = dataFields[index];
@@ -4137,7 +4139,6 @@ console.log("row: "+i);
 			var attr = field["attributes"];
 			var pres = field["presentation"];
 console.log("field: "+index);
-			//console.log(prop)
 			if(attr["editable"]==="true" || attr["primary_key"]==="true"){
 				if(pres && pres["json_model_column"]){ // json configuration
 					console.log(mapping.value())
@@ -4153,10 +4154,15 @@ console.log(mapping);
 					// FROM OBJECTS GET DATA:
 					var mappingValue = mapping.value();
 					var value = null;
-					if( Code.isObject(mappingValue) ){
-						value = jsObject.value();
+GLOBS = mappingValue;
+					console.log(mappingValue.constructor,(typeof mappingValue));
+					if( Code.isInstance(mappingValue) ){
+						console.log("A");
+						value = mappingValue.value();
 					}else{
+						console.log("B");
 						value = mappingValue;
+						console.log(value);
 					}
 					console.log(mappingValue);
 					console.log(value);
@@ -4169,10 +4175,6 @@ console.log(mapping);
 console.log("+++++++++");
 console.log(updateData);
 console.log("---------");
-//return;
-		//{"text":"PAGE_DEPARTMENT_ELEMENTARY_SECTION_7","class":"departmentDescriptionItemInfo","style":""}"
-		//updateData["section_configuration"] = "richie ";
-		console.log(updateData);
 		// pass editable values to server
 		var jsonData = updateData;
 		var jsonString = Code.StringFromJSON(jsonData);
@@ -4337,8 +4339,7 @@ giau.CRUD.prototype._updateWithData = function(data){
 					pres = columnPresentations[alias];
 					//
 					var info = {};
-console.log(i);
-console.log(column+" = "+alias);
+console.log(i+": "+column+" = "+alias);
 					info["column"] = alias;
 					info["alias"] = key;
 					info["definition"] = column;
@@ -4352,9 +4353,11 @@ console.log(column+" = "+alias);
 						searchFields.push(info);
 					}
 				}
+				//console.log(metadata);
 			}
 		}
 	}
+	console.log(editFields);
 	view["data"]["metadata"] = metadata;
 	view["data"]["fields"] = lookupFields;
 	view["data"]["edit_fields"] = editFields;
@@ -4433,9 +4436,6 @@ giau.CRUD.prototype._updateLayout = function(){
 			var dataContext = {};
 			dataContext["index"] = primaryKeyIndex;
 			dataContext["value"] = primaryKeyValue;
-// console.log("PRIMARY KEYING: ");
-// console.log(primaryKeyIndex);
-// console.log(primaryKeyValue);
 			// DELETE
 			var elementDelete = this._buttonInput("&times;", elementRow);
 			//Code.setStyleFloat(elementDelete,"right");
@@ -4504,19 +4504,33 @@ giau.CRUD._elementSelectStringArray = function(mapping){
 	return elementContainer;
 }
 
-giau.CRUD._elementSelectOption = function(mapping){
+giau.CRUD._elementSelectOption = function(mapping, table){
 	var object = mapping.object();
 	var field = mapping.field();
-	var value = object[field];
+	var value = object[field]; // == mapping.value()
 
 	var elementContainer = Code.newDiv();
-// TODO: get options and index from value
-var options = [
-	{"value":"val0", "display":"value 0"},
-	{"value":"val1", "display":"value 1"},
-	{"value":"val2", "display":"value 2"},
-]
-var optionIndex = 2;
+	
+	var options = [];
+	var option, row, val, disp, i;
+	var optionIndex = null;
+	for(i=0; i<table.length; ++i){
+		row = table[i];
+		val = row["value"];
+		disp = row["display"];
+		option = {};
+		option["display"] = disp;
+		option["value"] = val;
+		var isDefault = row["default"] ? true : false;
+		option["default"] = isDefault;
+		if(isDefault && optionIndex===null){
+			optionIndex = i;
+		}
+		if(val==value){
+			optionIndex = i;
+		}
+		options.push(option);
+	}
 	var jsObject = new giau.InputFieldDiscrete(elementContainer, options, optionIndex);
 	mapping.value(jsObject);
 	mapping.updateElementFxn(giau.CRUD._fieldEditOptionUpdateElementFxn);
@@ -4571,98 +4585,274 @@ giau.CRUD._elementSelectString = function(mapping){
 	return elementContainer;
 }
 
-giau.CRUD._elementSelectDiscrete = function(mapping, dd, metadata){
-	var elementContainer = Code.newDiv();
-		Code.setStyleBackgroundColor(elementContainer,"#EEE");
-		Code.setStyleBorderColor(elementContainer,"#CCC");
-		Code.setStyleBorder(elementContainer,"solid");
-		Code.setStyleBorderWidth(elementContainer,1+"px");
-		Code.setStyleMinHeight(elementContainer,24+"px");
-		Code.setStylePadding(elementContainer,2+"px");
-		Code.setStyleBorderRadius(elementContainer,4+"px");
-	Code.setProperty(elementContainer,"data-value","true");
+// ----------------------------------------------------------------------------------------------------------------------------------------------------------- DRAG N DROP
+giau.InputFieldDragAndDrop = function(element, bus, value, table, dd){
+	Code.constructorClass(giau.InputFieldDragAndDrop, this);
+	this._bus = bus;
+	this._lookupTable = table;
+	this._ddInfo = dd;
+	this._value = value;
+	console.log("RICHIE LOOKUP:");
+	console.log( this._lookupTable );
+	console.log( this._ddInfo );
 
-	var bus = giau.MessageBus();
-	var obj = {"bus":bus, "element":elementContainer, "mapping":mapping};//, "drag_and_drop":dd, "metadata":metadata};
-	bus.addFunction(giau.MessageBus.EVENT_OBJECT_DRAG_SELECT, giau.CRUD._handleDragSelectFxn, this, obj);
-	return elementContainer;
+	this._bus.addFunction(giau.MessageBus.EVENT_OBJECT_DRAG_SELECT, this._handleDragSelectFxn, this);
+
+	this._container = element;
+	Code.setStyleBackgroundColor(this._container,"#EEE");
+		Code.setStyleBorderColor(this._container,"#CCC");
+		Code.setStyleBorder(this._container,"solid");
+		Code.setStyleBorderWidth(this._container,1+"px");
+		Code.setStyleMinHeight(this._container,24+"px");
+		Code.setStylePadding(this._container,2+"px");
+		Code.setStyleBorderRadius(this._container,4+"px");
+	Code.setProperty(this._container,"data-value","true");
+
+	this.value(value);
 }
+Code.inheritClass(giau.InputFieldDragAndDrop, Dispatchable);
 
-giau.CRUD._handleDragSelectFxn = function(e, f){ // e is passed by self, f is passed by alert
-	var mapping = e["mapping"]
-	var myCriteria = mapping._OTHER["drag_and_drop"];
+
+giau.InputFieldDragAndDrop.prototype._handleDragSelectFxn = function(e){ // e is passed by self, f is passed by alert
+	console.log("_handleDragSelectFxn");
+	console.log(e);
+	var myCriteria = this._ddInfo;
 		var mySource = myCriteria["source"];
 			var myName = mySource["name"];
-	var metadata = e["metadata"];
-	var criteria = f["criteria"];
+	//var metadata = e["metadata"];
+	var criteria = e["criteria"];
+	console.log(criteria);
 	if(criteria){
 		var name = criteria["name"];
 		console.log(name,myName);
 		if(name===myName){
 			console.log("made it in ....");
-			var bus = e["bus"];
-			var element = e["element"];
-			var mapping = e["mapping"];
-			var ctx = {"element":element, "mapping":mapping};//, "drag_and_drop":myCriteria, "metadata":metadata};
+			var bus = this._bus;
+			var element = this._container;
+			//var mapping = e["mapping"];
+			//var ctx = {"element":element, "mapping":mapping};//, "drag_and_drop":myCriteria, "metadata":metadata};
 				var lef = $(element).offset().left;
 				var top = $(element).offset().top;
 				var wid = $(element).outerWidth();
 				var hei = $(element).outerHeight();
 			var rect = new Rect(lef,top, wid,hei);
-			var obj = {"rect": rect, "fxn": giau.CRUD._handleDragLifecycleFxn, "ctx": ctx};
+			var obj = {"rect": rect, "fxn": this._handleDragLifecycleFxn, "ctx": this};
 			bus.alertAll(giau.MessageBus.EVENT_OBJECT_DRAG_AVAILABLE, obj);
 		}
 	}
 }
+giau.InputFieldDragAndDrop.prototype.value = function(v){
+	if(v!==undefined){
+		this._value = v;
+		this._updateLayout();
+	}
+	return this._value;
+}
 
-/*
-(sections)
-
-initially set VALUE from source
-initially set DISPLAY ??????
-	- look up on server -- mapping
-	- lookup table server
-
-how to delete from list?
-	- data-index
-
-
-
-*/
-giau.CRUD._handleDragLifecycleFxn = function(event, data){
+giau.InputFieldDragAndDrop.prototype._handleDragLifecycleFxn = function(event, data){
 	if(event==DragNDrop.EVENT_DRAG_INTERSECT_AREA_START){
-		//console.log("START");
+		// 
 	}else if(event==DragNDrop.EVENT_DRAG_INTERSECT_AREA_STOP){
-		//console.log("STOP");
+		// 
 	}else if(event==DragNDrop.EVENT_DRAG_INTERSECT_AREA_DROP){
-		// console.log("DROP");
-		var mapping = this["mapping"];
+		console.log("DROP");
+		console.log(data);
+		var source = this._lookupTable;
+		var value = this._value;
+		var array = Code.arrayFromCommaSeparatedString(value);
 
-		// update element data rep:
-		var element = this["element"];
-		if(element){
-			var valueArrayString = Code.getProperty(element,"data-value");
-			valueArray = Code.arrayFromCommaSeparatedString(valueArrayString);
-			valueArrayString = valueArray.join(",");
-			Code.setProperty(element,"data-value",valueArrayString);
-			//Code.setContent(element,"new value: "+valueArrayString);
+		var i, key, val;
+		var dataObject = data["value"];
+		var keys = Code.keys(dataObject);
+		for(i=0; i<keys.length; ++i){
+			key = keys[i];
+			val = dataObject[key];
+			console.log(key);
+			console.log(val);
+			array.push(key);
+			//source[key] = val;
+			source.push(val);
 		}
-		data = {"action":"append", "data":data, "context":this}; // custom addition
-		mapping.updateDataFromAction(data);
-		mapping.updateElementFromData();
+
+		value = Code.stringFromCommaSeparatedArray(array);
+		this.value(value);
+
+		// 	var src = dd["metadata"]["source"];
+	// 	var table = metadata[src];
+	// 	var keys = Code.keys(actionValue);
+	// 	var key = keys[0];
+	// 	console.log("??????????????????????");
+	// 	console.log(key);
+	// 	console.log(table);
+	// 	table[key] = actionValue[key];
+
+		// var element = this._container;
+		// if(element){
+		// 	var valueArrayString = Code.getProperty(element,"data-value");
+		// 	valueArray = Code.arrayFromCommaSeparatedString(valueArrayString);
+		// 	valueArrayString = valueArray.join(",");
+		// 	Code.setProperty(element,"data-value",valueArrayString);
+		// 	//Code.setContent(element,"new value: "+valueArrayString);
+		// }
+		
+		// APPEND
+		
 	}
 }
-giau.CRUD._boxActionHandle = function(event){
-	console.log("handle", this)
+
+giau.InputFieldDragAndDrop.prototype._updateLayout = function(){
+	// var data = mapping.object();
+	// var field = mapping.field();
+	// var element = mapping.element();
+	// var value = mapping.value();
+var value = this._value;
+var element = this._container;
+console.log("RICHIE - value: "+value);
+	var ele = Code.getElementsWithFunction(element, function(e){
+			return Code.hasProperty(e,"data-value");
+		}, true);
+	ele = ele.length > 0 ? ele[0] : null;
+	if(ele!==null && value!==null){
+		var array = Code.arrayFromCommaSeparatedString(value);
+		console.log(array);
+		//var elements = giau.CRUD.generateBoxDivsFromArray(array, mapping, giau.CRUD._boxActionHandle, giau.CRUD._boxActionClose);
+		var elements = this.generateBoxDivsFromArray(array);//, mapping, giau.CRUD._boxActionHandle, giau.CRUD._boxActionClose);
+		Code.removeAllChildren(ele);
+		for(var i=0; i<elements.length; ++i){
+			Code.addChild(ele,elements[i]);
+		}
+	}
 }
-giau.CRUD._boxActionClose = function(event){
-	console.log("close", event, this)
-	var mapping = this["context"];
+
+// update data ...
+giau.InputFieldDragAndDrop.prototype._fieldEditCommaSeparatedStringUpdateDataFxn = function(mapping, action){
+	console.log("_fieldEditCommaSeparatedStringUpdateDataFxn: "+mapping.value());
+	console.log(action);
+	var data = mapping.object();
+	var field = mapping.field();
+		
+	var operation = action["action"];
+	var context = action["context"];
+	var action = action["data"];
+console.log("RICHIE -- DD IS INTERNAL NOW");
+console.log("RICHIE - _OTHER 2");
+	var dd = mapping._OTHER["drag_and_drop"];;
+	var maxCount = dd//(context!==undefined) ? context["drag_and_drop"] : null;
+	var metadata = mapping._OTHER["metadata"];
+	if(maxCount){
+		maxCount = maxCount["source"];
+		console.log(maxCount);
+		maxCount = maxCount["max_count"];
+		console.log(maxCount);
+		if(maxCount!==null){
+			maxCount = parseInt(maxCount);
+		}
+	}
+		console.log(maxCount);
+	var originalValue = data[field];
+	var array = Code.arrayFromCommaSeparatedString(originalValue);
+
+	console.log(array);
+	if(operation=="append"){
+// 		var actionValue = action["value"];
+// console.log("GOT A VALUE --- METADATA");
+// console.log(actionValue);
+// console.log(metadata);
+// if(dd && dd["metadata"] && dd["metadata"]["source"]){
+// 	var src = dd["metadata"]["source"];
+// 	var table = metadata[src];
+// 	var keys = Code.keys(actionValue);
+// 	var key = keys[0];
+// 	console.log("??????????????????????");
+// 	console.log(key);
+// 	console.log(table);
+// 	table[key] = actionValue[key];
+// 	actionValue = key;	
+// }
+			// array.push(actionValue);
+	// }else if(operation=="remove"){
+	// 	var index = action["index"];
+	// 		Code.removeElementAt(array,index);
+	// 	// var removedValue = Code.stringFromCommaSeparatedArray(array);
+	// 	// mapping.value(removedValue);
+	}else if(operation=="update"){
+		//var updatedValue = action["value"];
+		//array = Code.arrayFromCommaSeparatedString(updatedValue);
+	}
+	console.log("BEFORE");
+	//
+	if(maxCount!==null && maxCount>0){
+		while(array.length>maxCount){
+			array.shift();
+		}
+	}
+	console.log("OUT");
+	var updatedValue = Code.stringFromCommaSeparatedArray(array);
+	mapping.value(updatedValue);
+}
+
+giau.InputFieldDragAndDrop.prototype._boxActionHandle = function(event){
+	console.log("handle")
+}
+giau.InputFieldDragAndDrop.prototype._boxActionClose = function(e){
+	var self = this["context"];
 	var index = this["index"];
+	var array = Code.arrayFromCommaSeparatedString(self._value);
+	Code.removeElementAt(array,index);
+	var value = Code.stringFromCommaSeparatedArray(array);
+	self.value(value);
+}
+
+
+giau.InputFieldDragAndDrop.prototype.generateBoxDivsFromArray = function(array){
+	if(!array){
+		return [];
+	}
+var dd = this._ddInfo;
+console.log("generateBoxDivsFromArray -- METADATA");
+console.log(dd);
+var indexMatch = dd["metadata"]["match_index"];
+var indexDisplay = dd["metadata"]["display_index"];
+	indexDisplay = indexDisplay ? indexDisplay : indexMatch;
+var source = this._lookupTable;
+// console.log(indexDisplay+" ? "+indexMatch);
+// console.log(source);
+	var handleFxn = this._boxActionHandle;
+	var closeFxn = this._boxActionClose;
+	var i, j, value, displayValue, len = array.length;
+	var elements = [];
+	for(i=0; i<len; ++i){
+		value = array[i];
+		displayValue = value;
+		if(indexMatch){
+			for(j=0; j<source.length; ++j){
+				src = source[j];
+				if(src && src[indexMatch]==value){
+					displayValue = src[indexDisplay];
+					break;
+				}
+			}
+		}
+		var obj = {"index":i, "context":this};
+		elements.push( giau.CRUD.generateBoxDiv(displayValue, obj, handleFxn, closeFxn) );
+	}
+	return elements;
+}
+
+
+
+
+giau.CRUD._elementSelectDiscrete = function(mapping, table, dd){
 	var object = mapping.object();
-	var data = {"action":"remove", "data":{"index":index}};
-	mapping.updateDataFromAction(data);
-	mapping.updateElementFromData();
+	var field = mapping.field();
+	var value = object[field];
+	var elementContainer = Code.newDiv();
+
+	var bus = giau.MessageBus();
+	var jsObject = new giau.InputFieldDragAndDrop(elementContainer, bus, value, table, dd);
+	mapping.value(jsObject);
+
+	return elementContainer;
 }
 
 giau.CRUD._fieldEditBoolean = function(definition, container, fieldName, elementContainer, mapping){ // NOT USED YET NOT USED YET NOT USED YET NOT USED YET NOT USED YET NOT USED YET 
@@ -4694,12 +4884,16 @@ giau.CRUD._fieldEditStringArray = function(definition, container, fieldName, ele
 
 	if(presentation && presentation["drag_and_drop"]){ // DRAG AND DROP
 		console.log("FOUND A DRAG AND DROP: "+fieldName);
-		// update mapping
-		mapping.updateElementFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateElementFxn);
-		mapping.updateDataFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateDataFxn);
 			var dd = presentation["drag_and_drop"];
-			mapping._OTHER = {"metadata":metadata, "drag_and_drop":dd};
-		var elementDrop = giau.CRUD._elementSelectDiscrete(mapping);
+			var table = null;
+			if(dd["metadata"]){
+				var index_name = dd["metadata"]["source"];
+				table = metadata[index_name];
+			}
+			// update mapping
+			//mapping.updateElementFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateElementFxn);
+			//mapping.updateDataFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateDataFxn);
+		var elementDrop = giau.CRUD._elementSelectDiscrete(mapping, table, dd);
 		Code.addChild(elementContainer,elementDrop);
 
 	}else{ // regular tags
@@ -4709,8 +4903,12 @@ giau.CRUD._fieldEditStringArray = function(definition, container, fieldName, ele
 }
 
 giau.CRUD._fieldEditOption = function(definition, container, fieldName, elementContainer, mapping){
-	var elementText = giau.CRUD._elementSelectOption(mapping);
-		Code.addChild(elementContainer,elementText);
+	var presentation = definition["presentation"];
+	var metadata = definition["metadata"];
+	var value = container[fieldName];
+	var table = presentation ? presentation["options"] : [];
+	var elementText = giau.CRUD._elementSelectOption(mapping, table);
+	Code.addChild(elementContainer,elementText);
 }
 
 
@@ -4720,15 +4918,7 @@ giau.CRUD._fieldEditString = function(definition, container, fieldName, elementC
 	var metadata = definition["metadata"];
 	var value = container[fieldName];
 	if(false){
-// 	if(presentation && presentation["drag_and_drop"]){ // DRAG AND DROP
-// console.log("FOUND A DRAG AND DROP: "+fieldName);
-// 		// update mapping
-// 		mapping.updateElementFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateElementFxn);
-// 		mapping.updateDataFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateDataFxn);
-// 			var dd = presentation["drag_and_drop"];
-// 			mapping._OTHER = {"metadata":metadata, "drag_and_drop":dd};
-// 		var elementDrop = giau.CRUD._elementSelectDiscrete(mapping);
-// 		Code.addChild(elementContainer,elementDrop);
+		// ?
 	}else{ // TEXTFIELD
 		mapping.updateElementFxn(giau.CRUD._fieldEditStringPrimitiveUpdateElementFxn);
 		mapping.updateDataFxn(giau.CRUD._fieldEditStringPrimitiveUpdateDataFxn);
@@ -4771,92 +4961,6 @@ giau.CRUD._fieldEditStringPrimitiveUpdateElementFxn = function(mapping){
 			return Code.getElementTag(e)=="textarea";
 		}, true)[0];
 	Code.setInputTextValue(element, value);
-}
-
-// -------------------------------------------------------------------------------- MAPPING DRAG-N-DROP CSV
-
-giau.CRUD._fieldEditCommaSeparatedStringUpdateElementFxn = function(mapping){
-	console.log("_fieldEditCommaSeparatedStringUpdateElementFxn: "+mapping.value());
-	var data = mapping.object();
-	var field = mapping.field();
-	var element = mapping.element();
-	var value = mapping.value();
-	var ele = Code.getElementsWithFunction(element, function(e){
-			return Code.hasProperty(e,"data-value");
-		}, true);
-	ele = ele.length > 0 ? ele[0] : null;
-	if(ele!==null && value!==null){
-		var array = Code.arrayFromCommaSeparatedString(value);
-		var elements = giau.CRUD.generateBoxDivsFromArray(array, mapping, giau.CRUD._boxActionHandle, giau.CRUD._boxActionClose);
-		Code.removeAllChildren(ele);
-		for(var i=0; i<elements.length; ++i){
-			Code.addChild(ele,elements[i]);
-		}
-	}
-}
-
-giau.CRUD._fieldEditCommaSeparatedStringUpdateDataFxn = function(mapping, action){
-	console.log("_fieldEditCommaSeparatedStringUpdateDataFxn: "+mapping.value());
-	console.log(action);
-	var data = mapping.object();
-	var field = mapping.field();
-		
-	var operation = action["action"];
-	var context = action["context"];
-	var action = action["data"];
-	var dd = mapping._OTHER["drag_and_drop"];;
-	var maxCount = dd//(context!==undefined) ? context["drag_and_drop"] : null;
-	var metadata = mapping._OTHER["metadata"];
-	if(maxCount){
-		maxCount = maxCount["source"];
-		console.log(maxCount);
-		maxCount = maxCount["max_count"];
-		console.log(maxCount);
-		if(maxCount!==null){
-			maxCount = parseInt(maxCount);
-		}
-	}
-		console.log(maxCount);
-	var originalValue = data[field];
-	var array = Code.arrayFromCommaSeparatedString(originalValue);
-
-	console.log(array);
-	if(operation=="append"){
-		var actionValue = action["value"];
-console.log("GOT A VALUE");
-console.log(actionValue);
-console.log(metadata);
-if(dd && dd["metadata"] && dd["metadata"]["source"]){
-	var src = dd["metadata"]["source"];
-	var table = metadata[src];
-	var keys = Code.keys(actionValue);
-	var key = keys[0];
-	console.log("??????????????????????");
-	console.log(key);
-	console.log(table);
-	table[key] = actionValue[key];
-	actionValue = key;	
-}
-			array.push(actionValue);
-	}else if(operation=="remove"){
-		var index = action["index"];
-			Code.removeElementAt(array,index);
-		// var removedValue = Code.stringFromCommaSeparatedArray(array);
-		// mapping.value(removedValue);
-	}else if(operation=="update"){
-		var updatedValue = action["value"];
-		array = Code.arrayFromCommaSeparatedString(updatedValue);
-	}
-	console.log("BEFORE");
-	//
-	if(maxCount!==null && maxCount>0){
-		while(array.length>maxCount){
-			array.shift();
-		}
-	}
-	console.log("OUT");
-	var updatedValue = Code.stringFromCommaSeparatedArray(array);
-	mapping.value(updatedValue);
 }
 
 // -------------------------------------------------------------------------------- MAPPING JSON
@@ -5035,40 +5139,6 @@ giau.CRUD.prototype._checkSubmitChange = function(field, value, source){
 	console.log(str)
 }
 
-
-giau.CRUD.generateBoxDivsFromArray = function(array, ctx, handleFxn, closeFxn){
-	if(!array){
-		return [];
-	}
-	console.log(ctx);
-var mapping = ctx;
-var dd = mapping._OTHER["drag_and_drop"];
-var metadata = mapping._OTHER["metadata"];
-console.log("generateBoxDivsFromArray");
-console.log(metadata);
-	var i, value, len = array.length;
-	var elements = [];
-	for(i=0; i<len; ++i){
-		value = array[i];
-		var obj = {"index":i, "context":ctx};
-		console.log(dd)
-		if(dd && dd["metadata"]){
-			var source = dd["metadata"]["source"];
-			
-			console.log(metadata)
-			console.log(source)
-			console.log(value)
-			if(metadata && source){
-				value = metadata[source][value];
-				if(value){
-					value = value["widget_name"];
-				}
-			}
-		}
-		elements.push( giau.CRUD.generateBoxDiv(value, obj, handleFxn, closeFxn) );
-	}
-	return elements;
-}
 giau.CRUD._jsDispatch = new JSDispatch();
 giau.CRUD.generateBoxDiv = function(value, ctx, handleFxn, closeFxn){
 	var textColor = "#FFF";
@@ -6191,6 +6261,7 @@ giau.InputFieldDiscrete = function(element, options, index){
 	this._index = 0;
 	this._selectElement = Code.newSelect();
 		Code.addChild(this._container,this._selectElement);
+	this._jsDispatch.addJSEventListener(this._selectElement, Code.JS_EVENT_INPUT_CHANGE, this._handleSelectValueChangeFxn, this);
 	this.options(options);
 	this.index(index);
 }
@@ -6198,16 +6269,20 @@ Code.inheritClass(giau.InputFieldDiscrete, Dispatchable);
 
 giau.InputFieldDiscrete.EVENT_CHANGE = "giau.InputFieldDiscrete.EVENT_CHANGE";
 
-giau.InputFieldDiscrete.prototype._updateLayout = function(v){
+giau.InputFieldDiscrete.prototype._handleSelectValueChangeFxn = function(e){
+	var sel = Code.getSelected(this._selectElement);
+	sel = parseInt(sel);
+	this.index(sel);
+}
+giau.InputFieldDiscrete.prototype._updateLayout = function(){
 	var array = this.options();
 	var select = this._selectElement;
 	Code.removeAllChildren(select);
 	var i, len = array.length;
 	for(i=0; i<len; ++i){
 		var item = array[i];
-		var value = item["value"];
 		var display = item["display"];
-		var option = Code.newOption(value,display,i==this._index);
+		var option = Code.newOption(display,i+"",i==this._index);
 		Code.addChild(select,option);
 	}
 }
@@ -6221,11 +6296,16 @@ giau.InputFieldDiscrete.prototype.index = function(index){
 	if(index!==undefined){
 		this._index = index;
 		this._updateLayout();
+		this.alertAll(giau.InputFieldDiscrete.EVENT_CHANGE, this);
 	}
 	return this._index;
 }
-giau.InputFieldDiscrete.prototype.value = function(){
-	return this._value;
+giau.InputFieldDiscrete.prototype.value = function(value){ // assign a value ...
+	this.index(value); // simple passing index
+	if(this._index < this._options.length){
+		return this._options[this._index]["value"];
+	}
+	return null;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------- INPUT DATE

@@ -389,10 +389,10 @@ function giau_wordpress_data_service(){
 					- values WHERE id
 				*/
 				// TEST FOR MANY SUB SECTIONS
-				// $offset = 46;
-				// $count = 1;
-				$offset = 50;
+				$offset = 46;
 				$count = 1;
+				// $offset = 50;
+				// $count = 1;
 				$requestInfo = [];
 				$requestInfo["offset"] = $offset;
 				$requestInfo["count"] = $count;
@@ -419,7 +419,8 @@ function giau_wordpress_data_service(){
 				$foundSubsections = [];
 				for($i=0; $i<$len; ++$i){
 					$row = &$rows[$i];
-					$subsections = $row["section_list"];
+					$subsections = $row["section_subsections"];
+					error_log($i.": subsections 1: ".$subsections);
 					$subsections = arrayFromCommaSeparatedString($subsections);
 					foreach ($subsections as $section){
 						$index = "".$section;
@@ -434,9 +435,48 @@ function giau_wordpress_data_service(){
 				if( count($foundSubsections)>0){
 					$subsectionsList = implode(",",$foundSubsections);
 					global $wpdb;
-					$query = 'SELECT '.GIAU_FULL_TABLE_NAME_SECTION().'.* FROM '.GIAU_FULL_TABLE_NAME_SECTION().' WHERE id IN ('.$subsectionsList.')';
+					//$query = 'SELECT '.GIAU_FULL_TABLE_NAME_SECTION().'.* FROM '.GIAU_FULL_TABLE_NAME_SECTION().' WHERE id IN ('.$subsectionsList.')'."
+					$query = "
+						SELECT
+							sections.id AS section_id,
+							sections.name AS section_name,
+							".GIAU_FULL_TABLE_NAME_WIDGET().".id AS widget_id,
+							".GIAU_FULL_TABLE_NAME_WIDGET().".name AS widget_name
+						FROM
+						(
+							SELECT *
+							FROM ".GIAU_FULL_TABLE_NAME_SECTION()." 
+							WHERE ".GIAU_FULL_TABLE_NAME_SECTION().".id IN (".$subsectionsList.") 
+						) as sections
+						JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()." 
+				    	ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = sections.widget 
+				    	";
+/*
+SELECT * FROM
+(
+SELECT * 
+FROM wp_giau_section
+WHERE wp_giau_section.id IN (38,39,40,41,42,43,44)
+) as sections
+JOIN wp_giau_widget 
+ON wp_giau_widget.id = sections.widget
+				    	*/
+				    	// WHERE ".GIAU_FULL_TABLE_NAME_SECTION().".id IN (".$subsectionsList.") 
+				    	error_log("QUERY: ".$query);
 					$subsections = $wpdb->get_results($query, ARRAY_A);
 				}
+				error_log("subsections count: ".count($subsections));
+				// $subsections_return = [];
+				// for($i=0; $i<count($subsections); ++$i){
+				// 	$row = $subsections[$i];
+				// 	$section = [];
+				// 	$section["section_id"] = $row["section_id"];
+				// 	$section["section_name"] = $row["section_name"];
+				// 	$section["widget_id"] = $row["widget_id"];
+				// 	$section["widget_name"] = $row["widget_name"];
+				// 	$subsections_return[] = $section;
+				// }
+				$subsections_return = $subsections;
 /*
 DATA FROM DRAG SOURCE (LIBRARY) NEEDS TO BE APPENDED/UPDATED TO THE METADATA TABLE
 VALUE => MUST BE AN OBJECT / INDEX TO AN OBJECT
@@ -446,8 +486,8 @@ if data-metadata is present, use this as the metadata lookup 'column'
 	-> return the VALUE/OBJECT at data["metadata"][this._metadataField][value];
 
 */
-				$metadata["subsections"] = $subsections;
-				$metadata["widgets"] = [
+				$metadata["section_list"] = $subsections_return;
+				$metadata["widget_list"] = [
 					"15" => [
 						"id" => "15",
 						"widget_name" => "ORIGINAL WIDGET",
