@@ -117,6 +117,12 @@ giau.prototype.initialize = function(){
 	dataTableLists.each(function(index, element){
 		var dataTable = new giau.LibraryScroller(element);
 	});
+
+	var fileDropAreas = $(".giauDropArea");
+	fileDropAreas.each(function(index, element){
+		var dropArea = new giau.FileUploadDropArea(element);
+	});
+
 	// var listener = function(e){
 	// 	console.log(e);
 	// 	THIS._mousePosition = new V2D(e.clientX,e.clientY);
@@ -1885,9 +1891,7 @@ giau.CalendarListView = function(element){
 			Code.setStyleFontSize(div,"12px");
 			Code.setStyleFontStyleItalic(div);
 			Code.setStyleTextAlign(div,"center");
-			// Code.addClass(div,"calendarEventListItemDate");
-//			Code.setStyleColor(div,noEventsTextColor);
-			// Code.setStyleVerticalAlign(div,"top");
+			Code.setStyleColor(div,noEventsTextColor);
 			Code.addChild(container,div);
 	}
 // Code.getTimeStamp
@@ -2289,9 +2293,6 @@ giau.FileBrowser = function(element){
 			--i;
 		}
 	}
-	// <div data-icon-key="icon_default" data-icon-value="./wp-content/themes/giau/img/file_browser/icon_fb_blank.png">
-	// 	<div data-icon-key="icon_folder" data-icon-value="./wp-content/themes/giau/img/file_browser/icon_fb_folder.png">
-	// 	<div data-icon-key="icon_image_background" data-icon-value="./wp-content/themes/giau/img/file_browser/icon_fb_image_background.png">
 
 	this._elementPathContainer = Code.newDiv();
 		Code.addChild(this._container,this._elementPathContainer);
@@ -2813,6 +2814,81 @@ giau.FileBrowser.prototype.uploadFile = function(file,filename,directory){
 		var obj = Code.parseJSON(d);
 		console.log(obj);
 		this.refreshBrowser();
+	});
+	ajax.send();
+}
+
+
+
+
+
+giau.FileUploadDropArea = function(element){
+	console.log("FileUploadDropArea");
+	this._container = element;
+	this._elementUploadDropTarget = Code.newDiv();
+	Code.addChild(this._container,this._elementUploadDropTarget);
+	// drop target
+		div = this._elementUploadDropTarget;
+		Code.setStyleWidth(div,"100px");
+		Code.setStyleHeight(div,"100px");
+		Code.setStyleBackground(div,"#F00");
+		Code.setStyleDisplay(div,"inline-block");
+		Code.setStyleTextAlign(div,"center")
+		Code.setStyleVerticalAlign(div,"middle")
+		Code.setContent(div,"drag file here to upload");
+
+	// LISTNERS
+	this._jsDispatch = new JSDispatch();
+	// UPLOAD
+	this._jsDispatch.addJSEventListener(this._elementUploadDropTarget, Code.JS_EVENT_DRAG_OVER, this._handleDragOverUploadFxn, this);
+	this._jsDispatch.addJSEventListener(this._elementUploadDropTarget, Code.JS_EVENT_DRAG_DROP, this._handleDragDropUploadFxn, this);
+
+	// START AT ROOT
+	this._selectedIndex = -1;
+	this._path = [];
+	this._contents = [];
+}
+giau.FileUploadDropArea.prototype._handleDragOverUploadFxn = function(e){
+	e.stopPropagation();
+	e.preventDefault();
+}
+giau.FileUploadDropArea.prototype._handleDragDropUploadFxn = function(e){
+	e.stopPropagation();
+	e.preventDefault();
+	var fileList = e.dataTransfer.files;
+	var i, len = fileList.length;
+	for(i=0; i<len; ++i){
+		var file = fileList[i];
+		var filename = file.name;
+		var filetype = file.type;
+		if(this.fileTypeAcceptable(filetype)){
+			this.uploadFile(file, filename);
+			break;
+		}
+	}
+}
+giau.FileUploadDropArea.prototype.fileTypeAcceptable = function(type){
+	if(type=="application/zip"){
+		return true;
+	}
+	return false;
+}
+giau.FileUploadDropArea.prototype.uploadFile = function(file,filename){
+	var url = "./";
+	filename = filename!==undefined ? filename : "";
+	var ajax = new Ajax();
+	ajax.url(url);
+	ajax.method(Ajax.METHOD_TYPE_POST);
+		ajax.append('operation','backup_upload_zip');
+		//ajax.append('file_directory',directory);
+		ajax.append('file_name',filename);
+		ajax.append('file',file);
+	ajax.context(this);
+	ajax.callback(function(d){
+		console.log(d);
+		var obj = Code.parseJSON(d);
+		console.log(obj);
+		//this.refreshBrowser();
 	});
 	ajax.send();
 }

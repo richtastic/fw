@@ -1041,6 +1041,37 @@ function divWithDatasValuesLabelsExtras($object, $included, $labels, $extra){
 	return $div;
 }
 
+function executeCommand($command){
+	//$command = " ".$command."  > /dev/null 2>&1 ";
+	$result = shell_exec("$command");
+	return $result;
+}
+
+
+function zipDirectory($source, $destination){
+	if(!$source || !$destination){
+		return;
+	}
+	error_log("zipDirectory");
+	error_log("location: ".$source);
+	error_log("destination: ".$destination);
+	$command = " cd ".$source."  &&  zip -r ".$destination." ./* ";
+	error_log("command: ".$command);
+	executeCommand($command);
+}
+
+function unzipDirectory($source, $destination){
+	if(!$source || !$destination){
+		return;
+	}
+	error_log("unzipDirectory");
+	error_log("location: ".$source);
+	error_log("destination: ".$destination);
+	$command = " unzip ".$source."  -d ".$destination." ";
+	error_log("command: '".$command."'");
+	$result = executeCommand($command);
+	error_log("result: '".$result."'");
+}
 
 /*
 https://codex.wordpress.org/Plugin_API/Action_Reference

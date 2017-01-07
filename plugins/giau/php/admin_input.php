@@ -9,16 +9,6 @@ error_log("wpdb: ".print_r($wpdb));
 
 //header("Location: ");
 
-$firstName = "Richie";
-$lastName = "lasname";
-$displayName = "displayname";
-$position = "position";
-$description = "";
-$uri = "";
-$imageURL = "";
-
-giau_insert_bio($firstName,$lastName,$displayName,$position,$description,$uri,$imageURL);
-
 
 /*
 

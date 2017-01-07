@@ -2,6 +2,7 @@
 // service.php
 
 function giau_wordpress_data_service(){
+	error_log("giau_wordpress_data_service");
 	if(!giau_is_current_user_admin()){
 		return;
 	}
@@ -88,6 +89,10 @@ function giau_wordpress_data_service(){
 				$response["result"] = "success";
 			}
 			$response = json_encode($response);
+// BACKUP SERVICE --------------------------------------------------------------------------------------------------------------
+		}else if($operationType=="backup_upload_zip"){
+			error_log("UPLOAD BACKUP ZIP");
+			//
 // FILE SERVICE --------------------------------------------------------------------------------------------------------------
 		}else if($operationType=="file_upload_file"){
 			$relative = $_POST['file_directory'];

@@ -172,7 +172,29 @@ function giau_admin_menu_page_submenu_data_backup(){
 
 
 	//async_fxn(giau_test, 2);
-	async_fxn();
+	//async_fxn();
+	
+
+	// ZIP UP
+	$zipSource = giau_plugin_upload_root_dir();
+	$zipDestination = giau_plugin_temp_dir()."/"."uploads.zip";
+
+	$zipURL = giau_plugin_temp_url()."/"."uploads.zip";
+	echo "<br/>";
+	echo "ZIP URL: ".$zipURL;
+	echo "<br/>";
+	//zipDirectory($zipSource, $zipDestination);
+
+	// ZIP OUT
+	$zipSource = giau_plugin_temp_dir()."/"."uploads.zip";
+	$zipDestination = giau_plugin_temp_dir()."/"."uploads";
+	//$zipDestination = giau_plugin_upload_root_dir();
+	//unzipDirectory($zipSource, $zipDestination);
+
+	?>
+	<!--giau.FileUploadDropArea-->
+	<div class="giauDropArea"></div>
+	<?php
 }
 function giau_test(){
 	error_log("GIAU TEST");
@@ -181,8 +203,6 @@ function giau_test(){
 function giau_insert_database_from_json($jsonSource, $deleteTables){
 	global $wpdb;
 
-	//$jsonSource = '{"wp_giau_presentation_website": [{"id": "1","created": "2016-11-22 04:03:37.0000","modified": "2016-11-22 04:03:37.0000","start_page": "0"}] }';
-	
 	echo "<br/>";
 	$jsonObject = json_decode($jsonSource, true);
 	$tableCount = count($jsonObject);
