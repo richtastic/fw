@@ -316,7 +316,7 @@ function giau_wordpress_data_service(){
 				    ORDER BY name ASC, modified DESC 
 				";
 				error_log($requestInfo["query"]);
-				paged_data_service($requestInfo, table_info_section(), $response );
+				paged_data_service($requestInfo, table_info_page(), $response );
 				//
 				$metadata[] = [];
 					$subsections = subsection_list($response["data"], "page_section_list");
@@ -344,7 +344,7 @@ function giau_wordpress_data_service(){
 				    ORDER BY title ASC, short_name ASC, modified DESC 
 				";
 				error_log($requestInfo["query"]);
-				paged_data_service($requestInfo, table_info_section(), $response );
+				paged_data_service($requestInfo, table_info_calendar(), $response );
 				//
 				$metadata[] = [];
 				$response["metadata"] = $metadata;
@@ -373,7 +373,7 @@ function giau_wordpress_data_service(){
 				    ORDER BY last_name ASC, first_name ASC, modified DESC 
 				";
 				error_log($requestInfo["query"]);
-				paged_data_service($requestInfo, table_info_section(), $response );
+				paged_data_service($requestInfo, table_info_bio(), $response );
 				//
 				$metadata[] = [];
 				$response["metadata"] = $metadata;
@@ -395,7 +395,7 @@ function giau_wordpress_data_service(){
 				    ORDER BY hash_index ASC, modified DESC 
 				";
 				error_log($requestInfo["query"]);
-				paged_data_service($requestInfo, table_info_section(), $response );
+				paged_data_service($requestInfo, table_info_languagization(), $response );
 				//
 				$metadata[] = [];
 				$response["metadata"] = $metadata;
@@ -611,6 +611,16 @@ function table_info_website(){
 		"table" => GIAU_FULL_TABLE_NAME_WEBSITE(),
 	];
 }
+function table_info_page(){
+	return [
+		"table" => GIAU_FULL_TABLE_NAME_PAGE(),
+	];
+}
+function table_info_languagization(){
+	return [
+		"table" => GIAU_FULL_TABLE_NAME_LANGUAGIZATION(),
+	];
+}
 function table_info_section(){
 	return [
 		"table" => GIAU_FULL_TABLE_NAME_SECTION(),
@@ -619,6 +629,16 @@ function table_info_section(){
 function table_info_widget(){
 	return [
 		"table" => GIAU_FULL_TABLE_NAME_WIDGET(),
+	];
+}
+function table_info_bio(){
+	return [
+		"table" => GIAU_FULL_TABLE_NAME_BIO(),
+	];
+}
+function table_info_calendar(){
+	return [
+		"table" => GIAU_FULL_TABLE_NAME_CALENDAR(),
 	];
 }
 
@@ -651,6 +671,22 @@ function paged_data_service($requestInfo, $tableInfo, &$response, $override=fals
 
 	$criteria = "";
 
+	// TOTAL
+	$total = 0;
+	$queryTotal = "
+	    SELECT COUNT(*) AS total
+	    FROM ".$table."
+	    ".$criteria." 
+	";
+	error_log("TOTAL - RICHIE ".$queryTotal);
+	// SELECT TABLE_NAME, TABLE_ROWS as total FROM information_schema.tables;
+	// SELECT TABLE_ROWS as total FROM information_schema.tables WHERE TABLE_NAME = 'wp_giau_bio';
+	// wp_giau_languagization
+	$resultTotal = $wpdb->get_results($queryTotal, ARRAY_A);
+	error_log("TOTAL - RICHIE ".count($resultTotal));
+	$total = intval($resultTotal[0]["total"]);
+	error_log("TOTAL - RICHIE == ".$total);
+	// QUERY
 
 	$querystr = $requestInfo["query"];
 	if(!$querystr){
@@ -664,8 +700,10 @@ function paged_data_service($requestInfo, $tableInfo, &$response, $override=fals
 	$results = $wpdb->get_results($querystr, ARRAY_A);
 	// return $results;
 	$response["result"] = "success";
+	$response["offset"] = $offset;
 	$response["count"] = count($results);
 	$response["data"] = $results;
+	$response["total"] = $total;
 }
 
 

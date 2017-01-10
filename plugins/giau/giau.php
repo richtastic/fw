@@ -401,13 +401,14 @@ function giau_action_page_head(){ // inject as desired
 	$fileJavaScriptCode = getPluginURIPath()."/js/code/Code.js";
 	$relativePathJSFF = getPluginURIPath()."/js/code/";
 	$relativePathJSPluginJS = getPluginURIPath()."/js/";
+	$fileJQueryLocal = $relativePathJSPluginJS."jquery-2.2.3.min.js";
 	//$fileJavaScriptGiau = getPluginURIPath()."/js/theme.js";
 	error_log("js path: ".$fileJavaScriptFF);
 	?>
 	<script rel="text/javascript" src="<?php echo $fileJavaScriptCode; ?>"></script>
 	<script rel="text/javascript" src="<?php echo $fileJavaScriptFF; ?>"></script>
-	
-	<script rel="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+	<script rel="text/javascript" src="<?php echo $fileJQueryLocal; ?>"></script>
+	<!--<script rel="text/javascript" src="https://code.jquery.com/jquery-2.2.3.min.js"></script>-->
 	<script type="text/javascript">
 		$(document).ready( function(){
 			var classesLoadedFxn = function(){

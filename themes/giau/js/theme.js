@@ -3496,6 +3496,7 @@ giau.LibraryScroller = function(element, name, url, params){
 	url = url !== undefined ? url : "./";
 	params = params !== undefined ? params : {};
 	this._scrollBarSize = Code.getScrollBarSize();
+	this._itemsPerPage = 20;
 
 	this._jsDispatch = new JSDispatch();
 
@@ -3615,7 +3616,7 @@ giau.LibraryScroller = function(element, name, url, params){
 		}
 	}
 	this._name = name;
-	this._dataSource = new giau.DataSource(url,20, params);
+	this._dataSource = new giau.DataSource(url,this._itemsPerPage, params);
 	this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
 	this._dataSource.getPage(0);
 }
@@ -3821,7 +3822,9 @@ giau.LibraryScroller.prototype._updateWithData = function(data){
 	var offset = data["offset"];
 	var count = data["count"];
 	var rows = data["data"];
+	var total = data["total"];
 	var metadata = data["metadata"];
+	console.log("LIBRARY SCORLLER: _updateWithData : "+offset+" / "+count+" / "+total);
 	this._metaData = metadata;
 	this._dataRows = rows;
 	this._updateLayout();
@@ -3832,6 +3835,163 @@ giau.LibraryScroller.prototype._scrollTo = function(){
 
 
 
+giau.PagingDisplay = function(element, currentPage, totalPages, pagingFxn){ // pages in [0...total-1]
+	Code.constructorClass(giau.PagingDisplay, this);
+	this._container = element;
+		Code.setStyleTextAlign(this._container,"center");
+	this._currentPage = 0;
+	this._totalPages = 0;
+	this._pagingDisplayFxn = giau.PagingDisplay._defaultPagingDisplay;
+	this._pagingDisplayCtx = null;
+	this.pagingDisplayFunction(pagingFxn);
+	this.set(currentPage, totalPages);
+};
+Code.inheritClass(giau.PagingDisplay, Dispatchable);
+giau.PagingDisplay.EVENT_REQUEST_PAGE_URL = "PagingDisplay.EVENT_REQUEST_PAGE_URL";
+giau.PagingDisplay._defaultPagingDisplay = function(datum){
+	var page = datum["page"];
+	var currentPage = datum["pageCurrent"];
+	var pagesTotal = datum["pagesTotal"];
+	var getParamKeyPage = "p";
+	var pageURL = document.location+"";
+	var url = "";
+	if(currentPage!=page){
+		//url = pageURL+"&"+getParamKeyPage+"="+page;
+		url = Code.setURLParameter(pageURL,getParamKeyPage,page);
+	}
+	return {"url":url, "display":(""+(page+1))};
+}
+giau.PagingDisplay.prototype.updateFunction = function(datum){
+	if(this._pagingDisplayFxn){
+		if(this._pagingDisplayCtx){
+			return this._pagingDisplayFxn.call(ctx,datum)
+		}else{
+			return this._pagingDisplayFxn();
+		}
+	}
+}
+giau.PagingDisplay.prototype._updateLayout = function(){
+	Code.removeAllChildren(this._container);
+	if(this._totalPages==0){ return; }
+	var i, len, lm1, div;
+	len = this._totalPages;
+	lm1 = len-1;
+	var maxPagesToLimit = 10;
+	var limitBefore = 1;
+	var limitAfter = 1;
+	var limitBegin = 3;
+	var limitEnd = 3;
+	var shownEllipsesBefore = false;
+	var shownEllipsesAfter = false;
+//this._currentPage = 8;
+//this._currentPage = 14;
+//this._currentPage = 5;
+// prev
+div = Code.newDiv("<");
+Code.setStyleDisplay(div,"inline-block");
+Code.addChild(this._container,div);
+giau.PagingDisplay._addSpacer(this._container);
+	for(i=0; i<len; ++i){
+		var datum = this._callPagingDisplay({"pagesTotal":this._totalPages, "page":i, "pageCurrent":this._currentPage});
+		var display = datum["display"];
+		var url = datum["url"];
+		var shouldShowPage = true;
+		if(this._totalPages >= maxPagesToLimit){
+			shouldShowPage = false;
+			if( i<limitBegin && i<=(this._currentPage+limitAfter) ){ // left (+mid)
+				shouldShowPage = true;
+			}
+			if( i>(this._totalPages-limitEnd-1) && i>=(this._currentPage-limitBefore) ){ // right (+mid)
+				shouldShowPage = true;
+			}
+			if( i>=(this._currentPage-limitBefore) && i<=(this._currentPage+limitAfter) ){ // middle
+				shouldShowPage = true;
+			}
+			if(i>=limitBegin && i<(this._currentPage-limitBefore) && !shownEllipsesBefore){ // ellipses before
+				shownEllipsesBefore = true;
+				div = Code.newDiv();
+				Code.setContent(div, "...");
+				Code.setStyleDisplay(div,"inline-block");
+				Code.addChild(this._container,div);
+				giau.PagingDisplay._addSpacer(this._container);
+			}
+			if(i>(this._currentPage+limitAfter) && i<=(this._totalPages-limitEnd-1) && !shownEllipsesAfter){ // ellipses after
+				shownEllipsesAfter = true;
+				div = Code.newDiv();
+				Code.setContent(div, "...");
+				Code.setStyleDisplay(div,"inline-block");
+				Code.addChild(this._container,div);
+				giau.PagingDisplay._addSpacer(this._container);
+			}
+		}
+		if(shouldShowPage){
+			if(url && url!==""){
+				div = Code.newAnchor(url, display);
+			}else{
+				div = Code.newDiv(display);
+			}
+			Code.setStyleDisplay(div,"inline-block");
+			Code.addChild(this._container,div);
+			if(i<lm1){
+				giau.PagingDisplay._addSpacer(this._container);
+			}
+		}
+	}
+	// next
+	giau.PagingDisplay._addSpacer(this._container);
+	div = Code.newDiv(">");
+	Code.setStyleDisplay(div,"inline-block");
+	Code.addChild(this._container,div);
+};
+giau.PagingDisplay._addSpacer = function(container){
+	var spacer = Code.newDiv();
+	Code.setStyleWidth(spacer,5+"px");
+	Code.setStyleDisplay(spacer,"inline-block");
+	Code.addChild(container,spacer);
+	return spacer;
+}
+giau.PagingDisplay.prototype.set = function(currentPage, totalPages){
+	this.currentPage(currentPage);
+	this.totalPages(totalPages);
+	this._updateLayout();
+};
+giau.PagingDisplay.prototype.currentPage = function(p){
+	if(p!==undefined){
+		this._currentPage = p;
+		this._updateLayout();
+	}
+	return this._currentPage;
+};
+giau.PagingDisplay.prototype.totalPages = function(p){
+	if(p!==undefined){
+		this._totalPages = p;
+		this._updateLayout();
+	}
+	return this._totalPages;
+};
+giau.PagingDisplay.prototype.pagingDisplayFunction = function(p, c){
+	if(p!==undefined){
+		this._pagingDisplayFxn = p;
+	}
+	if(c!==undefined){
+		this._pagingDisplayCtx = c;
+	}
+	return this._pagingDisplayFxn;
+};
+giau.PagingDisplay.prototype._callPagingDisplay = function(datum){
+	var page = datum["page"];
+	var isCurrentPage = datum["pageCurrent"];
+	var pagesTotal = datum["pagesTotal"];
+	if(this._pagingDisplayFxn){
+		if(this._pagingDisplayCtx){
+			return this._pagingDisplayFxn.call(ctx,datum)
+		}else{
+			return this._pagingDisplayFxn(datum);
+		}
+	}else{
+		return {"url":"", "display":(""+page)};
+	}
+}
 
 
 giau.DataSource = function(url, itemsPerPage, params){
@@ -3914,6 +4074,7 @@ giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData, 
 		if(obj["data"]){
 			obj = obj["data"];
 		}
+console.log("DATACRUDCOMPLETE")
 		this.alertAll(alertEventName, {"source":returnData, "data":obj});
 	});
 	ajax.send();
@@ -3927,6 +4088,7 @@ giau.CRUD = function(element){
 	var propertyDataTableName = "data-table-name";
 	var valueTableName = Code.getProperty(element,propertyDataTableName);
 	console.log("CRUD TABLE NAME: "+valueTableName);
+	this._itemsPerPage = 20;
 	// simulate got data:
 /*
 	section
@@ -4051,15 +4213,48 @@ return;
 	// this._elementTableContainer = Code.newDiv();
 
 	this._elementContainer = Code.newDiv();
+	this._elementPagingTop = Code.newDiv();
+	this._elementPagingBottom = Code.newDiv();
 	this._elementTools = Code.newDiv();
 	this._elementOrdering = Code.newDiv();
 	this._elementTable = Code.newDiv();
 	Code.addChild(this._container,this._elementContainer);
-	
+		
+		Code.addChild(this._elementContainer,this._elementPagingTop);
 		Code.addChild(this._elementContainer,this._elementOrdering);
 		Code.addChild(this._elementContainer,this._elementTools);
 		Code.addChild(this._elementContainer,this._elementTable);
+		Code.addChild(this._elementContainer,this._elementPagingBottom);
 		//Code.addChild(this._elementContainer,this._elementTable);
+
+// PAGING
+Code.setStyleBackgroundColor(this._elementPagingTop, "#FF0");
+Code.setStyleDisplay(this._elementPagingTop, "block");
+Code.setStyleMinHeight(this._elementPagingTop, 25+"px");
+
+Code.setStyleBackgroundColor(this._elementPagingBottom, "#FF0");
+Code.setStyleDisplay(this._elementPagingBottom, "block");
+Code.setStyleMinHeight(this._elementPagingBottom, 25+"px");
+
+this._pagingTop = new giau.PagingDisplay(this._elementPagingTop, 0,0);
+this._pagingBottom = new giau.PagingDisplay(this._elementPagingBottom, 0,0);
+
+console.log("PARSE TIME");
+//Code.parseURL("https://video.google.co.uk/site/home?basic=123&arr[]=0&arr[]=1&arr[]=2;list[0]=a;list[1]=b;list[2]=c&items=first,second,third#end");
+/*
+Code.setURLParm = function(url,key,value){
+	var datum = Code.parseURL();
+	datum[key] = value;
+	return Code.generateURL(datum["protocol"], datum["fulldomain"], datum["path"], datum["parameters"], datum["fragment"]);
+}*/
+//url = "https://video.google.co.uk/site/home?basic=123&arr[]=0&arr[]=1&arr[]=2;list[0]=a;list[1]=b;list[2]=c&items=first,second,third#end";
+
+//var url = Code.generateURL("https", "video.google.co.uk", "/site/home", {"hi":"yay","areas":[1,2,3]}, "end");
+//console.log(url);
+var url = "http://localhost/wordpress/wp-admin/admin.php?page=giau-plugin-submenu-data-entry&table=languages&p=3";
+console.log(url);
+url = Code.setURLParameter(url,"p","1234567890");
+console.log(url);
 
 
 	// CONTAINER
@@ -4109,7 +4304,7 @@ return;
 
 
 	
-	this._dataSource = new giau.DataSource("./",20, {"table":dataTableName} );
+	this._dataSource = new giau.DataSource("./",this._itemsPerPage, {"table":dataTableName} );
 	this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
 	this._dataSource.getPage(0);
 
@@ -4323,6 +4518,7 @@ giau.CRUD.prototype._handleCreateCompleteFxn = function(e,d){
 }
 giau.CRUD.prototype._handleReloadCompleteFxn = function(e){
 	console.log("READ COMPLETE");
+	console.log(e);
 	var original = e["source"];
 	var criteriaIndex = original["index"];
 	var criteriaValue = original["value"];
@@ -4387,14 +4583,28 @@ giau.CRUD.prototype._dataRowFromKeyValue = function(criteriaIndex, criteriaValue
 }
 
 giau.CRUD.prototype._updateWithData = function(data){
+console.log("giau.CRUD.prototype._updateWithData");
 	var offset = data["offset"];
 	var count = data["count"];
 	var rows = data["data"];
+	var total = data["total"];
 	var definition = data["definition"];
 	var columns = definition["columns"];
 	var presentation = definition["presentation"];
 	var columnPresentations = presentation["columns"];
 	var metadata = data["metadata"];
+console.log(offset);
+console.log(count);
+console.log(total);
+console.log(this);
+console.log(this._itemsPerPage);
+var pagesTotal = total>0 ? Math.ceil(total/this._itemsPerPage) : 0;
+//var pageCurrent = Math.floor( (offset/total) this._itemsPerPage);
+var pageCurrent = Math.floor( offset/this._itemsPerPage);
+
+console.log(pageCurrent+"/"+pagesTotal)
+this._pagingTop.set(pageCurrent, pagesTotal);// = new giau.PagingDisplay(this._elementPagingTop, 0,15);
+this._pagingBottom.set(pageCurrent, pagesTotal);
 
 	view = {};
 	view["data"] = data;
