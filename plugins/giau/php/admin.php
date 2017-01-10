@@ -34,6 +34,7 @@ function giau_admin_menu_page_main(){
 		<li><a href="<?php echo $URL_FILE_BACKUP; ?>">File Backup</a></li>
 		<li><a href="<?php echo $URL_DATA_BACKUP; ?>">Data Backup</a></li>
 	</ul>
+	<!--
 	<div class="giauTestA" style="width:200px; height:120px; background-color:#CCC;"></div>
 	<div class="giauTestB" style="width:200px; height:100px; background-color:#CCC;"></div>
 	<div class="giauTestC" style="width:200px; height:100px; background-color:#CCC;"></div>
@@ -135,6 +136,7 @@ var select = new giau.InputFieldDiscrete($(".giauTestJ")[0],[
 	}
 	setTimeout(afterDelay, 800);
 	</script>
+	-->
 <?php
 }
 function giau_admin_menu_page_submenu_file_upload(){
@@ -376,8 +378,8 @@ function giau_admin_menu_page_submenu_data_entry(){
 	<h2><?php echo $selectedTableDisplayName; ?></h2>
 
 	<!-- table? -->
-		<div class="limitedWidth" style="width:100%; display:block; position:relative;">
-		<div style="width:70%; min-height:600px; display:inline-block; background-color:#F0F; float:left;"><div class="giauCRUD" style="" data-table-name="<?php echo $selectedTableDataName; ?>"></div></div><div style="width:30%; display:inline-block; background-color:#0FF; float:left;"><div class="giauLibraryView" style="" data-name="section_id" data-display-value="section_id" data-display-title="widget_name" data-display-subtitle="section_modified">
+		<div class="limitedWidth" style="display:block; position:relative; margin-right:18px;">
+		<div style="width:70%; min-height:600px; display:inline-block; float:left;"><div class="giauCRUD" style="" data-table-name="<?php echo $selectedTableDataName; ?>"></div></div><div style="width:30%; display:inline-block; text-align: right;"><div class="giauLibraryView" style="" data-name="section_id" data-display-value="section_id" data-display-title="widget_name" data-display-subtitle="section_modified">
 		<div data-key="table" data-value="section"></div>
 		<div data-key="library" data-value="true"></div>
 		</div><div class="giauLibraryView" style="" data-name="widget_id" data-display-value="widget_id" data-display-title="widget_name" data-display-subtitle="widget_modified">

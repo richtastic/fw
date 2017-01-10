@@ -2407,10 +2407,6 @@ giau.FileBrowser = function(element){
 		Code.setStyleTextAlign(div,"center")
 		Code.setStyleVerticalAlign(div,"middle")
 		Code.setContent(div,"delete selected item");
-	
-
-	//this._dragTarget = div;
-
 
 	// LISTNERS
 	this._jsDispatch = new JSDispatch();
@@ -2434,12 +2430,6 @@ giau.FileBrowser = function(element){
 	this._contents = [];
 	// INIT
 	this.refreshBrowser();
-	//this._updateLayout();
-	//this.createDirectory("test");
-	//this.removeFile("giau_settings_icon.png");
-	//this.removeFile("test");
-	//this.removeFile("/");
-	//this.removeFile("");
 }
 giau.FileBrowser.prototype.refreshBrowser = function(){
 	this.setSelectedIndex(-1);
@@ -3030,7 +3020,7 @@ giau.ObjectComposer.prototype._handleNewArrayItem = function(e,d){
 		console.log("new object");
 		array.push({});
 	}else{ // create default primitive
-		console.log("primitive?: "+type+" | "+subtype);
+		console.log("primitive?: "+type+" | "+subType);
 		array.push("");
 	}
 
@@ -3070,6 +3060,8 @@ giau.ObjectComposer.prototype.fillOutModelFromElementArray = function(element,mo
 			this.fillOutModelFromElement(subElement,objectModel,array[i], false);
 		}
 	}else{ // array of primitives
+		console.log("array of primitives");
+		console.log(array);
 		this._fillOutWithPrimitiveType(element,modelFieldInfo, array, null, modelSubType, array, superModel);
 	}
 	var button = this._interactActionButton("&nbsp;+&nbsp;", element);
@@ -3130,24 +3122,18 @@ giau.ObjectComposer.prototype.newSubElement = function(element,name,type, contai
 		holder = element;
 	}else if(type=="primitive"){
 		var value = container[field];
-		console.log(container);
 		var fieldType = model[field]["type"];
 		var fieldValue = container[field];
-		console.log(fieldValue);
 		if(giau.ObjectComposer.isFieldTypeBoolean(fieldType)){
-			console.log("BOOLEAN "+value);
 			var input = this._inputBooleanField(div,field, value, container);
 			holder = element;
 		}else if(giau.ObjectComposer.isFieldTypeColor(fieldType)){
-			console.log("COLOR "+value);
 			var input = this._inputColorField(div,field, value, container);
 			holder = element;
 		}else if(giau.ObjectComposer.isFieldTypeDate(fieldType)){
-			console.log("DATE "+value);
 			var input = this._inputDateField(div,field, value, container);
 			holder = element;
 		}else if(giau.ObjectComposer.isFieldTypeDuration(fieldType)){
-			console.log("DURATION "+value);
 			var input = this._inputDurationField(div,field, value, container);
 			holder = element;
 		}else{
@@ -3164,6 +3150,10 @@ giau.ObjectComposer.prototype.newSubElement = function(element,name,type, contai
 			}
 			var input = this._inputTextField(div,field, value, container);
 			holder = element;
+if(isReallyArray){
+label = div;
+}
+
 		}
 	}
 
@@ -3195,12 +3185,20 @@ giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(element, mode
 	if(found && instanceObject){
 		var primitive = null;
 		if(isArray){
+			//console.log("is array");
 			var i, len = instanceObject.length;
 			for(i=0;i<len;++i){
 				primitive = instanceObject[i];
-				var subElement = this.newSubElement(element,null,"primitive", instanceObject,i, modelObject, instanceObject, superModel);
+				// TODO: THIS IS HACKY
+				// passing fake model because newSubElement expects the subtype inside the model
+				var subType = giau.ObjectComposer.fieldTypeArraySubtype(modelFieldType);
+				var tempModel = {};
+				tempModel[i] = {"type":subType};
+				//var subElement = this.newSubElement(element,null,"primitive", instanceObject,i, modelObject, instanceObject, superModel);
+				var subElement = this.newSubElement(element,null,"primitive", instanceObject,i, tempModel, instanceObject, superModel);
 			}
 		}else{
+			console.log("is primitive");
 			primitive = instanceObject[modelFieldName];
 			var subElement = this.newSubElement(element,null,"primitive", instanceObject,modelFieldName, modelObject);
 		}
@@ -3275,7 +3273,9 @@ giau.ObjectComposer.prototype._handlePrimitiveDateUpdate = function(e,f){
 
 giau.ObjectComposer.prototype._handlePrimitiveColorUpdate = function(e,f){
 	console.log("_handlePrimitiveColorUpdate");
-	this._handlePrimitiveUpdateAny(e);
+	this._handlePrimitiveUpdateAny(e, function(value){
+		return Code.getHexColorARGB(value);
+	});
 }
 
 giau.ObjectComposer.prototype._handlePrimitiveBooleanUpdate = function(e,f){
@@ -3288,19 +3288,21 @@ giau.ObjectComposer.prototype._handlePrimitiveTextUpdate = function(e,f){
 	this._handlePrimitiveUpdateAny(e);
 }
 
-giau.ObjectComposer.prototype._handlePrimitiveUpdateAny = function(e){
+giau.ObjectComposer.prototype._handlePrimitiveUpdateAny = function(e, fxn){
 	var control = e["control"];
 	var object = e["object"];
 	var key = e["key"];
 	var value = e["value"]; // beginning old value
 	var newValue = null;
 	console.log(control)
-	console.log( control.value )
-	if( e["isElement"] ){//!Code.isObject(control) ){ // text field has no object
+	if(false){ // e["isElement"] ){//!Code.isObject(control) ){ // text field has no object
 		var input = control;
 		newValue = Code.getInputTextValue(input);
 	}else{
 		newValue = control.value();
+	}
+	if(fxn){
+		newValue = fxn(newValue);
 	}
 	object[key] = newValue;
 	console.log("NEW VALUE: "+newValue);
@@ -3330,7 +3332,7 @@ giau.ObjectComposer.prototype._inputDateField = function(element, key,value, con
 		//var jsObject = new giau.InputFieldDate(input,value);
 var jsObject = new giau.InputFieldDateModal(input,value);
 			var data = {"object":container, "key":key, "value":value, "control":jsObject};
-jsObject.addFunction(giau.InputFieldCompositeModal.EVENT_CHANGE, this._handlePrimitiveColorUpdate, this, data);
+jsObject.addFunction(giau.InputFieldCompositeModal.EVENT_CHANGE, this._handlePrimitiveDateUpdate, this, data);
 			//jsObject.addFunction(giau.InputFieldDate.EVENT_CHANGE, this._handlePrimitiveDateUpdate, this, data);
 	var content = this._inputField(element,input, key);
 	return {"container":content, "input":input};
@@ -3338,14 +3340,12 @@ jsObject.addFunction(giau.InputFieldCompositeModal.EVENT_CHANGE, this._handlePri
 
 giau.ObjectComposer.prototype._inputColorField = function(element, key,value, container){
 	var input = Code.newDiv();
-		// Code.setStyleWidth(input,200+"px");
-		// Code.setStyleHeight(input,80+"px");
 		Code.setStyleBackgroundColor(input,"#F00");
 		Code.setStyleDisplay(input,"inline-block");
 // var jsObject = new giau.InputFieldColor(input,value);
 var jsObject = new giau.InputFieldColorModal(input,value);
 			var data = {"object":container, "key":key, "value":value, "control":jsObject};
-// jsObject.addFunction(giau.InputFieldColor.EVENT_CHANGE, this._handlePrimitiveColorUpdate, this, data);
+//jsObject.addFunction(giau.InputFieldColor.EVENT_CHANGE, this._handlePrimitiveColorUpdate, this, data);
 jsObject.addFunction(giau.InputFieldCompositeModal.EVENT_CHANGE, this._handlePrimitiveColorUpdate, this, data);
 	var content = this._inputField(element,input, key);
 	return {"container":content, "input":input};
@@ -3354,10 +3354,12 @@ jsObject.addFunction(giau.InputFieldCompositeModal.EVENT_CHANGE, this._handlePri
 giau.ObjectComposer.prototype._inputTextField = function(element, key,value, container, criteria){
 	var input = Code.newDiv();
 		Code.setStyleWidth(input,100+"%");
-		Code.setStyleHeight(input,50+"px");
+		//Code.setStyleMinHeight(input,28+"px");
+		Code.setStyleMarginRight(input,0+"px");
 		Code.setStyleBackgroundColor(input,"#F00");
-		Code.setStyleDisplay(input,"inline-block");
-		var jsObject = new giau.InputFieldTextModal(input,value, criteria);
+		//Code.setStyleDisplay(input,"inline-block");
+		Code.setStyleDisplay(input,"table-cell");
+		var jsObject = new giau.InputFieldTextModal(input,value, criteria, null);
 			var data = {"object":container, "key":key, "value":value, "control":jsObject};
 			jsObject.addFunction(giau.InputFieldCompositeModal.EVENT_CHANGE, this._handlePrimitiveTextUpdate, this, data);
 	var content = this._inputField(element,input, key);
@@ -3370,7 +3372,8 @@ giau.ObjectComposer.prototype._inputBooleanField = function(element, key,value, 
 		// Code.setStyleWidth(input,100+"px");
 		// Code.setStyleHeight(input,20+"px");
 		Code.setStyleBackgroundColor(input,"#F00");
-		Code.setStyleDisplay(input,"inline-block");
+		Code.setStyleDisplay(input,"table-cell");
+		Code.setStyleMarginRight(input,0+"px");
 		var jsObject = new giau.InputFieldBoolean(input,value);
 			var data = {"object":container, "key":key, "value":value, "control":jsObject};
 			jsObject.addFunction(giau.InputFieldBoolean.EVENT_CHANGE, this._handlePrimitiveBooleanUpdate, this, data);
@@ -3430,9 +3433,7 @@ giau.ObjectComposer.prototype.defaultInputRowObject = function(element){
 	return div;
 }
 giau.ObjectComposer.prototype.defaultInputRowLabel = function(element, title){
-	var bgColor = giau.Theme.Color.MediumRed;//0xFFFFFFFF;
-		// console.log(bgColor);
-		// bgColor = Code.getJSColorFromARGB(bgColor);
+	var bgColor = giau.Theme.Color.MediumRed;
 	div = Code.newDiv();
 	Code.setStylePaddingTop(div,"4px");
 	Code.setStylePaddingBottom(div,"4px");
@@ -3442,7 +3443,8 @@ giau.ObjectComposer.prototype.defaultInputRowLabel = function(element, title){
 		Code.setStyleBorder(div,"solid");
 		Code.setStyleBorderWidth(div,1+"px");
 		Code.setStyleBorderColor(div,giau.Theme.Color.LightRed);
-	Code.setStyleDisplay(div,"inline-block");
+	//Code.setStyleDisplay(div,"inline-block");
+	Code.setStyleDisplay(div,"table-cell");
 	Code.setStyleColor(div,"#FFF");
 	Code.setStyleFontSize(div,12+"px");
 
@@ -3522,6 +3524,8 @@ giau.LibraryScroller = function(element, name, url, params){
 
 	var radiusContainer = 4;
 
+	Code.setStyleDisplay(this._container,"inline-block");
+	Code.setStyleTextAlign(this._container,"left");
 	Code.setStyleBorderRadius(this._container,radiusContainer+"px");
 	Code.setStyleBackgroundColor(this._container,containerBG);
 	Code.setStyleWidth(this._container,this._displayWidth+"px");
@@ -3702,7 +3706,7 @@ giau.LibraryScroller._generateDiv = function(info, data){//, displayData){
 		
 	
 	var elementID = Code.newDiv();
-		Code.setContent(elementID,"#"+dataIndex);
+		Code.setContent(elementID,"#"+(dataIndex+1));
 		Code.setStyleFontSize(elementID,"10px");
 		Code.setStyleColor(elementID,"#DBB");
 		Code.setStyleMarginTop(elementID,-4+"px");
@@ -3824,7 +3828,6 @@ giau.LibraryScroller.prototype._updateWithData = function(data){
 	var rows = data["data"];
 	var total = data["total"];
 	var metadata = data["metadata"];
-	console.log("LIBRARY SCORLLER: _updateWithData : "+offset+" / "+count+" / "+total);
 	this._metaData = metadata;
 	this._dataRows = rows;
 	this._updateLayout();
@@ -3837,6 +3840,7 @@ giau.LibraryScroller.prototype._scrollTo = function(){
 
 giau.PagingDisplay = function(element, currentPage, totalPages, pagingFxn){ // pages in [0...total-1]
 	Code.constructorClass(giau.PagingDisplay, this);
+	this._pagingGetParam = "p";
 	this._container = element;
 		Code.setStyleTextAlign(this._container,"center");
 	this._currentPage = 0;
@@ -3844,6 +3848,11 @@ giau.PagingDisplay = function(element, currentPage, totalPages, pagingFxn){ // p
 	this._pagingDisplayFxn = giau.PagingDisplay._defaultPagingDisplay;
 	this._pagingDisplayCtx = null;
 	this.pagingDisplayFunction(pagingFxn);
+		if(true){ // set from get param
+			currentPage = Code.getURLParameter(Code.getURL(),this._pagingGetParam);
+			currentPage = parseInt(currentPage);
+		}
+	console.log("FOUND GET PAGE: "+currentPage);
 	this.set(currentPage, totalPages);
 };
 Code.inheritClass(giau.PagingDisplay, Dispatchable);
@@ -3852,12 +3861,10 @@ giau.PagingDisplay._defaultPagingDisplay = function(datum){
 	var page = datum["page"];
 	var currentPage = datum["pageCurrent"];
 	var pagesTotal = datum["pagesTotal"];
-	var getParamKeyPage = "p";
-	var pageURL = document.location+"";
 	var url = "";
 	if(currentPage!=page){
 		//url = pageURL+"&"+getParamKeyPage+"="+page;
-		url = Code.setURLParameter(pageURL,getParamKeyPage,page);
+		url = Code.setURLParameter(Code.getURL(),this._pagingGetParam,page);
 	}
 	return {"url":url, "display":(""+(page+1))};
 }
@@ -3883,11 +3890,16 @@ giau.PagingDisplay.prototype._updateLayout = function(){
 	var limitEnd = 3;
 	var shownEllipsesBefore = false;
 	var shownEllipsesAfter = false;
+var pageLinkColor = 0xFFCC0033;
+	pageLinkColor = Code.getJSColorFromARGB(pageLinkColor);
+var pageNoneColor = 0xFF776677;
+	pageNoneColor = Code.getJSColorFromARGB(pageNoneColor);
 //this._currentPage = 8;
 //this._currentPage = 14;
 //this._currentPage = 5;
 // prev
 div = Code.newDiv("<");
+Code.setStyleColor(div,pageNoneColor);
 Code.setStyleDisplay(div,"inline-block");
 Code.addChild(this._container,div);
 giau.PagingDisplay._addSpacer(this._container);
@@ -3927,8 +3939,10 @@ giau.PagingDisplay._addSpacer(this._container);
 		if(shouldShowPage){
 			if(url && url!==""){
 				div = Code.newAnchor(url, display);
+				Code.setStyleColor(div,pageLinkColor);
 			}else{
 				div = Code.newDiv(display);
+				Code.setStyleColor(div,pageNoneColor);
 			}
 			Code.setStyleDisplay(div,"inline-block");
 			Code.addChild(this._container,div);
@@ -3940,6 +3954,7 @@ giau.PagingDisplay._addSpacer(this._container);
 	// next
 	giau.PagingDisplay._addSpacer(this._container);
 	div = Code.newDiv(">");
+	Code.setStyleColor(div,pageNoneColor);
 	Code.setStyleDisplay(div,"inline-block");
 	Code.addChild(this._container,div);
 };
@@ -3999,18 +4014,18 @@ giau.DataSource = function(url, itemsPerPage, params){
 	this._arrayWindow = [];
 	this._url = (url!==undefined && url!==null) ? url : "./";
 	this._urlParams = params;
-	this._itemsPerPage = 10;
+	this._itemsPerPage = itemsPerPage;
 	this._currentPageIndex = 0;
 }
 Code.inheritClass(giau.DataSource, Dispatchable);
 
 giau.DataSource.EVENT_PAGE_DATA = "EVENT_PAGE_DATA";
 giau.DataSource.prototype.getPage = function(pageToGet){
-	this._currentPage = 0;
-	this._pageCount = 10;
-	var start = this._currentPage * this._pageCount;
-	var end = start + this._pageCount;
-	var count = end-start;
+	console.log("getpage::: "+pageToGet+" ? "+this._itemsPerPage);
+	this._currentPage = pageToGet;
+	var start = this._currentPage * this._itemsPerPage;
+	var end = start + this._itemsPerPage;
+	var count = this._itemsPerPage;//end-start;
 
 	var table = this._dataTable;
 	var url = this._url;
@@ -4200,18 +4215,7 @@ return;
 
 
 	this._container = element;
-
 	this._jsDispatch = new JSDispatch();
-
-	// this._elementLibrary = Code.newDiv();
-	// Code.addChild(this._container,this._elementLibrary);
-	// this._library = new giau.LibraryScroller(this._elementLibrary);
-
-	// display hierarchy
-	// this._elementSortingContainer = Code.newDiv();
-	// this._elementToolsContainer = Code.newDiv();
-	// this._elementTableContainer = Code.newDiv();
-
 	this._elementContainer = Code.newDiv();
 	this._elementPagingTop = Code.newDiv();
 	this._elementPagingBottom = Code.newDiv();
@@ -4221,41 +4225,18 @@ return;
 	Code.addChild(this._container,this._elementContainer);
 		
 		Code.addChild(this._elementContainer,this._elementPagingTop);
-		Code.addChild(this._elementContainer,this._elementOrdering);
+//		Code.addChild(this._elementContainer,this._elementOrdering);
 		Code.addChild(this._elementContainer,this._elementTools);
 		Code.addChild(this._elementContainer,this._elementTable);
 		Code.addChild(this._elementContainer,this._elementPagingBottom);
-		//Code.addChild(this._elementContainer,this._elementTable);
 
-// PAGING
-Code.setStyleBackgroundColor(this._elementPagingTop, "#FF0");
-Code.setStyleDisplay(this._elementPagingTop, "block");
-Code.setStyleMinHeight(this._elementPagingTop, 25+"px");
-
-Code.setStyleBackgroundColor(this._elementPagingBottom, "#FF0");
-Code.setStyleDisplay(this._elementPagingBottom, "block");
-Code.setStyleMinHeight(this._elementPagingBottom, 25+"px");
-
-this._pagingTop = new giau.PagingDisplay(this._elementPagingTop, 0,0);
-this._pagingBottom = new giau.PagingDisplay(this._elementPagingBottom, 0,0);
-
-console.log("PARSE TIME");
-//Code.parseURL("https://video.google.co.uk/site/home?basic=123&arr[]=0&arr[]=1&arr[]=2;list[0]=a;list[1]=b;list[2]=c&items=first,second,third#end");
-/*
-Code.setURLParm = function(url,key,value){
-	var datum = Code.parseURL();
-	datum[key] = value;
-	return Code.generateURL(datum["protocol"], datum["fulldomain"], datum["path"], datum["parameters"], datum["fragment"]);
-}*/
-//url = "https://video.google.co.uk/site/home?basic=123&arr[]=0&arr[]=1&arr[]=2;list[0]=a;list[1]=b;list[2]=c&items=first,second,third#end";
-
-//var url = Code.generateURL("https", "video.google.co.uk", "/site/home", {"hi":"yay","areas":[1,2,3]}, "end");
-//console.log(url);
-var url = "http://localhost/wordpress/wp-admin/admin.php?page=giau-plugin-submenu-data-entry&table=languages&p=3";
-console.log(url);
-url = Code.setURLParameter(url,"p","1234567890");
-console.log(url);
-
+	// PAGING
+	Code.setStyleDisplay(this._elementPagingTop, "block");
+	Code.setStyleMinHeight(this._elementPagingTop, 25+"px");
+	Code.setStyleDisplay(this._elementPagingBottom, "block");
+	Code.setStyleMinHeight(this._elementPagingBottom, 25+"px");
+	this._pagingTop = new giau.PagingDisplay(this._elementPagingTop, 0,0);
+	this._pagingBottom = new giau.PagingDisplay(this._elementPagingBottom, 0,0);
 
 	// CONTAINER
 	Code.setStyleWidth(this._elementContainer,"100%");
@@ -4264,13 +4245,13 @@ console.log(url);
 	// Code.setStyleMaxHeight(this._elementTable,800+"px");
 	// Code.setStylePosition(this._elementTable,"relative");
 	Code.setStyleDisplay(this._elementContainer,"inline-block");
-	Code.setStyleBackgroundColor(this._elementContainer,"#00F");
+	//Code.setStyleBackgroundColor(this._elementContainer,"#00F");
 
 	// TOOLS
 	Code.setStyleWidth(this._elementTools,"100%");
 	//Code.setStyleMinHeight(this._elementTools,50+"px");
 	Code.setStyleDisplay(this._elementTools,"inline-block");
-	Code.setStyleBackgroundColor(this._elementTools,"#F0F");
+	//Code.setStyleBackgroundColor(this._elementTools,"#F0F");
 	var div;
 	div = this._buttonInput("&plus;", this._elementTools);
 		// div = Code.newDiv();
@@ -4278,39 +4259,30 @@ console.log(url);
 		// Code.setStyleCursor(div,Code.JS_CURSOR_STYLE_FINGER);
 		// Code.addChild(this._elementTools,div);
 		var ctx = {"element":div};
-		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_CLICK, this._handleCreateFxn, this, ctx);
-			
+		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_CLICK, this._handleCreateFxn, this, ctx);	
 
 	// ORDERING
 	Code.setStyleWidth(this._elementOrdering,"100%");
 	Code.setStyleMinHeight(this._elementOrdering,50+"px");
 	Code.setStyleDisplay(this._elementOrdering,"inline-block");
 	Code.setStyleBackgroundColor(this._elementOrdering,"#F00");
-
 	
 	// TABLE
 		Code.setStyleBorderRadius(this._elementTable,5+"px");
 	//Code.setStyleWidth(this._elementTable,500+"px");
 	Code.setStyleWidth(this._elementTable,"100%");
-	//Code.setStyleHeight(this._elementTable,500+"px");
-	// Code.setStyleMinHeight(this._elementTable,500+"px");
-	// Code.setStyleMaxHeight(this._elementTable,800+"px");
 	Code.setStyleMinHeight(this._elementTable,100+"px");
 	Code.setStylePosition(this._elementTable,"relative");
 	Code.setStyleDisplay(this._elementTable,"inline-block");
 	Code.setStyleBackgroundColor(this._elementTable,giau.Theme.Color.backgroundLight);
-	// Code.setStyleLeft(this._elementTable,interriorPadding+"px");
-	// Code.setStyleTop(this._elementTable,interriorPadding+"px");
-
-
 	
 	this._dataSource = new giau.DataSource("./",this._itemsPerPage, {"table":dataTableName} );
 	this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
-	this._dataSource.getPage(0);
-
-
+console.log("get page: "+this._pagingTop.currentPage());
+	this._dataSource.getPage(this._pagingTop.currentPage());
+	// table listing
 	this._dataCRUD = new giau.DataCRUD("./", {"operation":"crud_data", "table":dataTableName} );
-
+	// row CRUD
 	this._dataCRUD.addFunction(giau.DataCRUD.EVENT_CREATE, this._handleCreateCompleteFxn, this);
 	this._dataCRUD.addFunction(giau.DataCRUD.EVENT_READ, this._handleReloadCompleteFxn, this);
 	this._dataCRUD.addFunction(giau.DataCRUD.EVENT_UPDATE, this._handleUpdateCompleteFxn, this);
@@ -4431,11 +4403,8 @@ console.log("field: "+index);
 					updateData[index] = str;
 					console.log(str);
 				}else{
-// console.log(mapping.value());
-					// FROM OBJECTS GET DATA:
 					var mappingValue = mapping.value();
 					var value = null;
-GLOBS = mappingValue;
 					console.log(mappingValue.constructor,(typeof mappingValue));
 					if( Code.isInstance(mappingValue) ){
 						console.log("A");
@@ -4499,17 +4468,15 @@ giau.CRUD.prototype._handleCreateCompleteFxn = function(e,d){
 	var editFields = view["data"]["edit_fields"];
 	var rows = view["rows"];
 	var viewRow = [];
-// console.log(fields);
-// console.log(editFields);
-// console.log(rows);
-// console.log(viewRow);
 	var j;
 	for(j=0; j<editFields.length; ++j){
 		var field = editFields[j];
 		var column = field["column"];
 		var alias = field["alias"];
 		var mapping = this._mappingFromData(field,row,alias);
-		viewRow.push(mapping);
+		if(mapping){
+			viewRow.push(mapping);
+		}
 	}
 	// add row to top of table 
 	rows.unshift(viewRow);
@@ -4593,18 +4560,10 @@ console.log("giau.CRUD.prototype._updateWithData");
 	var presentation = definition["presentation"];
 	var columnPresentations = presentation["columns"];
 	var metadata = data["metadata"];
-console.log(offset);
-console.log(count);
-console.log(total);
-console.log(this);
-console.log(this._itemsPerPage);
-var pagesTotal = total>0 ? Math.ceil(total/this._itemsPerPage) : 0;
-//var pageCurrent = Math.floor( (offset/total) this._itemsPerPage);
-var pageCurrent = Math.floor( offset/this._itemsPerPage);
-
-console.log(pageCurrent+"/"+pagesTotal)
-this._pagingTop.set(pageCurrent, pagesTotal);// = new giau.PagingDisplay(this._elementPagingTop, 0,15);
-this._pagingBottom.set(pageCurrent, pagesTotal);
+	var pagesTotal = total>0 ? Math.ceil(total/this._itemsPerPage) : 0;
+	var pageCurrent = Math.floor( offset/this._itemsPerPage);
+	this._pagingTop.set(pageCurrent, pagesTotal);
+	this._pagingBottom.set(pageCurrent, pagesTotal);
 
 	view = {};
 	view["data"] = data;
@@ -4632,7 +4591,6 @@ this._pagingBottom.set(pageCurrent, pagesTotal);
 					pres = columnPresentations[alias];
 					//
 					var info = {};
-// console.log(i+": "+column+" = "+alias);
 					info["column"] = alias;
 					info["alias"] = key;
 					info["definition"] = column;
@@ -4646,17 +4604,26 @@ this._pagingBottom.set(pageCurrent, pagesTotal);
 						searchFields.push(info);
 					}
 				}
-				//console.log(metadata);
 			}
 		}
 	}
+	// sort field 'columns'
+	editFields.sort(function(a,b){
+		var attrA = a["attributes"];
+			var orderA = attrA["order"];
+				orderA = parseInt(orderA);
+		var attrB = b["attributes"];
+			var orderB = attrB["order"];
+				orderB = parseInt(orderB);
+		return orderA>orderB ? 1 : -1;
+	});
 	// console.log(editFields);
 	view["data"]["metadata"] = metadata;
 	view["data"]["fields"] = lookupFields;
 	view["data"]["edit_fields"] = editFields;
 	this._searchFields = searchFields;
 	this._rowElements = [];
-
+	// 
 	for(i=0; i<rows.length; ++i){
 		var row = rows[i];
 		var viewRow = [];
@@ -4666,9 +4633,9 @@ this._pagingBottom.set(pageCurrent, pagesTotal);
 			var column = field["column"];
 			var alias = field["alias"];
 			var mapping = this._mappingFromData(field,row,alias);
-// console.log(column+"==========================================================================================================");
-// console.log(field);
-			viewRow.push(mapping);
+			if(mapping){
+				viewRow.push(mapping);
+			}
 		}
 	}
 	this._updateLayout();
@@ -4784,13 +4751,13 @@ giau.CRUD._elementSelectStringArray = function(mapping){
 	var field = mapping.field();
 	var value = object[field];
 
-	var elementContainer = Code.newDiv();
-	var jsObject = new giau.InputFieldTags(elementContainer, value);
+	var container = Code.newDiv();
+	var jsObject = new giau.InputFieldTags(container, value);
 	mapping.value(jsObject);
 	mapping.updateElementFxn(giau.CRUD._fieldEditStringArrayElementFxn);
 	mapping.updateDataFxn(giau.CRUD._fieldEditStringArrayUpdateDataFxn);
 
-	return elementContainer;
+	return container;
 }
 
 giau.CRUD._elementSelectOption = function(mapping, table){
@@ -4862,16 +4829,29 @@ giau.CRUD._elementSelectString = function(mapping){
 	var field = mapping.field();
 	var value = object[field];
 
-	var elementContainer = Code.newDiv();
-		Code.setStyleWidth(elementContainer,"100%");
-		Code.setStyleHeight(elementContainer,50+"px");
-	var jsObject = new giau.InputFieldTextModal(elementContainer, value);
+	var container = Code.newDiv();
+		Code.setStyleWidth(container,"100%");
+		Code.setStyleHeight(container,50+"px");
+		var backgroundColor = giau.Theme.Color.MediumRed;
+		var borderColor = giau.Theme.Color.DarkRed;
+		//Code.setStylePaddingLeft(container,2+"px");
+		// Code.setStyleDisplay(container,"inline-block");
+		Code.setStyleBorderWidth(container,1+"px");
+		Code.setStyleBorderColor(container,borderColor);
+		Code.setStyleBorder(container,"solid");
+		// Code.setStyleFontSize(container,12+"px");
+		Code.setStyleBackgroundColor(container,backgroundColor);
+		Code.setStyleBorderRadius(container,2+"px");
+		//Code.setStyleBackgroundColor(container,"#00F");
+	var jsObject = new giau.InputFieldTextModal(container, value, null, function style(e){
+
+		Code.setStyleColor(e,giau.Theme.Color.TextOnDark);
+	});
 
 	mapping.value(jsObject);
 	mapping.updateElementFxn(giau.CRUD._fieldEditStringUpdateElementFxn);
 	mapping.updateDataFxn(giau.CRUD._fieldEditStringUpdateDataFxn);
-
-	return elementContainer;
+	return container;
 }
 
 // ----------------------------------------------------------------------------------------------------------------------------------------------------------- DRAG N DROP
@@ -5275,7 +5255,7 @@ giau.CRUD._fieldEditStringUpdateElementFxn = function(mapping){
 }
 
 giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, itemIndex){
-	//
+console.log("_mappingFromData")
 	var alias = fieldDescription["alias"];
 	var column = fieldDescription["column"];
 	var attributes = fieldDescription["attributes"];
@@ -5283,6 +5263,9 @@ giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, 
 	var definition = fieldDescription["definition"];
 	// SUB
 	var name = attributes["display_name"];
+	var shouldDisplay = attributes["display"];
+		shouldDisplay = shouldDisplay!=="false"; // default to true
+shouldDisplay = true;
 	var fieldType = definition["type"];
 	// DISPLAY
 	var elementField = Code.newDiv();
@@ -5296,9 +5279,15 @@ giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, 
 	Code.setStyleColor(elementTitle,"#000");
 	Code.setStyleWordWrap(elementTitle,"break-word");
 	// CONTAINER
-	Code.setStylePadding(elementField,5+"px");
+	Code.setStylePaddingLeft(elementField,4+"px");
+	Code.setStylePaddingRight(elementField,4+"px");
+	Code.setStylePaddingTop(elementField,2+"px");
+	Code.setStylePaddingBottom(elementField,0+"px");
 	// VALUES
 	Code.setContent(elementTitle,""+name+":");
+if(!shouldDisplay){
+	return null;
+}
 	
 	var mapping = new MapDataDisplay();
 	mapping.element(elementField);
@@ -5318,7 +5307,6 @@ operationFxn["string-option"] = [giau.CRUD._fieldEditOption,giau.CRUD._fieldEdit
 		
 	var operation = operationFxn[fieldType];
 	var updateElementFunction = null;
-console.log("OPERATING ON .... "+fieldType);
 	if(operation){
 		var statFxn = operation[0];
 		var editFxn = operation[1];
@@ -5327,7 +5315,7 @@ console.log("OPERATING ON .... "+fieldType);
 		}else{
 			//statFxn(definition, attributes, presentation, value, source, elementValue, mapping);
 		}
-		editFxn(fieldDescription, sourceObject, itemIndex, elementValue, mapping);
+			editFxn(fieldDescription, sourceObject, itemIndex, elementValue, mapping);
 	}
 	mapping.updateElementFromData();
 	return mapping;
@@ -5338,13 +5326,13 @@ giau.CRUD.prototype._checkSubmitChange = function(field, value, source){
 	console.log(str)
 }
 
-giau.CRUD._jsDispatch = new JSDispatch();
+giau.CRUD._jsDispatch = new JSDispatch(); // TODO: USE SOMETHING ELSE
 giau.CRUD.generateBoxDiv = function(value, ctx, handleFxn, closeFxn){
 	var textColor = "#FFF";
 	var backgroundColor = giau.Theme.Color.MediumRed;
 	var borderColor = giau.Theme.Color.DarkRed;
 	var container = Code.newDiv();
-		Code.setStylePadding(container,4+"px");
+		Code.setStylePadding(container,2+"px");
 		Code.setStyleDisplay(container,"inline-block");
 		Code.setStyleBorderWidth(container,1+"px");
 		Code.setStyleBorderColor(container,borderColor);
@@ -5356,30 +5344,27 @@ giau.CRUD.generateBoxDiv = function(value, ctx, handleFxn, closeFxn){
 		Code.setContent(content,value+""+"&nbsp;");
 		Code.setStyleDisplay(content,"inline");
 		Code.setStyleColor(content,textColor);
-	// var closeButton = Code.newDiv();
-	// 	Code.setContent(closeButton,"[x]");
-	// 	Code.setStyleDisplay(closeButton,"inline");
-	// 	Code.setStyleColor(closeButton,textColor);
-	Code.addChild(container,content);
+		Code.addChild(container,content);
 	var closeButton = giau.CRUD._generateSubButton("&times;", container);
-	//Code.addChild(container,closeButton);
 	if(closeFxn){
 		this._jsDispatch.addJSEventListener(closeButton, Code.JS_EVENT_CLICK, closeFxn, ctx);
 	}
 	if(handleFxn){
 		this._jsDispatch.addJSEventListener(content, Code.JS_EVENT_CLICK, handleFxn, ctx);
 	}
-
 	return container;
-}
+};
 
 giau.CRUD._generateSubButton = function(display,element){
 	var div;
 		div = Code.newDiv();
 		Code.setStyleDisplay(div,"inline-block");
-		Code.setStyleFontSize(div, 12+"px");
+		Code.setStyleFontSize(div, 14+"px");
 		Code.setStyleColor(div,giau.Theme.Color.TextOnDark);
-		Code.setStylePadding(div,4+"px");
+		Code.setStylePaddingLeft(div,4+"px");
+		Code.setStylePaddingRight(div,4+"px");
+		Code.setStylePaddingTop(div,1+"px");
+		Code.setStylePaddingBottom(div,1+"px");
 		Code.setStyleBorderWidth(div,1+"px");
 		Code.setStyleBorderColor(div,giau.Theme.Color.MediumRed);
 		Code.setStyleBorder(div,"solid");
@@ -5397,7 +5382,7 @@ giau.CRUD._generateSubButton = function(display,element){
 }
 
 
-giau.InputFieldTextMini = function(element, value){
+giau.InputFieldTextMini = function(element, value, stylingFxn){
 	giau.InputFieldTextMini._.constructor.call(this);
 	this._container = element;
 	this._value = "";
@@ -5416,16 +5401,23 @@ Code.setStyleOverflow(this._container,"hidden");
 		Code.setStyleColor(textElement,"#000");
 		Code.setStyleFontSize(textElement,11+"px");
 		
-		Code.setStyleWidth(textElement,"100%");
-		Code.setStyleHeight(textElement,"100%");
-		Code.setStyleBackgroundColor(textElement,"#FFF");
+		//Code.setStyleWidth(textElement,"100%");
+		//Code.setStyleHeight(textElement,"100%");
+
+		//Code.setStyleBackgroundColor(textElement,"#FFF");
+		//Code.setStyleBackgroundColor(input,Code.getJSColorFromARGB(0x00000000));
 		//Code.setStyleOverflow(textElement,"hidden");
 		//Code.setStylePadding(textElement,"2px");
 		//Code.setTextPlaceholder(textElement,"(empty)");
 	Code.addChild(this._container,textElement);
+	// outside styling
+	if(stylingFxn){
+		stylingFxn(textElement);
+	}
 
 	this._jsDispatch = new JSDispatch();
-	this._jsDispatch.addJSEventListener(textElement, Code.JS_EVENT_MOUSE_DOWN, this._handleMouseDownFxn, this, {});
+	// textElement clear background makes not selectable
+	this._jsDispatch.addJSEventListener(this._container, Code.JS_EVENT_MOUSE_DOWN, this._handleMouseDownFxn, this, {});
 
 	this._textElement = textElement;
 	this.value(value);
@@ -5467,7 +5459,8 @@ giau.InputFieldText = function(element, value, criteria){ // string, string-numb
 		Code.setStyleBorderWidth(input,1+"px");
 		Code.setStyleBorderColor(input,"#CCC");
 		Code.setStyleBorderRadius(input,0+"px "+radius+"px "+radius+"px "+0+"px");
-		Code.setStyleBackgroundColor(input,"#FFF");
+			//Code.setStyleBackgroundColor(input,"#FFF");
+			//Code.setStyleBackgroundColor(input,Code.getJSColorFromARGB(0x00000000));
 		Code.setStyleDisplay(input,"inline-block");
 		Code.setStyleColor(input,"#000");
 		Code.setStylePadding(input,"2px");
@@ -5478,6 +5471,7 @@ giau.InputFieldText = function(element, value, criteria){ // string, string-numb
 		Code.setStyleHeight(input,"100%");
 
 	Code.addChild(this._container,input);
+	//Code.setStyleBackgroundColor(this._container,Code.getJSColorFromARGB(0x00000000));
 
 
 	this._jsDispatch = new JSDispatch();
@@ -5607,9 +5601,10 @@ giau.InputFieldBoolean = function(element, value){
 		Code.addChild(this._elementRect, this._elementCover);
 
 	Code.setStylePosition(this._elementRect,"relative");
+	Code.setStyleVerticalAlign(this._elementRect,"middle");
 	Code.setStyleDisplay(this._elementRect,"inline-block");
-	Code.setStyleWidth(this._elementRect,40+"px");
-	Code.setStyleHeight(this._elementRect,20+"px");
+	Code.setStyleMinWidth(this._elementRect,40+"px");
+	Code.setStyleHeight(this._elementRect,100+"%");
 	Code.setStyleBackgroundColor(this._elementRect,Code.getJSColorFromARGB(0x99000000));
 	Code.setStyleTextAlign(this._elementRect,"center");
 
@@ -5621,7 +5616,7 @@ giau.InputFieldBoolean = function(element, value){
 	Code.setStylePosition(this._elementCover,"absolute");
 	Code.setStyleLeft(this._elementCover,0+"px");
 	Code.setStyleTop(this._elementCover,0+"px");
-	Code.setStyleDisplay(this._elementCover,"block");
+	Code.setStyleDisplay(this._elementCover,"inline-block");
 	Code.setStyleWidth(this._elementCover,"100%");
 	Code.setStyleHeight(this._elementCover,"100%");
 	Code.setStyleBackgroundColor(this._elementCover,Code.getJSColorFromARGB(0x00000000));
@@ -5674,7 +5669,6 @@ giau.InputFieldBoolean.prototype.value = function(v){
 	return this._dataValue;
 }
 giau.InputFieldDuration = function(element, value){
-	console.log(this)
 	giau.InputFieldDuration._.constructor.call(this);
 	this._container = element;
 	this._fieldYears = Code.newInputText("years");
@@ -5745,7 +5739,6 @@ giau.InputFieldDuration.prototype._handleFieldChangeFxn = function(e,f){
 
 	this._updateFilterFields();
 	this._updateValueFromFields();	
-	console.log(this.value());
 }
 giau.InputFieldDuration.prototype._updateFilterFields = function(){
 	this._filterField(this._fieldMilliseconds);
@@ -5807,7 +5800,6 @@ giau.InputFieldDuration.prototype._updateFieldsFromValue = function(){
 giau.InputFieldDuration.prototype.value = function(v){
 	//oldValue = this._dataValue;
 	if(v!==undefined){
-		console.log("assign value: "+v);
 		if(Code.isString(v)){
 			this._dataValue = parseInt(v);
 		} // else assume int
@@ -6090,6 +6082,7 @@ giau.InputFieldColor.prototype.value = function(value){ // 0xAARRGGBB
 		}
 		this._colorValue = value;
 	}
+	console.log("giau.InputFieldColor.prototype.value: "+this._colorValue);
 	return this._colorValue;
 }
 
@@ -6678,7 +6671,7 @@ giau.InputFieldDate.prototype._handleFieldChange = function(e,f){
 	this._dateValue = Code.getTimeStampFromMilliseconds(milliseconds);
 	this._updateLayout();
 
-	this._alertChanged();	
+	this._alertChanged();
 }
 giau.InputFieldDate.prototype._alertChanged = function(){
 	this.alertAll(giau.InputFieldDate.EVENT_CHANGE, this);
@@ -6950,6 +6943,7 @@ giau.InputFieldColorMini.prototype.value = function(v){
 		this._updateLayout();
 		this.alertAll(giau.InputFieldColorMini.EVENT_CHANGE,this);
 	}
+	console.log("giau.InputFieldColorMini.prototype.value: "+this._value);
 	return this._value;
 };
 
@@ -7120,6 +7114,7 @@ giau.InputFieldCompositeModal.prototype.show = function(e){
 giau.InputFieldCompositeModal.prototype._handleMaxiChangeFxn = function(e){
 	var value = this._maxi.value();
 	this._mini.value(value);
+	this.alertChanged();
 };
 giau.InputFieldCompositeModal.prototype.gotoMin = function(v){
 	Code.removeAllChildren(this._container);
@@ -7159,7 +7154,8 @@ giau.InputFieldCompositeModal.prototype._layoutMaxi = function(v){ // place next
 	Code.setStylePosition(maxi,"absolute");
 	*/
 };
-giau.InputFieldCompositeModal.prototype.alertChange = function(){
+giau.InputFieldCompositeModal.prototype.alertChanged = function(){
+	console.log("alertChanged");
 	this.alertAll(giau.InputFieldCompositeModal.EVENT_CHANGE,this);
 }
 giau.InputFieldCompositeModal.prototype.updateLayout = function(value){
@@ -7214,31 +7210,24 @@ giau.InputFieldColorModal = function(element, value){
 Code.inheritClass(giau.InputFieldColorModal, giau.InputFieldCompositeModal);
 
 
-giau.InputFieldTextModal = function(element, value, criteria){
+giau.InputFieldTextModal = function(element, value, criteria, stylingFxn){
 	Code.constructorClass(giau.InputFieldTextModal, this, element, value);
 	
 	Code.setStyleWidth(this._maxiElement,400+"px");
 	Code.setStyleHeight(this._maxiElement,200+"px");
 
-	this._mini = new giau.InputFieldTextMini(this._miniElement, value);
+	this._mini = new giau.InputFieldTextMini(this._miniElement, value, stylingFxn);
 		this._mini.addFunction(giau.InputFieldTextMini.EVENT_SELECT, this._handleMiniSelectFxn, this);
 	var max = this._maxiElement;
 	this._maxi = new giau.InputFieldText(max, value, criteria);
 		//this._maxi.addFunction(giau.InputFieldText.EVENT_CHANGE, this._handleMaxiChangeFxn, this);
-	
 	this.gotoMin();
 };
 
 giau.InputFieldTextModal.prototype._handleOverlayExitFxn = function(e){
-	// ChildClassName._.kill.call(this); // super method
-	//Code.methodClass(giau.InputFieldTextModal,"_handleOverlayExitFxn");
 	giau.InputFieldTextModal._._handleOverlayExitFxn.call(this,e);
-	//Code.methodClass(giau.InputFieldTextModal,);
 	this._handleMaxiChangeFxn(null);
 };
-// giau.InputFieldTextModal.prototype.handleExit = function(){
-// 	this._handleMaxiChangeFxn(null);
-// }
 giau.InputFieldTextModal.prototype._handleMaxiChangeFxn = function(e){
 	this._maxi.applyFilters();
 	giau.InputFieldTextModal._._handleMaxiChangeFxn.call(this,e);

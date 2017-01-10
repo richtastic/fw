@@ -94,7 +94,7 @@ function GIAU_TABLE_DEFINITION_WIDGET(){
 				"type" => "string-number",
 				"attributes" =>  [
 					"display_name" => "ID",
-					"order" => "0",
+					"order" => "99",
 					"primary_key" => "true",
 					"sort" => "false",
 					"editable" => "false",
@@ -125,7 +125,7 @@ function GIAU_TABLE_DEFINITION_WIDGET(){
 				"type" => "string",
 				"attributes" =>  [
 					"display_name" => "Name",
-					"order" => "3",
+					"order" => "0",
 					"sort" =>  "true",
 					"editable" => "true",
 					"default" => "",
@@ -165,10 +165,11 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				"type" => "string-number",
 				"attributes" =>  [
 					"display_name" => "ID",
-					"order" => "0",
+					"order" => "99",
 					"primary_key" => "true",
 					"sort" => "false",
 					"editable" => "false",
+					"display" => "false",
 					"default" => null,
 				],
 			],
@@ -176,7 +177,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				"type" => "string-date",
 				"attributes" =>  [
 					"display_name" => "Created",
-					"order" => "1",
+					"order" => "4",
 					"sort" =>  "true",
 					"editable" => "false",
 					"default" => null,
@@ -186,7 +187,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				"type" => "string-date",
 				"attributes" =>  [
 					"display_name" => "Modified",
-					"order" => "2",
+					"order" => "5",
 					"sort" =>  "true",
 					"editable" => "false",
 					"default" => null,
@@ -196,27 +197,27 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				"type" => "string-array",
 				"attributes" =>  [
 					"display_name" => "Widget",
-					"order" => "3",
+					"order" => "1",
 					"sort" =>  "true",
 					"editable" => "true",
-					"default" => null, // SELECT FROM MENU ???
+					"default" => null,
 				],
 			],
-			"extend" => [
-				"type" => "string-number",
-				"attributes" =>  [
-					"display_name" => "Extends",
-					"order" => "4",
-					"sort" =>  "true",
-					"editable" => "false",
-					"default" => "",
-				],
-			],
+			// "extend" => [
+			// 	"type" => "string-number",
+			// 	"attributes" =>  [
+			// 		"display_name" => "Extends",
+			// 		"order" => "99",
+			// 		"sort" =>  "true",
+			// 		"editable" => "false",
+			// 		"default" => "",
+			// 	],
+			// ],
 			"configuration" => [
 				"type" => "string-json",
 				"attributes" =>  [
 					"display_name" => "Configuration",
-					"order" => "5",
+					"order" => "3",
 					"sort" =>  "false",
 					"editable" => "true",
 					"default" => "{}",
@@ -226,7 +227,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				"type" => "string",
 				"attributes" =>  [
 					"display_name" => "Name",
-					"order" => "5",
+					"order" => "0",
 					"sort" =>  "true",
 					"editable" => "true",
 					"default" => "",
@@ -236,7 +237,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				"type" => "string-array",
 				"attributes" =>  [
 					"display_name" => "Subsections",
-					"order" => "6",
+					"order" => "2",
 					"sort" =>  "false",
 					"editable" => "true",
 					"default" => "",
@@ -302,17 +303,18 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 				"type" => "string-number",
 				"attributes" => [
 					"display_name" => "ID",
-					"order" => "0",
+					"order" => "99",
 					"primary_key" => "true",
 					"sort" =>  "false",
 					"editable" => "false",
+					"display" => "false",
 				],
 			],
 			"created" => [
 				"type" => "string-date",
 				"attributes" => [
 					"display_name" => "Created",
-					"order" => "1",
+					"order" => "3",
 					"sort" =>  "true",
 					"editable" => "false",
 				],
@@ -321,7 +323,7 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 				"type" => "string-date",
 				"attributes" => [
 					"display_name" => "Modified",
-					"order" => "2",
+					"order" => "4",
 					"sort" =>  "true",
 					"editable" => "false",
 				],
@@ -330,7 +332,7 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 				"type" => "string",
 				"attributes" => [
 					"display_name" => "Hash Index",
-					"order" => "3",
+					"order" => "0",
 					"sort" =>  "true",
 					"editable" => "true",
 					"monospace" => "true",
@@ -340,7 +342,7 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 				"type" => "string-option",
 				"attributes" => [
 					"display_name" => "Language",
-					"order" => "4",
+					"order" => "1",
 					"monospace" => "true",
 					"editable" => "true",
 				],
@@ -349,7 +351,7 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 				"type" => "string",
 				"attributes" => [
 					"display_name" => "Phrase",
-					"order" => "5",
+					"order" => "2",
 					"sort" =>  "true",
 					"editable" => "true",
 				],

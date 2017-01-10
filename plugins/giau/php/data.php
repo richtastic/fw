@@ -553,7 +553,7 @@ function giau_data_default_insert_into_database(){
 					"type" => "boolean",
 					"description" => "show the left and right navigation arrows"
 				],
-				"images" => [
+				"images" => [ // HERE
 					"type" => "array-string-image",
 					"description" => "list of images for gallery"
 				],

@@ -228,6 +228,8 @@ function giau_wordpress_data_service(){
 			$tableSourceName = $_POST['table'];
 			$isRequestLibrary = $_POST['library'];
 				$isRequestLibrary = $isRequestLibrary==="true";
+			$offset = $_POST['offset'];
+			$count =  $_POST['count'];
 			if($tableSourceName=="website"){
 				$offset = 0;
 				$count = 2;
@@ -379,8 +381,8 @@ function giau_wordpress_data_service(){
 				$response["metadata"] = $metadata;
 				$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( GIAU_TABLE_DEFINITION_BIO() );
 			}else if($tableSourceName=="languagization"){
-				$offset = 0;
-				$count = 2;
+				// $offset = 0;
+				// $count = 2;
 				$requestInfo = [];
 				$requestInfo["offset"] = $offset;
 				$requestInfo["count"] = $count;
@@ -431,9 +433,7 @@ function giau_wordpress_data_service(){
 					";
 					paged_data_service($requestInfo, table_info_section(), $response , true);
 
-					//$response["data"] = $data;
 					$response["metadata"] = $metadata;
-					//$response["result"] = "success";
 				}else{
 					global $wpdb;
 					/*
@@ -459,10 +459,11 @@ function giau_wordpress_data_service(){
 						- values WHERE id
 					*/
 					// TEST FOR MANY SUB SECTIONS
-					$offset = 46;
-					$count = 1;
+					// $offset = 46;
+					// $count = 1;
 					// $offset = 50;
 					// $count = 1;
+error_log("SECTION OFFSETS: ".$offset,$count);
 					$requestInfo = [];
 					$requestInfo["offset"] = $offset;
 					$requestInfo["count"] = $count;
