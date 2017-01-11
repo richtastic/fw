@@ -4,19 +4,15 @@
 
 ###TODO
 
-- drag_and_drop needs to be a csv not just a string
+- prettier CRUD interface
+- download file backup DB
+- file upload backup DB
+- download file backup uploads zip
+- file upload backup uploads  zip
 
-	- add new type handling for primitives
-		=> rows
-		=> config
 
 ADMIN PAGES:
 	- choose from library of widgets
-	- color picker
-	- date picker
-	- boolean select
-	- url picker?
-	- subsection drag/drop
 	- preview section
 - page table: READ, UPDATE, CREATE, DELETE
 	- special key names:
@@ -27,7 +23,7 @@ ADMIN PAGES:
 	- preview webpage (new window?)
 - widget table: READ ONLY
 	- want OBJECT-CREATOR/DEFINER in future
-- file upload
+
 
 - giau settings page (website table? == widget?)
 	- color theming, font theming...
