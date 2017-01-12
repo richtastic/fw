@@ -156,46 +156,108 @@ function giau_admin_menu_page_submenu_data_backup(){
 	$URL_BACKUP_UPLOAD = add_query_arg('page','giau-plugin-submenu-data-upload');
 ?>
 	<!-- <h1 style="vertical-align:middle;"><img src="<?php echo $iconBlackMini; ?>"  style="display:inline-block; vertical-align:middle;" />Giau Plugin</h1> -->
+	<h1>Admin</h1>
+
+	<h2>Clear Temp directory</h2>
+	temp_directory_remove
+	<div id="temp_remove_element"></div>
+	<div id="temp_remove_feedback"></div>
+	<div>temporary files created here are available publicly to download, after downloading an asset, clear the temp directory to remove all remote file storage.</div>
+
+
 	<h1>Database Backup</h1>
 	<!-- <ul>
 		<li><a href="<?php echo $URL_BACKUP_DOWNLOAD; ?>">Download Backup</a></li>
 		<li><a href="<?php echo $URL_BACKUP_UPLOAD; ?>">Upload Backup</a></li> -->
-	<h2>Download Backup</h1>
-	- click button to trigger save | download
-	<?php
-	//$fileLocation = giau_database_backup_url();
-	// delete file after time
-	?>
-	<h2>Upload Backup</h1>
-	- upload drop location
-	<?php
-	//giau_insert_database_from_json($returnJSON, true);
+	<h2>Download Database Backup</h2>
+	<div id="download_database_element"></div>
+	<div id="download_database_link"></div>
 
-
-
-	//async_fxn(giau_test, 2);
-	//async_fxn();
 	
+	<h2>Upload Database Backup</h2>
+	
+	<div class="giauDropArea">
+	<div data-parameter-accepted-filetype="application/zip"></div>
+		<div data-parameter-accepted-filetype="text/plain"></div>
+		<div data-parameter-accepted-filetype="text/javascript"></div>
+		<div data-parameter-key="operation" data-parameter-value="backup_upload_database"></div>
+	</div>
 
-	// ZIP UP
-	$zipSource = giau_plugin_upload_root_dir();
-	$zipDestination = giau_plugin_temp_dir()."/"."uploads.zip";
+	
+	<h1>File Backup</h1>
 
-	$zipURL = giau_plugin_temp_url()."/"."uploads.zip";
-	echo "<br/>";
-	echo "ZIP URL: ".$zipURL;
-	echo "<br/>";
-	//zipDirectory($zipSource, $zipDestination);
 
-	// ZIP OUT
-	$zipSource = giau_plugin_temp_dir()."/"."uploads.zip";
-	$zipDestination = giau_plugin_temp_dir()."/"."uploads";
-	//$zipDestination = giau_plugin_upload_root_dir();
-	//unzipDirectory($zipSource, $zipDestination);
+	<h2>Download File Backup</h2>
+	backup_download_uploads_zip
+	<div id="download_file_element"></div>
+	<div id="download_file_link"></div>
 
-	?>
-	<!--giau.FileUploadDropArea-->
-	<div class="giauDropArea"></div>
+
+
+	<h2>Upload File Backup</h2>
+	backup_upload_uploads_zip
+	<div class="giauDropArea">
+		<div data-parameter-accepted-filetype="text/plain"></div>
+		<div data-parameter-accepted-filetype="text/javascript"></div>
+		<div data-parameter-key="operation" data-parameter-value="backup_upload_uploads_zip"></div>
+	</div>
+
+
+
+
+	<script>
+	function afterDelay(){
+		console.log("afterDelay");
+		// console.log(giau)
+		// console.log(window.giau)
+		if(window.giau){
+			console.log("button action");
+			var elementButtonDownload = Code.getElements(Code.getBody(), function(e){
+				return Code.getProperty(e,"id") == "download_database_element";
+			}, true)[0];
+			var elementDatabaseLink = Code.getElements(Code.getBody(), function(e){
+				return Code.getProperty(e,"id") == "download_database_link";
+			}, true)[0];
+			console.log(elementButtonDownload);
+			Code.setStyleWidth(elementButtonDownload,200+"px");
+			Code.setStyleHeight(elementButtonDownload,50+"px");
+			Code.setStyleTextAlign(elementButtonDownload,"center");
+			Code.setContent(elementButtonDownload,"Press To Download Database Backup");
+			Code.setStyleColor(elementButtonDownload,Code.getJSColorFromARGB(0xFF000000));
+			Code.setStyleBackgroundColor(elementButtonDownload,Code.getJSColorFromARGB(0xFFDD6677));
+			//
+			var ajax = new Ajax();
+			//
+			var dispatch = new JSDispatch();
+			dispatch.addJSEventListener(elementButtonDownload, Code.JS_EVENT_MOUSE_DOWN, function(e){
+				if(!Code.getMouseLeftClick(e)){ return; }
+				var url = "./";
+				ajax.url(url);
+				ajax.method(Ajax.METHOD_TYPE_POST);
+				ajax.append('operation','backup_download_database');
+				ajax.callback(function(e){
+					console.log("RESPONSE:");
+					console.log(e);
+					var json = Code.parseJSON(e);
+					console.log(json);
+					if(json && json["result"]=="success"){
+						var databaseURL = json["data"]["database_json"];
+						console.log(databaseURL);
+						Code.open(databaseURL);
+						var div = Code.newAnchor(databaseURL,databaseURL);
+						Code.addChild( elementDatabaseLink, div);
+					}
+				});
+				ajax.send();
+			});
+		}else{
+			setTimeout(afterDelay, 200);
+		}
+	}
+	setTimeout(afterDelay, 800);
+
+	</script>
+
 	<?php
 }
 function giau_test(){

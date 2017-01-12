@@ -164,13 +164,22 @@ function giau_data_default_insert_into_database(){
 	giau_insert_languagization($langEng,"CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","Faith in Action (Junior High and High School Retreat)");
 	giau_insert_languagization($langKor,"CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","중학교 과 고등학교 겨울 수련회");
 
-	$calendar_tag_front_page = "frontpage";//"fp";
-	$calendar_tag_nursery = "nrs";//"nursery";
-	$calendar_tag_kindergarten = "kg";//"kindergarten";
-	$calendar_tag_elementary = "ele";//"elementary";
-	$calendar_tag_juniorhigh = "jrh";//"juniorhigh";
-	$calendar_tag_highschool = "hs";//"highschool";
-	$calendar_tag_koreanschool = "ks";//"koreanschool";
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_FAMILY_WORSHIP_2017_TITLE_TEXT","Family Worship Movement : Every Wednesday");
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_BASIC_THEOLOGY_2017_TITLE_TEXT","THEO 101 – Basic Theology : Every Saturday");
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_PRAYER_MEETING_MONTHLY_JAN_2017_TITLE_TEXT","Monthly Parents'/Teachers' Prayer Meeting");
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_PRAYER_MEETING_MONTHLY_FEB_2017_TITLE_TEXT","Monthly Parents'/Teachers' Prayer Meeting");
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_MOUNTAIN_OUTING_FEBRUARY_2017_TITLE_TEXT","CE Staff Prayer Mountain Outing");
+	giau_insert_languagization($langEng,"CALENDAR_EVENT_PRAYER_MEETING_MONTHLY_MAR_2017_TITLE_TEXT","Monthly Parents'/Teachers' Prayer Meeting");
+
+	//giau_insert_languagization($langEng,"","");
+
+	$calendar_tag_front_page = "frontpage";
+	$calendar_tag_nursery = "nursery";
+	$calendar_tag_kindergarten = "kindergarten";
+	$calendar_tag_elementary = "elementary";
+	$calendar_tag_juniorhigh = "juniorhigh";
+	$calendar_tag_highschool = "highschool";
+	$calendar_tag_koreanschool = "koreanschool";
 
 	// CALENDAR ITEMS
 	// set 1
@@ -193,11 +202,17 @@ function giau_data_default_insert_into_database(){
 	giau_insert_calendar("event_teacher_appreciation_2016","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT","CALENDAR_EVENT_TEACHER_APPRECIATION_2016_TITLE_TEXT", stringFromHumanTime(2016,12,17, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
 	giau_insert_calendar("event_christmas_celebration_2016","CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT","CALENDAR_EVENT_CHRISTMAS_CELEBRATION_2016_TITLE_TEXT", stringFromHumanTime(2016,12,23, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery, $calendar_tag_kindergarten, $calendar_tag_elementary, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
 	giau_insert_calendar("event_jh_hs_winter_retreat_2017","CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT","CALENDAR_EVENT_JH_HS_WINTER_RETREAT_TITLE_TEXT", stringFromHumanTime(2016,12,26, 0, 0, 0, 0), 2*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_juniorhigh, $calendar_tag_highschool]);
-
+	// set 3
+	giau_insert_calendar("event_family_worship_2017","CALENDAR_EVENT_FAMILY_WORSHIP_2017_TITLE_TEXT","CALENDAR_EVENT_FAMILY_WORSHIP_2017_TITLE_TEXT", stringFromHumanTime(2017, 1, 4, 0, 0, 0, 0), 357*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery,$calendar_tag_kindergarten,$calendar_tag_elementary,$calendar_tag_juniorhigh,$calendar_tag_highschool,$calendar_tag_koreanschool]);
+	giau_insert_calendar("event_theology_101_2017","CALENDAR_EVENT_BASIC_THEOLOGY_2017_TITLE_TEXT","CALENDAR_EVENT_BASIC_THEOLOGY_2017_TITLE_TEXT", stringFromHumanTime(2017, 1, 7, 0, 0, 0, 0), 63*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery,$calendar_tag_kindergarten,$calendar_tag_elementary,$calendar_tag_juniorhigh,$calendar_tag_highschool,$calendar_tag_koreanschool]);
+	giau_insert_calendar("event_monthly_prayer_jan_2017","CALENDAR_EVENT_PRAYER_MEETING_MONTHLY_JAN_2017_TITLE_TEXT","CALENDAR_EVENT_PRAYER_MEETING_MONTHLY_JAN_2017_TITLE_TEXT", stringFromHumanTime(2017, 1,13, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery,$calendar_tag_kindergarten,$calendar_tag_elementary,$calendar_tag_juniorhigh,$calendar_tag_highschool,$calendar_tag_koreanschool]);
+	giau_insert_calendar("event_monthly_prayer_feb_2017","CALENDAR_EVENT_PRAYER_MEETING_MONTHLY_FEB_2017_TITLE_TEXT","CALENDAR_EVENT_PRAYER_MEETING_MONTHLY_FEB_2017_TITLE_TEXT", stringFromHumanTime(2017, 2,10, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery,$calendar_tag_kindergarten,$calendar_tag_elementary,$calendar_tag_juniorhigh,$calendar_tag_highschool,$calendar_tag_koreanschool]);
+	giau_insert_calendar("event_mountain_outing_feb_2017","CALENDAR_EVENT_MOUNTAIN_OUTING_FEBRUARY_2017_TITLE_TEXT","CALENDAR_EVENT_MOUNTAIN_OUTING_FEBRUARY_2017_TITLE_TEXT", stringFromHumanTime(2017, 2,17, 0, 0, 0, 0), 1*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery,$calendar_tag_kindergarten,$calendar_tag_elementary,$calendar_tag_juniorhigh,$calendar_tag_highschool,$calendar_tag_koreanschool]);
+	giau_insert_calendar("event_monthly_prayer_mar_2017","CALENDAR_EVENT_PRAYER_MEETING_MONTHLY_MAR_2017_TITLE_TEXT","CALENDAR_EVENT_PRAYER_MEETING_MONTHLY_MAR_2017_TITLE_TEXT", stringFromHumanTime(2017, 3,10, 0, 0, 0, 0), 0*24*60*60*1000, [$calendar_tag_front_page, $calendar_tag_nursery,$calendar_tag_kindergarten,$calendar_tag_elementary,$calendar_tag_juniorhigh,$calendar_tag_highschool,$calendar_tag_koreanschool]);
 	// ?
-	giau_insert_languagization($langEng,"","");
-	giau_insert_languagization($langEng,"","");
-	giau_insert_languagization($langEng,"","");
+
+
+	
 
 	// BIOs
 	giau_insert_bio(
@@ -1378,12 +1393,14 @@ function giau_data_default_insert_into_database(){
 			"autoplay" => "10000",
 			"display_navigation" => "false",
 			"images" => [
+				"/images/galleries/home_featured/featured_07_opt.png",
+				"/images/galleries/home_featured/featured_08_opt.png",
 				"/images/galleries/home_featured/featured_06_opt.png",
 				"/images/galleries/home_featured/featured_01_opt.png",
 				"/images/galleries/home_featured/featured_02_opt.png",
 				"/images/galleries/home_featured/featured_03_opt.png",
 				"/images/galleries/home_featured/featured_04_opt.png",
-				"/images/galleries/home_featured/featured_01_opt.png",
+				"/images/galleries/home_featured/featured_05_opt.png",
 			],
 			"overlay_color" => "0x44000000",
 			"height" => "500px",
@@ -1402,7 +1419,6 @@ function giau_data_default_insert_into_database(){
 				"/images/galleries/home_featured/featured_02_opt.png",
 				"/images/galleries/home_featured/featured_03_opt.png",
 				"/images/galleries/home_featured/featured_04_opt.png",
-				"/images/galleries/home_featured/featured_01_opt.png",
 			],
 			"height" => "500px",
 			"page_indicators" => "true",
@@ -1714,10 +1730,6 @@ function giau_data_default_insert_into_database(){
 				"/images/galleries/elementary/gallery_03_opt.png",
 				"/images/galleries/elementary/gallery_04_opt.png",
 				"/images/galleries/elementary/gallery_05_opt.png",
-				"/images/galleries/elementary/gallery_06_opt.png",
-				"/images/galleries/elementary/gallery_07_opt.png",
-				"/images/galleries/elementary/gallery_08_opt.png",
-				"/images/galleries/elementary/gallery_09_opt.png",
 			],
 			"height" => "500px",
 			"page_indicators" => "true",
@@ -2057,10 +2069,6 @@ function giau_data_default_insert_into_database(){
 				"/images/galleries/elementary/gallery_03_opt.png",
 				"/images/galleries/elementary/gallery_04_opt.png",
 				"/images/galleries/elementary/gallery_05_opt.png",
-				"/images/galleries/elementary/gallery_06_opt.png",
-				"/images/galleries/elementary/gallery_07_opt.png",
-				"/images/galleries/elementary/gallery_08_opt.png",
-				"/images/galleries/elementary/gallery_09_opt.png",
 			],
 			"height" => "500px",
 			"page_indicators" => "true",

@@ -36,7 +36,28 @@ function padRight($input, $padding, $count){
 	return str_pad($string, $count, $padding,STR_PAD_RIGHT);
 }
 function getDateNow(){
-	return dateFromString( date("Y-m-d H:i:s.0000") );
+	return dateFromString( date("Y-m-d H:i:s.0000") ); // milliseconds = v in php7 0-999
+}
+function getDateYear($time){
+	return date("Y",$time);
+}
+function getDateMonth($time){
+	return date("m",$time);
+}
+function getDateDay($time){
+	return date("d",$time);
+}
+function getDateHour($time){
+	return date("H",$time);
+}
+function getDateMinute($time){
+	return date("i",$time);
+}
+function getDateSecond($time){
+	return date("s",$time);
+}
+function getDateMilliecond($time){
+	return date("s",$time);
 }
 
 function colorHTMLFromColorString($color){

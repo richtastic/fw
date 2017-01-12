@@ -1074,6 +1074,26 @@ function unzipDirectory($source, $destination){
 	error_log("result: '".$result."'");
 }
 
+
+function backup_uploads_directory_url(){
+	$date = getDateNow();
+	$year = getDateYear($date);
+	$month = getDateMonth($date);
+	$day = getDateDay($date);
+	$hour = getDateHour($date);
+	$minute = getDateMinute($date);
+	$second = getDateSecond($date);
+	$timestamp = "".$year."_".$month."_".$day."_".$hour."_".$minute."_".$second."";
+	$endName = "uploads_".$timestamp.".zip";
+	// ZIP UP
+	$zipSource = giau_plugin_upload_root_dir();
+	$zipDestination = giau_plugin_temp_dir()."/".$endName;
+	zipDirectory($zipSource, $zipDestination);
+	// location
+	$zipURL = giau_plugin_temp_url()."/".$endName;
+	return $zipURL;
+}
+
 /*
 https://codex.wordpress.org/Plugin_API/Action_Reference
 https://codex.wordpress.org/Plugin_API/Filter_Reference

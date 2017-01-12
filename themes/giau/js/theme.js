@@ -2816,6 +2816,26 @@ giau.FileUploadDropArea = function(element){
 	console.log("FileUploadDropArea");
 	this._container = element;
 	this._elementUploadDropTarget = Code.newDiv();
+	this._allowedMimeTypes = [];
+	this._ajaxParameters = [];
+
+	var propertyDataParamKey = "data-parameter-key";
+	var propertyDataParamValue = "data-parameter-value";
+	var propertyDataMimeType = "data-parameter-accepted-filetype";
+	for(i=0; i<Code.numChildren(this._container); ++i){
+		var ele = Code.getChild(this._container,i);
+		if( Code.hasProperty(ele,propertyDataParamKey) ){
+			var key = Code.getProperty(ele,propertyDataParamKey);
+			var value = Code.getProperty(ele,propertyDataParamValue);
+			this._ajaxParameters.push({"key":key,"value":value});
+			Code.removeChild(this._container,ele);
+			--i;
+		}else if( Code.hasProperty(ele,propertyDataMimeType) ){
+			var mime = Code.getProperty(ele,propertyDataMimeType);
+			this._allowedMimeTypes.push(mime);
+		}
+	}
+
 	Code.addChild(this._container,this._elementUploadDropTarget);
 	// drop target
 		div = this._elementUploadDropTarget;
@@ -2858,10 +2878,10 @@ giau.FileUploadDropArea.prototype._handleDragDropUploadFxn = function(e){
 	}
 }
 giau.FileUploadDropArea.prototype.fileTypeAcceptable = function(type){
-	if(type=="application/zip"){
+	if(this._allowedMimeTypes.length==0){
 		return true;
 	}
-	return false;
+	Code.elementExists(this._allowedMimeTypes,type);
 }
 giau.FileUploadDropArea.prototype.uploadFile = function(file,filename){
 	var url = "./";
@@ -2869,8 +2889,13 @@ giau.FileUploadDropArea.prototype.uploadFile = function(file,filename){
 	var ajax = new Ajax();
 	ajax.url(url);
 	ajax.method(Ajax.METHOD_TYPE_POST);
-		ajax.append('operation','backup_upload_zip');
-		//ajax.append('file_directory',directory);
+	var i;
+	for(i=0; i<this._ajaxParameters.length; ++i){
+		var key = this._ajaxParameters[i]["key"];
+		var value = this._ajaxParameters[i]["value"];
+		console.log(key,value);
+		ajax.append(key,value);
+	}
 		ajax.append('file_name',filename);
 		ajax.append('file',file);
 	ajax.context(this);

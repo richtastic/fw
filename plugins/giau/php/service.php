@@ -90,9 +90,58 @@ function giau_wordpress_data_service(){
 			}
 			$response = json_encode($response);
 // BACKUP SERVICE --------------------------------------------------------------------------------------------------------------
-		}else if($operationType=="backup_upload_zip"){
+		}else if($operationType=="temp_directory_remove"){
+			error_log("CLEAR TEMP DIRECTORY");
+			$response["result"] = "success";
+		}else if($operationType=="backup_download_database"){
+			error_log("DOWNLOAD BACKUP DB");
+			$backupURL = giau_database_backup_url();
+			if($backupURL){
+				$response["data"] = [
+					"database_json" => $backupURL,
+				];
+				$response["result"] = "success";
+			}
+		}else if($operationType=="backup_upload_database"){
+			error_log("UPLOAD BACKUP DB");
+
+			$result = null;
+			error_log("result: ".$result);
+			if($result){
+				$response["data"] = [
+					"uploads_zip" => $backupURL,
+				];
+				$response["result"] = "success";
+			}
+			// giau_insert_database_from_json($returnJSON, true);
+
+
+		}else if($operationType=="backup_download_uploads_zip"){
+			error_log("DOWNLOAD BACKUP ZIP");
+			$backupURL = backup_uploads_directory_url();
+			if($backupURL){
+				$response["data"] = [
+					"uploads_zip" => $backupURL,
+				];
+				$response["result"] = "success";
+			}
+		}else if($operationType=="backup_upload_uploads_zip"){
 			error_log("UPLOAD BACKUP ZIP");
-			//
+
+
+
+	// ZIP OUT
+			$zipSource = giau_plugin_temp_dir()."/"."uploads.zip";
+			$zipDestination = giau_plugin_temp_dir()."/"."uploads";
+			//$zipDestination = giau_plugin_upload_root_dir();
+			$result = unzipDirectory($zipSource, $zipDestination);
+			error_log("result: ".$result);
+			if($result){
+				$response["data"] = [
+					"uploads_zip" => $backupURL,
+				];
+				$response["result"] = "success";
+			}
 // FILE SERVICE --------------------------------------------------------------------------------------------------------------
 		}else if($operationType=="file_upload_file"){
 			$relative = $_POST['file_directory'];

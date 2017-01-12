@@ -1280,16 +1280,24 @@ function giau_database_backup_json(){
 	return $returnJSON;
 }
 
-function giau_database_backup_file(){
-	$endName = "database.txt";
+function giau_database_backup_file($directory=null){
+	if(!$directory){
+		$directory = giau_plugin_temp_dir();
+	}
+	$date = getDateNow();
+	$year = getDateYear($date);
+	$month = getDateMonth($date);
+	$day = getDateDay($date);
+	$hour = getDateHour($date);
+	$minute = getDateMinute($date);
+	$second = getDateSecond($date);
+	$timestamp = "".$year."_".$month."_".$day."_".$hour."_".$minute."_".$second."";
+	$endName = "database_".$timestamp.".txt";
 	$jsonData = giau_database_backup_json();
-	$tempDirectory = giau_plugin_temp_dir();
-	//createDirectoryAtLocation($tempDirectory);
+	$tempDirectory = $directory;
 	$fileName = $tempDirectory."/".$endName;
-	error_log("fileName: ".$fileName);
 	$result = file_put_contents($fileName, $jsonData);
 	setFilePermissionsReadOnly($fileName);
-	error_log("result: ".$result);
 	return $endName;
 }
 
