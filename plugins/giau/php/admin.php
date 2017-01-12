@@ -264,36 +264,6 @@ function giau_test(){
 	error_log("GIAU TEST");
 }
 
-function giau_insert_database_from_json($jsonSource, $deleteTables){
-	global $wpdb;
-
-	echo "<br/>";
-	$jsonObject = json_decode($jsonSource, true);
-	$tableCount = count($jsonObject);
-	
-	foreach ($jsonObject as $tableName => $rowList) {
-		echo "TABLE: ".$tableName."<br/>";
-		if($deleteTables){
-			echo "TODO: DELETE TABLE: ".$tableName."<br/>";
-			$dropQuery = "DROP TABLE IF EXISTS ".$tableName." ;";
-			//$wpdb->query($dropQuery);
-		}
-		$rowCount = count($rowList);
-		for($i=0; $i<$rowCount; ++$i){
-			$row = $rowList[$i];
-			$insertArray = [];
-			foreach ($row as $column => $value) {
-				echo $i." ".$column." = ".$value."<br/>";
-				$insertArray[$column] = $value;
-			}
-			// INSERT
-			$result = $wpdb->insert($tableName, $insertArray);
-			echo "RESULT: '".$result."' <br/>";
-		}
-	}
-	
-	echo "<br/>";
-}
 
 function giau_admin_menu_page_submenu_file_backup(){
 	$URL_BACKUP_DOWNLOAD = add_query_arg('page','giau-plugin-submenu-file-download');

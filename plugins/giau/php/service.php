@@ -103,19 +103,22 @@ function giau_wordpress_data_service(){
 				$response["result"] = "success";
 			}
 		}else if($operationType=="backup_upload_database"){
-			error_log("UPLOAD BACKUP DB");
-
-			$result = null;
-			error_log("result: ".$result);
-			if($result){
-				$response["data"] = [
-					"uploads_zip" => $backupURL,
-				];
-				$response["result"] = "success";
+			error_log("UPLOAD BACKUP DB TXT");
+			$file = $_FILES['file'];
+			if($file){
+				$location = $file['tmp_name'];
+				$json = file_get_contents($location);
+				if($json){
+					$result = giau_insert_database_from_json($json, true);
+					error_log("result: ".$result);
+					if($result){
+						$response["data"] = [
+							"uploads_zip" => $backupURL,
+						];
+						$response["result"] = "success";
+					}
+				}
 			}
-			// giau_insert_database_from_json($returnJSON, true);
-
-
 		}else if($operationType=="backup_download_uploads_zip"){
 			error_log("DOWNLOAD BACKUP ZIP");
 			$backupURL = backup_uploads_directory_url();
@@ -127,9 +130,9 @@ function giau_wordpress_data_service(){
 			}
 		}else if($operationType=="backup_upload_uploads_zip"){
 			error_log("UPLOAD BACKUP ZIP");
-
-
-
+			
+			
+			
 	// ZIP OUT
 			$zipSource = giau_plugin_temp_dir()."/"."uploads.zip";
 			$zipDestination = giau_plugin_temp_dir()."/"."uploads";

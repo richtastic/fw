@@ -2872,16 +2872,18 @@ giau.FileUploadDropArea.prototype._handleDragDropUploadFxn = function(e){
 		var filename = file.name;
 		var filetype = file.type;
 		if(this.fileTypeAcceptable(filetype)){
+			console.log("upload file");
 			this.uploadFile(file, filename);
 			break;
 		}
 	}
 }
 giau.FileUploadDropArea.prototype.fileTypeAcceptable = function(type){
+	console.log(this._allowedMimeTypes,type);
 	if(this._allowedMimeTypes.length==0){
 		return true;
 	}
-	Code.elementExists(this._allowedMimeTypes,type);
+	return Code.elementExists(this._allowedMimeTypes,type);
 }
 giau.FileUploadDropArea.prototype.uploadFile = function(file,filename){
 	var url = "./";

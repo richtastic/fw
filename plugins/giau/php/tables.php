@@ -193,7 +193,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"default" => null,
 				],
 			],
-			"widget_id" => [
+			"widget" => [
 				"type" => "string-array",
 				"attributes" =>  [
 					"display_name" => "Widget",
@@ -252,7 +252,7 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				"section_configuration" => "configuration",
 				"section_name" => "name",
 				"section_subsections" => "section_list",
-				"widget_id" => "widget_id",
+				"widget_id" => "widget",
 				"widget_configuration" => null,
 				"widget_info" => null,
 			],
@@ -1307,6 +1307,36 @@ function giau_database_backup_url(){
 	error_log("fileURL: ".$fileURL);
 	return $fileURL;
 }
+
+
+function giau_insert_database_from_json($jsonSource, $deleteTables){
+	global $wpdb;
+	error_log("giau_insert_database_from_json");
+	$jsonObject = json_decode($jsonSource, true);
+	$tableCount = count($jsonObject);
+	foreach ($jsonObject as $tableName => $rowList) {
+		if($deleteTables){
+			//$dropQuery = "DROP TABLE IF EXISTS ".$tableName." ;";
+			//$wpdb->query($dropQuery);
+			$truncateQuery = "TRUNCATE TABLE  ".$tableName." ;";
+			// ALTER TABLE tablename AUTO_INCREMENT = 1
+			$wpdb->query($truncateQuery);
+		}
+		$rowCount = count($rowList);
+		for($i=0; $i<$rowCount; ++$i){
+			$row = $rowList[$i];
+			$insertArray = [];
+			foreach ($row as $column => $value) {
+				$insertArray[$column] = $value;
+			}
+			// INSERT
+			$result = $wpdb->insert($tableName, $insertArray);
+		}
+	}
+	error_log("giau_insert_database_from_json DONE");
+	return true;
+}
+
 
 // $fileName = tempnam(sys_get_temp_dir(), 'prefix');
 
