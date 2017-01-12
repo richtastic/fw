@@ -2918,19 +2918,10 @@ giau.ObjectComposer = function(element, model, object){
 
 	this._jsDispatch = new JSDispatch();
 	this._dataNonce = {"reference":"reference"};
-	
-	console.log("model:",this._dataModel);
-	console.log("insta:",this._dataInstance);
-
+	// console.log("model:",this._dataModel);
+	// console.log("insta:",this._dataInstance);
 	this.initialize();
-	/*
-	var div = Code.newInputButton("SAVE/UPDATE ?");
-		Code.setStyleBackgroundColor(div,"#FCC");
-	this._submitButton = div;
-	Code.addChild(this._container,this._submitButton);
-	this._jsDispatch.addJSEventListener(this._submitButton, Code.JS_EVENT_CLICK, this._handleSubmitClickFxn, this);
-	*/
-}
+};
 giau.ObjectComposer.prototype.instance = function(i){
 	if(i!==undefined){
 		this._dataInstance = Code.parseJSON(i);
@@ -3046,7 +3037,7 @@ giau.ObjectComposer.prototype._handleDeleteArrayItem = function(e,d){
 giau.ObjectComposer.prototype.fillOutModelFromElementArray = function(element,modelFieldInfo,array,field, superModel){
 	var modelFieldType = modelFieldInfo["type"];
 	var modelSubType = giau.ObjectComposer.fieldTypeArraySubtype(modelFieldType);
-	console.log("\t=> array of "+modelSubType);
+	//console.log("\t=> array of "+modelSubType);
 	if(modelSubType=="array"){ // array of arrays
 		var objectModel = modelFieldInfo["fields"];
 		for(var i=0; i<array.length; ++i){
@@ -3060,8 +3051,6 @@ giau.ObjectComposer.prototype.fillOutModelFromElementArray = function(element,mo
 			this.fillOutModelFromElement(subElement,objectModel,array[i], false);
 		}
 	}else{ // array of primitives
-		console.log("array of primitives");
-		console.log(array);
 		this._fillOutWithPrimitiveType(element,modelFieldInfo, array, null, modelSubType, array, superModel);
 	}
 	var button = this._interactActionButton("&nbsp;+&nbsp;", element);
@@ -3169,7 +3158,6 @@ label = div;
 // (element,modelFieldInfo, array,                null, modelSubType, array, superModel
 // element, modelObject,instanceObject, modelFieldName,modelFieldType, isArray
 giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(element, modelObject,instanceObject, modelFieldName,modelFieldType, isArray, superModel){
-	console.log("_fillOutWithPrimitiveType  "+modelFieldType);
 	var found = false;
 	if( giau.ObjectComposer.isFieldTypeString(modelFieldType) ){
 		found = true;
@@ -3198,7 +3186,6 @@ giau.ObjectComposer.prototype._fillOutWithPrimitiveType = function(element, mode
 				var subElement = this.newSubElement(element,null,"primitive", instanceObject,i, tempModel, instanceObject, superModel);
 			}
 		}else{
-			console.log("is primitive");
 			primitive = instanceObject[modelFieldName];
 			var subElement = this.newSubElement(element,null,"primitive", instanceObject,modelFieldName, modelObject);
 		}
@@ -3357,12 +3344,12 @@ giau.ObjectComposer.prototype._inputTextField = function(element, key,value, con
 		Code.setStyleMarginRight(input,0+"px");
 		Code.setStyleBackgroundColor(input,giau.Theme.Color.MediumRed);
 		Code.setStyleDisplay(input,"table-cell");
-HERE
-
+// HERE
 		var jsObject = new giau.InputFieldTextModal(input,value, criteria, function(element){
 			Code.setStyleColor(element,"#FFF");
+			//Code.setStyleDisplay(element,"inline");
 			Code.setStyleVerticalAlign(element,"middle");
-			Code.setStyleVerticalAlign(  Code.getParent(element),"middle");
+			Code.setStyleVerticalAlign( Code.getParent(element) ,"middle");
 		});
 			var data = {"object":container, "key":key, "value":value, "control":jsObject};
 			jsObject.addFunction(giau.InputFieldCompositeModal.EVENT_CHANGE, this._handlePrimitiveTextUpdate, this, data);
@@ -3455,8 +3442,6 @@ giau.ObjectComposer.prototype.defaultInputRowLabel = function(element, title, mo
 	Code.setStyleVerticalAlign(div,"top");
 
 	var description = model && model["description"] ? model["description"] : "";
-	console.log("RICHIE GOT MODEL: "+title);
-	console.log(model);
 	var datum =  {"description":description};
 	this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_MOUSE_DOWN, giau.ObjectComposer.alertHelpInfoField, datum);
 
@@ -3519,7 +3504,6 @@ giau.ObjectComposer.prototype._interactActionButton = function(display, element)
 
 giau.LibraryScroller = function(element, name, url, params){
 	console.log("LibraryScroller");
-	console.log(element);
 	url = url !== undefined ? url : "./";
 	params = params !== undefined ? params : {};
 	this._scrollBarSize = Code.getScrollBarSize();
@@ -3611,34 +3595,11 @@ giau.LibraryScroller = function(element, name, url, params){
 		name = Code.getProperty(this._container, propertyDataName);
 		Code.removeProperty(this._container, propertyDataName);
 	}
-	/*
-	this._displayData = {};
-	if(Code.hasProperty(this._container,propertyDataDisplayTitle)){
-		this._displayData["title"] = Code.getProperty(this._container, propertyDataDisplayTitle);
-		Code.removeProperty(this._container, propertyDataDisplayTitle);
-	}
-	if(Code.hasProperty(this._container,propertyDataDisplaySubtitle)){
-		this._displayData["subtitle"] = Code.getProperty(this._container, propertyDataDisplaySubtitle);
-		Code.removeProperty(this._container, propertyDataDisplaySubtitle);
-	}
-	if(Code.hasProperty(this._container,propertyDataDisplayImage)){
-		this._displayData["image"] = Code.getProperty(this._container, propertyDataDisplayImage);
-		Code.removeProperty(this._container, propertyDataDisplayImage);
-	}
-	if(Code.hasProperty(this._container,propertyDataDisplayValue)){
-		this._displayData["value"] = Code.getProperty(this._container, propertyDataDisplayValue);
-		Code.removeProperty(this._container, propertyDataDisplayValue);
-	}
-	*/
-
-	
 	for(i=0; i<Code.numChildren(this._container); ++i){ 
 		var child = Code.getChild(this._container,i);
-		console.log(child);
 		if(Code.hasProperty(child,propertyDataParamKey)){
 			var key = Code.getProperty(child, propertyDataParamKey);
 			var value = Code.getProperty(child, propertyDataParamValue);
-			console.log(key,value);
 			params[key] = value;
 			Code.removeChild(this._container, child);
 			--i;
@@ -3756,15 +3717,8 @@ giau.LibraryScroller._generateDiv = function(info, data){//, displayData){
 }
 giau.LibraryScroller.prototype._updateLayout = function(){
 	console.log("LibraryScroller - _updateLayout");
-	console.log(this);
-//	var displayData = this._displayData;
-	// source vars
-	// var widthContainer = $(this._container).width();
-	// var heightContainer = $(this._container).height();
 	var widthContainer = $(this._elementScroller).width();
 	var heightContainer = $(this._elementScroller).height();
-	// var widthContainer = $(this._elementContents).width();
-	// var heightContainer = $(this._elementContents).height();
 	widthContainer -= this._scrollBarSize;
 	//var divSizeY = 60;
 	var divSpacingY = 0;
@@ -3881,7 +3835,6 @@ giau.PagingDisplay = function(element, currentPage, totalPages, pagingFxn){ // p
 				currentPage = 0;
 			}
 		}
-	console.log("FOUND GET PAGE: "+currentPage);
 	this.set(currentPage, totalPages);
 };
 Code.inheritClass(giau.PagingDisplay, Dispatchable);
@@ -4050,7 +4003,6 @@ Code.inheritClass(giau.DataSource, Dispatchable);
 
 giau.DataSource.EVENT_PAGE_DATA = "EVENT_PAGE_DATA";
 giau.DataSource.prototype.getPage = function(pageToGet){
-	console.log("getpage::: "+pageToGet+" ? "+this._itemsPerPage);
 	this._currentPage = pageToGet;
 	var start = this._currentPage * this._itemsPerPage;
 	var end = start + this._itemsPerPage;
@@ -4307,7 +4259,6 @@ return;
 	
 	this._dataSource = new giau.DataSource("./",this._itemsPerPage, {"table":dataTableName} );
 	this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
-console.log("get page: "+this._pagingTop.currentPage());
 	this._dataSource.getPage(this._pagingTop.currentPage());
 	// table listing
 	this._dataCRUD = new giau.DataCRUD("./", {"operation":"crud_data", "table":dataTableName} );
@@ -5180,7 +5131,6 @@ giau.CRUD._fieldEditStringPrimitiveUpdateElementFxn = function(mapping){
 
 // -------------------------------------------------------------------------------- MAPPING JSON
 giau.CRUD._fieldEditJSON = function(definition, container, fieldName, elementContainer, mapping){
-	console.log("fieldEditJSON");
 	// update mapping
 	mapping.updateElementFxn(giau.CRUD._fieldEditJSONUpdateElementFxn);
 	mapping.updateDataFxn(giau.CRUD._fieldEditJSONUpdateDataFxn);
@@ -5189,7 +5139,6 @@ giau.CRUD._fieldEditJSON = function(definition, container, fieldName, elementCon
 	var presentation = definition["presentation"];
 	var jsonModelColumn = presentation["json_model_column"];
 	var modelString = container[jsonModelColumn]; // ALSO: mapping.object()["json_model_column"];
-	console.log("modelString: "+modelString);
 	var model = Code.parseJSON(modelString);
 	var object = Code.parseJSON(mapping.value());
 	// set source to objects instead of strings
@@ -5277,14 +5226,13 @@ giau.CRUD._fieldEditDateUpdateElementFxn = function(mapping){
 
 // -------------------------------------------------------------------------------- MAPPING STRING
 giau.CRUD._fieldEditStringUpdateDataFxn = function(mapping, action){
-	console.log("_fieldEditStringUpdateDataFxn");
+	//console.log("_fieldEditStringUpdateDataFxn");
 }
 giau.CRUD._fieldEditStringUpdateElementFxn = function(mapping){
-	console.log("_fieldEditStringUpdateElementFxn");
+	//console.log("_fieldEditStringUpdateElementFxn");
 }
 
 giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, itemIndex){
-console.log("_mappingFromData")
 	var alias = fieldDescription["alias"];
 	var column = fieldDescription["column"];
 	var attributes = fieldDescription["attributes"];
@@ -6111,7 +6059,6 @@ giau.InputFieldColor.prototype.value = function(value){ // 0xAARRGGBB
 		}
 		this._colorValue = value;
 	}
-	console.log("giau.InputFieldColor.prototype.value: "+this._colorValue);
 	return this._colorValue;
 }
 
@@ -6972,7 +6919,6 @@ giau.InputFieldColorMini.prototype.value = function(v){
 		this._updateLayout();
 		this.alertAll(giau.InputFieldColorMini.EVENT_CHANGE,this);
 	}
-	console.log("giau.InputFieldColorMini.prototype.value: "+this._value);
 	return this._value;
 };
 
@@ -7469,17 +7415,196 @@ giau.InputOverlay.prototype.kill = function(){
 // 	var width = $(window).width();
 // 	var height = $(window).height();
 // }
+// Sync
+// Remote
+// Source
+// Local
+// Track
+// Concurrent
+// Eventually
+// Transaction
+// Sync Local copy and Source copy to singular value
+
+// singular value is some combination of source BASE and local CHANGES
+giau.Tracker = function(){
+	this._timestampSource = null;
+	this._timestampPending = null;
+	this._local = null; // local
+	this._pending = []; // on way to server
+	this._residual = []; // sent to server but residual timestamp > server timestamp
+	this._source = null; // server
+	this.local(null);
+	this.source(null);
+	this._pendingID = 0;
+	this._operationCombineFxn = giau.Tracker._defaultCombineFxn;
+	this._operationValueFxn = giau.Tracker._defaultValueFxn;
+	this._operationFlushFxn = giau.Tracker._defaultFlushFxn;
+	// auto send to source
+	this._autoFlush = true;
+	this._autoFlushTicker = new Ticker(2000);
+	this._autoFlushTicker.addFunction(Ticker.EVENT_TICK, this._flushTickerCheck, this);
+};
+giau.Tracker.prototype._flushTickerReset = function(e){
+	if(this._autoFlush){
+		this._ticker.stop();
+		this._ticker.start();
+	}
+};
+giau.Tracker.prototype._flushTickerCheck = function(e){
+	this._ticker.stop();
+	var local = this.local();
+	if(local!==null){ // dirty
+		this._flush();
+	}
+};
+giau.Tracker.prototype.flush = function(){ // push all pending changes to source
+	var pending = {};
+	var local = this._local;
+	this.local(null);
+	pending["value"] = local;
+	pending["timestamp"] = Code.getTimeMilliseconds();
+	pending["id"] = ++this._pendingID;
+	this._pending.push(pending);
+	this._operationFlushFxn(pending["value"],this._flushCompleteFxn, this, pending);
+};
+giau.Tracker.prototype._flushCompleteFxn = function(flushID, success){
+	var i;
+	var index = Code.indexOfElement(this._pending, function(o){
+		return o["id"] == flushID;
+	});
+	if(index){
+		var pending = this._pending[index];
+		if(success){
+			console.log("success");
+			Code.removeElementAt(index);
+			this._processPendingComplete(pending);
+		}else{ // failure -- retry
+			console.log("failure");
+			this._operationFlushFxn(pending["value"],this._flushCompleteFxn, this, pending);
+		}
+	}else{
+		console.log("NOT FOUND: "+flushID);
+	}
+};
+giau.Tracker.prototype.append = function(value, timestamp){
+	var local = this.local();
+	local = this._operationCombineFxn(local, value);
+	this.local(local, timestamp);
+};
+giau.Tracker.prototype.local = function(value, timestamp){
+	if(value!==undefined){
+		timestamp = timestamp!==undefined ? timestamp : Code.getTimeMilliseconds();
+		this._local = {"value":value, "timestamp":timestamp};
+		this._flushTickerReset();
+	}
+	return this._operationValueFxn(this._local["value"]);
+};
+giau.Tracker.prototype.source = function(value, timestamp){
+	if(value!==undefined){
+		timestamp = timestamp!==undefined ? timestamp : Code.getTimeMilliseconds();
+		this._source = {"value":value, "timestamp":timestamp};
+		this._processSourceUpdate();
+	}
+	return this._operationValueFxn(this._source["value"]);
+};
+giau.Tracker.prototype.pending = function(){
+	var i;
+	var pending = null;
+	var timestampSource = this._source["timestamp"];
+	for(i=0; i<this._pending.length; ++i){
+		var pend = this._pending[i];
+		var next = pend["value"];
+		var timestampPending = pend["timestamp"];
+		if(timestampPending>timestampSource){
+			pending = this.this._operationCombineFxn(pending, next);
+		}
+	}
+	return this._operationPendingFxn(pending);
+};
+giau.Tracker.prototype.residual = function(){
+	var i;
+	var residual = null;
+	var timestampSource = this._source["timestamp"];
+	for(i=0; i<this._residual.length; ++i){
+		var resi = this._residual[i];
+		var next = thie._residual["value"];
+		var timestampResidual = resi["timestamp"];
+		if(timestampResidual>timestampSource){
+			residual = this.this._operationCombineFxn(residual, next);
+		}
+	}
+	return this._operationValueFxn(residual);
+};
+giau.Tracker.prototype._processPendingComplete = function(pending){
+	var timestampPending = pending["timestamp"];
+	var timestampSource = this._source["timestamp"];
+	if(timestampPending>timestampServer){
+		this._residual.push(pending);
+	}
+};
+giau.Tracker.prototype._processSourceUpdate = function(){
+	var i;
+	for(i=0; i<this._residual.length; ++i){
+		var resi = this._residual[i];
+		var timestampResidual = resi["timestamp"];
+		if(timestampResidual<timestampSource){
+			Code.removeElementAt(this._residual,i);
+			--i; // redo
+		}
+	}
+};
+giau.Tracker.prototype.value = function(){
+	var local = this.local();
+	var pending = this.pending();
+	var residual = this.residual();
+	var source = this.source();
+	var value = null;
+	value = this._operationCombineFxn(value, local);
+	value = this._operationCombineFxn(value, pending);
+	value = this._operationCombineFxn(value, residual);
+	value = this._operationCombineFxn(value, source);
+	return value;
+};
+giau.Tracker.prototype.kill = function(){
+
+	this._autoFlushTicker.stop();
+	this._autoFlushTicker = null;
+};
+giau.Tracker._defaultCombineFxn = function(valueA, valueB){
+	return (valueA!==null ? valueA : 0) + (valueB!==null ? valueB : 0);
+};
+giau.Tracker._defaultValueFxn = function(value){
+	return value!==null ? value : 0;
+};
+giau.Tracker._defaultFlushFxn = function(val, fxn, ctx, dat){
+	
+};
+/*
+var tracker = new giau.Tracker();
+	tracker.value();
+tracker.local(0);
+tracker.source(0);
+	tracker.value();
+tracker.append(1);
+tracker.append(1);
+	tracker.value();
+tracker.flush();
+	tracker.value();
+*/
+
+/*
+keep pending values with timestamp AFTER source
+*/
 
 
 
-
-
-
-
-
-
-
-
+/*
+get source at 100 								S: 100  L:   0  P:   0   V: 100
+set local to 10 								S: 100  L:  10  P:   0   V: 110
+send pending 10, reset local to 0 				S: 100  L:   0  P:  10   V: 110
+pending is a success, reset pending to 0 		S: 100  L:   0  P:   0   V: 100
+get source at 110 								S: 110  L:   0  P:   0   V: 110
+*/
 
 
 
