@@ -1314,7 +1314,9 @@ function giau_insert_database_from_json($jsonSource, $deleteTables){
 	error_log("giau_insert_database_from_json");
 	$jsonObject = json_decode($jsonSource, true);
 	$tableCount = count($jsonObject);
+	error_log("tableCount: ".$tableCount);
 	foreach ($jsonObject as $tableName => $rowList) {
+		error_log("   tableName: ".$tableName);
 		if($deleteTables){
 			//$dropQuery = "DROP TABLE IF EXISTS ".$tableName." ;";
 			//$wpdb->query($dropQuery);
