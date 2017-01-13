@@ -1562,7 +1562,7 @@ function giau_data_default_insert_into_database(){
 	$PAGE_TAG_LIVE = "__live";
 	$PAGE_TAG_HOME = "home";
 	// PAGE - MAIN
-	$page_id_front_page = giau_insert_page("home_page",
+	$page_id_front_page = giau_insert_page("page_home",
 		[
 			//$section_id_home_page_top,
 			$section_id_gallery_home_page_primary,

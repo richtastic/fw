@@ -293,8 +293,8 @@ function giau_wordpress_data_service(){
 			$offset = $_POST['offset'];
 			$count =  $_POST['count'];
 			if($tableSourceName=="website"){
-				$offset = 0;
-				$count = 2;
+				// $offset = 0;
+				// $count = 2;
 				$requestInfo = [];
 				$requestInfo["offset"] = $offset;
 				$requestInfo["count"] = $count;
@@ -340,8 +340,8 @@ function giau_wordpress_data_service(){
 					paged_data_service($requestInfo, table_info_widget(), $response , true);
 					$response["metadata"] = $metadata;
 				}else{
-					$offset = 0;
-					$count = 2;
+					// $offset = 0;
+					// $count = 2;
 					$requestInfo = [];
 					$requestInfo["offset"] = $offset;
 					$requestInfo["count"] = $count;
@@ -363,9 +363,8 @@ function giau_wordpress_data_service(){
 				}
 
 			}else if($tableSourceName=="page"){
-			
-				$offset = 0;
-				$count = 2;
+				// $offset = 0;
+				// $count = 2;
 				$requestInfo = [];
 				$requestInfo["offset"] = $offset;
 				$requestInfo["count"] = $count;
@@ -382,6 +381,7 @@ function giau_wordpress_data_service(){
 				error_log($requestInfo["query"]);
 				paged_data_service($requestInfo, table_info_page(), $response );
 				//
+				error_log("PAGE ROWS: ".count($response["data"]));
 				$metadata[] = [];
 					$subsections = subsection_list($response["data"], "page_section_list");
 					$metadata["section_list"] = $subsections;
@@ -389,8 +389,8 @@ function giau_wordpress_data_service(){
 				$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( GIAU_TABLE_DEFINITION_PAGE() );
 				
 			}else if($tableSourceName=="calendar"){
-				$offset = 0;
-				$count = 2;
+				// $offset = 0;
+				// $count = 2;
 				$requestInfo = [];
 				$requestInfo["offset"] = $offset;
 				$requestInfo["count"] = $count;
@@ -414,8 +414,8 @@ function giau_wordpress_data_service(){
 				$response["metadata"] = $metadata;
 				$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( GIAU_TABLE_DEFINITION_CALENDAR() );
 			}else if($tableSourceName=="bio"){
-				$offset = 0;
-				$count = 2;
+				// $offset = 0;
+				// $count = 2;
 				$requestInfo = [];
 				$requestInfo["offset"] = $offset;
 				$requestInfo["count"] = $count;
@@ -525,7 +525,6 @@ function giau_wordpress_data_service(){
 					// $count = 1;
 					// $offset = 50;
 					// $count = 1;
-error_log("SECTION OFFSETS: ".$offset,$count);
 					$requestInfo = [];
 					$requestInfo["offset"] = $offset;
 					$requestInfo["count"] = $count;
@@ -547,58 +546,17 @@ error_log("SECTION OFFSETS: ".$offset,$count);
 
 					// LIST SUBSECTIONS IN METADATA FOR DISPLAY
 					$subsections = subsection_list($response["data"], "section_subsections");
-					/*
-					$rows = &$response["data"];
-					$i;
-					$len = count($rows);
-					$foundSubsections = [];
-					for($i=0; $i<$len; ++$i){
-						$row = &$rows[$i];
-						$subsections = $row["section_subsections"];
-						$subsections = arrayFromCommaSeparatedString($subsections);
-						foreach ($subsections as $section){
-							$index = "".$section;
-							if( $index !="" ){
-								$foundSubsections[$index] = true;
-							}
-						}
-					}
-
-					// sections
-					$foundSubsections = array_keys($foundSubsections);
-					$subsections = [];
-					
-					if( count($foundSubsections)>0){
-						$subsectionsList = implode(",",$foundSubsections);
-						$query = "
-							SELECT
-								sections.id AS section_id,
-								sections.name AS section_name,
-								".GIAU_FULL_TABLE_NAME_WIDGET().".id AS widget_id,
-								".GIAU_FULL_TABLE_NAME_WIDGET().".name AS widget_name
-							FROM
-							(
-								SELECT *
-								FROM ".GIAU_FULL_TABLE_NAME_SECTION()." 
-								WHERE ".GIAU_FULL_TABLE_NAME_SECTION().".id IN (".$subsectionsList.") 
-							) as sections
-							JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()." 
-					    	ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = sections.widget 
-					    	";
-						$subsections = $wpdb->get_results($query, ARRAY_A);
-					}
-					*/
 					$metadata["section_list"] = $subsections;
-					
 
-										$foundWidgets = [];
 					// LIST WIDGETS IN METADATA FOR DISPLAY
+					$rows = $response["data"];
+					$len=count($rows);
+					$foundWidgets = [];
 					for($i=0; $i<$len; ++$i){
 						$row = &$rows[$i];
 						$widget_id = $row["widget_id"];
 						$foundWidgets[]= $widget_id;
 					}
-
 					// widgets
 						$subwidgetsList = implode(",",$foundWidgets);
 						$query = "

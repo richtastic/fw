@@ -5028,6 +5028,9 @@ giau.InputFieldDragAndDrop.prototype.generateBoxDivsFromArray = function(array){
 				src = source[j];
 				if(src && src[indexMatch]==value){
 					displayValue = src[indexDisplay];
+					if(displayValue == ""){ // default to index if visual not existing
+						displayValue = "("+value+")";
+					}
 					break;
 				}
 			}
