@@ -13,17 +13,13 @@ function giau_action_admin_menu() {
 		add_menu_page('Giau Plugin', 'Giau Plugin', 'manage_options', 'giau-plugin-main', 'giau_admin_menu_page_main',  giau_plugin_images_url().'/admin/giau_icon_white_24x24.png');
 		add_submenu_page('giau-plugin-main', 'Giau - File Upload', 'File Upload', 'manage_options', 'giau-plugin-submenu-file-upload', 'giau_admin_menu_page_submenu_file_upload');
 		add_submenu_page('giau-plugin-main', 'Giau - Data Entry', 'Data Entry', 'manage_options', 'giau-plugin-submenu-data-entry', 'giau_admin_menu_page_submenu_data_entry');
-		add_submenu_page('giau-plugin-main', 'Giau - File Backup', 'File Backup', 'manage_options', 'giau-plugin-submenu-file-backup', 'giau_admin_menu_page_submenu_file_backup');
-		add_submenu_page('giau-plugin-main', 'Giau - Data Backup', 'Data Backup', 'manage_options', 'giau-plugin-submenu-data-backup', 'giau_admin_menu_page_submenu_data_backup');
+		add_submenu_page('giau-plugin-main', 'Giau - Backup', 'Backup', 'manage_options', 'giau-plugin-submenu-backup', 'giau_admin_menu_page_submenu_backup');
 }
-
-
 
 function giau_admin_menu_page_main(){
 	$iconBlackMini = giau_plugin_images_url().'/admin/giau_icon_black_24x24.png';
 	$THIS_URL = getCurrentRequestURL();
-	$URL_FILE_UPLOAD = add_query_arg('page','giau-plugin-submenu-file-upload');
-	$URL_FILE_BACKUP = add_query_arg('page','giau-plugin-submenu-file-backup');
+	$URL_FILE_BACKUP = add_query_arg('page','giau-plugin-submenu-backup');
 	$URL_DATA_ENTRY = add_query_arg('page','giau-plugin-submenu-data-entry');
 	$URL_DATA_BACKUP = add_query_arg('page','giau-plugin-submenu-data-backup');
 ?>
@@ -31,8 +27,7 @@ function giau_admin_menu_page_main(){
 	<ul>
 		<li><a href="<?php echo $URL_FILE_UPLOAD; ?>">File Uploading</a></li>
 		<li><a href="<?php echo $URL_DATA_ENTRY; ?>">Data Entry</a></li>
-		<li><a href="<?php echo $URL_FILE_BACKUP; ?>">File Backup</a></li>
-		<li><a href="<?php echo $URL_DATA_BACKUP; ?>">Data Backup</a></li>
+		<li><a href="<?php echo $URL_FILE_BACKUP; ?>">File & Data Backup</a></li>
 	</ul>
 	<!--
 	<div class="giauTestA" style="width:200px; height:120px; background-color:#CCC;"></div>
@@ -151,7 +146,7 @@ function giau_admin_menu_page_submenu_file_upload(){
 <?php
 }
 
-function giau_admin_menu_page_submenu_data_backup(){	
+function giau_admin_menu_page_submenu_backup(){	
 	$URL_BACKUP_DOWNLOAD = add_query_arg('page','giau-plugin-submenu-data-download');
 	$URL_BACKUP_UPLOAD = add_query_arg('page','giau-plugin-submenu-data-upload');
 ?>
@@ -235,6 +230,7 @@ function giau_admin_menu_page_submenu_data_backup(){
 				if(!Code.getMouseLeftClick(e)){ return; }
 				var url = "./";
 				ajax.url(url);
+				ajax.timeout(100*1000);
 				ajax.method(Ajax.METHOD_TYPE_POST);
 				ajax.append('operation',operationName);
 				ajax.callback(function(e){

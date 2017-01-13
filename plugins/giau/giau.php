@@ -1045,6 +1045,15 @@ function divWithDatasValuesLabelsExtras($object, $included, $labels, $extra){
 function executeCommand($command){
 	//$command = " ".$command."  > /dev/null 2>&1 ";
 	$result = shell_exec("$command");
+	//$result = exec("$command"); // ?
+	return $result;
+}
+function executeCommandY($command){ // never worked
+	$result = proc_open("$command");
+	return $result;
+}
+function executeCommandZ($command){
+	$result = `{$command}`;
 	return $result;
 }
 
@@ -1054,11 +1063,39 @@ function zipDirectory($source, $destination){
 		return;
 	}
 	error_log("zipDirectory");
-	error_log("location: ".$source);
-	error_log("destination: ".$destination);
-	$command = " cd ".$source."  &&  zip -r ".$destination." ./* ";
-	error_log("command: ".$command);
-	executeCommand($command);
+	// error_log("location: ".$source);
+	// error_log("destination: ".$destination);
+	// $command = " cd ".$source."  &&  zip -r ".$destination." ./* "; // ./ ?
+	// error_log("command: ".$command);
+	// $result = executeCommand($command);
+	// return $command." ==== ".$result;
+	//return $result;
+
+	// using classes:
+	$zip = new ZipArchive();
+	if($zip->open($destination, ZipArchive::CREATE)!==TRUE){
+		return "";
+	}
+	$fileList = [];
+	getDirectoryListingLinear($source,$fileList);
+	error_log("contents length: ".count($fileList));
+	$i;
+	$len = count($fileList);
+	for($i=0; $i<$len; ++$i){
+		$entry = $fileList[$i];
+		$name = $entry["name"];
+		$absolute = $entry["path"];
+		$relative = relativePathByRemovingPrefix($absolute,$source);
+		$isDir = $entry["isDirectory"];
+		if(!$isDir){
+			$zip->addFile($absolute,$relative);
+		}
+		error_log("file: ".$name." = ".$relative);
+	}
+	error_log("numfiles: " . $zip->numFiles . "\n");
+	error_log("status:" . $zip->status . "\n");
+	$zip->close();
+	return $destination;
 }
 
 function unzipDirectory($source, $destination){
@@ -1068,10 +1105,19 @@ function unzipDirectory($source, $destination){
 	// error_log("unzipDirectory");
 	// error_log("location: ".$source);
 	// error_log("destination: ".$destination);
-	$command = " unzip ".$source."  -d ".$destination." ";
+	//$command = " unzip ".$source."  -d ".$destination." ";
 	// error_log("command: '".$command."'");
-	$result = executeCommand($command);
-	return $result;
+	//$result = executeCommand($command);
+	//return $command." ==== ".$result;
+
+	// using classes:
+	$zipSource = new ZipArchive();
+	if($zipSource->open($source)!==TRUE){
+		return "";
+	}
+	$zipSource->extractTo($destination);
+	$zipSource->close();
+	return $destination;
 }
 
 
@@ -1088,7 +1134,7 @@ function backup_uploads_directory_url(){
 	// ZIP UP
 	$zipSource = giau_plugin_upload_root_dir();
 	$zipDestination = giau_plugin_temp_dir()."/".$endName;
-	zipDirectory($zipSource, $zipDestination);
+	$result = zipDirectory($zipSource, $zipDestination); // assumed success
 	// location
 	$zipURL = giau_plugin_temp_url()."/".$endName;
 	return $zipURL;

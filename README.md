@@ -192,7 +192,6 @@ wp methods excape strings for you, no need for mysql_real_escape_string
 ```
 lftp
 open -u USERNAME,PASSWORD  ftp.lacpc.org
-
 # ---- BOX THEME:
 # GOTO
 cd /www/ce/wp-content/themes
@@ -248,15 +247,33 @@ chmod -R 755 giau/
 cd /www/ce/wp-content/plugins/
 lcd ~/universe/repo/fw/plugins
 # COPY GIAU
-# chmod -R 777 ./uploads
 rm -rf ./giau
 mirror -R giau giau
-# CODE ... ?
+# CODE ... ? HACKY:
+cd /www/ce/wp-content/plugins/giau
+mkdir js
+cd /www/ce/wp-content/plugins/giau/js
+lcd ~/universe/repo/fw/plugins/giau/js
+mirror -R . .
+
+lcd ~/universe/repo/fw/plugins/giau/js/code
+lcd ~/universe/repo/ff/src
+mirror -R code code
+
 # CHMOD READ ACCESS:
 cd /www/ce/wp-content/plugins/
 chmod -R 755 giau/
 
 ```
+
+
+
+service playing:------------------------------------------------------
+
+cd /www/ce/wp-content/plugins/giau/php
+lcd  ~/universe/repo/fw/plugins/giau/php
+put service.php
+
 
 
 

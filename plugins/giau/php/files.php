@@ -66,6 +66,12 @@ function relativePathToAbsolutePath($root, $relative){
 	return $absolutePath;
 }
 
+function relativePathByRemovingPrefix($path, $prefix){
+	if(substr($path, 0, strlen($prefix)) == $prefix) {
+		return substr($path, strlen($prefix));
+	}
+	return "";
+}
 
 function setFilePermissionsReadOnly($path){
 	chmod($path,0644); // rw- | r-- | r--
@@ -125,11 +131,11 @@ function getDirectoryListingRecursive($directory,&$array,$limit=null, $trim=null
 		}
 		$path = $item;
 		$path = realpath($directory."/".$path); // ($directory."".$path);//
-		error_log("PATH: ".$path."       ==========");
+		//error_log("PATH: ".$path."       ==========");
 		$size = filesize($path);
 		$isDir = is_dir($path);
 		$mimetype = $isDir ? "directory" : mime_content_type($path);
-		$arr  = [];
+		$arr = [];
 		$entry = [];
 		$entry["name"] = $item; // end
 		$entry["path"] = $path; // absolute
@@ -149,10 +155,27 @@ function getDirectoryListingRecursive($directory,&$array,$limit=null, $trim=null
 		}
 		array_push($array, $entry);
 		if($isDir){
-			getDirectoryListingRecursive($entry["path"], $arr, $limit-1, $trim);
+			getDirectoryListingRecursive($entry["path"], $arr, $limit-1, $trim, $fxn);
 		}
 		unset($entry);
 		unset($arr);
+	}
+}
+function getDirectoryListingLinear($directory,&$array,$limit=null, $trim=null, $fxn=null){
+	$temp = [];
+	getDirectoryListingRecursive($directory,$temp,$limit, $trim, $fxn);
+	addListingLinear($array, $temp);
+}
+function addListingLinear(&$destination, &$source){
+	$i;
+	$len = count($source);
+	for($i=0; $i<$len; ++$i){
+		$entry =& $source[$i];
+		$destination[] =& $entry;
+		if($entry["isDirectory"]){
+			addListingLinear($destination, $entry["contents"]);
+		}
+		unset($entry);
 	}
 }
 
