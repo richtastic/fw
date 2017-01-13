@@ -1065,13 +1065,13 @@ function unzipDirectory($source, $destination){
 	if(!$source || !$destination){
 		return;
 	}
-	error_log("unzipDirectory");
-	error_log("location: ".$source);
-	error_log("destination: ".$destination);
+	// error_log("unzipDirectory");
+	// error_log("location: ".$source);
+	// error_log("destination: ".$destination);
 	$command = " unzip ".$source."  -d ".$destination." ";
-	error_log("command: '".$command."'");
+	// error_log("command: '".$command."'");
 	$result = executeCommand($command);
-	error_log("result: '".$result."'");
+	return $result;
 }
 
 

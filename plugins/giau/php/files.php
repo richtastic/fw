@@ -156,6 +156,28 @@ function getDirectoryListingRecursive($directory,&$array,$limit=null, $trim=null
 	}
 }
 
+function removeContentsInDirectory($absolutePath){
+	if(!$absolutePath){ return 0; }
+//function removeFileAtLocation($absolutePath, $deleteIfDir=true){
+//function getDirectoryListingRecursive($directory,&$array,$limit=null, $trim=null, $fxn=null){
+	$array = [];
+	getDirectoryListingRecursive($absolutePath,$array, 1);
+	error_log("contents length: ".count($array));
+	$i;
+	$len = count($array);
+	$deleteCount = 0;
+	for($i=0; $i<$len; ++$i){
+		$entry = $array[$i];
+		$path = $entry["path"];
+		error_log("  path: ".$path);
+		$removed = removeFileAtLocation($path);
+		if($removed){
+			$deleteCount += 1;
+		}
+	}
+	return $deleteCount;
+}
+
 
 
 ?>

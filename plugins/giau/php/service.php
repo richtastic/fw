@@ -92,6 +92,8 @@ function giau_wordpress_data_service(){
 // BACKUP SERVICE --------------------------------------------------------------------------------------------------------------
 		}else if($operationType=="temp_directory_remove"){
 			error_log("CLEAR TEMP DIRECTORY");
+			$tempDirectory = giau_plugin_temp_dir();
+			$removed = removeContentsInDirectory($tempDirectory);
 			$response["result"] = "success";
 		}else if($operationType=="backup_download_database"){
 			error_log("DOWNLOAD BACKUP DB");
@@ -131,19 +133,28 @@ function giau_wordpress_data_service(){
 		}else if($operationType=="backup_upload_uploads_zip"){
 			error_log("UPLOAD BACKUP ZIP");
 			
-			
-			
-	// ZIP OUT
-			$zipSource = giau_plugin_temp_dir()."/"."uploads.zip";
-			$zipDestination = giau_plugin_temp_dir()."/"."uploads";
-			//$zipDestination = giau_plugin_upload_root_dir();
-			$result = unzipDirectory($zipSource, $zipDestination);
-			error_log("result: ".$result);
-			if($result){
-				$response["data"] = [
-					"uploads_zip" => $backupURL,
-				];
-				$response["result"] = "success";
+			$file = $_FILES['file'];
+			error_log("    => file:".$file);
+			if($file){
+				$location = $file['tmp_name'];
+				error_log("    => location:".$location);
+				error_log("    => error:".$file['error']);
+				// error_log("  0  type: ".UPLOAD_ERR_OK);
+				// error_log("  1  type: ".UPLOAD_ERR_INI_SIZE);
+				// error_log("  2  type: ".UPLOAD_ERR_FORM_SIZE);
+				// error_log("  3  type: ".UPLOAD_ERR_PARTIAL);
+				// error_log("  4  type: ".UPLOAD_ERR_NO_FILE);
+				if($location){
+					$zipSource = $location;
+					$zipDestination = giau_plugin_upload_root_dir();
+					error_log("UNZIP: ".$zipSource." => ".$zipDestination);
+					$result = unzipDirectory($zipSource, $zipDestination);
+					error_log("result: ".$result);
+					if($result){
+						error_log("SEND SUCCESS");
+						$response["result"] = "success";
+					}
+				}
 			}
 // FILE SERVICE --------------------------------------------------------------------------------------------------------------
 		}else if($operationType=="file_upload_file"){
