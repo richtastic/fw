@@ -401,7 +401,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				"type" => "string-number",
 				"attributes" => [
 					"display_name" => "ID",
-					"order" => "0",
+					"order" => "12",
 					"primary_key" => "true",
 					"sort" =>  "false",
 					"editable" => "false",
@@ -411,7 +411,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				"type" => "string-date",
 				"attributes" => [
 					"display_name" => "Created",
-					"order" => "1",
+					"order" => "10",
 					"sort" =>  "true",
 					"editable" => "false",
 				],
@@ -420,7 +420,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				"type" => "string-date",
 				"attributes" => [
 					"display_name" => "Modified",
-					"order" => "2",
+					"order" => "11",
 					"sort" =>  "true",
 					"editable" => "false",
 				],
@@ -429,7 +429,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				"type" => "string",
 				"attributes" => [
 					"display_name" => "First Name",
-					"order" => "5",
+					"order" => "1",
 					"sort" =>  "true",
 					"editable" => "true",
 				],
@@ -438,7 +438,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				"type" => "string",
 				"attributes" => [
 					"display_name" => "Last Name",
-					"order" => "5",
+					"order" => "2",
 					"sort" =>  "true",
 					"editable" => "true",
 				],
@@ -447,7 +447,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				"type" => "string",
 				"attributes" => [
 					"display_name" => "Display Name",
-					"order" => "5",
+					"order" => "0",
 					"sort" =>  "true",
 					"editable" => "true",
 				],
@@ -456,7 +456,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				"type" => "string",
 				"attributes" => [
 					"display_name" => "Position",
-					"order" => "5",
+					"order" => "3",
 					"sort" =>  "true",
 					"editable" => "true",
 				],
@@ -465,7 +465,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				"type" => "string",
 				"attributes" => [
 					"display_name" => "Email",
-					"order" => "5",
+					"order" => "4",
 					"sort" =>  "true",
 					"editable" => "true",
 				],
@@ -483,7 +483,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				"type" => "string",
 				"attributes" => [
 					"display_name" => "Description",
-					"order" => "5",
+					"order" => "6",
 					"sort" =>  "true",
 					"editable" => "true",
 				],
@@ -492,7 +492,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				"type" => "string",
 				"attributes" => [
 					"display_name" => "Web URL",
-					"order" => "5",
+					"order" => "7",
 					"sort" =>  "true",
 					"editable" => "true",
 				],
@@ -501,7 +501,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				"type" => "string",
 				"attributes" => [
 					"display_name" => "Image URL",
-					"order" => "5",
+					"order" => "8",
 					"sort" =>  "true",
 					"editable" => "true",
 				],
@@ -510,7 +510,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				"type" => "string-array",
 				"attributes" => [
 					"display_name" => "Tags",
-					"order" => "5",
+					"order" => "9",
 					"sort" =>  "true",
 					"editable" => "true",
 				],

@@ -4441,7 +4441,7 @@ console.log(jsonString);
 			passBack["index"] = data["index"];
 			passBack["value"] = data["value"];
 // TODO: UNBLOCK THIS
-//		this._dataCRUD.update(jsonString, passBack);
+		this._dataCRUD.update(jsonString, passBack);
 	}
 }
 giau.CRUD.prototype._handleDeleteFxn = function(e,data){
