@@ -59,6 +59,52 @@ function getDateSecond($time){
 function getDateMilliecond($time){
 	return date("s",$time);
 }
+function reverseObjectMap($obj){
+	$reverse = [];
+	$keys = array_keys($obj);
+	$i;
+	$len = count($keys);
+	for($i=0; $i<$len; ++$i){
+		$key = $keys[$i];
+		$val = $obj[$key];
+		if($key && $val){
+			$reverse[$val] = $key;
+			//unset($arr);
+		}
+	}
+	return $reverse;
+}
+function objectToString($obj=null, $tab=" "){
+	$str = "";
+	if($obj==null){
+		$str = "(null)";
+	}else{
+		// is_object
+		if(!is_array($obj)){
+			if(is_string($obj)){
+				$str = "\"".$obj."\"";
+			}else{
+				$str = "".$obj;
+			}
+		}else{
+			$str = $str."[\n";
+			$keys = array_keys($obj);
+			$i;
+			$len = count($keys);
+			for($i=0; $i<$len; ++$i){
+				$key = $keys[$i];
+				$val = $obj[$key];
+				$str = $str."".$tab."".$key." => ".objectToString($val, $tab."    ")."\n";
+			}
+			$str = $str.$tab."]";
+		}
+	}
+	return $str;
+}
+
+function getKeys($obj){
+	return array_keys($obj);
+}
 
 function colorHTMLFromColorString($color){
 	error_log("WAS: ".$color);

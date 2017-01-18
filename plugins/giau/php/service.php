@@ -21,7 +21,7 @@ function giau_wordpress_data_service(){
 	foreach ($_FILES as $key => $value) {
 		error_log("FILES key: ".$key." ........... ".$value);
 	}
-
+crudDataFromOperation( [], "read", GIAU_TABLE_DEFINITION_SECTION());
 	if( isset($_POST) && isset($_POST['operation']) ){ // if( isset($_GET) && isset($_GET['operation']) ){
 		$operationType = $_POST['operation'];
 		if($operationType=="get_table_page" || $operationType=="get_autocomplete"){
@@ -242,19 +242,18 @@ function giau_wordpress_data_service(){
 			$dataCRUD = json_decode($dataCRUD);
 			if($tableSourceName=="section"){
 				crudDataFromOperation($lifecycleCRUD, GIAU_TABLE_DEFINITION_SECTION());
+			}else if($tableSourceName=="widget"){
+				crudDataFromOperation($lifecycleCRUD, GIAU_TABLE_DEFINITION_WIDGET());
+			}else if($tableSourceName=="page"){
+				crudDataFromOperation($lifecycleCRUD, GIAU_TABLE_DEFINITION_PAGE());
+			}else if($tableSourceName=="website"){
+				crudDataFromOperation($lifecycleCRUD, GIAU_TABLE_DEFINITION_WEBSITE());
+			}else if($tableSourceName=="languagization"){
+				crudDataFromOperation($lifecycleCRUD, GIAU_TABLE_DEFINITION_LANGUAGIZATION());
+			}else if($tableSourceName=="calendar"){
+				crudDataFromOperation($lifecycleCRUD, GIAU_TABLE_DEFINITION_CALENDAR());
 			}else if($tableSourceName=="bio"){
 				crudDataFromOperation($lifecycleCRUD, GIAU_TABLE_DEFINITION_BIO());
-
-				error_log("BIO ;;;".$lifecycleCRUD);
-				if($lifecycleCRUD==="create"){
-					error_log("BIO CREATE");
-				}else if($lifecycleCRUD==="read"){
-					error_log("BIO READ");
-				}else if($lifecycleCRUD==="update"){
-					error_log("BIO UPDATE");
-				}else if($lifecycleCRUD==="delete"){
-					error_log("BIO DELETE");
-				}
 			}else{
 				error_log("UNKNOWN CRUD TABLE");
 			}
@@ -599,52 +598,24 @@ function subsection_list(&$rows, $columnName){ // LIST SUBSECTIONS IN METADATA F
 }
 
 
-function crudDataFromOperation($lifecycleCRUD, $tableDefinition){ // $tableSourceName
-
-	HERE
-
+function crudDataFromOperation($inputData, $lifecycleCRUD, $tableDefinition){ // $tableSourceName
 	// find primary key
 	// find editable fields
 	// pass non null fields to corresponding fxn
 
 	if($lifecycleCRUD==="create"){
-		crudDataCreate(???);
+		crudDataCreate($tableDefinition, $dataCRUD);
 	}else if($lifecycleCRUD==="read"){
-		error_log(" => READ");
-		$dataID = $dataCRUD->{'section_id'};
-		if($dataID!==null){
-			$res = giau_read_section($dataID);
-			if($res!==null){
-				$response["data"] = $res;
-				$response["result"] = "success";
-			}
-		}
+		crudDataOperationRead($tableDefinition, $dataCRUD);
 	}else if($lifecycleCRUD==="update"){
-		error_log(" => UPDATE");
-		$dataID = $dataCRUD->{'section_id'};
-		error_log("dataID: ".$dataID);
-		$dataName = $dataCRUD->{'section_name'};
-		$dataConfiguration = $dataCRUD->{'section_configuration'};
-		$dataList = $dataCRUD->{'section_subsections'};
-		$res = giau_update_section($dataID, $dataName, null, $dataConfiguration, $dataList);
-		if($res!==null){
-			$response["data"] = $res;
-			$response["result"] = "success";
-		}
+		crudDataOperationUpdate($tableDefinition, $dataCRUD);
 	}else if($lifecycleCRUD==="delete"){
-		error_log(" => DELETE");
-		$dataID = $dataCRUD->{'section_id'};
-		if($dataID!==null){
-			$res = giau_delete_section($dataID);
-			error_log(" => RESULT".$res);
-			if($res!==null){
-				$response["result"] = "success";
-			}
-		}
+		crudDataOperationDelete($tableDefinition, $dataCRUD);
 	}
 }
 
-function crudDataOperationCreate($tableDefinition, $data){
+function crudDataOperationCreate($tableDefinition, $dataCRUD){
+
 	/*
 	error_log(" => CREATE");
 					$dataName = $dataCRUD->{'section_name'};
@@ -657,17 +628,139 @@ function crudDataOperationCreate($tableDefinition, $data){
 						$response["data"] = $res;
 						$response["result"] = "success";
 					}
+
+
+function giau_create_section($sectionName, $widgetID, $sectionConfig, $sectionList){
+	error_log("giau_create_section - sectionConfig: ".$sectionConfig);
+	// to array
+	$sectionList = arrayFromCommaSeparatedString($sectionList);
+	$sectionID = giau_insert_section($sectionName, $widgetID, $sectionConfig, $sectionIDList);
+	return giau_read_section($sectionID);
+}
 	*/
 	
 }
-function crudDataOperationRead($tableDefinition, $data){
-	//
+function crudDataFromDefinition($tableDefinition){
+	// ...
+	$info = [];
+	$primary_key = "?";
+	$editableFields = [];
+	$allFields = [];
+	$aliases = [];
+	$info["primary_key"] = $primary_key;
+	$info["all_fields"] = $allFields;
+	$info["column_aliases"] = $aliases;
+	$info["editable_fields"] = $editableFields;
+	return $info;
 }
-function crudDataOperationUpdate($tableDefinition, $data){
-	//
+function crudDataOperationRead($tableDefinition, $dataCRUD){
+	$i;
+	$len;
+//	error_log( objectToString($lifecycleCRUD) );
+//	error_log( objectToString($tableDefinition) );
+	$tableName = $tableDefinition["table"];
+	$presentation = $tableDefinition["presentation"];
+	$columnAliases = $presentation["column_aliases"];
+		$columnAliases = reverseObjectMap($columnAliases);
+	$tableColumns = $tableDefinition["columns"];
+$editableFields = [];
+	// go thru definition
+	$keys = getKeys($tableColumns);
+	$primaryKeyColumnName = null;
+	$primaryKeyColumnAlias = null;
+	$len = count($keys);
+	for($i=0; $i<$len; ++$i){
+		$key = $keys[$i];
+		$columnRealName = $key;
+		$column = $tableColumns[$key];
+		$columnAliasName = $columnAliases[$columnRealName];
+		//error_log(" col:".$columnAliasName." =?= ".$columnRealName);
+		$attributes = $column["attributes"];
+		if($attributes["primary_key"] == "true"){
+			$primaryKeyColumnName = $columnRealName;
+			$primaryKeyColumnAlias = $columnAliasName;
+		}
+		if($attributes["editable"]=="true"){
+			$editableFields[] = $columnAliasName;
+		}
+	}
+	error_log( objectToString($editableFields) );
+	if($primaryKeyColumnAlias && $primaryKeyColumnName){
+		error_log("need primary key: ".$primaryKeyColumnAlias);
+	}
+	// get params from data
+	$dataValues = [];
+	$keys = getKeys($tableColumns);
+	$primaryKeyColumnName = null;
+	$primaryKeyColumnAlias = null;
+	$len = count($keys);
+	for($i=0; $i<$len; ++$i){
+		
+	}
+	/*
+	error_log(" => READ");
+		$dataID = $dataCRUD->{'section_id'};
+		if($dataID!==null){
+			$res = giau_read_section($dataID);
+			if($res!==null){
+				$response["data"] = $res;
+				$response["result"] = "success";
+			}
+		}
+
+function giau_read_section($sectionID){
+	error_log(" read sectionID: ".$sectionID);
+	if($sectionID===null){
+		return null;
+	}
+	global $wpdb;
+	$querystr = "
+		SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".created as section_created,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as section_modified,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".name as section_name,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".configuration as section_configuration,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".section_list as section_subsections,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".widget as widget_id
+		FROM ".GIAU_FULL_TABLE_NAME_SECTION()." 
+		WHERE id=\"".$sectionID."\" LIMIT 1";
+	$rows = $wpdb->get_results($querystr, ARRAY_A);
+	error_log(" read row: ".($rows[0]["section_id"]));
+	if( count($rows)==1 ){
+		return $rows[0];
+	}
+	return null;
 }
-function crudDataOperationDelete($tableDefinition, $data){
-	//
+
+	*/
+}
+function crudDataOperationUpdate($tableDefinition, $dataCRUD){
+	/*
+	error_log(" => UPDATE");
+		$dataID = $dataCRUD->{'section_id'};
+		error_log("dataID: ".$dataID);
+		$dataName = $dataCRUD->{'section_name'};
+		$dataConfiguration = $dataCRUD->{'section_configuration'};
+		$dataList = $dataCRUD->{'section_subsections'};
+		$res = giau_update_section($dataID, $dataName, null, $dataConfiguration, $dataList);
+		if($res!==null){
+			$response["data"] = $res;
+			$response["result"] = "success";
+		}
+		*/
+}
+function crudDataOperationDelete($tableDefinition, $dataCRUD){
+	/*
+	error_log(" => DELETE");
+		$dataID = $dataCRUD->{'section_id'};
+		if($dataID!==null){
+			$res = giau_delete_section($dataID);
+			error_log(" => RESULT".$res);
+			if($res!==null){
+				$response["result"] = "success";
+			}
+		}
+		*/
 }
 
 function table_info_website(){
