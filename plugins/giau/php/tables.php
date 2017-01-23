@@ -68,8 +68,13 @@ function GIAU_FULL_TABLE_NAME_BIO(){
 		extend int,
 		section_list VARCHAR(65535) NOT NULL,
 		*/
-function GIAU_TABLE_DEFINITION_TO_PRESENTATION(&$tableDefinition){
+function GIAU_TABLE_DEFINITION_TO_PRESENTATION(&$tableDefinition){ // for client consumption
 	// substitute or whatnot
+	//$tableDefinition["functions"] = null;
+	// unset($tableDefinition);
+
+	// remove the functions key
+	unset($tableDefinition["functions"]);
 	return $tableDefinition;
 
 }
@@ -291,8 +296,18 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					],
 				],
 			]
-		]
+		],
+		"functions" => [
+			"crud" => [
+				"create" => GIAU_TABLE_FUNCTION_CRUD_CREATE,
+				//
+			],
+			//
+		],
 	];
+}
+function GIAU_TABLE_FUNCTION_CRUD_CREATE($data) {
+	return null;
 }
 function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 	return

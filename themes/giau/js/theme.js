@@ -4648,6 +4648,7 @@ console.log("giau.CRUD.prototype._updateWithData");
 	this._updateLayout();
 }
 giau.CRUD.prototype._updateLayout = function(){
+	console.log(this._dataView);
 	var searchFields = this._searchFields;
 	var i, j;
 	

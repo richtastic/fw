@@ -511,6 +511,7 @@ crudDataFromOperation( [], "read", GIAU_TABLE_DEFINITION_SECTION());
 					    FROM ".GIAU_FULL_TABLE_NAME_SECTION()."
 					    JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
 					    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
+					    ORDER BY section_name ASC, section_id DESC
 					";
 					paged_data_service($requestInfo, table_info_section(), $response );
 
@@ -658,6 +659,8 @@ function crudDataOperationRead($tableDefinition, $dataCRUD){
 	$len;
 //	error_log( objectToString($lifecycleCRUD) );
 //	error_log( objectToString($tableDefinition) );
+	$tableFunctions = $tableDefinition["functions"];
+		$tableFunctionCreate = $tableFunctions["crud"]["create"];
 	$tableName = $tableDefinition["table"];
 	$presentation = $tableDefinition["presentation"];
 	$columnAliases = $presentation["column_aliases"];
@@ -691,11 +694,10 @@ $editableFields = [];
 	// get params from data
 	$dataValues = [];
 	$keys = getKeys($tableColumns);
-	$primaryKeyColumnName = null;
-	$primaryKeyColumnAlias = null;
+	$hasFoundPrimaryKey;
 	$len = count($keys);
 	for($i=0; $i<$len; ++$i){
-		
+		$key = $keys[$i];
 	}
 	/*
 	error_log(" => READ");

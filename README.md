@@ -4,16 +4,13 @@
 
 ###TODO
 
-- prettier CRUD interface
-- download file backup DB
-- file upload backup DB
-- download file backup uploads zip
-- file upload backup uploads  zip
-
+- specific input criteria fxns --
+	- separate: CREATE / READ / UPDATE / DELETE
+	- maximum character length
+	- sections cannot somewhere down the line contain another section
+- add more helpful description / infos
 
 ADMIN PAGES:
-	- choose from library of widgets
-	- preview section
 - page table: READ, UPDATE, CREATE, DELETE
 	- special key names:
 		- __live

@@ -19,7 +19,7 @@ function giau_action_admin_menu() {
 function giau_admin_menu_page_main(){
 	$iconBlackMini = giau_plugin_images_url().'/admin/giau_icon_black_24x24.png';
 	$THIS_URL = getCurrentRequestURL();
-	$URL_FILE_BACKUP = add_query_arg('page','giau-plugin-submenu-backup');
+	$URL_FILE_UPLOAD = add_query_arg('page','giau-plugin-submenu-file-upload');
 	$URL_DATA_ENTRY = add_query_arg('page','giau-plugin-submenu-data-entry');
 	$URL_DATA_BACKUP = add_query_arg('page','giau-plugin-submenu-data-backup');
 ?>
