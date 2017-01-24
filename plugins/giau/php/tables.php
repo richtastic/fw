@@ -69,12 +69,22 @@ function GIAU_FULL_TABLE_NAME_BIO(){
 		section_list VARCHAR(65535) NOT NULL,
 		*/
 function GIAU_TABLE_DEFINITION_TO_PRESENTATION(&$tableDefinition){ // for client consumption
-	// substitute or whatnot
-	//$tableDefinition["functions"] = null;
-	// unset($tableDefinition);
-
 	// remove the functions key
 	unset($tableDefinition["functions"]);
+
+	// remove server validation params
+	$columns = &$tableDefinition["columns"];
+	$i;
+	$keys = getKeys($columns);
+	$len = count($keys);
+	for($i=0; $i<$len; ++$i){
+		$key = $keys[$i];
+		if($columns[$key]["validation"]){
+			error_log("RICHIE FOUND COLUMN VALIDATION: ".$key);
+			unset($columns[$key]["validation"]);
+		}
+	}
+
 	return $tableDefinition;
 
 }
@@ -177,6 +187,9 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"display" => "false",
 					"default" => null,
 				],
+				"validation" => [
+					//
+				],
 			],
 			"created" => [
 				"type" => "string-date",
@@ -186,6 +199,11 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"sort" =>  "true",
 					"editable" => "false",
 					"default" => null,
+				],
+				"validation" => [
+					"create" => [
+						"timestamp" => "now" // replace with now
+					],
 				],
 			],
 			"modified" => [
@@ -197,6 +215,14 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"editable" => "false",
 					"default" => null,
 				],
+				"validation" => [
+					"create" => [
+						"timestamp" => "now" // replace with now
+					],
+					"update" => [
+						"timestamp" => "now" // replace with now
+					],
+				],
 			],
 			"widget" => [
 				"type" => "string-array",
@@ -207,6 +233,18 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"editable" => "true",
 					"default" => null,
 				],
+				"validation" => [
+					"create" => [
+						// widget doesn't have to exist on creation
+					],
+					"update" => [
+						"reference" => [
+							"table" => GIAU_FULL_TABLE_NAME_WIDGET(),
+							"column" => "id",
+							"logic" => "equal",
+						],
+					],
+				]
 			],
 			// "extend" => [
 			// 	"type" => "string-number",
@@ -237,6 +275,13 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"editable" => "true",
 					"default" => "",
 				],
+				"validation" => [
+					"create" => [
+						"max_length" => [
+							"characters" => "255",
+						],
+					],
+				],
 			],
 			"section_list" => [
 				"type" => "string-array",
@@ -246,6 +291,16 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					"sort" =>  "false",
 					"editable" => "true",
 					"default" => "",
+				],
+				"validation" => [
+					"create" => [
+						"recursion_contains" => [  // cannot contain self
+							"logic" => "not_equal",
+							"column_source" => "id",
+							"column_check" => "section_list",
+							"limit" => "0",
+						],
+					],
 				],
 			],
 		],
@@ -352,6 +407,13 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 					"editable" => "true",
 					"monospace" => "true",
 				],
+				"validation" => [
+					"update" => [
+						"max_length" => [
+							"characters" => "255",
+						],
+					],
+				],
 			],
 			"language" => [
 				"type" => "string-option",
@@ -360,6 +422,13 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 					"order" => "1",
 					"monospace" => "true",
 					"editable" => "true",
+				],
+				"validation" => [
+					"update" => [
+						"max_length" => [
+							"characters" => "16",
+						],
+					],
 				],
 			],
 			"phrase_value" => [
@@ -943,7 +1012,7 @@ function giau_create_database(){
 		id int NOT NULL AUTO_INCREMENT,
 		created VARCHAR(32) NOT NULL,
 		modified VARCHAR(32) NOT NULL,
-		short_name VARCHAR(32) NOT NULL,
+		short_name VARCHAR(64) NOT NULL,
 		title VARCHAR(255) NOT NULL,
 		description VARCHAR(255) NOT NULL,
 		start_date VARCHAR(32) NOT NULL,

@@ -600,23 +600,147 @@ function subsection_list(&$rows, $columnName){ // LIST SUBSECTIONS IN METADATA F
 
 
 function crudDataFromOperation($inputData, $lifecycleCRUD, $tableDefinition){ // $tableSourceName
-	// find primary key
-	// find editable fields
-	// pass non null fields to corresponding fxn
-
-	if($lifecycleCRUD==="create"){
-		crudDataCreate($tableDefinition, $dataCRUD);
-	}else if($lifecycleCRUD==="read"){
-		crudDataOperationRead($tableDefinition, $dataCRUD);
-	}else if($lifecycleCRUD==="update"){
-		crudDataOperationUpdate($tableDefinition, $dataCRUD);
-	}else if($lifecycleCRUD==="delete"){
-		crudDataOperationDelete($tableDefinition, $dataCRUD);
+	$i;
+	$len;
+//	error_log( objectToString($lifecycleCRUD) );
+//	error_log( objectToString($tableDefinition) );
+	$tableFunctions = $tableDefinition["functions"];
+		$tableFunctionsCRUD = $tableFunctions["crud"];
+			$tableFunctionCreate = $tableFunctionsCRUD["create"];
+			$tableFunctionRead = $tableFunctionsCRUD["read"];
+			$tableFunctionUpdate = $tableFunctionsCRUD["update"];
+			$tableFunctionDelete = $tableFunctionsCRUD["delete"];
+	$tableName = $tableDefinition["table"];
+	$presentation = $tableDefinition["presentation"];
+	$columnAliasToReal = $presentation["column_aliases"];
+		$columnRealToAlias = reverseObjectMap($columnRealToAlias);
+	$tableColumns = $tableDefinition["columns"];
+$editableFields = [];
+	// go thru definition
+	$keys = getKeys($tableColumns);
+	$primaryKeyColumnName = null;
+	$primaryKeyColumnAlias = null;
+	$len = count($keys);
+	for($i=0; $i<$len; ++$i){
+		$key = $keys[$i];
+		$columnRealName = $key;
+		$column = $tableColumns[$key];
+		$columnAliasName = $columnRealToAlias[$columnRealName];
+		//error_log(" col:".$columnAliasName." =?= ".$columnRealName);
+		$attributes = $column["attributes"];
+		if($attributes["primary_key"] == "true"){
+			$primaryKeyColumnName = $columnRealName;
+			$primaryKeyColumnAlias = $columnAliasName;
+			$editableFields[] = $columnAliasName;
+		}
+		if($attributes["editable"]=="true"){
+			$editableFields[] = $columnAliasName;
+		}
 	}
+	error_log( objectToString($editableFields) );
+	if($primaryKeyColumnAlias && $primaryKeyColumnName){
+		error_log("need primary key: ".$primaryKeyColumnAlias);
+	}
+	// get params from data
+	$dataPass = [];
+	$keys = getKeys($inputData);
+	$hasFoundPrimaryKey = false;
+	$len = count($keys);
+	for($i=0; $i<$len; ++$i){
+		$key = $keys[$i];
+		$value = $inputData[$key];
+		if($key==$primaryKeyColumnAlias){
+			$hasFoundPrimaryKey = true;
+		}
+		if(in_array($key,$editableFields)){
+			$column = $columnAliasToReal[$key];
+			if($column){
+				$dataPass[$column] = $value;
+			}
+		}
+	}
+	error_log("DATA PASS: ".objectToString($dataPass));
+	/*
+	error_log(" => READ");
+		$dataID = $dataCRUD->{'section_id'};
+		if($dataID!==null){
+			$res = giau_read_section($dataID);
+			if($res!==null){
+				$response["data"] = $res;
+				$response["result"] = "success";
+			}
+		}
+
+function giau_read_section($sectionID){
+	error_log(" read sectionID: ".$sectionID);
+	if($sectionID===null){
+		return null;
+	}
+	global $wpdb;
+	$querystr = "
+		SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".created as section_created,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as section_modified,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".name as section_name,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".configuration as section_configuration,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".section_list as section_subsections,
+	    ".GIAU_FULL_TABLE_NAME_SECTION().".widget as widget_id
+		FROM ".GIAU_FULL_TABLE_NAME_SECTION()." 
+		WHERE id=\"".$sectionID."\" LIMIT 1";
+	$rows = $wpdb->get_results($querystr, ARRAY_A);
+	error_log(" read row: ".($rows[0]["section_id"]));
+	if( count($rows)==1 ){
+		return $rows[0];
+	}
+	return null;
 }
 
-function crudDataOperationCreate($tableDefinition, $dataCRUD){
+	*/
+	if($lifecycleCRUD==="create"){
+		return crudDataOperationCreate($tableName, $tableColumns, $dataPass);
+		//return $tableFunctionCreate($dataPass);
+	}else if($lifecycleCRUD==="read"){
+		//return $tableFunctionRead($dataPass);
+	}else if($lifecycleCRUD==="update"){
+		//return $tableFunctionUpdate($dataPass);
+	}else if($lifecycleCRUD==="delete"){
+		//return $tableFunctionDelete($dataPass);
+	}
+	return null;
+}
 
+function crudDataOperationCreate($tableName, $columnInfo, $inputData){
+	global $wpdb;
+	$row = [];
+	$i; $len; $keys;
+	$keys = getKeys($columnInfo);
+	for($i=0; $i<$len; ++$i){ // go thru each of the fields
+		$columnName = $keys[$i];
+		$column = $columnInfo[$key];
+		$validation = $column["validation"];
+		$validAll = array_merge($validation["all"], $validation["create"]);
+
+		// CHECK ...
+		
+		// does not have editable field => return
+		// 	"created" => $timestampNow,
+		// 	"modified" => $timestampNow,
+		// 	"name" => $sectionName,
+		// 	"widget" => $widgetID,
+		// 	"configuration" => $sectionConfig,
+		// 	"section_list" => $sectionList,
+		// )
+	}
+	//"all" => [ // c/r/u/d
+
+	return null;
+
+	$wpdb->insert($tableName, $row);
+	$result = $wpdb->insert_id;
+	if($result!==null){
+		// return object
+	}
+	return null;
 	/*
 	error_log(" => CREATE");
 					$dataName = $dataCRUD->{'section_name'};
@@ -655,86 +779,7 @@ function crudDataFromDefinition($tableDefinition){
 	return $info;
 }
 function crudDataOperationRead($tableDefinition, $dataCRUD){
-	$i;
-	$len;
-//	error_log( objectToString($lifecycleCRUD) );
-//	error_log( objectToString($tableDefinition) );
-	$tableFunctions = $tableDefinition["functions"];
-		$tableFunctionCreate = $tableFunctions["crud"]["create"];
-	$tableName = $tableDefinition["table"];
-	$presentation = $tableDefinition["presentation"];
-	$columnAliases = $presentation["column_aliases"];
-		$columnAliases = reverseObjectMap($columnAliases);
-	$tableColumns = $tableDefinition["columns"];
-$editableFields = [];
-	// go thru definition
-	$keys = getKeys($tableColumns);
-	$primaryKeyColumnName = null;
-	$primaryKeyColumnAlias = null;
-	$len = count($keys);
-	for($i=0; $i<$len; ++$i){
-		$key = $keys[$i];
-		$columnRealName = $key;
-		$column = $tableColumns[$key];
-		$columnAliasName = $columnAliases[$columnRealName];
-		//error_log(" col:".$columnAliasName." =?= ".$columnRealName);
-		$attributes = $column["attributes"];
-		if($attributes["primary_key"] == "true"){
-			$primaryKeyColumnName = $columnRealName;
-			$primaryKeyColumnAlias = $columnAliasName;
-		}
-		if($attributes["editable"]=="true"){
-			$editableFields[] = $columnAliasName;
-		}
-	}
-	error_log( objectToString($editableFields) );
-	if($primaryKeyColumnAlias && $primaryKeyColumnName){
-		error_log("need primary key: ".$primaryKeyColumnAlias);
-	}
-	// get params from data
-	$dataValues = [];
-	$keys = getKeys($tableColumns);
-	$hasFoundPrimaryKey;
-	$len = count($keys);
-	for($i=0; $i<$len; ++$i){
-		$key = $keys[$i];
-	}
-	/*
-	error_log(" => READ");
-		$dataID = $dataCRUD->{'section_id'};
-		if($dataID!==null){
-			$res = giau_read_section($dataID);
-			if($res!==null){
-				$response["data"] = $res;
-				$response["result"] = "success";
-			}
-		}
-
-function giau_read_section($sectionID){
-	error_log(" read sectionID: ".$sectionID);
-	if($sectionID===null){
-		return null;
-	}
-	global $wpdb;
-	$querystr = "
-		SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".created as section_created,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as section_modified,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".name as section_name,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".configuration as section_configuration,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".section_list as section_subsections,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".widget as widget_id
-		FROM ".GIAU_FULL_TABLE_NAME_SECTION()." 
-		WHERE id=\"".$sectionID."\" LIMIT 1";
-	$rows = $wpdb->get_results($querystr, ARRAY_A);
-	error_log(" read row: ".($rows[0]["section_id"]));
-	if( count($rows)==1 ){
-		return $rows[0];
-	}
-	return null;
-}
-
-	*/
+	
 }
 function crudDataOperationUpdate($tableDefinition, $dataCRUD){
 	/*

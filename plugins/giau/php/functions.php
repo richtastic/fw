@@ -4,7 +4,7 @@
 function require_once_directory($directory){
 	error_log("require_once_directory: '".$directory."'");
 	$phpEnding = ".php";
-	$phpEndingStringLength = strlen(phpEnding);
+	$phpEndingStringLength = strlen($phpEnding);
 	if($directory){
 		$directoryExists = file_exists($directory);
 		if($directoryExists){
@@ -14,7 +14,7 @@ function require_once_directory($directory){
 				$fileName = $fileValue;
 				$fileStringLength = strlen($fileName);
 				if( $fileStringLength > $phpEndingStringLength && substr($fileName, $fileStringLength-$phpEndingStringLength, $phpEndingStringLength) == $phpEnding ) {
-					require_once fileName;
+					require_once $fileName;
 				}
 			}
 		}
