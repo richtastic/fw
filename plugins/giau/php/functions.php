@@ -59,7 +59,24 @@ function getDateSecond($time){
 function getDateMilliecond($time){
 	return date("s",$time);
 }
+function mergeObjects(&$objectA, &$objectB, $recursive){
+	if(!$objectA){
+		$objectA = [];
+	}
+	if(!$objectB){
+		$objectB = [];
+	}
+	if($recursive){
+		return array_merge_recursive($objectA, $objectB);
+	}else{
+		return array_merge($objectA, $objectB);
+	}
+}
+		
 function reverseObjectMap($obj){
+	if(!$obj){
+		return [];
+	}
 	$reverse = [];
 	$keys = array_keys($obj);
 	$i;

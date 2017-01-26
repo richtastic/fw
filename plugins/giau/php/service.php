@@ -21,7 +21,7 @@ function giau_wordpress_data_service(){
 	foreach ($_FILES as $key => $value) {
 		error_log("FILES key: ".$key." ........... ".$value);
 	}
-crudDataFromOperation( [], "read", GIAU_TABLE_DEFINITION_SECTION());
+//crudDataFromOperation( [], "read", GIAU_TABLE_DEFINITION_SECTION());
 	if( isset($_POST) && isset($_POST['operation']) ){ // if( isset($_GET) && isset($_GET['operation']) ){
 		$operationType = $_POST['operation'];
 		if($operationType=="get_table_page" || $operationType=="get_autocomplete"){
@@ -234,26 +234,28 @@ crudDataFromOperation( [], "read", GIAU_TABLE_DEFINITION_SECTION());
 			error_log("CRUD DATA");
 			$tableSourceName = $_POST['table'];
 			$dataCRUD = $_POST['data'];
+			$lifecycleCRUD = $_POST['lifecycle'];
 			//error_log(" dataCRUD: ".$dataCRUD);
 			$dataCRUD = stripslashes($dataCRUD); // remove mass baskslashes
 			error_log(" dataCRUD2: '".$dataCRUD."'");
 			error_log(" dataCRUD3: '".$tableSourceName."'");
 			error_log(" dataCRUD4: '".$lifecycleCRUD."'");
-			$dataCRUD = json_decode($dataCRUD);
+			$dataCRUD = json_decode($dataCRUD, true);
+			// json_decode($jsonSource, true);
 			if($tableSourceName=="section"){
-				crudDataFromOperation($lifecycleCRUD, GIAU_TABLE_DEFINITION_SECTION());
+				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_SECTION());
 			}else if($tableSourceName=="widget"){
-				crudDataFromOperation($lifecycleCRUD, GIAU_TABLE_DEFINITION_WIDGET());
+				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_WIDGET());
 			}else if($tableSourceName=="page"){
-				crudDataFromOperation($lifecycleCRUD, GIAU_TABLE_DEFINITION_PAGE());
+				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_PAGE());
 			}else if($tableSourceName=="website"){
-				crudDataFromOperation($lifecycleCRUD, GIAU_TABLE_DEFINITION_WEBSITE());
+				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_WEBSITE());
 			}else if($tableSourceName=="languagization"){
-				crudDataFromOperation($lifecycleCRUD, GIAU_TABLE_DEFINITION_LANGUAGIZATION());
+				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_LANGUAGIZATION());
 			}else if($tableSourceName=="calendar"){
-				crudDataFromOperation($lifecycleCRUD, GIAU_TABLE_DEFINITION_CALENDAR());
+				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_CALENDAR());
 			}else if($tableSourceName=="bio"){
-				crudDataFromOperation($lifecycleCRUD, GIAU_TABLE_DEFINITION_BIO());
+				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_BIO());
 			}else{
 				error_log("UNKNOWN CRUD TABLE");
 			}
@@ -600,6 +602,7 @@ function subsection_list(&$rows, $columnName){ // LIST SUBSECTIONS IN METADATA F
 
 
 function crudDataFromOperation($inputData, $lifecycleCRUD, $tableDefinition){ // $tableSourceName
+	error_log("crudDataFromOperation");
 	$i;
 	$len;
 //	error_log( objectToString($lifecycleCRUD) );
@@ -613,7 +616,7 @@ function crudDataFromOperation($inputData, $lifecycleCRUD, $tableDefinition){ //
 	$tableName = $tableDefinition["table"];
 	$presentation = $tableDefinition["presentation"];
 	$columnAliasToReal = $presentation["column_aliases"];
-		$columnRealToAlias = reverseObjectMap($columnRealToAlias);
+		$columnRealToAlias = reverseObjectMap($columnAliasToReal);
 	$tableColumns = $tableDefinition["columns"];
 $editableFields = [];
 	// go thru definition
@@ -641,6 +644,7 @@ $editableFields = [];
 	if($primaryKeyColumnAlias && $primaryKeyColumnName){
 		error_log("need primary key: ".$primaryKeyColumnAlias);
 	}
+	error_log( objectToString($inputData) );
 	// get params from data
 	$dataPass = [];
 	$keys = getKeys($inputData);
@@ -649,6 +653,7 @@ $editableFields = [];
 	for($i=0; $i<$len; ++$i){
 		$key = $keys[$i];
 		$value = $inputData[$key];
+		error_log($i." = ".$key." == ".$value);
 		if($key==$primaryKeyColumnAlias){
 			$hasFoundPrimaryKey = true;
 		}
@@ -710,16 +715,68 @@ function giau_read_section($sectionID){
 }
 
 function crudDataOperationCreate($tableName, $columnInfo, $inputData){
+	error_log("crudDataOperationCreate");
 	global $wpdb;
 	$row = [];
-	$i; $len; $keys;
+	$i;
 	$keys = getKeys($columnInfo);
+	error_log( objectToString($columnInfo) );
+	$len = count($keys);
 	for($i=0; $i<$len; ++$i){ // go thru each of the fields
 		$columnName = $keys[$i];
-		$column = $columnInfo[$key];
+		$column = $columnInfo[$columnName];
+		//error_log( objectToString($column) );
+		$columnType = $column["type"];
 		$validation = $column["validation"];
-		$validAll = array_merge($validation["all"], $validation["create"]);
+		//error_log($i." == ".$columnName." ---- ".$columnType);
+		//error_log( objectToString($validation) );
+		$validOptions = mergeObjects($validation["all"], $validation["create"], true);
+		//error_log( objectToString($validOptions) );
+		$j;
+		$validKeys = getKeys($validOptions);
+		$validLen = count($validKeys);
+		$dataValue = $inputData[$columnName];
+		$value = null;
+		for($j=0; $j<$validLen; ++$j){
+			$option = $validKeys[$j];
+			$config = $validOptions[$option];
+			error_log("option: ".$option);
+			error_log("config: ".$config);
+			HERE
+			if($option=="timestamp"){
+				error_log("timestamp");
+				if($config=="now"){
+					$value = "...";
+				}
+			}else if($option=="max_length"){
+				//
+			}else if($option=="recursion_contains"){
+				//
+			}else{
+				error_log("unknown option: '".$option."");
+			}
+			
+			// "max_length" [ "characters" => "255"]
+			// "timestamp" => "now"  : replace with a timestamp of now
+			/*
 
+			"reference" => [
+				"table" => GIAU_FULL_TABLE_NAME_WIDGET(),
+				"column" => "id",
+				"logic" => "equal",
+			],
+
+			"recursion_contains" => [  // cannot contain self
+							"logic" => "not_equal",
+							"column_source" => "id",
+							"column_check" => "section_list",
+							"limit" => "0",
+						],
+			*/
+		}
+		if($value!==null){
+			$row[$columnName] = $value;
+		}
 		// CHECK ...
 		
 		// does not have editable field => return
@@ -732,6 +789,8 @@ function crudDataOperationCreate($tableName, $columnInfo, $inputData){
 		// )
 	}
 	//"all" => [ // c/r/u/d
+
+	error_log("INSERTING NEW : ".objectToString($row));
 
 	return null;
 
