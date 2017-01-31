@@ -243,7 +243,7 @@ function giau_wordpress_data_service(){
 			$dataCRUD = json_decode($dataCRUD, true);
 			// json_decode($jsonSource, true);
 			if($tableSourceName=="section"){
-				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_SECTION());
+				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_SECTION());
 			}else if($tableSourceName=="widget"){
 				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_WIDGET());
 			}else if($tableSourceName=="page"){
@@ -258,6 +258,21 @@ function giau_wordpress_data_service(){
 				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_BIO());
 			}else{
 				error_log("UNKNOWN CRUD TABLE");
+			}
+			if($returnValue!==null){
+				error_log("GOT RESULT: ".$returnValue);
+				$response["result"] = "success";
+				$response["data"] = $returnValue;
+				$response["offset"] = 0;
+				$response["count"] = 1;
+				$response["total"] = 1;
+				/*
+				$response["result"] = "success";
+				$response["offset"] = $offset;
+				$response["count"] = count($results);
+				$response["data"] = $results;
+				$response["total"] = $total;
+				*/
 			}
 // LANGUAGIZATION SERVICE --------------------------------------------------------------------------------------------------------------
 		}else if($operationType=="page_data"){
@@ -470,36 +485,10 @@ function giau_wordpress_data_service(){
 					$response["metadata"] = $metadata;
 				}else{
 					global $wpdb;
-					/*
-					lang:
-						- set of options for language
-					sect:
-						- use model & object model for config
-						- use section list id-library
-					page:
-						- 
-					- comma-separated array fields
-					// get a list
-						- offset, count, ordering
-						=> total, columns = all column names, data = each row entry
-					// add a new row
-						=> columns & options/specs
-						- values
-						=> created column
-					// delete a row
-						- id
-						=> success/fail
-					// edit a row
-						- values WHERE id
-					*/
-					// TEST FOR MANY SUB SECTIONS
-					// $offset = 46;
-					// $count = 1;
-					// $offset = 50;
-					// $count = 1;
 					$requestInfo = [];
 					$requestInfo["offset"] = $offset;
 					$requestInfo["count"] = $count;
+					//$requestInfo["count"] = 1000;
 					$requestInfo["query"] = "
 					    SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
 					    ".GIAU_FULL_TABLE_NAME_SECTION().".created as section_created,
@@ -515,7 +504,7 @@ function giau_wordpress_data_service(){
 					    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
 					    ORDER BY section_name ASC, section_id DESC
 					";
-					paged_data_service($requestInfo, table_info_section(), $response );
+					paged_data_service($requestInfo, table_info_section(), $response, true);
 
 					// LIST SUBSECTIONS IN METADATA FOR DISPLAY
 					$subsections = subsection_list($response["data"], "section_subsections");
@@ -605,8 +594,6 @@ function crudDataFromOperation($inputData, $lifecycleCRUD, $tableDefinition){ //
 	error_log("crudDataFromOperation");
 	$i;
 	$len;
-//	error_log( objectToString($lifecycleCRUD) );
-//	error_log( objectToString($tableDefinition) );
 	$tableFunctions = $tableDefinition["functions"];
 		$tableFunctionsCRUD = $tableFunctions["crud"];
 			$tableFunctionCreate = $tableFunctionsCRUD["create"];
@@ -665,56 +652,56 @@ $editableFields = [];
 		}
 	}
 	error_log("DATA PASS: ".objectToString($dataPass));
-	/*
-	error_log(" => READ");
-		$dataID = $dataCRUD->{'section_id'};
-		if($dataID!==null){
-			$res = giau_read_section($dataID);
-			if($res!==null){
-				$response["data"] = $res;
-				$response["result"] = "success";
+	if($lifecycleCRUD==="create"){
+		return crudDataOperationGeneric($tableName, $tableColumns, $dataPass, $tableDefinition, "create");
+	}else if($lifecycleCRUD==="read"){
+		return crudDataOperationGeneric($tableName, $tableColumns, $dataPass, $tableDefinition, "read");
+	}else if($lifecycleCRUD==="update"){
+		return crudDataOperationGeneric($tableName, $tableColumns, $dataPass, $tableDefinition, "update");
+	}else if($lifecycleCRUD==="delete"){
+		return crudDataOperationGeneric($tableName, $tableColumns, $dataPass, $tableDefinition, "delete");
+	}
+	return null;
+}
+
+function translateRowsToClient($tableDefinition, $columnInfo, $rows){
+	$tableName = $tableDefinition["table"];
+	$presentation = $tableDefinition["presentation"];
+	$columnAliasToReal = $presentation["column_aliases"];
+		$columnRealToAlias = reverseObjectMap($columnAliasToReal);
+	//$tableColumns = $tableDefinition["columns"];
+	//
+	$returnRows = [];
+	foreach ($rows as $index => $row) {
+		$newRow = [];
+		/*
+		"presentation" => [
+			"column_aliases" => [
+				"section_id" => "id",
+				"section_created" => "created",
+				"section_modified" => "modified",
+				"section_configuration" => "configuration",
+				"section_name" => "name",
+				"section_subsections" => "section_list",
+				"widget_id" => "widget",
+				"widget_configuration" => null,
+				"widget_info" => null,
+			],],
+			],
+		*/
+		foreach ($row as $column => $value) {
+			$info = $columnInfo[$column];
+			if($info!==null){
+				//$alias = $info[""];
+				//$newRow[] = ;
 			}
 		}
-
-function giau_read_section($sectionID){
-	error_log(" read sectionID: ".$sectionID);
-	if($sectionID===null){
-		return null;
+		$returnRows[] = $newRow;
+		// 
 	}
-	global $wpdb;
-	$querystr = "
-		SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".created as section_created,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as section_modified,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".name as section_name,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".configuration as section_configuration,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".section_list as section_subsections,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".widget as widget_id
-		FROM ".GIAU_FULL_TABLE_NAME_SECTION()." 
-		WHERE id=\"".$sectionID."\" LIMIT 1";
-	$rows = $wpdb->get_results($querystr, ARRAY_A);
-	error_log(" read row: ".($rows[0]["section_id"]));
-	if( count($rows)==1 ){
-		return $rows[0];
-	}
-	return null;
+	return $returnRows;
 }
-
-	*/
-	if($lifecycleCRUD==="create"){
-		return crudDataOperationCreate($tableName, $tableColumns, $dataPass);
-		//return $tableFunctionCreate($dataPass);
-	}else if($lifecycleCRUD==="read"){
-		//return $tableFunctionRead($dataPass);
-	}else if($lifecycleCRUD==="update"){
-		//return $tableFunctionUpdate($dataPass);
-	}else if($lifecycleCRUD==="delete"){
-		//return $tableFunctionDelete($dataPass);
-	}
-	return null;
-}
-
-function crudDataOperationCreate($tableName, $columnInfo, $inputData){
+function crudDataOperationGeneric($tableName, $columnInfo, $inputData, $tableDefinition, $crudType){ // "create" "read" "update" "delete"
 	error_log("crudDataOperationCreate");
 	global $wpdb;
 	$row = [];
@@ -722,57 +709,94 @@ function crudDataOperationCreate($tableName, $columnInfo, $inputData){
 	$keys = getKeys($columnInfo);
 	error_log( objectToString($columnInfo) );
 	$len = count($keys);
+	$primaryKeyColumnName = "";
+	$primaryKeyValue = null;
+		$functions = $tableDefinition["functions"];
+		if($functions){
+			$functionsCRUD = $functions["crud"];
+			if($functionsCRUD){
+				$functionCRUDTable = $functionsCRUD[$tableName];
+				$functionReadSingle = $functionCRUDTable["read_single"];
+			}
+		}
+	
 	for($i=0; $i<$len; ++$i){ // go thru each of the fields
 		$columnName = $keys[$i];
 		$column = $columnInfo[$columnName];
 		//error_log( objectToString($column) );
 		$columnType = $column["type"];
+		$columnAttributes = $column["attributes"];
+		$columnIsPrimaryKey = $columnAttributes["primary_key"] == "true";
+		
 		$validation = $column["validation"];
 		//error_log($i." == ".$columnName." ---- ".$columnType);
 		//error_log( objectToString($validation) );
-		$validOptions = mergeObjects($validation["all"], $validation["create"], true);
+		$validOptions = mergeObjects($validation["all"], $validation[$crudType], true);
 		//error_log( objectToString($validOptions) );
 		$j;
 		$validKeys = getKeys($validOptions);
 		$validLen = count($validKeys);
 		$dataValue = $inputData[$columnName];
+		
+		if($columnIsPrimaryKey){
+			$primaryKeyColumnName = $columnName;
+			$primaryKeyValue = intval($dataValue);
+		}
+
 		$value = null;
 		for($j=0; $j<$validLen; ++$j){
 			$option = $validKeys[$j];
 			$config = $validOptions[$option];
 			error_log("option: ".$option);
 			error_log("config: ".$config);
-			HERE
+			
 			if($option=="timestamp"){
-				error_log("timestamp");
 				if($config=="now"){
-					$value = "...";
+					$value = stringFromDate( getDateNow() );
+					//error_log("TIME: ".stringFromDate($value));
 				}
 			}else if($option=="max_length"){
-				//
+				$characterCount = $config["characters"];
+				error_log("characterCount: ".$characterCount."");
+				if($characterCount!==null){
+					$value = stringWithMatxLength($dataValue, $characterCount);
+				}
 			}else if($option=="recursion_contains"){
-				//
+				$containsLogic = $config["logic"];
+				$containsColumnSource = $config["column_source"];
+				$containsColumnCheck = $config["column_check"];
+				$containsRecursiveLimit = intval($config["limit"]);
+				$containsCheckValue = $inputData[$containsColumnSource];
+				$containsSourceValue = $inputData[$containsColumnCheck];
+				// error_log("containsCheckValue: ".$containsCheckValue." null ? ".($containsCheckValue==null));
+				// error_log("containsSourceValue: ".$containsSourceValue." null ? ".($containsSourceValue==null));
+				if($containsCheckValue!=null && $containsSourceValue != null){ // 
+					$containsList = commaSeparatedStringFromString($dataValue); // from  containsSourceValue
+					$containsRows = "select * from ".$tableName."where ".$containsColumnSource." in\"(".$containsList."\")";
+					error_log("recursion_contains: ".$rows);
+					// TODO
+					// get a list of rows w
+					// if it contains: set entire to null
+					return null;
+				}
+			}else if($option=="reference"){
+				$referenceTable = $config["table"];
+				$referenceColumn = $config["column"];
+				$referenceLogic = $config["logic"];
+				$referenceRow = "SELECT \"".$referenceColumn."\" FROM \"".$referenceTable."\"";
+				if($referenceLogic=="equal"){
+					//
+				}else if($referenceLogic=="not_equal"){
+					// 
+				}
+				// ... if exists 
+				error_log("reference exists: ".$referenceRow." ---- ".$referenceLogic);
 			}else{
 				error_log("unknown option: '".$option."");
+				return null; // don't return if don't know how to validate
 			}
 			
-			// "max_length" [ "characters" => "255"]
-			// "timestamp" => "now"  : replace with a timestamp of now
-			/*
-
-			"reference" => [
-				"table" => GIAU_FULL_TABLE_NAME_WIDGET(),
-				"column" => "id",
-				"logic" => "equal",
-			],
-
-			"recursion_contains" => [  // cannot contain self
-							"logic" => "not_equal",
-							"column_source" => "id",
-							"column_check" => "section_list",
-							"limit" => "0",
-						],
-			*/
+			error_log(" OUT: ".$dataValue." => ".$value);
 		}
 		if($value!==null){
 			$row[$columnName] = $value;
@@ -789,15 +813,34 @@ function crudDataOperationCreate($tableName, $columnInfo, $inputData){
 		// )
 	}
 	//"all" => [ // c/r/u/d
+	if($crudType=="create"){
+		error_log("INSERTING NEW : ".objectToString($row));
 
-	error_log("INSERTING NEW : ".objectToString($row));
-
-	return null;
-
-	$wpdb->insert($tableName, $row);
-	$result = $wpdb->insert_id;
-	if($result!==null){
-		// return object
+		$wpdb->insert($tableName, $row);
+		$result = $wpdb->insert_id;
+		error_log("RESULT: ".$result."");
+		if($result!==null){
+			if($functionReadSingle!==null){
+				return $functionReadSingle($result);
+			}else{
+				$query = "SELECT * FROM \"".$tableName."\" WHERE ".$primaryKeyColumnName."=\"".$result."\" LIMIT 1";
+				$rows = $wpdb->get_results($query, ARRAY_A);
+				return translateRowsToClient($tableDefinition,$columnInfo,$rows);
+			}
+		}
+	}else if($crudType=="read"){
+		error_log("READING EXISTING: ".$primaryKeyValue." == ".objectToString($row));
+		if($functionReadSingle!==null){
+			return $functionReadSingle($primaryKeyValue);
+		}else{
+			$query = "SELECT * FROM \"".$tableName."\" WHERE ".$primaryKeyColumnName."=\"".$primaryKeyValue."\" LIMIT 1";
+			$rows = $wpdb->get_results($query, ARRAY_A);
+			return translateRowsToClient($tableDefinition,$columnInfo,$rows);
+		}
+	}else if($crudType=="update"){
+		error_log("UPDATING EXISTING: ".$primaryKeyValue." == ".objectToString($row));
+	}else if($crudType=="delete"){
+		error_log("DELETING EXISTING: ".$primaryKeyValue." == ".objectToString($row));
 	}
 	return null;
 	/*
@@ -928,9 +971,9 @@ function paged_data_service($requestInfo, $tableInfo, &$response, $override=fals
 	if($count == 0){ // no results
 		return [];
 	}
-	if(!$override){
-		$count = min($count, 100);
-	}
+	// if(!$override){
+	// 	$count = min($count, 100);
+	// }
 
 	$criteria = "";
 
@@ -960,6 +1003,7 @@ function paged_data_service($requestInfo, $tableInfo, &$response, $override=fals
 		";
 	}
 	$querystr = $querystr . " LIMIT ".$offset.",".$count." ";
+	error_log("FINAL .................................................. ".$querystr);
 	$results = $wpdb->get_results($querystr, ARRAY_A);
 	// return $results;
 	$response["result"] = "success";
@@ -967,6 +1011,7 @@ function paged_data_service($requestInfo, $tableInfo, &$response, $override=fals
 	$response["count"] = count($results);
 	$response["data"] = $results;
 	$response["total"] = $total;
+	error_log("FINAL >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ".count($results));
 }
 
 

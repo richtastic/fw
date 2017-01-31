@@ -964,6 +964,8 @@ function getHumanReadablePhone($phone){
 }
 
 function arrayFromCommaSeparatedString($input){
+	// TODO: UPDATE TO ESCAPED STRINGS
+	
 	if(!$input){
 		return [];
 	}

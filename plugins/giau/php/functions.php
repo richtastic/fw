@@ -167,6 +167,18 @@ function colorHTMLFromColorString($color){
 	}
 	return "#000000";
 }
+
+function stringWithMatxLength($original, $maxLength, $fromRight = false){
+	if(!$original){
+		return "";
+	}
+	$len = strlen($original);
+	if($len > $maxLength){
+		return substr($original, 0, $maxLength);
+	}
+	return $original;
+}
+
 function substituteLiteralNewlinesToHTMLBreaks($editorString){
 	if($editorString){
 		$htmlString = preg_replace('/\\n/', '<br/>', $editorString);
@@ -174,6 +186,7 @@ function substituteLiteralNewlinesToHTMLBreaks($editorString){
 	}
 	return null;
 }
+
 function substituteHTMLBreaksToLiteralNewlines($htmlString){
 	$editorString = preg_replace('/<( )*br( )*(/)*( )*>/', '\\n', $htmlString);
 	return $editorString;

@@ -354,9 +354,15 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 		],
 		"functions" => [
 			"crud" => [
-				"create" => GIAU_TABLE_FUNCTION_CRUD_CREATE,
+				//"create" => GIAU_TABLE_FUNCTION_CRUD_CREATE,
 				//
+				GIAU_FULL_TABLE_NAME_SECTION() =>
+				[
+					"read_single" => giau_read_section,
+					// "read_many" => giau_read_section,
+				],
 			],
+
 			//
 		],
 	];
@@ -1249,7 +1255,7 @@ function giau_read_section($sectionID){
 		FROM ".GIAU_FULL_TABLE_NAME_SECTION()." 
 		WHERE id=\"".$sectionID."\" LIMIT 1";
 	$rows = $wpdb->get_results($querystr, ARRAY_A);
-	error_log(" read row: ".($rows[0]["section_id"]));
+	//error_log(" read row: ".($rows[0]["section_id"]));
 	if( count($rows)==1 ){
 		return $rows[0];
 	}

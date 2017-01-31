@@ -4048,6 +4048,8 @@ giau.DataSource.prototype.getPage = function(pageToGet){
 	ajax.context(this);
 	ajax.callback(function(d){
 		var obj = Code.parseJSON(d);
+		console.log("RICHIE RETRUNED: ");
+		console.log(obj);
 		this.alertAll(giau.DataSource.EVENT_PAGE_DATA,obj);
 	});
 	ajax.send();
@@ -5171,6 +5173,7 @@ giau.CRUD._fieldEditJSON = function(definition, container, fieldName, elementCon
 	var jsonModelColumn = presentation["json_model_column"];
 	var modelString = container[jsonModelColumn]; // ALSO: mapping.object()["json_model_column"];
 	var model = Code.parseJSON(modelString);
+	//console.log(mapping.value());
 	var object = Code.parseJSON(mapping.value());
 	// set source to objects instead of strings
 	container[jsonModelColumn] = model;
