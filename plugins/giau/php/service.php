@@ -710,6 +710,7 @@ function crudDataOperationGeneric($tableName, $columnInfo, $inputData, $tableDef
 	error_log( objectToString($columnInfo) );
 	$len = count($keys);
 	$primaryKeyColumnName = "";
+	$primaryKeyColumnNameAlias = ""; // TODO
 	$primaryKeyValue = null;
 		$functions = $tableDefinition["functions"];
 		if($functions){
@@ -740,7 +741,8 @@ function crudDataOperationGeneric($tableName, $columnInfo, $inputData, $tableDef
 		
 		if($columnIsPrimaryKey){
 			$primaryKeyColumnName = $columnName;
-			$primaryKeyValue = intval($dataValue);
+			$primaryKeyColumnNameAlias = "TODO";
+			$primaryKeyValue = intval($dataValue); // assuming indexed on int
 		}
 
 		$value = null;
@@ -812,6 +814,7 @@ function crudDataOperationGeneric($tableName, $columnInfo, $inputData, $tableDef
 		// 	"section_list" => $sectionList,
 		// )
 	}
+
 	//"all" => [ // c/r/u/d
 	if($crudType=="create"){
 		error_log("INSERTING NEW : ".objectToString($row));
@@ -829,18 +832,22 @@ function crudDataOperationGeneric($tableName, $columnInfo, $inputData, $tableDef
 			}
 		}
 	}else if($crudType=="read"){
-		error_log("READING EXISTING: ".$primaryKeyValue." == ".objectToString($row));
-		if($functionReadSingle!==null){
-			return $functionReadSingle($primaryKeyValue);
-		}else{
-			$query = "SELECT * FROM \"".$tableName."\" WHERE ".$primaryKeyColumnName."=\"".$primaryKeyValue."\" LIMIT 1";
-			$rows = $wpdb->get_results($query, ARRAY_A);
-			return translateRowsToClient($tableDefinition,$columnInfo,$rows);
-		}
+		return crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle);
 	}else if($crudType=="update"){
 		error_log("UPDATING EXISTING: ".$primaryKeyValue." == ".objectToString($row));
+		$data = crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle);
+		if($data && $data[$primaryKeyColumnNameAlias] == $primaryKeyValue){
+			// TODO: INSERT
+			// HERE
+			return crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle);
+		}
 	}else if($crudType=="delete"){
+		// check if exists
 		error_log("DELETING EXISTING: ".$primaryKeyValue." == ".objectToString($row));
+		// TODO: SAME LOOKUP AS UPDATE
+		// DELETE WHERE
+		// RETURN SUCCESS -- & DATA?
+		// HERE
 	}
 	return null;
 	/*
@@ -866,6 +873,22 @@ function giau_create_section($sectionName, $widgetID, $sectionConfig, $sectionLi
 }
 	*/
 	
+}
+function crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle){
+	error_log("READING EXISTING: ".$primaryKeyValue);//." == ".objectToString($row));
+	$tableName = $tableDefinition["table"];
+	if($functionReadSingle!==null){
+		return $functionReadSingle($primaryKeyValue);
+	}else{
+		$query = "SELECT * FROM \"".$tableName."\" WHERE ".$primaryKeyColumnName."=\"".$primaryKeyValue."\" LIMIT 1";
+		$rows = $wpdb->get_results($query, ARRAY_A);
+		return translateRowsToClient($tableDefinition,$columnInfo,$rows);
+	}
+	/*
+	$results = $wpdb->get_results( 
+	$wpdb->prepare("SELECT count(ID) as total FROM {$wpdb->prefix}your_table_without_prefix WHERE some_field_in_your_table=%d", $some_parameter) 
+	);
+	*/
 }
 function crudDataFromDefinition($tableDefinition){
 	// ...
