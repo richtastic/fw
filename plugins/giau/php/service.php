@@ -653,13 +653,13 @@ $editableFields = [];
 	}
 	error_log("DATA PASS: ".objectToString($dataPass));
 	if($lifecycleCRUD==="create"){
-		return crudDataOperationGeneric($tableName, $tableColumns, $dataPass, $tableDefinition, "create");
+		return crudDataOperationGeneric($tableColumns, $dataPass, $tableDefinition, "create");
 	}else if($lifecycleCRUD==="read"){
-		return crudDataOperationGeneric($tableName, $tableColumns, $dataPass, $tableDefinition, "read");
+		return crudDataOperationGeneric($tableColumns, $dataPass, $tableDefinition, "read");
 	}else if($lifecycleCRUD==="update"){
-		return crudDataOperationGeneric($tableName, $tableColumns, $dataPass, $tableDefinition, "update");
+		return crudDataOperationGeneric($tableColumns, $dataPass, $tableDefinition, "update");
 	}else if($lifecycleCRUD==="delete"){
-		return crudDataOperationGeneric($tableName, $tableColumns, $dataPass, $tableDefinition, "delete");
+		return crudDataOperationGeneric($tableColumns, $dataPass, $tableDefinition, "delete");
 	}
 	return null;
 }
@@ -701,7 +701,7 @@ function translateRowsToClient($tableDefinition, $columnInfo, $rows){
 	}
 	return $returnRows;
 }
-function crudDataOperationGeneric($tableName, $columnInfo, $inputData, $tableDefinition, $crudType){ // "create" "read" "update" "delete"
+function crudDataOperationGeneric($columnInfo, $inputData, $tableDefinition, $crudType){ // "create" "read" "update" "delete"
 	error_log("crudDataOperationCreate");
 	global $wpdb;
 	$row = [];
@@ -709,8 +709,12 @@ function crudDataOperationGeneric($tableName, $columnInfo, $inputData, $tableDef
 	$keys = getKeys($columnInfo);
 	error_log( objectToString($columnInfo) );
 	$len = count($keys);
+	$tableName = $tableDefinition["table"];
+	$presentation = $tableDefinition["presentation"];
+	$columnAliasToReal = $presentation["column_aliases"];
+		$columnRealToAlias = reverseObjectMap($columnAliasToReal);
 	$primaryKeyColumnName = "";
-	$primaryKeyColumnNameAlias = ""; // TODO
+	$primaryKeyColumnNameAlias = "";
 	$primaryKeyValue = null;
 		$functions = $tableDefinition["functions"];
 		if($functions){
@@ -720,13 +724,28 @@ function crudDataOperationGeneric($tableName, $columnInfo, $inputData, $tableDef
 				$functionReadSingle = $functionCRUDTable["read_single"];
 			}
 		}
-	
+	/*
+ ]
+[05-Feb-2017 01:52:20 UTC]   0 HAVE KEY: section_id == id
+[05-Feb-2017 01:52:20 UTC]   1 HAVE KEY: section_created == created
+[05-Feb-2017 01:52:20 UTC]   2 HAVE KEY: section_modified == modified
+[05-Feb-2017 01:52:20 UTC]   3 HAVE KEY: widget_id == widget
+[05-Feb-2017 01:52:20 UTC]   4 HAVE KEY: section_configuration == configuration
+[05-Feb-2017 01:52:20 UTC]   5 HAVE KEY: section_name == name
+[05-Feb-2017 01:52:20 UTC]   6 HAVE KEY: section_subsections == section_list
+
+	*/
 	for($i=0; $i<$len; ++$i){ // go thru each of the fields
+		//$columnNameAlias = $keys[$i];
+		//$columnName = $columnAliasToReal[$columnNameAlias];
 		$columnName = $keys[$i];
+		$columnNameAlias = $columnRealToAlias[$columnName];
 		$column = $columnInfo[$columnName];
+		error_log("  ".$i." HAVE KEY: ".$columnNameAlias." == ".$columnName);
 		//error_log( objectToString($column) );
 		$columnType = $column["type"];
 		$columnAttributes = $column["attributes"];
+		error_log( "attributes    ".objectToString($columnAttributes) );
 		$columnIsPrimaryKey = $columnAttributes["primary_key"] == "true";
 		
 		$validation = $column["validation"];
@@ -741,11 +760,11 @@ function crudDataOperationGeneric($tableName, $columnInfo, $inputData, $tableDef
 		
 		if($columnIsPrimaryKey){
 			$primaryKeyColumnName = $columnName;
-			$primaryKeyColumnNameAlias = "TODO";
+			$primaryKeyColumnNameAlias = $columnNameAlias;
 			$primaryKeyValue = intval($dataValue); // assuming indexed on int
 		}
-
-		$value = null;
+		// go thru each of the validations for key
+		$value = $dataValue;
 		for($j=0; $j<$validLen; ++$j){
 			$option = $validKeys[$j];
 			$config = $validOptions[$option];
@@ -801,6 +820,7 @@ function crudDataOperationGeneric($tableName, $columnInfo, $inputData, $tableDef
 			error_log(" OUT: ".$dataValue." => ".$value);
 		}
 		if($value!==null){
+			error_log("SETTING: ".$columnName." (".$columnNameAlias.") = ".$value);
 			$row[$columnName] = $value;
 		}
 		// CHECK ...
@@ -831,21 +851,46 @@ function crudDataOperationGeneric($tableName, $columnInfo, $inputData, $tableDef
 				return translateRowsToClient($tableDefinition,$columnInfo,$rows);
 			}
 		}
+		return null;
 	}else if($crudType=="read"){
+		error_log("READ EXISTING: ".$primaryKeyValue." == ".objectToString($row));
 		return crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle);
 	}else if($crudType=="update"){
+		/*
+		UPDATING EXISTING:  == [
+ id => "100"
+ widget => "1"
+ configuration => "{"class":"everythingContact","style":"display:block; width:100%; padding-top:32px; padding-bottom:64px;  background-color:#F6F7F9; "}"
+ name => (null)
+ section_list => "94,99"
+ ]
+
+		*/
 		error_log("UPDATING EXISTING: ".$primaryKeyValue." == ".objectToString($row));
 		$data = crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle);
+		error_log("row: ".objectToString($row));
+		error_log("data: ".objectToString($data));
 		if($data && $data[$primaryKeyColumnNameAlias] == $primaryKeyValue){
-			// TODO: INSERT
-			// HERE
+			$where = [$primaryKeyColumnName => $primaryKeyValue];
+			error_log("WHERE: ".objectToString($where));
+			$result = $wpdb -> update($tableName, $row, $where );
+			error_log("RESULT: ".objectToString($result));
 			return crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle);
 		}
+		return null;
 	}else if($crudType=="delete"){
 		// check if exists
 		error_log("DELETING EXISTING: ".$primaryKeyValue." == ".objectToString($row));
-		// TODO: SAME LOOKUP AS UPDATE
-		// DELETE WHERE
+		$data = crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle);
+		error_log("data: ".objectToString($data));
+		if($data && $data[$primaryKeyColumnNameAlias] == $primaryKeyValue){
+			$where = [$primaryKeyColumnName => $primaryKeyValue];
+			$result = $wpdb -> delete($tableName, $where );
+			error_log("RESULT: ".objectToString($result));
+			return data;
+		}
+		return null;
+		// wpdb::delete( 'table', array( 'ID' => 1 ), array( '%d' ) )
 		// RETURN SUCCESS -- & DATA?
 		// HERE
 	}

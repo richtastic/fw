@@ -4450,11 +4450,12 @@ giau.CRUD.prototype._handleDeleteFxn = function(e,data){
 	console.log("DELETE");
 	var keyIndex = data["index"];
 	var keyValue = data["value"];
+		keyValue = keyValue.value(); // value stored inside json object
 	var passBack = {};
 		passBack["index"] = keyIndex;
 		passBack["value"] = keyValue;
 	var jsonData = {};
-	jsonData[ data["index"] ] = data["value"];
+	jsonData[ keyIndex ] = keyValue;
 	var jsonString = Code.StringFromJSON(jsonData);
 	var name = keyIndex+" : "+keyValue;
 	var alertDelete = confirm("are you sure you want to delete\n"+name+" ?");
@@ -4528,7 +4529,11 @@ giau.CRUD.prototype._handleDeleteCompleteFxn = function(e){
 	var original = e["source"];
 	var criteriaIndex = original["index"];
 	var criteriaValue = original["value"];
+	console.log(original);
+	console.log(criteriaIndex);
+	console.log(criteriaValue);
 	var rowData = this._dataRowFromKeyValue(criteriaIndex, criteriaValue);
+	console.log(rowData);
 	if(rowData){
 		this._dataRowRemoveAt(rowData["index"]);
 	}
@@ -4548,7 +4553,10 @@ giau.CRUD.prototype._dataRowFromKeyValue = function(criteriaIndex, criteriaValue
 			var mapping = row[j];
 			var index = mapping.field();
 			if(index===criteriaIndex){
-				var value = mapping.value();
+				var value = mapping.value(); // json object container
+				if(Code.isObjectOrInstance(value)){
+					value = value.value();
+				}
 				if(value===criteriaValue){
 					return {"index":i, "row":row};
 				}
