@@ -245,17 +245,17 @@ function giau_wordpress_data_service(){
 			if($tableSourceName=="section"){
 				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_SECTION());
 			}else if($tableSourceName=="widget"){
-				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_WIDGET());
+				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_WIDGET());
 			}else if($tableSourceName=="page"){
-				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_PAGE());
+				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_PAGE());
 			}else if($tableSourceName=="website"){
-				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_WEBSITE());
+				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_WEBSITE());
 			}else if($tableSourceName=="languagization"){
-				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_LANGUAGIZATION());
+				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_LANGUAGIZATION());
 			}else if($tableSourceName=="calendar"){
-				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_CALENDAR());
+				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_CALENDAR());
 			}else if($tableSourceName=="bio"){
-				crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_BIO());
+				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_BIO());
 			}else{
 				error_log("UNKNOWN CRUD TABLE");
 			}
@@ -477,7 +477,7 @@ function giau_wordpress_data_service(){
 					    ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id,
 					    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name
 					    FROM ".GIAU_FULL_TABLE_NAME_SECTION()."
-					    JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
+					    LEFT JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
 					    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
 					";
 					paged_data_service($requestInfo, table_info_section(), $response , true);
@@ -500,10 +500,10 @@ function giau_wordpress_data_service(){
 					    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name,
 					    ".GIAU_FULL_TABLE_NAME_WIDGET().".configuration as widget_configuration
 					    FROM ".GIAU_FULL_TABLE_NAME_SECTION()."
-					    JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
+					    LEFT JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
 					    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
 					    ORDER BY section_name ASC, section_id DESC
-					";
+					"; // LEFT JOIN ALLOWS NULL WIDGET ID
 					paged_data_service($requestInfo, table_info_section(), $response, true);
 
 					// LIST SUBSECTIONS IN METADATA FOR DISPLAY
@@ -664,36 +664,28 @@ $editableFields = [];
 	return null;
 }
 
-function translateRowsToClient($tableDefinition, $columnInfo, $rows){
+function translateRowsToClient($tableDefinition, $rows){
+	error_log("ROWS: ".count($rows));
 	$tableName = $tableDefinition["table"];
 	$presentation = $tableDefinition["presentation"];
 	$columnAliasToReal = $presentation["column_aliases"];
 		$columnRealToAlias = reverseObjectMap($columnAliasToReal);
-	//$tableColumns = $tableDefinition["columns"];
-	//
+	$columnInfo = $tableDefinition["columns"];
+	//$columnInfo
+	error_log( objectToString($columnInfo) );
 	$returnRows = [];
 	foreach ($rows as $index => $row) {
+		error_log("ROW: ");
+		//error_log( objectToString($row) );
 		$newRow = [];
-		/*
-		"presentation" => [
-			"column_aliases" => [
-				"section_id" => "id",
-				"section_created" => "created",
-				"section_modified" => "modified",
-				"section_configuration" => "configuration",
-				"section_name" => "name",
-				"section_subsections" => "section_list",
-				"widget_id" => "widget",
-				"widget_configuration" => null,
-				"widget_info" => null,
-			],],
-			],
-		*/
 		foreach ($row as $column => $value) {
 			$info = $columnInfo[$column];
+			error_log("INFO: ".$info);
 			if($info!==null){
-				//$alias = $info[""];
-				//$newRow[] = ;
+				$alias = $columnRealToAlias[$column];
+				if($alias!==null){
+					$newRow[$alias] = $row[$column];
+				}
 			}
 		}
 		$returnRows[] = $newRow;
@@ -846,9 +838,9 @@ function crudDataOperationGeneric($columnInfo, $inputData, $tableDefinition, $cr
 			if($functionReadSingle!==null){
 				return $functionReadSingle($result);
 			}else{
-				$query = "SELECT * FROM \"".$tableName."\" WHERE ".$primaryKeyColumnName."=\"".$result."\" LIMIT 1";
+				$query = "SELECT * FROM ".$tableName." WHERE ".$primaryKeyColumnName."=\"".$result."\" LIMIT 1";
 				$rows = $wpdb->get_results($query, ARRAY_A);
-				return translateRowsToClient($tableDefinition,$columnInfo,$rows);
+				return translateRowsToClient($tableDefinition, $rows);
 			}
 		}
 		return null;
@@ -856,16 +848,6 @@ function crudDataOperationGeneric($columnInfo, $inputData, $tableDefinition, $cr
 		error_log("READ EXISTING: ".$primaryKeyValue." == ".objectToString($row));
 		return crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle);
 	}else if($crudType=="update"){
-		/*
-		UPDATING EXISTING:  == [
- id => "100"
- widget => "1"
- configuration => "{"class":"everythingContact","style":"display:block; width:100%; padding-top:32px; padding-bottom:64px;  background-color:#F6F7F9; "}"
- name => (null)
- section_list => "94,99"
- ]
-
-		*/
 		error_log("UPDATING EXISTING: ".$primaryKeyValue." == ".objectToString($row));
 		$data = crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle);
 		error_log("row: ".objectToString($row));
@@ -921,19 +903,20 @@ function giau_create_section($sectionName, $widgetID, $sectionConfig, $sectionLi
 }
 function crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle){
 	error_log("READING EXISTING: ".$primaryKeyValue);//." == ".objectToString($row));
+	global $wpdb;
 	$tableName = $tableDefinition["table"];
 	if($functionReadSingle!==null){
+		error_log("RICHIE - READ AAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		return $functionReadSingle($primaryKeyValue);
 	}else{
-		$query = "SELECT * FROM \"".$tableName."\" WHERE ".$primaryKeyColumnName."=\"".$primaryKeyValue."\" LIMIT 1";
+		error_log("RICHIE - READ BBBBBBBBBBBBBBBBBBBBBBBBBBB");
+		$query = "SELECT * FROM ".$tableName." WHERE ".$primaryKeyColumnName."=\"".$primaryKeyValue."\" LIMIT 1";
+		error_log($query);
 		$rows = $wpdb->get_results($query, ARRAY_A);
-		return translateRowsToClient($tableDefinition,$columnInfo,$rows);
+		$result = translateRowsToClient($tableDefinition,$rows);
+		return $result;
 	}
-	/*
-	$results = $wpdb->get_results( 
-	$wpdb->prepare("SELECT count(ID) as total FROM {$wpdb->prefix}your_table_without_prefix WHERE some_field_in_your_table=%d", $some_parameter) 
-	);
-	*/
+	return null;
 }
 function crudDataFromDefinition($tableDefinition){
 	// ...
@@ -1027,6 +1010,8 @@ function paged_data_service($requestInfo, $tableInfo, &$response, $override=fals
 	$count = esc_sql($count);
 	$table = esc_sql($table);
 
+	error_log("FOUND OFFSET: ".$offset);
+
 	// offset must be positive
 	if(!$offset || $offset < 0){
 		$offset = 0;
@@ -1071,6 +1056,7 @@ function paged_data_service($requestInfo, $tableInfo, &$response, $override=fals
 		";
 	}
 	$querystr = $querystr . " LIMIT ".$offset.",".$count." ";
+	//$querystr = $querystr . " OFFSET ".$offset." " . " LIMIT ".$count;
 	error_log("FINAL .................................................. ".$querystr);
 	$results = $wpdb->get_results($querystr, ARRAY_A);
 	// return $results;

@@ -5,6 +5,11 @@
 
 function giau_action_admin_menu() {
 	error_log("RICHIE Y");
+
+	$arr = ["A","B","C\,"];
+	$str = commaSeparatedStringFromArray($arr);
+	error_log("ARR: ".$arr);
+	error_log("STR: ".$str);
 	// OPTIONS > GIAU PLUGIN
 	//add_options_page('Giau Plugin Options', 'Giau Plugin', 'manage_options', GIAU_UNIQUE_IDENTIFIER(), 'giau_admin_plugin_options');
 	// GIAU PLUGIN | MENU
@@ -344,11 +349,12 @@ function giau_admin_menu_page_submenu_data_entry(){
 	$selectedTableGetParameter = $_GET['table'];
 
 	$THIS_URL = getCurrentRequestURL();
-	$LANGUAGE_URL = add_query_arg('table','languages');
-	$CALENDAR_URL = add_query_arg('table','calendar');
-	$BIOS_URL = add_query_arg('table','bios');
-	$PAGES_URL = add_query_arg('table','pages');
-	$SECTIONS_URL = add_query_arg('table','sections');
+
+	$LANGUAGE_URL = add_query_arg(['table'=>'languages','p'=>'0']);
+	$CALENDAR_URL = add_query_arg(['table'=>'calendar','p'=>'0']);
+	$BIOS_URL = add_query_arg(['table'=>'bios','p'=>'0']);
+	$PAGES_URL = add_query_arg(['table'=>'pages','p'=>'0']);
+	$SECTIONS_URL = add_query_arg(['table'=>'sections','p'=>'0']);
 
 	$TABLE_LIST = [
 		[

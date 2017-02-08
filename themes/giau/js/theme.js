@@ -4078,6 +4078,7 @@ giau.DataCRUD.prototype.read = function(data, returnData){
 	this._asyncOperation("read", data, returnData, giau.DataCRUD.EVENT_READ);
 }
 giau.DataCRUD.prototype.update = function(data, returnData){
+	console.log("SEND AN UPDATE");
 	this._asyncOperation("update", data, returnData, giau.DataCRUD.EVENT_UPDATE);
 }
 giau.DataCRUD.prototype.remove = function(data, returnData){
@@ -4095,11 +4096,11 @@ giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData, 
 	ajax.append("data",data);
 	ajax.context(this);
 	ajax.callback(function(d){
+		console.log("GOT BACK: "+d);
 		var obj = Code.parseJSON(d);
 		if(obj["data"]){
 			obj = obj["data"];
 		}
-console.log("DATACRUDCOMPLETE")
 		this.alertAll(alertEventName, {"source":returnData, "data":obj});
 	});
 	ajax.send();
@@ -4385,12 +4386,18 @@ console.log(textValue);
 }
 giau.CRUD.prototype._handleUpdateFxn = function(e,data){
 	console.log("UPDATE +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-	// console.log(data);
+	console.log(e);
+	console.log(data);
 		var dataInfo = this._dataView["data"];
 		var dataFields = dataInfo["fields"];
 	var criteriaIndex = data["index"];
 	var criteriaValue = data["value"];
+
+	if( Code.isObjectOrInstance(criteriaValue)){
+		criteriaValue = criteriaValue.value();
+	}
 	var rowData = this._dataRowFromKeyValue(criteriaIndex, criteriaValue);
+	console.log(rowData)
 	if(rowData){
 		console.log(rowData)
 		var row = rowData["row"];
@@ -4416,10 +4423,8 @@ console.log("field: "+index);
 					var value = null;
 					console.log(mappingValue.constructor,(typeof mappingValue));
 					if( Code.isInstance(mappingValue) ){
-						console.log("A");
 						value = mappingValue.value();
 					}else{
-						console.log("B");
 						value = mappingValue;
 						console.log(value);
 					}
@@ -4442,7 +4447,6 @@ console.log(jsonString);
 		var passBack = {};
 			passBack["index"] = data["index"];
 			passBack["value"] = data["value"];
-// TODO: UNBLOCK THIS
 		this._dataCRUD.update(jsonString, passBack);
 	}
 }
@@ -4495,12 +4499,22 @@ giau.CRUD.prototype._handleCreateCompleteFxn = function(e,d){
 }
 giau.CRUD.prototype._handleReloadCompleteFxn = function(e){
 	console.log("READ COMPLETE");
+
 	console.log(e);
 	var original = e["source"];
 	var criteriaIndex = original["index"];
 	var criteriaValue = original["value"];
+	if(Code.isObjectOrInstance(criteriaValue)){
+		criteriaValue = criteriaValue.value();
+	}
 	var sourceData = e["data"];
+		if(Code.isArray(sourceData)){
+			sourceData = sourceData[0]; //assuming single returned read object
+		}
 	var rowData = this._dataRowFromKeyValue(criteriaIndex, criteriaValue);
+// LOCAL
+var dataInfo = this._dataView["data"];
+var dataFields = dataInfo["fields"];
 	if(rowData && sourceData){
 		var row = rowData["row"];
 		// UPDATE VALUES / CONTAINERS
@@ -4510,14 +4524,31 @@ giau.CRUD.prototype._handleReloadCompleteFxn = function(e){
 			var field = mapping.field();
 			var sourceValue = sourceData[field];
 			if(mapping!==null){
-				var action = {"action":"update","data":{"value":sourceValue}};
-				mapping.updateDataFromAction(action);
+				var jsObject = mapping.value();
+				localField = dataFields[field];
+				var attr = localField["attributes"];
+				var pres = localField["presentation"];
+				if(Code.isObjectOrInstance(jsObject)){
+					if(pres && pres["json_model_column"]){ // json configuration
+						var colJSON = pres["json_model_column"];
+						var modl = sourceData[colJSON];
+						var inst = sourceValue;
+						jsObject.model(modl);
+						jsObject.instance(inst);
+					}else{
+						jsObject.value(sourceValue);
+					}
+				}else{
+					var action = {"action":"update","data":{"value":sourceValue}};
+					mapping.updateDataFromAction(action);
+				}
 				mapping.updateElementFromData();
 			}
 		}
 
 	}
 	this._updateLayout();
+
 }
 giau.CRUD.prototype._handleUpdateCompleteFxn = function(e){
 	console.log("UPDATE COMPLETE");
@@ -4947,14 +4978,11 @@ giau.InputFieldDragAndDrop.prototype._handleDragLifecycleFxn = function(event, d
 			var infoReplace = sourceInfo["replace_on_add"];
 			if(infoReplace && infoReplace==="true"){
 				replaceOnAdd = true;
-				maxCount = null;
 			}
 		}
-
-		if(maxCount!==null && maxCount!==undefined && maxCount>=array.length){
-			return;
-		}
-
+		// if(maxCount!==null && maxCount!==undefined && maxCount>=array.length){
+		// 	return;
+		// }
 		var i, key, val;
 		var dataObject = data["value"];
 		var keys = Code.keys(dataObject);
@@ -4964,10 +4992,11 @@ giau.InputFieldDragAndDrop.prototype._handleDragLifecycleFxn = function(event, d
 			array.push(key);
 			source.push(val); // should replace if already exists
 		}
-		if(replaceOnAdd){ // should shift out source if no longer need that index
-			array.shift();
+		if(maxCount!==null && array.length>maxCount){
+			if(replaceOnAdd){ // should remove out source too if no longer need that index
+				array.shift();
+			}
 		}
-
 		value = Code.stringFromCommaSeparatedArray(array);
 		this.value(value);
 	}
@@ -5229,7 +5258,6 @@ giau.CRUD._fieldEditJSON = function(definition, container, fieldName, elementCon
 }
 
 giau.CRUD._fieldEditJSONUpdateDataFxn = function(mapping, action){
-	// console.log("_fieldEditJSONUpdateDataFxn");
 	var field = mapping.field();
 	var operation = action["action"];
 	var action = action["data"];
@@ -5242,7 +5270,6 @@ giau.CRUD._fieldEditJSONUpdateDataFxn = function(mapping, action){
 }
 
 giau.CRUD._fieldEditJSONUpdateElementFxn = function(mapping){
-	// console.log("_fieldEditJSONUpdateElementFxn");
 	var data = mapping.object();
 	var field = mapping.field();
 	var element = mapping.element();
@@ -5260,7 +5287,10 @@ giau.CRUD._fieldEditDateUpdateDataFxn = function(mapping, action){
 	var action = action["data"];
 	var dateValue = action["value"];
 	var dateModal = mapping.value();
-	dateModal.value(dateValue);
+	console.log(dateModal);
+	if(dateModal && dateModal.value){
+		dateModal.value(dateValue);
+	}
 }
 giau.CRUD._fieldEditDateUpdateElementFxn = function(mapping){
 	// N/A

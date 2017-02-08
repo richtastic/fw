@@ -360,20 +360,23 @@ function giau_init_fxn() {
 	error_log("giau_init_fxn");
 	include_all_files();
 
+	error_log("0");
+
 	$WP_ACTION_PLUGINS_LOADED = "plugins_loaded";
 	$WP_ACTION_INIT = "init";
 
 	$WP_ACTION_ADMIN_MENU_BAR = "admin_bar_menu";
-
+	error_log("1");
 	$GIAU_PLUGIN_VERSION_KEY = "GIAU_PLUGIN_VERSION";
 	$GIAU_PLUGIN_VERSION_VALUE = "0.0.0";
-
+	error_log("2");
 	if(!defined($GIAU_PLUGIN_VERSION_KEY)){
+		error_log("INSIDE A");
 		define($GIAU_PLUGIN_VERSION_KEY, $GIAU_PLUGIN_VERSION_VALUE);
 	}else{
-		return;
+		error_log("INSIDE B");
+//		return;
 	}
-
 	// CREATE DATABASE & TABLES
 	giau_create_database();
 	giau_default_fill_database();
@@ -957,12 +960,81 @@ function getHumanReadablePhone($phone){
 	if($phoneLength==10){ // (XXX) XXX-XXXX
 		return "(".substr($phone, 0,3).")"." ".substr($phone, 3,3)."-".substr($phone, 6,4);
 	}
-	if($phoneLength==11){ // X-XXX-XXX-XXXX
+	if($phoneLength==11){ // X-(XXX)-XXX-XXXX
 		return substr($phone, 0,1)."(".substr($phone, 1,3).")"." ".substr($phone, 4,3)."-".substr($phone, 7,4);
 	}
 	return $phone;
 }
 
+function commaSeparatedStringFromArray($arr){ 
+	$str = "";
+	$i;
+	$s;
+	$len = count($arr);
+	$lm1 = $len - 1;
+	for($i=0; $i<$len; ++$i){
+		$s = $arr[$i];
+		$s = str_replace('/\\/',"\\\\",$s);
+		$s = str_replace('/,/',"\\,",$s);
+		$str = $str."".$s;
+		if($i<$lm1){
+			$str = $str.",";
+		}
+	}
+	return $str;
+};
+
+/*
+Code.commaSeparatedStringFromArray = function(arr){ 
+	var str = "";
+	var i, s;
+	var len = arr.length;
+	var lm1 = len - 1;
+	for(i=0; i<len; ++i){
+		s = arr[i];
+		s = s.replace(/\\/g,"\\\\"); //Code.stringReplaceAll(s,"\\","\\\\");
+		s = s.replace(/,/g,"\\,");  //Code.stringReplaceAll(s,",","\\,");
+		str += s;
+		if(i<lm1){
+			str += ",";
+		}
+	}
+	return str;
+};
+Code.arrayFromCommaSeparatedString = function(str){ // only things that should be escaped are ,
+	if(!str){ return []; }
+	var arr = [];
+	var index = 0;
+	var i, ch;
+	var len = str.length;
+	var currentTag = "";
+	for(i=0; i<=len; ++i){
+		ch = null;
+		if(i<len){
+			ch = str[i];
+		}
+		if(ch=="\\"){ // escape character
+			var chNext = null;
+			if(i+1 < len){
+				chNext = str[i+1];
+			}
+				if(chNext){
+					currentTag += chNext;
+					i += 1;
+				}
+		}else if(i==len || ch==","){ // split
+				if(currentTag.length>0){
+					arr.push(currentTag);
+					currentTag = "";
+				}
+		}else{ // normal character
+			currentTag += ch;
+		}
+	}
+	return arr;
+	//return Code.arrayFromStringSeparatedString(str,",");
+}
+*/
 function arrayFromCommaSeparatedString($input){
 	// TODO: UPDATE TO ESCAPED STRINGS
 	
@@ -972,14 +1044,18 @@ function arrayFromCommaSeparatedString($input){
 	$array = explode(",", $input);
 	return $array;
 }
+
 function commaSeparatedStringFromString($input, $limitCount = null){
 	if(!$input){
 		return "";
 	}
-	if(is_array($input)){
-		$input = implode(",", $input);
+	if(is_array($input)){ // ARRAY TO STRING TO ARRAY
+		$input = commaSeparatedStringFromArray($input);
+		$input = arrayFromCommaSeparatedString($input);
+	}else{ // STRING TO ARRAY
+		$input = arrayFromCommaSeparatedString($input);
 	}
-	$split = explode(",", $input);
+	$split = $input;
 	$i;
 	$len = count($split);
 	$cleaned = [];
@@ -989,7 +1065,6 @@ function commaSeparatedStringFromString($input, $limitCount = null){
 		if(strlen($value)>0){
 			array_push($cleaned, $value);
 		}
-
 	}
 	// no limit
 	if($limitCount===null){

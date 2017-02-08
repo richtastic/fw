@@ -5,8 +5,11 @@ function require_once_directory($directory){
 	error_log("require_once_directory: '".$directory."'");
 	$phpEnding = ".php";
 	$phpEndingStringLength = strlen($phpEnding);
+	error_log("YEP: '".$directory."'");
 	if($directory){
+
 		$directoryExists = file_exists($directory);
+		error_log("directoryExists: '".$directoryExists."'");
 		if($directoryExists){
 			$fileList = scandir($directory);
 			foreach($fileList as $fileKey => $fileValue){
@@ -14,11 +17,16 @@ function require_once_directory($directory){
 				$fileName = $fileValue;
 				$fileStringLength = strlen($fileName);
 				if( $fileStringLength > $phpEndingStringLength && substr($fileName, $fileStringLength-$phpEndingStringLength, $phpEndingStringLength) == $phpEnding ) {
+					$fileName = $directory."/".$fileName.""; // need full file path
+					error_log("require: '".$fileName."'");
+					$exists = file_exists($fileName);
+					error_log("exists: ".$exists);
 					require_once $fileName;
 				}
 			}
 		}
 	}
+	error_log("OUT...");
 }
 
 function padLeft($input, $padding, $count){
