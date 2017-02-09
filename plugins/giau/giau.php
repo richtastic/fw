@@ -974,75 +974,56 @@ function commaSeparatedStringFromArray($arr){
 	$lm1 = $len - 1;
 	for($i=0; $i<$len; ++$i){
 		$s = $arr[$i];
-		$s = str_replace('/\\/',"\\\\",$s);
-		$s = str_replace('/,/',"\\,",$s);
+		error_log("WAS:   '".$s."'");
+		$s = str_replace('\\',"\\\\",$s);
+		$s = str_replace(',',"\\,",$s);
+		error_log("IS:    '".$s."'");
 		$str = $str."".$s;
 		if($i<$lm1){
 			$str = $str.",";
 		}
 	}
 	return $str;
-};
-
-/*
-Code.commaSeparatedStringFromArray = function(arr){ 
-	var str = "";
-	var i, s;
-	var len = arr.length;
-	var lm1 = len - 1;
-	for(i=0; i<len; ++i){
-		s = arr[i];
-		s = s.replace(/\\/g,"\\\\"); //Code.stringReplaceAll(s,"\\","\\\\");
-		s = s.replace(/,/g,"\\,");  //Code.stringReplaceAll(s,",","\\,");
-		str += s;
-		if(i<lm1){
-			str += ",";
-		}
-	}
-	return str;
-};
-Code.arrayFromCommaSeparatedString = function(str){ // only things that should be escaped are ,
-	if(!str){ return []; }
-	var arr = [];
-	var index = 0;
-	var i, ch;
-	var len = str.length;
-	var currentTag = "";
-	for(i=0; i<=len; ++i){
-		ch = null;
-		if(i<len){
-			ch = str[i];
-		}
-		if(ch=="\\"){ // escape character
-			var chNext = null;
-			if(i+1 < len){
-				chNext = str[i+1];
-			}
-				if(chNext){
-					currentTag += chNext;
-					i += 1;
-				}
-		}else if(i==len || ch==","){ // split
-				if(currentTag.length>0){
-					arr.push(currentTag);
-					currentTag = "";
-				}
-		}else{ // normal character
-			currentTag += ch;
-		}
-	}
-	return arr;
-	//return Code.arrayFromStringSeparatedString(str,",");
 }
-*/
-function arrayFromCommaSeparatedString($input){
-	// TODO: UPDATE TO ESCAPED STRINGS
-	
-	if(!$input){
+
+function arrayFromCommaSeparatedString($str){ // only things that should be escaped are , and \
+	error_log("arrayFromCommaSeparatedString: '".$str."'");
+	if(!$str){
 		return [];
 	}
-	$array = explode(",", $input);
-	return $array;
+	$arr = [];
+	$index = 0;
+	$i;
+	$ch;
+	$len = mb_strlen($str);
+	error_log(" length: ".$len." ");
+	$currentTag = "";
+	for($i=0; $i<=$len; ++$i){
+		$ch = null;
+		if($i<$len){
+			$ch = $str[$i];
+		}
+		error_log(  " ----".$i."  CHARACTER: '".$ch."' ");
+		if($ch=="\\"){ // escape character
+			$chNext = null;
+			if($i+1 < $len){
+				$chNext = $str[$i+1];
+			}
+			if($chNext){
+				error_log("  => ESCAPED: '".$chNext."' ");
+				$currentTag = $currentTag."".$chNext;
+				$i += 1;
+			}
+		}else if($i==$len || $ch==","){ // split
+				if(strlen(currentTag)>0){
+					$arr[] = $currentTag;
+					$currentTag = "";
+				}
+		}else{ // normal character
+			$currentTag = $currentTag."".$ch;
+		}
+	}
+	return $arr;
 }
 
 function commaSeparatedStringFromString($input, $limitCount = null){

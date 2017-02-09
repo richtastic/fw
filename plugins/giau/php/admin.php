@@ -6,10 +6,16 @@
 function giau_action_admin_menu() {
 	error_log("RICHIE Y");
 
-	$arr = ["A","B","C\,"];
+	// A | B\ | C\, | \, 
+	$arr = ["A","B\\","C\,","\\,"];
+	error_log("ARR: ".objectToString($arr));
+	// A | B\\, C\\\, \,
 	$str = commaSeparatedStringFromArray($arr);
-	error_log("ARR: ".$arr);
 	error_log("STR: ".$str);
+	error_log("++++");
+	$arr = arrayFromCommaSeparatedString($str);
+	error_log("ARR: ".objectToString($arr));
+
 	// OPTIONS > GIAU PLUGIN
 	//add_options_page('Giau Plugin Options', 'Giau Plugin', 'manage_options', GIAU_UNIQUE_IDENTIFIER(), 'giau_admin_plugin_options');
 	// GIAU PLUGIN | MENU
