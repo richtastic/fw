@@ -665,6 +665,7 @@ $editableFields = [];
 }
 
 function translateRowsToClient($tableDefinition, $rows){
+	error_log("translateRowsToClient -----------");
 	error_log("ROWS: ".count($rows));
 	$tableName = $tableDefinition["table"];
 	$presentation = $tableDefinition["presentation"];
@@ -695,6 +696,7 @@ function translateRowsToClient($tableDefinition, $rows){
 }
 function crudDataOperationGeneric($columnInfo, $inputData, $tableDefinition, $crudType){ // "create" "read" "update" "delete"
 	error_log("crudDataOperationCreate");
+	error_log( objectToString($inputData) );
 	global $wpdb;
 	$row = [];
 	$i;
@@ -716,17 +718,6 @@ function crudDataOperationGeneric($columnInfo, $inputData, $tableDefinition, $cr
 				$functionReadSingle = $functionCRUDTable["read_single"];
 			}
 		}
-	/*
- ]
-[05-Feb-2017 01:52:20 UTC]   0 HAVE KEY: section_id == id
-[05-Feb-2017 01:52:20 UTC]   1 HAVE KEY: section_created == created
-[05-Feb-2017 01:52:20 UTC]   2 HAVE KEY: section_modified == modified
-[05-Feb-2017 01:52:20 UTC]   3 HAVE KEY: widget_id == widget
-[05-Feb-2017 01:52:20 UTC]   4 HAVE KEY: section_configuration == configuration
-[05-Feb-2017 01:52:20 UTC]   5 HAVE KEY: section_name == name
-[05-Feb-2017 01:52:20 UTC]   6 HAVE KEY: section_subsections == section_list
-
-	*/
 	for($i=0; $i<$len; ++$i){ // go thru each of the fields
 		//$columnNameAlias = $keys[$i];
 		//$columnName = $columnAliasToReal[$columnNameAlias];
@@ -852,6 +843,7 @@ function crudDataOperationGeneric($columnInfo, $inputData, $tableDefinition, $cr
 		$data = crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle);
 		error_log("row: ".objectToString($row));
 		error_log("data: ".objectToString($data));
+		error_log("prim: '".$data[$primaryKeyColumnNameAlias]."'' == '".$primaryKeyValue."'");
 		if($data && $data[$primaryKeyColumnNameAlias] == $primaryKeyValue){
 			$where = [$primaryKeyColumnName => $primaryKeyValue];
 			error_log("WHERE: ".objectToString($where));
@@ -906,15 +898,14 @@ function crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValu
 	global $wpdb;
 	$tableName = $tableDefinition["table"];
 	if($functionReadSingle!==null){
-		error_log("RICHIE - READ AAAAAAAAAAAAAAAAAAAAAAAAAAA");
 		return $functionReadSingle($primaryKeyValue);
 	}else{
-		error_log("RICHIE - READ BBBBBBBBBBBBBBBBBBBBBBBBBBB");
 		$query = "SELECT * FROM ".$tableName." WHERE ".$primaryKeyColumnName."=\"".$primaryKeyValue."\" LIMIT 1";
-		error_log($query);
 		$rows = $wpdb->get_results($query, ARRAY_A);
 		$result = translateRowsToClient($tableDefinition,$rows);
-		return $result;
+		if($result && count($result)==1){
+			return $result[0];
+		}
 	}
 	return null;
 }

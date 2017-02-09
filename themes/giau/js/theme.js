@@ -3892,9 +3892,9 @@ giau.PagingDisplay.prototype._updateLayout = function(){
 	var i, len, lm1, div;
 	len = this._totalPages;
 	lm1 = len-1;
-	var maxPagesToLimit = 10;
-	var limitBefore = 1;
-	var limitAfter = 1;
+	var maxPagesToLimit = 20;
+	var limitBefore = 5;
+	var limitAfter = 5;
 	var limitBegin = 3;
 	var limitEnd = 3;
 	var shownEllipsesBefore = false;
@@ -4048,8 +4048,6 @@ giau.DataSource.prototype.getPage = function(pageToGet){
 	ajax.context(this);
 	ajax.callback(function(d){
 		var obj = Code.parseJSON(d);
-		console.log("RICHIE RETRUNED: ");
-		console.log(obj);
 		this.alertAll(giau.DataSource.EVENT_PAGE_DATA,obj);
 	});
 	ajax.send();
@@ -4096,7 +4094,6 @@ giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData, 
 	ajax.append("data",data);
 	ajax.context(this);
 	ajax.callback(function(d){
-		console.log("GOT BACK: "+d);
 		var obj = Code.parseJSON(d);
 		if(obj["data"]){
 			obj = obj["data"];
@@ -4386,8 +4383,6 @@ console.log(textValue);
 }
 giau.CRUD.prototype._handleUpdateFxn = function(e,data){
 	console.log("UPDATE +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-	console.log(e);
-	console.log(data);
 		var dataInfo = this._dataView["data"];
 		var dataFields = dataInfo["fields"];
 	var criteriaIndex = data["index"];
@@ -4397,9 +4392,7 @@ giau.CRUD.prototype._handleUpdateFxn = function(e,data){
 		criteriaValue = criteriaValue.value();
 	}
 	var rowData = this._dataRowFromKeyValue(criteriaIndex, criteriaValue);
-	console.log(rowData)
 	if(rowData){
-		console.log(rowData)
 		var row = rowData["row"];
 		var updateData = {};
 		for(var i=0; i<row.length; ++i){
@@ -4409,27 +4402,19 @@ giau.CRUD.prototype._handleUpdateFxn = function(e,data){
 			//console.log(field)
 			var attr = field["attributes"];
 			var pres = field["presentation"];
-console.log("field: "+index);
 			if(attr["editable"]==="true" || attr["primary_key"]==="true"){
 				if(pres && pres["json_model_column"]){ // json configuration
-					console.log(mapping.value())
 					var json = mapping.value().instance();
-					console.log(json);
 					var str = Code.StringFromJSON(json);
 					updateData[index] = str;
-					console.log(str);
 				}else{
 					var mappingValue = mapping.value();
 					var value = null;
-					console.log(mappingValue.constructor,(typeof mappingValue));
-					if( Code.isInstance(mappingValue) ){
+					if( Code.isObjectOrInstance(mappingValue) ){
 						value = mappingValue.value();
 					}else{
 						value = mappingValue;
-						console.log(value);
 					}
-					console.log(mappingValue);
-					console.log(value);
 					updateData[index] = value+""; // cast to string
 
 
@@ -4470,10 +4455,11 @@ giau.CRUD.prototype._handleDeleteFxn = function(e,data){
 
 giau.CRUD.prototype._handleCreateCompleteFxn = function(e,d){
 	console.log("CREATE COMPLETE");
-	console.log(e);
-	console.log(d);
 	var source = e["source"];
 	var data = e["data"];
+	if(data && Code.isArray(data) && data.length>0){
+		data = data[0];
+	}
 	// get back new row
 	var row = data;
 	//
@@ -4487,7 +4473,11 @@ giau.CRUD.prototype._handleCreateCompleteFxn = function(e,d){
 		var field = editFields[j];
 		var column = field["column"];
 		var alias = field["alias"];
+		//console.log(field,column,alias);
 		var mapping = this._mappingFromData(field,row,alias);
+		if(mapping.value){
+			console.log(mapping.value().value());
+		}
 		if(mapping){
 			viewRow.push(mapping);
 		}
@@ -4500,7 +4490,6 @@ giau.CRUD.prototype._handleCreateCompleteFxn = function(e,d){
 giau.CRUD.prototype._handleReloadCompleteFxn = function(e){
 	console.log("READ COMPLETE");
 
-	console.log(e);
 	var original = e["source"];
 	var criteriaIndex = original["index"];
 	var criteriaValue = original["value"];
@@ -5316,6 +5305,7 @@ giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, 
 		shouldDisplay = shouldDisplay!=="false"; // default to true
 shouldDisplay = true;
 	var fieldType = definition["type"];
+console.log(itemIndex+" = "+fieldType+" ... "+sourceObject[itemIndex]);
 	// DISPLAY
 	var elementField = Code.newDiv();
 	var elementTitle = Code.newDiv();
@@ -6539,7 +6529,20 @@ giau.InputFieldDiscrete.prototype.index = function(index){
 	return this._index;
 }
 giau.InputFieldDiscrete.prototype.value = function(value){ // assign a value ...
-	this.index(value); // simple passing index
+	if(Code.isString(value)){ // complicated lookup
+		var array = this.options();
+		var i, len = array.length;
+		for(i=0; i<len; ++i){
+			var item = array[i];
+			var val = item["value"];
+			if(val == value){
+				this.index(i);
+				break;
+			}
+		}
+	}else{ // simple passing index
+		this.index(value);
+	}
 	if(this._index < this._options.length){
 		return this._options[this._index]["value"];
 	}

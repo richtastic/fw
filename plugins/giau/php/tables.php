@@ -394,6 +394,11 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 					"sort" =>  "true",
 					"editable" => "false",
 				],
+				"validation" => [
+					"create" => [
+						"timestamp" => "now" // replace with now
+					],
+				],
 			],
 			"modified" => [
 				"type" => "string-date",
@@ -402,6 +407,14 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 					"order" => "4",
 					"sort" =>  "true",
 					"editable" => "false",
+				],
+				"validation" => [
+					"create" => [
+						"timestamp" => "now" // replace with now
+					],
+					"update" => [
+						"timestamp" => "now" // replace with now
+					],
 				],
 			],
 			"hash_index" => [
@@ -505,6 +518,11 @@ function GIAU_TABLE_DEFINITION_BIO(){
 					"sort" =>  "true",
 					"editable" => "false",
 				],
+				"validation" => [
+					"create" => [
+						"timestamp" => "now" // replace with now
+					],
+				],
 			],
 			"modified" => [
 				"type" => "string-date",
@@ -513,6 +531,14 @@ function GIAU_TABLE_DEFINITION_BIO(){
 					"order" => "11",
 					"sort" =>  "true",
 					"editable" => "false",
+				],
+				"validation" => [
+					"create" => [
+						"timestamp" => "now" // replace with now
+					],
+					"update" => [
+						"timestamp" => "now" // replace with now
+					],
 				],
 			],
 			"first_name" => [
@@ -652,6 +678,11 @@ function GIAU_TABLE_DEFINITION_CALENDAR(){
 					"sort" =>  "true",
 					"editable" => "false",
 				],
+				"validation" => [
+					"create" => [
+						"timestamp" => "now" // replace with now
+					],
+				],
 			],
 			"modified" => [
 				"type" => "string-date",
@@ -661,6 +692,14 @@ function GIAU_TABLE_DEFINITION_CALENDAR(){
 					"sort" =>  "true",
 					"editable" => "false",
 				],
+				"validation" => [
+					"create" => [
+						"timestamp" => "now" // replace with now
+					],
+					"update" => [
+						"timestamp" => "now" // replace with now
+					],
+				],
 			],
 			"short_name" => [
 				"type" => "string",
@@ -668,7 +707,7 @@ function GIAU_TABLE_DEFINITION_CALENDAR(){
 					"display_name" => "Short Name",
 					"order" => "0",
 					"sort" =>  "false",
-					"editable" => "false",
+					"editable" => "true",
 				],
 			],
 			"title" => [
@@ -696,6 +735,11 @@ function GIAU_TABLE_DEFINITION_CALENDAR(){
 					"order" => "3",
 					"sort" =>  "false",
 					"editable" => "true",
+				],
+				"validation" => [
+					"create" => [
+						"timestamp" => "now" // replace with now
+					],
 				],
 			],
 			"duration" => [
@@ -758,6 +802,11 @@ function GIAU_TABLE_DEFINITION_PAGE(){
 					"sort" =>  "true",
 					"editable" => "false",
 				],
+				"validation" => [
+					"create" => [
+						"timestamp" => "now" // replace with now
+					],
+				],
 			],
 			"modified" => [
 				"type" => "string-date",
@@ -766,6 +815,14 @@ function GIAU_TABLE_DEFINITION_PAGE(){
 					"order" => "4",
 					"sort" =>  "true",
 					"editable" => "false",
+				],
+				"validation" => [
+					"create" => [
+						"timestamp" => "now" // replace with now
+					],
+					"update" => [
+						"timestamp" => "now" // replace with now
+					],
 				],
 			],
 			"name" => [
