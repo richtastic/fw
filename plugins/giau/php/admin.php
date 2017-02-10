@@ -32,13 +32,13 @@ function giau_admin_menu_page_main(){
 	$THIS_URL = getCurrentRequestURL();
 	$URL_FILE_UPLOAD = add_query_arg('page','giau-plugin-submenu-file-upload');
 	$URL_DATA_ENTRY = add_query_arg('page','giau-plugin-submenu-data-entry');
-	$URL_DATA_BACKUP = add_query_arg('page','giau-plugin-submenu-data-backup');
+	$URL_DATA_BACKUP = add_query_arg('page','giau-plugin-submenu-backup');
 ?>
 	<h1 style="vertical-align:middle;"><img src="<?php echo $iconBlackMini; ?>"  style="display:inline-block; vertical-align:middle;" />Giau Plugin</h1>
 	<ul>
 		<li><a href="<?php echo $URL_FILE_UPLOAD; ?>">File Uploading</a></li>
 		<li><a href="<?php echo $URL_DATA_ENTRY; ?>">Data Entry</a></li>
-		<li><a href="<?php echo $URL_FILE_BACKUP; ?>">File & Data Backup</a></li>
+		<li><a href="<?php echo $URL_DATA_BACKUP; ?>">File & Data Backup</a></li>
 	</ul>
 	<!--
 	<div class="giauTestA" style="width:200px; height:120px; background-color:#CCC;"></div>

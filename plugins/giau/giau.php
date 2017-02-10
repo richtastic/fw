@@ -1191,6 +1191,7 @@ function backup_uploads_directory_url(){
 	$endName = "uploads_".$timestamp.".zip";
 	// ZIP UP
 	$zipSource = giau_plugin_upload_root_dir();
+	createDirectoryIfNotExist($zipSource);
 	$zipDestination = giau_plugin_temp_dir()."/".$endName;
 	$result = zipDirectory($zipSource, $zipDestination); // assumed success
 	// location

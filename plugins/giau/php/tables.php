@@ -1451,6 +1451,7 @@ function giau_database_backup_file($directory=null){
 	if(!$directory){
 		$directory = giau_plugin_temp_dir();
 	}
+	createDirectoryIfNotExist($directory);
 	$date = getDateNow();
 	$year = getDateYear($date);
 	$month = getDateMonth($date);
@@ -1469,8 +1470,9 @@ function giau_database_backup_file($directory=null){
 }
 
 function giau_database_backup_url(){
-	$fileURL = giau_database_backup_file();
-	$fileURL = giau_plugin_temp_url()."/".$fileURL;
+	$dir = giau_plugin_temp_url();
+	$filename = giau_database_backup_file();
+	$fileURL = $dir."/".$filename;
 	error_log("fileURL: ".$fileURL);
 	return $fileURL;
 }

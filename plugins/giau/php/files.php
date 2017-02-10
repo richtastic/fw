@@ -106,6 +106,14 @@ function removeFileAtLocation($absolutePath, $deleteIfDir=true){
 }
 
 
+function createDirectoryIfNotExist($absolutePath, $mode=0777){
+	if(!$absolutePath){
+		return;
+	}
+	if(!file_exists($absolutePath)){
+		mkdir($absolutePath, $mode, true);
+	}
+}
 
 
 function getDirectoryListingRecursive($directory,&$array,$limit=null, $trim=null, $fxn=null){
@@ -113,6 +121,9 @@ function getDirectoryListingRecursive($directory,&$array,$limit=null, $trim=null
 	// $directory = preg_replace('/(\/)+/', '/', $directory);
 	// directory nonempty
 	if(!$directory){
+		return;
+	}
+	if(!file_exists($directory)){
 		return;
 	}
 	if($limit===null){
