@@ -115,6 +115,7 @@ function giau_wordpress_data_service(){
 					$result = giau_insert_database_from_json($json, true);
 					error_log("result: ".$result);
 					if($result){
+						error_log("SUCCESS");
 						$response["data"] = [
 							"feedback" => $result,
 						];
@@ -150,7 +151,7 @@ function giau_wordpress_data_service(){
 					if($result){
 						error_log("SEND SUCCESS");
 						$response["data"] = [
-							"feedback" => $result,
+							"feedback" => giau_plugin_upload_root_url(),
 						];
 						$response["result"] = "success";
 					}

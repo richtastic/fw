@@ -2813,7 +2813,6 @@ giau.FileBrowser.prototype.uploadFile = function(file,filename,directory){
 
 
 giau.FileUploadDropArea = function(element){
-	console.log("FileUploadDropArea");
 	this._container = element;
 	this._elementUploadDropTarget = Code.newDiv();
 	this._allowedMimeTypes = [];
@@ -2872,9 +2871,8 @@ giau.FileUploadDropArea.prototype._handleDragDropUploadFxn = function(e){
 		var filename = file.name;
 		var filetype = file.type;
 		if(this.fileTypeAcceptable(filetype)){
-			console.log("upload file");
 			this.uploadFile(file, filename);
-			break;
+			break; // only one
 		}
 	}
 }
@@ -2889,6 +2887,7 @@ giau.FileUploadDropArea.prototype.uploadFile = function(file,filename){
 	var url = "./";
 	filename = filename!==undefined ? filename : "";
 	var ajax = new Ajax();
+	ajax.timeout(100*1000);
 	ajax.url(url);
 	ajax.method(Ajax.METHOD_TYPE_POST);
 	var i;
@@ -2902,9 +2901,42 @@ giau.FileUploadDropArea.prototype.uploadFile = function(file,filename){
 		ajax.append('file',file);
 	ajax.context(this);
 	ajax.callback(function(d){
+		console.log("returned: ");
 		console.log(d);
+		var div = this._elementUploadDropTarget;
 		var obj = Code.parseJSON(d);
-		console.log(obj);
+		var oldBG = Code.getStyleBackgroundColor(div);
+		var newBG = 0xFF00FF00;
+		var duration = 500;
+		var deltaTime = 25;
+		var steps = Math.ceil(duration/deltaTime);
+		var ticker = new Ticker(deltaTime);
+		var count = 0;
+var oldR = Code.getRedARGB(oldBG) / 255.0;
+var oldG = Code.getGrnARGB(oldBG) / 255.0;
+var oldB = Code.getBluARGB(oldBG) / 255.0;
+var oldA = Code.getAlpARGB(oldBG) / 255.0;
+var newR = Code.getRedARGB(newBG) / 255.0;
+var newG = Code.getGrnARGB(newBG) / 255.0;
+var newB = Code.getBluARGB(newBG) / 255.0;
+var newA = Code.getAlpARGB(newBG) / 255.0;
+		ticker.addFunction(Ticker.EVENT_TICK,function(){
+			if(count<=steps){
+				var percent = count/steps;
+				var percm1 = 1.0 - percent;
+				var red = oldR*percm1 + newR*percent;
+				var grn = oldG*percm1 + newG*percent;
+				var blu = oldB*percm1 + newB*percent;
+				var alp = oldA*percm1 + newA*percent;
+				var col = Code.getColARGBFromFloat(alp,red,grn,blu);
+				col = Code.getJSColorFromARGB(col);
+				Code.setStyleBackgroundColor(div,col);
+				++count;
+			}else{
+				ticker.stop();
+			}
+		},null);
+		ticker.start();
 		//this.refreshBrowser();
 	});
 	ajax.send();

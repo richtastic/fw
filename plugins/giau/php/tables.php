@@ -1480,17 +1480,14 @@ function giau_database_backup_url(){
 
 function giau_insert_database_from_json($jsonSource, $deleteTables){
 	global $wpdb;
-	error_log("giau_insert_database_from_json");
 	$jsonObject = json_decode($jsonSource, true);
 	$tableCount = count($jsonObject);
-	error_log("tableCount: ".$tableCount);
 	foreach ($jsonObject as $tableName => $rowList) {
-		error_log("   tableName: ".$tableName);
 		if($deleteTables){
 			//$dropQuery = "DROP TABLE IF EXISTS ".$tableName." ;";
 			//$wpdb->query($dropQuery);
-			$truncateQuery = "TRUNCATE TABLE  ".$tableName." ;";
 			// ALTER TABLE tablename AUTO_INCREMENT = 1
+			$truncateQuery = "TRUNCATE TABLE  ".$tableName." ;";
 			$wpdb->query($truncateQuery);
 		}
 		$rowCount = count($rowList);
@@ -1504,7 +1501,6 @@ function giau_insert_database_from_json($jsonSource, $deleteTables){
 			$result = $wpdb->insert($tableName, $insertArray);
 		}
 	}
-	error_log("giau_insert_database_from_json DONE");
 	return true;
 }
 

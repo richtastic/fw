@@ -4,8 +4,7 @@
 
 
 function giau_action_admin_menu() {
-	error_log("RICHIE Y");
-
+/*
 	// A | B\ | C\, | \, 
 	$arr = ["A","B\\","C\,","\\,"];
 	error_log("ARR: ".objectToString($arr));
@@ -15,7 +14,7 @@ function giau_action_admin_menu() {
 	error_log("++++");
 	$arr = arrayFromCommaSeparatedString($str);
 	error_log("ARR: ".objectToString($arr));
-
+*/
 	// OPTIONS > GIAU PLUGIN
 	//add_options_page('Giau Plugin Options', 'Giau Plugin', 'manage_options', GIAU_UNIQUE_IDENTIFIER(), 'giau_admin_plugin_options');
 	// GIAU PLUGIN | MENU
@@ -176,7 +175,7 @@ function giau_admin_menu_page_submenu_backup(){
 	<div id="download_database_element"></div>
 	<div id="download_database_link"></div>
 	
-	<h2>Upload Database Backup</h2>
+	<h2>Upload Database Backup (.txt)</h2>
 	
 	<div class="giauDropArea">
 		<div data-parameter-accepted-filetype="text/plain"></div>
@@ -191,7 +190,7 @@ function giau_admin_menu_page_submenu_backup(){
 	<div id="download_file_element"></div>
 	<div id="download_file_link"></div>
 
-	<h2>Upload File Backup</h2>
+	<h2>Upload File Backup (.zip)</h2>
 	<div class="giauDropArea">
 		<div data-parameter-accepted-filetype="application/zip"></div>
 		<div data-parameter-key="operation" data-parameter-value="backup_upload_uploads_zip"></div>
@@ -219,7 +218,6 @@ function giau_admin_menu_page_submenu_backup(){
 	setTimeout(afterDelay, 800);
 
 	function installBackupButton(elementName, linkName, operationName, phraseButton, returnedField){
-		console.log("button action");
 			var elementButtonDownload = Code.getElements(Code.getBody(), function(e){
 				return Code.getProperty(e,"id") == elementName;
 			}, true)[0];
@@ -233,9 +231,7 @@ function giau_admin_menu_page_submenu_backup(){
 			Code.setContent(elementButtonDownload,phraseButton);
 			Code.setStyleColor(elementButtonDownload,Code.getJSColorFromARGB(0xFF000000));
 			Code.setStyleBackgroundColor(elementButtonDownload,Code.getJSColorFromARGB(0xFFDD6677));
-			//
-			var ajax = new Ajax();
-			//
+			var ajax = new Ajax(true);
 			var dispatch = new JSDispatch();
 			dispatch.addJSEventListener(elementButtonDownload, Code.JS_EVENT_MOUSE_DOWN, function(e){
 				if(!Code.getMouseLeftClick(e)){ return; }
@@ -255,9 +251,20 @@ function giau_admin_menu_page_submenu_backup(){
 							if(returnedField){
 								var databaseURL = jsonData[returnedField];
 								Code.open(databaseURL);
+								var br = Code.newBreak();
 								var div = Code.newAnchor(databaseURL,databaseURL);
+								Code.addChild( elementDatabaseLink, br);
 								Code.addChild( elementDatabaseLink, div);
 							}
+						}else{ // output success feedback
+							var div = Code.newDiv("success");
+							Code.addChild( elementDatabaseLink, div);
+							var ticker = new Ticker(1000);
+							ticker.addFunction(Ticker.EVENT_TICK,function(){
+								ticker.stop();
+								Code.removeFromParent(div);
+							},null);
+							ticker.start();
 						}
 					}
 				});
