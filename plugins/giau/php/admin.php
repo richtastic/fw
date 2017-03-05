@@ -39,6 +39,35 @@ function giau_admin_menu_page_main(){
 		<li><a href="<?php echo $URL_DATA_ENTRY; ?>">Data Entry</a></li>
 		<li><a href="<?php echo $URL_DATA_BACKUP; ?>">File & Data Backup</a></li>
 	</ul>
+	<?php
+		$URL_IMAGE_DIAGRAM = giau_plugin_images_url().'/admin/giau_icon_black_24x24.png';
+	?>
+	<!-- info -->
+	<img src = "<?php echo URL_IMAGE_DIAGRAM; ?>">
+	<ul>
+		<li>Page:
+			<ul>
+				<li>Ordered list of sections</li>
+			</ul>
+		</il>
+	Section:
+		Implementation of a widget, possibly contains subsections
+
+	Widget:
+Defined set of behavior (typically display)
+
+	Bio:
+Personnel directory listing
+
+
+Calendar:
+List of events with start date and duration
+
+Languagization:
+Localization of material (text) , to display content according to end user laguage preferences
+
+	</ul>
+
 	<!--
 	<div class="giauTestA" style="width:200px; height:120px; background-color:#CCC;"></div>
 	<div class="giauTestB" style="width:200px; height:100px; background-color:#CCC;"></div>
