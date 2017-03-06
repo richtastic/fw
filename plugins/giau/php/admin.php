@@ -40,32 +40,41 @@ function giau_admin_menu_page_main(){
 		<li><a href="<?php echo $URL_DATA_BACKUP; ?>">File & Data Backup</a></li>
 	</ul>
 	<?php
-		$URL_IMAGE_DIAGRAM = giau_plugin_images_url().'/admin/giau_icon_black_24x24.png';
+		$URL_IMAGE_DIAGRAM = giau_plugin_images_url().'/admin/structure_giau_diagram.png';
 	?>
 	<!-- info -->
-	<img src = "<?php echo URL_IMAGE_DIAGRAM; ?>">
+	<img src = "<?php echo $URL_IMAGE_DIAGRAM; ?>" />
 	<ul>
 		<li>Page:
 			<ul>
 				<li>Ordered list of sections</li>
 			</ul>
 		</il>
-	Section:
-		Implementation of a widget, possibly contains subsections
-
-	Widget:
-Defined set of behavior (typically display)
-
-	Bio:
-Personnel directory listing
-
-
-Calendar:
-List of events with start date and duration
-
-Languagization:
-Localization of material (text) , to display content according to end user laguage preferences
-
+		<li>Section:
+			<ul>
+				<li>Implementation of a widget, possibly contains subsections</li>
+			</ul>
+		</li>
+		<li>Widget:
+			<ul>
+				<li>Defined set of behavior (typically display)</li>
+			</ul>
+		</li>
+		<li>Bio:
+			<ul>
+				<li>Personnel directory listing</li>
+			</ul>
+		</li>
+		<li>Calendar:
+			<ul>
+				<li>List of events with start date and duration</li>
+			</ul>
+		</li>
+		<li>Languagization:
+			<ul>
+				<li>Localization of material (text) , to display content according to end user laguage preferences</li>
+			</ul>
+		</li>
 	</ul>
 
 	<!--
@@ -193,7 +202,7 @@ function giau_admin_menu_page_submenu_backup(){
 	<h1>Temp Cache</h1>
 
 	<h2>Clear Temp directory</h2>
-	<div id="temp_remove_element"></div>
+	<div id="temp_remove_element" class="giauBackupButton"></div>
 	<div id="temp_remove_feedback"></div>
 	<div style="font-size: 10px;">temporary files created here are available publicly to download, after downloading an asset, clear the temp directory to remove all remote file storage.</div>
 
@@ -201,28 +210,30 @@ function giau_admin_menu_page_submenu_backup(){
 	<h1>Database Backup</h1>
 
 	<h2>Download Database Backup</h2>
-	<div id="download_database_element"></div>
+	<div id="download_database_element" class="giauBackupButton"></div>
 	<div id="download_database_link"></div>
 	
 	<h2>Upload Database Backup (.txt)</h2>
 	
-	<div class="giauDropArea">
+	<div class="giauDropArea giauBackupButton">
 		<div data-parameter-accepted-filetype="text/plain"></div>
 		<div data-parameter-accepted-filetype="text/javascript"></div>
 		<div data-parameter-key="operation" data-parameter-value="backup_upload_database"></div>
+		<div>Drag & Drop database file here to auto-upload</div>
 	</div>
 
 	
 	<h1>File Backup</h1>
 
 	<h2>Download File Backup</h2>
-	<div id="download_file_element"></div>
+	<div id="download_file_element" class="giauBackupButton"></div>
 	<div id="download_file_link"></div>
 
 	<h2>Upload File Backup (.zip)</h2>
-	<div class="giauDropArea">
+	<div class="giauDropArea giauBackupButton">
 		<div data-parameter-accepted-filetype="application/zip"></div>
 		<div data-parameter-key="operation" data-parameter-value="backup_upload_uploads_zip"></div>
+		<div>Drag & Drop archive file here to auto-upload</div>
 	</div>
 
 
@@ -253,13 +264,13 @@ function giau_admin_menu_page_submenu_backup(){
 			var elementDatabaseLink = Code.getElements(Code.getBody(), function(e){
 				return Code.getProperty(e,"id") == linkName;
 			}, true)[0];
-			console.log(elementButtonDownload);
-			Code.setStyleWidth(elementButtonDownload,200+"px");
-			Code.setStyleHeight(elementButtonDownload,50+"px");
-			Code.setStyleTextAlign(elementButtonDownload,"center");
+			//console.log(elementButtonDownload);
+			// Code.setStyleMinWidth(elementButtonDownload,200+"px");
+			// Code.setStyleMinHeight(elementButtonDownload,50+"px");
+			// Code.setStyleTextAlign(elementButtonDownload,"center");
+			// Code.setStyleColor(elementButtonDownload,Code.getJSColorFromARGB(0xFF000000));
+			// Code.setStyleBackgroundColor(elementButtonDownload,Code.getJSColorFromARGB(0xFFDD6677));
 			Code.setContent(elementButtonDownload,phraseButton);
-			Code.setStyleColor(elementButtonDownload,Code.getJSColorFromARGB(0xFF000000));
-			Code.setStyleBackgroundColor(elementButtonDownload,Code.getJSColorFromARGB(0xFFDD6677));
 			var ajax = new Ajax(true);
 			var dispatch = new JSDispatch();
 			dispatch.addJSEventListener(elementButtonDownload, Code.JS_EVENT_MOUSE_DOWN, function(e){
@@ -270,10 +281,7 @@ function giau_admin_menu_page_submenu_backup(){
 				ajax.method(Ajax.METHOD_TYPE_POST);
 				ajax.append('operation',operationName);
 				ajax.callback(function(e){
-					console.log("RESPONSE:");
-					console.log(e);
 					var json = Code.parseJSON(e);
-					console.log(json);
 					if(json && json["result"]=="success"){
 						var jsonData = json["data"];
 						if(jsonData){

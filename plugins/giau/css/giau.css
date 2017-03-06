@@ -1,0 +1,17 @@
+/* admin */
+
+/* new */
+.giauBackupButton {
+	color: #000000;
+	background-color: #99CCFF;
+	border-style: solid;
+	border-color: #66AAEE;
+	border-width: 1px;
+	border-radius: 10px;
+	width: 200px;
+	min-height: 50px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+

@@ -1398,8 +1398,6 @@ function giau_data_default_insert_into_database(){
 			"autoplay" => "10000",
 			"display_navigation" => "false",
 			"images" => [
-				"/images/galleries/home_featured/featured_07_opt.png",
-				"/images/galleries/home_featured/featured_08_opt.png",
 				"/images/galleries/home_featured/featured_06_opt.png",
 				"/images/galleries/home_featured/featured_01_opt.png",
 				"/images/galleries/home_featured/featured_02_opt.png",

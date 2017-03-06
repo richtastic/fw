@@ -403,11 +403,14 @@ function giau_action_page_head(){ // inject as desired
 	$fileJavaScriptFF = getPluginURIPath()."/js/code/FF.js";
 	$fileJavaScriptCode = getPluginURIPath()."/js/code/Code.js";
 	$relativePathJSFF = getPluginURIPath()."/js/code/";
-	$relativePathJSPluginJS = getPluginURIPath()."/js/";
-	$fileJQueryLocal = $relativePathJSPluginJS."jquery-2.2.3.min.js";
+	$relativePathPluginJS = getPluginURIPath()."/js/";
+	$relativePathPluginCSS = getPluginURIPath()."/css/";
+	$fileJQueryLocal = $relativePathPluginJS."jquery-2.2.3.min.js";
 	//$fileJavaScriptGiau = getPluginURIPath()."/js/theme.js";
+	$fileCSSAdmin = $relativePathPluginCSS."giau.css";
 	error_log("js path: ".$fileJavaScriptFF);
 	?>
+	<link   rel="stylesheet" href="<?php echo $fileCSSAdmin; ?>">
 	<script rel="text/javascript" src="<?php echo $fileJavaScriptCode; ?>"></script>
 	<script rel="text/javascript" src="<?php echo $fileJavaScriptFF; ?>"></script>
 	<script rel="text/javascript" src="<?php echo $fileJQueryLocal; ?>"></script>
@@ -418,7 +421,7 @@ function giau_action_page_head(){ // inject as desired
 				var g = new giau();
 			}
 			var ff = new FF("<?php echo $relativePathJSFF; ?>/",function(){
-				var scriptLoader = new ScriptLoader("<?php echo $relativePathJSPluginJS; ?>",["theme.js"],null,classesLoadedFxn,null);
+				var scriptLoader = new ScriptLoader("<?php echo $relativePathPluginJS; ?>",["theme.js"],null,classesLoadedFxn,null);
 				scriptLoader.load();
 				//var g = new giau();
 			});

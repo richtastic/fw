@@ -2838,13 +2838,13 @@ giau.FileUploadDropArea = function(element){
 	Code.addChild(this._container,this._elementUploadDropTarget);
 	// drop target
 		div = this._elementUploadDropTarget;
-		Code.setStyleWidth(div,"100px");
-		Code.setStyleHeight(div,"100px");
-		Code.setStyleBackground(div,"#F00");
-		Code.setStyleDisplay(div,"inline-block");
-		Code.setStyleTextAlign(div,"center")
-		Code.setStyleVerticalAlign(div,"middle")
-		Code.setContent(div,"drag file here to upload");
+		// Code.setStyleWidth(div,"100px");
+		// Code.setStyleHeight(div,"100px");
+		// Code.setStyleBackground(div,"#F00");
+		// Code.setStyleDisplay(div,"inline-block");
+		// Code.setStyleTextAlign(div,"center")
+		// Code.setStyleVerticalAlign(div,"middle")
+		// Code.setContent(div,"drag file here to upload");
 
 	// LISTNERS
 	this._jsDispatch = new JSDispatch();
