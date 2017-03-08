@@ -212,6 +212,15 @@ lcd /media/sf_zirbr001/dev/extRepos/fw/plugins
 # COPY GIAU
 rm -rf ./giau
 mirror -R giau giau
+# COPY FF
+cd /www/ce/wp-content/plugins/giau/js
+lcd /media/sf_zirbr001/dev/extRepos/ff/src
+# COPY CODE
+mirror -R code code
+# copy other JS files
+lcd /media/sf_zirbr001/dev/extRepos/fw/plugins/giau/js
+put ./jquery-2.2.3.min.js
+put ./theme.js
 # CHMOD READ ACCESS:
 cd /www/ce/wp-content/plugins/
 chmod -R 755 giau/

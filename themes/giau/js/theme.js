@@ -5587,7 +5587,7 @@ giau.InputFieldText.prototype._filterSingleLineOnly = function(s){
 	var regExLine = new RegExp('\n','g');
 	return s.replace(regExLine,"");
 };
-giau.InputFieldText.prototype._filterPlay = function(n){
+giau.InputFieldText.prototype._filterTEST = function(n){
 	var numbers = ["1","12","0.0",".09","3.141","3.141E4","3.141E+3","3.141E-25",   "asd452345","2344.6455+343"]
 	//var regex = new RegExp('([0-9]+(\.[0-9]+)?(E(\\+|\-)?[0-9]+))','i');
 	//var regex = new RegExp('[0-9]+(\.([0-9]+)?)?','i');
@@ -5623,6 +5623,15 @@ giau.InputFieldText.prototype._filterRegExOnly = function(n,r,d){
 	}
 	return value;
 };
+giau.InputFieldText.prototype.getFocus = function(){
+	// this._input.focus(); // does not work, need to delay
+	var t = new Ticker(1);
+	t.addFunction(Ticker.EVENT_TICK,function(){
+		t.stop();
+		this._input.focus();
+	}, this);
+	t.start();
+}
 giau.InputFieldText.prototype.applyFilters = function(){
 	var criteria = this._criteria;
 	var keys = Code.keys(criteria);
@@ -5742,6 +5751,7 @@ giau.InputFieldBoolean.prototype.value = function(v){
 giau.InputFieldDuration = function(element, value){
 	giau.InputFieldDuration._.constructor.call(this);
 	this._container = element;
+		Code.setStyleBackgroundColor(this._container,"#FFF");
 	this._fieldYears = Code.newInputText("years");
 	this._fieldDays = Code.newInputText("days");
 	this._fieldHours = Code.newInputText("hours");
@@ -6586,6 +6596,7 @@ giau.InputFieldDiscrete.prototype.value = function(value){ // assign a value ...
 giau.InputFieldDate = function(element, value){
 	giau.InputFieldDate._.constructor.call(this);
 	this._container = element;
+		Code.setStyleBackgroundColor(this._container,"#FFF");
 	if(!value){
 		value = Code.getTimeStampFromMilliseconds();// default to now
 	}
@@ -7294,7 +7305,7 @@ Code.inheritClass(giau.InputFieldColorModal, giau.InputFieldCompositeModal);
 
 giau.InputFieldTextModal = function(element, value, criteria, stylingFxn){
 	Code.constructorClass(giau.InputFieldTextModal, this, element, value);
-	
+	//giau.InputFieldTextModal._.constructor.call(this, element, value);
 	Code.setStyleWidth(this._maxiElement,400+"px");
 	Code.setStyleHeight(this._maxiElement,200+"px");
 
@@ -7305,17 +7316,20 @@ giau.InputFieldTextModal = function(element, value, criteria, stylingFxn){
 		//this._maxi.addFunction(giau.InputFieldText.EVENT_CHANGE, this._handleMaxiChangeFxn, this);
 	this.gotoMin();
 };
+Code.inheritClass(giau.InputFieldTextModal, giau.InputFieldCompositeModal);
 
 giau.InputFieldTextModal.prototype._handleOverlayExitFxn = function(e){
 	giau.InputFieldTextModal._._handleOverlayExitFxn.call(this,e);
 	this._handleMaxiChangeFxn(null);
 };
-giau.InputFieldTextModal.prototype._handleMaxiChangeFxn = function(e){
-	this._maxi.applyFilters();
-	giau.InputFieldTextModal._._handleMaxiChangeFxn.call(this,e);
 
+giau.InputFieldTextModal.prototype.show = function(e){
+	console.log("InputFieldTextModal show");
+	console.log(this);
+	console.log(giau.InputFieldTextModal._);
+	giau.InputFieldTextModal._.show.call(this,e);
+	this._maxi.getFocus();
 };
-Code.inheritClass(giau.InputFieldTextModal, giau.InputFieldCompositeModal);
 
 
 
