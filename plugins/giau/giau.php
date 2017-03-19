@@ -999,21 +999,21 @@ function arrayFromCommaSeparatedString($str){ // only things that should be esca
 	$i;
 	$ch;
 	$len = mb_strlen($str);
-	error_log(" length: ".$len." ");
+//	error_log(" length: ".$len." ");
 	$currentTag = "";
 	for($i=0; $i<=$len; ++$i){
 		$ch = null;
 		if($i<$len){
 			$ch = $str[$i];
 		}
-		error_log(  " ----".$i."  CHARACTER: '".$ch."' ");
+//		error_log(  " ----".$i."  CHARACTER: '".$ch."' ");
 		if($ch=="\\"){ // escape character
 			$chNext = null;
 			if($i+1 < $len){
 				$chNext = $str[$i+1];
 			}
 			if($chNext){
-				error_log("  => ESCAPED: '".$chNext."' ");
+//				error_log("  => ESCAPED: '".$chNext."' ");
 				$currentTag = $currentTag."".$chNext;
 				$i += 1;
 			}

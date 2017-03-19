@@ -38,7 +38,55 @@ function giau_wordpress_data_service(){
 			$operationOrder = $operationOrder!==null ? $operationOrder : [];
 			$results = null;
 			$rowColumns = null;
+
+			error_log("REQUEST .... ".$operationType);
+
 			if($operationType=="get_autocomplete"){
+				$tableDefinition = null;
+				$returnValue = null;
+				$searchValue = $_POST['search'];
+				if($operationTable=="languagization"){
+					$tableDefinition = GIAU_TABLE_DEFINITION_LANGUAGIZATION();
+				}
+				$dataCRUD = [];
+				$returnValue = null;
+				if($tableDefinition){
+					//$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_SECTION());
+					//GIAU_TABLE_DEFINITION_SECTION()
+					//$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD,);
+					//$searchValue = "children";
+					$searchValue = "for families";
+					$query = "SELECT * FROM ".GIAU_FULL_TABLE_NAME_LANGUAGIZATION()." WHERE phrase_value LIKE '%".$searchValue."%' LIMIT 10;";
+					error_log("AUTO VALUE: ".$query);
+					/*
+					"hash_index" => $hash,
+			"language" => $language,
+			"phrase_value" => $phrase,
+					*/
+
+		//			$query = "SELECT * FROM ".$tableName." WHERE ".$primaryKeyColumnName."=\"".$primaryKeyValue."\" LIMIT 1";
+global $wpdb;
+					$rows = $wpdb->get_results($query, ARRAY_A);
+					error_log("AUTOCOMPLETE RESULT COUNT: ".count($rows));
+					$result = translateRowsToClient($tableDefinition,$rows);
+					if($result){
+						error_log("AUTOCOMPLETE RESULT yep: ".$result);
+						$returnValue = $result;
+					}
+
+				}
+
+				if($returnValue!==null){
+					error_log("GOT RESULT: ".$returnValue);
+					$response["result"] = "success";
+					$response["data"] = $returnValue;
+					$response["offset"] = 0;
+					$response["count"] = 1;
+					$response["total"] = 1;
+				}else{
+					$response["result"] = "failure";
+				}
+				/*
 				if($operationTable=="localization"){
 					//$operationOrder = [ ["language",1], ["id",0], ["hash_index",1] ];
 					$operationOrder = [ ["hash_index",1], ["language",1], ["id",0] ];
@@ -49,6 +97,7 @@ function giau_wordpress_data_service(){
 					$results = giau_calendar_paginated($operationOffset,$operationCount,$operationOrder);
 					$rowColumns = ["id","created","modified","short_name","title","description","start_date","duration","tags"];
 				}
+				*/
 			}else if($operationType=="get_autocomplete"){
 				$operationOffset = 0;
 				if(!$operationCount){
@@ -666,23 +715,23 @@ $editableFields = [];
 }
 
 function translateRowsToClient($tableDefinition, $rows){
-	error_log("translateRowsToClient -----------");
-	error_log("ROWS: ".count($rows));
+	// error_log("translateRowsToClient -----------");
+	// error_log("ROWS: ".count($rows));
 	$tableName = $tableDefinition["table"];
 	$presentation = $tableDefinition["presentation"];
 	$columnAliasToReal = $presentation["column_aliases"];
 		$columnRealToAlias = reverseObjectMap($columnAliasToReal);
 	$columnInfo = $tableDefinition["columns"];
 	//$columnInfo
-	error_log( objectToString($columnInfo) );
+	//error_log( objectToString($columnInfo) );
 	$returnRows = [];
 	foreach ($rows as $index => $row) {
-		error_log("ROW: ");
+		// error_log("ROW: ");
 		//error_log( objectToString($row) );
 		$newRow = [];
 		foreach ($row as $column => $value) {
 			$info = $columnInfo[$column];
-			error_log("INFO: ".$info);
+			// error_log("INFO: ".$info);
 			if($info!==null){
 				$alias = $columnRealToAlias[$column];
 				if($alias!==null){

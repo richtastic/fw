@@ -465,6 +465,12 @@ function giau_admin_menu_page_submenu_data_entry(){
 
 	<!-- table? -->
 		<div class="limitedWidth" style="display:block; position:relative; margin-right:18px;">
+
+		<div class="giauAutoComplete" style="background-color: #F00">
+			<div style="display:none;" data-param="operation" data-value="get_autocomplete"></div>
+			<div style="display:none;" data-param="table" data-value="languagization"></div>
+		</div>
+
 		<div style="width:70%; min-height:600px; display:inline-block; float:left;"><div class="giauCRUD" style="" data-table-name="<?php echo $selectedTableDataName; ?>"></div></div><div style="width:30%; display:inline-block; text-align: right;"><div class="giauLibraryView" style="" data-name="section_id" data-display-value="section_id" data-display-title="widget_name" data-display-subtitle="section_modified">
 		<div data-key="table" data-value="section"></div>
 		<div data-key="library" data-value="true"></div>

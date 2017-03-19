@@ -2039,6 +2039,9 @@ giau.DataTable.prototype._handleButtonClickedFxn = function(){
 giau.AutoComplete = function(element){
 	this._container = element;
 	this._jsDispatch = new JSDispatch();
+
+	this._messageBus = giau.MessageBus();
+
 	console.log("autocomplete");
 
 	this._changeMiniumTime = 250;
@@ -2048,8 +2051,17 @@ giau.AutoComplete = function(element){
 	this._ticker.addFunction(Ticker.EVENT_TICK, this._handleTickerFxn, this);
 	this._hintIsActive = false;
 
+	this._textElement = Code.newInputText();
+	Code.addChild(this._container, this._textElement);
+
+	this._jsDispatch.addJSEventListener(this._textElement, Code.JS_EVENT_CHANGE, this._handleTextChangeFxn, this);
+	this._jsDispatch.addJSEventListener(this._textElement, Code.JS_EVENT_INPUT_CHANGE, this._handleTextInputChangeFxn, this);
+
+	this.sendRequestForInput();
+/*
 	this._url = Code.getProperty(this._container, "data-url");
 		var params = Code.getProperty(this._container, "data-params");
+
 	this._dataParameters = Code.parseJSON(params);
 		var columns = Code.getProperty(this._container, "data-columns");
 	this._dataColumns = columns.split(",");
@@ -2095,6 +2107,44 @@ giau.AutoComplete = function(element){
 	// ... 
 //	this._check();
 //this._ticker.start();
+*/
+}
+
+giau.AutoComplete.prototype._handleTextChangeFxn = function(e){
+	// focus / unfocis ?
+}
+
+giau.AutoComplete.prototype._handleTextInputChangeFxn = function(e){
+	console.log("changed: "+this.textValue());
+
+}
+giau.AutoComplete.prototype.textValue = function(){
+	return Code.getTextAreaValue(this._textElement);
+}
+
+giau.AutoComplete.prototype.sendRequestForInput = function(){
+	console.log("sendRequestForInput A");
+	var input = "acc";
+	var url = "./";//this._url;
+	//this._dataParameters["search"] = searchValue; // replace search param
+	//this._dataParameters["autocomplete"] = input;
+	var ajax = new Ajax();
+	ajax.url(url);
+	ajax.method(Ajax.METHOD_TYPE_POST);
+		ajax.append('operation','get_autocomplete');
+		ajax.append('table','languagization');
+		ajax.append('search',input);
+	//ajax.params(this._dataParameters);
+	ajax.context(this);
+	ajax.callback(function(d){
+		console.log("sendRequestForInput B");
+		console.log(d);
+		var obj = Code.parseJSON(d);
+		console.log("sendRequestForInput C");
+		console.log(obj);
+		//this.updateFromData(obj);
+	});
+	ajax.send();
 }
 
 giau.AutoComplete.prototype._handleA = function(){
@@ -3313,7 +3363,7 @@ giau.ObjectComposer.prototype._handlePrimitiveTextUpdate = function(e,d){
 
 
 giau.ObjectComposer.prototype._handlePrimitiveDateUpdate = function(e,f){
-	console.log("_handlePrimitiveColorUpdate");
+	console.log("_handlePrimitiveDateUpdate");
 	this._handlePrimitiveUpdateAny(e);
 }
 
@@ -5337,7 +5387,7 @@ giau.CRUD.prototype._mappingFromData = function(fieldDescription, sourceObject, 
 		shouldDisplay = shouldDisplay!=="false"; // default to true
 shouldDisplay = true;
 	var fieldType = definition["type"];
-console.log(itemIndex+" = "+fieldType+" ... "+sourceObject[itemIndex]);
+//console.log(itemIndex+" = "+fieldType+" ... "+sourceObject[itemIndex]);
 	// DISPLAY
 	var elementField = Code.newDiv();
 	var elementTitle = Code.newDiv();
@@ -5958,10 +6008,11 @@ giau.InputFieldDurationMini.prototype.kill = function(){
 giau.InputFieldColor = function(element, value){
 	giau.InputFieldColor._.constructor.call(this);
 	this._container = element;
+		Code.setStyleBackgroundColor(this._container,"#FFF");
 	this._colorValue = 0x00000000;
 	this.value(value);
 
-	var parentWidth = $(this._container).width();
+	var parentWidth = $(this._container).width() - 10; // hackery
 	var parentHeight = $(this._container).height();
 	var leftWidth = Math.floor(parentWidth * 0.80);
 	var rightWidth = parentWidth - leftWidth;
@@ -6170,10 +6221,8 @@ giau.InputFieldColor.prototype.value = function(value){ // 0xAARRGGBB
 
 giau.InputFieldColorSlider = function(element, color, ranges){
 	giau.InputFieldColorSlider._.constructor.call(this);
-
 	this._colorRanges = ranges;
-
-	this._container = element
+	this._container = element;
 	this._colorValue = 0 //color!==undefined ? color : 0;
 	this._background = Code.newDiv();
 	this._indicator = Code.newDiv();
@@ -7530,6 +7579,16 @@ giau.InputOverlay.prototype.kill = function(){
 	this._jsDispatch = null;
 	this._.kill.call(this);
 }
+
+
+
+
+giau.AutoComplete.prototype._handleWindowResizedFxn = function(e){
+	this.updateLayout();
+}
+
+
+
 
 
 
