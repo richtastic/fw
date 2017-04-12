@@ -396,10 +396,12 @@ giau.BioView = function(element){ //
 	this._container = element;
 
 	var propertyDefaultImage = "data-default-image"
-	var propertyDefultDescription = "data-default-description";
+	var propertyDefaultDescription = "data-default-description";
 
-	this._default_bio_description = Code.getPropertyOrDefault(this._container,propertyDefultDescription, "");
+	this._default_bio_description = Code.getPropertyOrDefault(this._container,propertyDefaultDescription, "");
 	this._default_bio_image = Code.getPropertyOrDefault(this._container,propertyDefaultImage, "");
+	this._default_bio_phone = "";
+	this._default_bio_email = "";
 
 	var propertyData = "data-data";
 	var propertyFirstName = "data-first-name";
@@ -435,7 +437,9 @@ giau.BioView = function(element){ //
 				"title": title,
 				"description": description,
 				"image_url": image,
-				"uri": url
+				"uri": url,
+				"email": email,
+				"phone": phone,
 			});
 		}
 	}
@@ -503,6 +507,31 @@ Code.setStyleBackgroundColor(parent,backgroundColor);
 			Code.setStyleFontFamily(descriptionElement,"siteThemeLight");
 			Code.setStyleFontSize(descriptionElement,"14px");
 			Code.setStyleColor(descriptionElement,"#333");
+		var phoneElement = Code.newDiv();
+			var phone = person["phone"];
+			if(!phone || phone==""){
+				phone = this._default_bio_phone;
+			}
+			Code.setContent(phoneElement,phone);
+			Code.setStylePaddingTop(phoneElement,"5px");
+			Code.setStyleDisplay(phoneElement,"block");
+			Code.setStyleFontFamily(phoneElement,"siteThemeLight");
+			Code.setStyleFontSize(phoneElement,"12px");
+			Code.setStyleColor(phoneElement,"#444");
+		var emailElement = Code.newDiv();
+			var email = person["email"];
+			if(!email || description==""){
+				email = this._default_bio_email;
+			}
+			if(email && email.length>0){
+				email = '<a href="mailto:'+email+'">'+email+'</a>';
+			}
+			Code.setContent(emailElement,email);
+			Code.setStyleDisplay(emailElement,"block");
+			Code.setStyleFontFamily(emailElement,"siteThemeLight");
+			Code.setStyleFontSize(emailElement,"14px");
+			Code.setStyleColor(emailElement,"#336");
+			Code.setStyleTextUnderline(emailElement);
 		var leftColumnElement = Code.newDiv();
 			Code.setStyleTextAlign(leftColumnElement,"center");
 			Code.setStyleDisplay(leftColumnElement,"inline-block");
@@ -539,6 +568,9 @@ Code.setStyleBackgroundColor(parent,backgroundColor);
 				Code.addChild(rightColumnElement,titleElement);
 				Code.addChild(rightColumnElement,nameElement);
 				Code.addChild(rightColumnElement,descriptionElement);
+				Code.addChild(rightColumnElement,phoneElement);
+				Code.addChild(rightColumnElement,emailElement);
+				
 		person["element"] = outerElement;
 		person["container"] = containerElement;
 	}
@@ -2888,12 +2920,12 @@ giau.FileUploadDropArea = function(element){
 	Code.addChild(this._container,this._elementUploadDropTarget);
 	// drop target
 		div = this._elementUploadDropTarget;
-		// Code.setStyleWidth(div,"100px");
-		// Code.setStyleHeight(div,"100px");
-		// Code.setStyleBackground(div,"#F00");
-		// Code.setStyleDisplay(div,"inline-block");
-		// Code.setStyleTextAlign(div,"center")
-		// Code.setStyleVerticalAlign(div,"middle")
+		Code.setStyleWidth(div,"100px");
+		Code.setStyleHeight(div,"100px");
+		Code.setStyleBackground(div,"#F00");
+		Code.setStyleDisplay(div,"inline-block");
+		Code.setStyleTextAlign(div,"center")
+		Code.setStyleVerticalAlign(div,"middle")
 		// Code.setContent(div,"drag file here to upload");
 
 	// LISTNERS
@@ -4159,6 +4191,7 @@ giau.DataCRUD.prototype.read = function(data, returnData){
 }
 giau.DataCRUD.prototype.update = function(data, returnData){
 	console.log("SEND AN UPDATE");
+	console.log(data);
 	this._asyncOperation("update", data, returnData, giau.DataCRUD.EVENT_UPDATE);
 }
 giau.DataCRUD.prototype.remove = function(data, returnData){
@@ -4964,7 +4997,6 @@ giau.CRUD._elementSelectString = function(mapping){
 		Code.setStyleBorderRadius(container,2+"px");
 		//Code.setStyleBackgroundColor(container,"#00F");
 	var jsObject = new giau.InputFieldTextModal(container, value, null, function style(e){
-
 		Code.setStyleColor(e,giau.Theme.Color.TextOnDark);
 	});
 
@@ -5624,6 +5656,7 @@ giau.InputFieldText.CRITERIA_FIELD_VALUE_SINGLE_LINE = "single_line";
 
 giau.InputFieldText.prototype._handleInputTextChangeFxn = function(e){
 	var newText = Code.getTextAreaValue(this._input);
+	console.log("RICHIE - new text: "+newText);
 	this._dataValue = newText;
 	this._alertChanged();
 };

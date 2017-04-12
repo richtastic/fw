@@ -6,7 +6,7 @@ function giau_data_default_insert_into_database(){
 
 	global $wpdb;
 
-	error_log("RICHIE - 000");
+	error_log("DEFAULT DATA");
 
 	// LANGUAGIZATION
 	$langEng = LANGUAGE_EN_US();
@@ -436,6 +436,10 @@ function giau_data_default_insert_into_database(){
 			"cssClass" => "giauLanguageToggleSwitch",
 			"jsClass" => "giau.LanguageToggle",
 			"fields" => [
+				"enabled" => [
+					"type" => "string-boolean",
+					"description" => "is toggle enabled",
+				],
 				"languages" => [
 					"type" => "array-object",
 					"description" => "list of language switches",

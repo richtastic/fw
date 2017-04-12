@@ -314,7 +314,9 @@ function giau_callback_activation(){
 
 function giau_callback_deactivation(){
 	error_log("giau_callback_deactivation");
-	giau_remove_database();
+	// CLEANUP : REMOVE DATABASES
+	//giau_remove_database();
+
 	// Our post type will be automatically removed, so no need to unregister it
 	// Clear the permalinks to remove our post type's rules
 	flush_rewrite_rules();
@@ -360,26 +362,20 @@ function giau_init_fxn() {
 	error_log("giau_init_fxn");
 	include_all_files();
 
-	error_log("0");
-
 	$WP_ACTION_PLUGINS_LOADED = "plugins_loaded";
 	$WP_ACTION_INIT = "init";
 
 	$WP_ACTION_ADMIN_MENU_BAR = "admin_bar_menu";
-	error_log("1");
 	$GIAU_PLUGIN_VERSION_KEY = "GIAU_PLUGIN_VERSION";
 	$GIAU_PLUGIN_VERSION_VALUE = "0.0.0";
-	error_log("2");
-	if(!defined($GIAU_PLUGIN_VERSION_KEY)){
-		error_log("INSIDE A");
+	if(!defined($GIAU_PLUGIN_VERSION_KEY)){ 
 		define($GIAU_PLUGIN_VERSION_KEY, $GIAU_PLUGIN_VERSION_VALUE);
 	}else{
-		error_log("INSIDE B");
-//		return;
 	}
 	// CREATE DATABASE & TABLES
 	giau_create_database();
-	giau_default_fill_database();
+	// FILL WITH EXAMPLE DEFAULT WEBSITE
+	//giau_default_fill_database();
 
 	// PREPARE ACTION HANDLERS
 	add_action($WP_ACTION_PLUGINS_LOADED, "giau_action_plugins_loaded_callback");
@@ -878,9 +874,10 @@ function giau_languagization_substitution_and_html($hash_index, $language=null){
 	return $result;
 }
 
-function giau_languagization_substitution($hash_index, $language=null){
+function giau_languagization_substitution($hash_index_in, $language=null){
 	$DEFAULT_LANGUAGE = LANGUAGE_EN_US();
 	// hash_index must be non-null and non-zero length
+	$hash_index = $hash_index_in;
 	if(!$hash_index || strlen($hash_index)==0 ){
 		return "";
 	}
@@ -928,7 +925,7 @@ function giau_languagization_substitution($hash_index, $language=null){
 	}else if($matchThird!==null){
 		return $matchThird;
 	} // default return original phrase
-	return $hash_index;
+	return $hash_index_in;
 }
 
 function giau_default_fill_database(){
