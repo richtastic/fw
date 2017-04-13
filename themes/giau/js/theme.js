@@ -2074,7 +2074,46 @@ giau.AutoComplete = function(element){
 
 	this._messageBus = giau.MessageBus();
 
-	console.log("autocomplete");
+	var i;
+	// get params from html
+	this._queryParams = {};
+	this._fieldNames = [];
+	this._url = "?";
+	this._messageBusEventName = giau.AutoComplete.EVENT_NAME_DATA;
+
+	var propertyDataParam = "data-param";
+	var propertyDataValue = "data-value";
+	var propertyDataParamURL = "data-param-url";
+	var propertyDataParamCriteriaField = "data-param-criteria-field";
+	var propertyDataMessageBusEvent = "data-param-message-bus-name";
+
+	
+
+	for(i=0; i<Code.numChildren(this._container); ++i){
+		var found = false;
+		div = Code.getChild(this._container,i);
+		if(Code.hasProperty(div,propertyDataParam)){
+			var key = Code.getProperty(div,propertyDataParam);
+			var value = Code.getProperty(div,propertyDataValue);
+			this._queryParams[key] = value;
+			found = true;
+		}else if(Code.hasProperty(div,propertyDataParamURL)){
+			this._url = Code.getProperty(div,propertyDataValue);
+			found = true;
+		}else if(Code.hasProperty(div,propertyDataParamCriteriaField)){
+			var field = Code.getProperty(div,propertyDataValue);
+			this._fieldNames.push(field);
+			found = true;
+		}else if(Code.hasProperty(div,propertyDataMessageBusEvent)){
+			var name = Code.getProperty(div,propertyDataValue);
+			this._messageBusEventName = name;
+			found = true;
+		}
+		if(found){
+			Code.removeChild(this._container,div);
+			--i; // recheck
+		}
+	}
 
 	this._changeMiniumTime = 250;
 	this._lastChangeTimestamp = -1;
@@ -2141,13 +2180,14 @@ giau.AutoComplete = function(element){
 //this._ticker.start();
 */
 }
-
+giau.AutoComplete.EVENT_NAME_DATA = "giau.AutoComplete.EVENT_NAME_DATA";
 giau.AutoComplete.prototype._handleTextChangeFxn = function(e){
 	// focus / unfocis ?
 }
 
 giau.AutoComplete.prototype._handleTextInputChangeFxn = function(e){
 	console.log("changed: "+this.textValue());
+	this.sendRequestForInput();
 
 }
 giau.AutoComplete.prototype.textValue = function(){
@@ -2156,16 +2196,40 @@ giau.AutoComplete.prototype.textValue = function(){
 
 giau.AutoComplete.prototype.sendRequestForInput = function(){
 	console.log("sendRequestForInput A");
-	var input = "acc";
-	var url = "./";//this._url;
+	var i;
+	//var input = "for families";
+	var input = this.textValue();
+	if(!input || input==""){
+		return;
+	}
+
+	var url = this._url;
+	var queryParams = this._queryParams;
+
+	var fieldNames = this._fieldNames;
+	var searchCriteria = {};
+	for(i=0; i<fieldNames.length; ++i){
+		searchCriteria[fieldNames[i]] = input;
+	}
+	console.log(searchCriteria);
+	searchCriteria = Code.StringFromJSON(searchCriteria);
+	console.log(searchCriteria);
+
 	//this._dataParameters["search"] = searchValue; // replace search param
 	//this._dataParameters["autocomplete"] = input;
 	var ajax = new Ajax();
 	ajax.url(url);
 	ajax.method(Ajax.METHOD_TYPE_POST);
-		ajax.append('operation','get_autocomplete');
-		ajax.append('table','languagization');
-		ajax.append('search',input);
+	keys = Code.keys(queryParams);
+	for(i=0; i<keys.length; ++i){
+		var key = keys[i];
+		var val = queryParams[key];
+		ajax.append(key,val);
+		
+	//	ajax.append('operation','get_autocomplete');
+	//	ajax.append('table','languagization');
+	}
+		ajax.append('criteria',searchCriteria);
 	//ajax.params(this._dataParameters);
 	ajax.context(this);
 	ajax.callback(function(d){

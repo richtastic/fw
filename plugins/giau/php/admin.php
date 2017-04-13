@@ -466,9 +466,21 @@ function giau_admin_menu_page_submenu_data_entry(){
 	<!-- table? -->
 		<div class="limitedWidth" style="display:block; position:relative; margin-right:18px;">
 
-		<div class="giauAutoComplete" style="background-color: #F00">
+		<!-- <div class="giauAutoComplete" style="background-color: #F00">
+			<div style="display:none;" data-param-url="url" data-value="./"></div>
 			<div style="display:none;" data-param="operation" data-value="get_autocomplete"></div>
 			<div style="display:none;" data-param="table" data-value="languagization"></div>
+			<div style="display:none;" data-param="count" data-value="5"></div>
+			<div style="display:none;" data-param-criteria-field="field" data-value="languagization_hash"></div>
+			<div style="display:none;" data-param-criteria-field="field" data-value="languagization_phrase"></div>
+		</div> -->
+		<div class="giauAutoComplete" style="background-color: #F00">
+			<div style="display:none;" data-param-message-bus-name="bus_name" data-value="autocomplete"></div>
+			<div style="display:none;" data-param-url="url" data-value="./"></div>
+			<div style="display:none;" data-param="operation" data-value="get_autocomplete"></div>
+			<div style="display:none;" data-param="count" data-value="5"></div>
+			<div style="display:none;" data-param="table" data-value="section"></div>
+			<div style="display:none;" data-param-criteria-field="field" data-value="section_name"></div>
 		</div>
 
 		<div style="width:70%; min-height:600px; display:inline-block; float:left;"><div class="giauCRUD" style="" data-table-name="<?php echo $selectedTableDataName; ?>"></div></div><div style="width:30%; display:inline-block; text-align: right;"><div class="giauLibraryView" style="" data-name="section_id" data-display-value="section_id" data-display-title="widget_name" data-display-subtitle="section_modified">

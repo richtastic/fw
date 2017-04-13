@@ -71,22 +71,24 @@ function GIAU_FULL_TABLE_NAME_BIO(){
 function GIAU_TABLE_DEFINITION_TO_PRESENTATION(&$tableDefinition){ // for client consumption
 	// remove the functions key
 	unset($tableDefinition["functions"]);
-
+	$i;
 	// remove server validation params
 	$columns = &$tableDefinition["columns"];
-	$i;
 	$keys = getKeys($columns);
 	$len = count($keys);
 	for($i=0; $i<$len; ++$i){
 		$key = $keys[$i];
 		if($columns[$key]["validation"]){
-			error_log("RICHIE FOUND COLUMN VALIDATION: ".$key);
 			unset($columns[$key]["validation"]);
 		}
 	}
 
-	return $tableDefinition;
+	$presentation = &$tableDefinition["presentation"];
+	if($presentation["joining"]){
+		unset($presentation["joining"]);
+	}
 
+	return $tableDefinition;
 }
 
 function GIAU_TABLE_DEFINITION_ALL_TABLES(){
@@ -246,16 +248,6 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 					],
 				]
 			],
-			// "extend" => [
-			// 	"type" => "string-number",
-			// 	"attributes" =>  [
-			// 		"display_name" => "Extends",
-			// 		"order" => "99",
-			// 		"sort" =>  "true",
-			// 		"editable" => "false",
-			// 		"default" => "",
-			// 	],
-			// ],
 			"configuration" => [
 				"type" => "string-json",
 				"attributes" =>  [
@@ -314,7 +306,21 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				"section_subsections" => "section_list",
 				"widget_id" => "widget",
 				"widget_configuration" => null,
-				"widget_info" => null,
+				"widget_name" => null,
+			],
+			"joining" => [
+				"widget_configuration" => [
+					"table" => GIAU_FULL_TABLE_NAME_WIDGET(),
+					"column" => "configuration",
+					"column_external" => "id",
+					"column_internal" => "widget",
+				],
+				"widget_name" => [
+					"table" => GIAU_FULL_TABLE_NAME_WIDGET(),
+					"column" => "widget_name",
+					"column_external" => "id",
+					"column_internal" => "widget",
+				]
 			],
 			"columns" => [
 				"configuration" => [
@@ -1267,7 +1273,6 @@ function giau_insert_widget($widgetName,$widgetConfig){
 function giau_insert_section($sectionName, $widgetID, $sectionConfig, $sectionIDList){
 	$widgetID = $widgetID!==null ? $widgetID : 0;
 	$sectionName = $sectionName!==null ? $sectionName : "";
-	error_log("INSERT SECTION: ".$sectionName);
 	if(!is_string($sectionConfig)){
 		$sectionConfig = json_encode($sectionConfig);
 	}
@@ -1297,10 +1302,13 @@ function giau_create_section($sectionName, $widgetID, $sectionConfig, $sectionLi
 	return giau_read_section($sectionID);
 }
 function giau_read_section($sectionID){
-	error_log(" read sectionID: ".$sectionID);
 	if($sectionID===null){
 		return null;
 	}
+	if(!is_array($sectionID)){
+		$sectionID = [$sectionID];
+	}
+	$sectionIDList = "(".commaSeparatedArray($sectionID).")";
 	global $wpdb;
 	// temporary
 	$querystr = "SELECT "."temporary".".id as section_id,
@@ -1314,23 +1322,10 @@ function giau_read_section($sectionID){
 					    ".GIAU_FULL_TABLE_NAME_WIDGET().".configuration as widget_configuration
 					    FROM 
 						(SELECT * FROM ".GIAU_FULL_TABLE_NAME_SECTION()."
-						WHERE ".GIAU_FULL_TABLE_NAME_SECTION().".id =\"".$sectionID."\" LIMIT 1) AS temporary
+						WHERE ".GIAU_FULL_TABLE_NAME_SECTION().".id IN ".$sectionIDList." LIMIT 1) AS temporary
 					    JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
 					    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = "."temporary".".widget";
-	/*
-SELECT * FROM (SELECT * FROM wp_giau_section WHERE id="75") as T   JOIN wp_giau_widget ON wp_giau_widget.id = T.widget;
-
-	$querystr = "
-		SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".created as section_created,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as section_modified,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".name as section_name,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".configuration as section_configuration,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".section_list as section_subsections,
-	    ".GIAU_FULL_TABLE_NAME_SECTION().".widget as widget_id
-		FROM ".GIAU_FULL_TABLE_NAME_SECTION()." 
-		WHERE id=\"".$sectionID."\" LIMIT 1";
-		*/
+// WHERE ".GIAU_FULL_TABLE_NAME_SECTION().".id =\"".$sectionID."\" LIMIT 1) AS temporary
 	$rows = $wpdb->get_results($querystr, ARRAY_A);
 	//error_log(" read row: ".($rows[0]["section_id"]));
 	if( count($rows)==1 ){
@@ -1505,6 +1500,193 @@ function giau_insert_database_from_json($jsonSource, $deleteTables){
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+// HELPERS ---------------------------------------------------------------------
+function pagedQueryGETFromDefinition(&$tableDefinition, $ordering=null, $criteria=null){
+	$query = "SELECT ";
+	$tableName = giauTableNameFromDefinition($tableDefinition);
+	$aliases = giauAliasesFromDefinition($tableDefinition);
+	$joining = giauJoiningFromDefinition($tableDefinition);
+	$hasJoins = $joining != null;
+	$aliasKeys = getKeys($aliases);
+	$aliasKeyCount = count($aliasKeys);
+	//foreach ($aliases as $aliasName => $columnName){
+	for($i=0; $i<$aliasKeyCount; ++$i){
+		$aliasName = $aliasKeys[$i];
+		$columnName = $aliases[$aliasName];
+		$columnQuery = $tableName.".".$columnName." AS ".$aliasName;
+		$query = $query." ".$columnQuery;
+		if($i<$aliasKeyCount-1){
+			$query = $query.", ";
+		}
+	}
+	if($hasJoins){
+		error_log("DO JOINING");
+	}
+
+	$query = $query." FROM ".$tableName;
+	if($criteria!=null){
+		//
+		$query." WHERE "." ... ";
+		// ... 
+	}
+	if($ordering!=null){
+		$orderLen = count($ordering);
+		$query." ORDER BY ";
+		for($i=0; $i<$orderLen; ++$i){
+			$order = $ordering[$i];
+			$column = $order["column"];
+			$direction = $order["direction"];
+			$direction = $direction=="ASC" ? "ASC" : "DESC";
+			$query." ".$column." ".$direction;
+			if($i<$orderLen-1){
+				$query = $query.", ";
+			}
+		}
+		
+	}
+	error_log("pagedQueryGETFromDefinition: ".$query);
+	return $query;
+
+}
+/*
+				$requestInfo = [];
+				$requestInfo["offset"] = $offset;
+				$requestInfo["count"] = $count;
+				$requestInfo["query"] = "
+				    SELECT ".GIAU_FULL_TABLE_NAME_CALENDAR().".id as calendar_id,
+				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".created as calendar_created,
+				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".modified as calendar_modified,
+				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".short_name as calendar_short_name,
+				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".title as calendar_title,
+				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".description as calendar_description,
+				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".start_date as calendar_start_date,
+				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".duration as calendar_duration,
+				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".tags as calendar_tags
+				    FROM ".GIAU_FULL_TABLE_NAME_CALENDAR()."
+				    ORDER BY title ASC, short_name ASC, modified DESC
+*/
+/*
+
+					$requestInfo["query"] = "
+					    SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
+					    ".GIAU_FULL_TABLE_NAME_SECTION().".created as section_created,
+					    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as section_modified,
+					    ".GIAU_FULL_TABLE_NAME_SECTION().".name as section_name,
+					    ".GIAU_FULL_TABLE_NAME_SECTION().".configuration as section_configuration,
+					    ".GIAU_FULL_TABLE_NAME_SECTION().".section_list as section_subsections,
+					    ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id,
+					    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name,
+					    ".GIAU_FULL_TABLE_NAME_WIDGET().".configuration as widget_configuration
+					    FROM ".GIAU_FULL_TABLE_NAME_SECTION()."
+					    LEFT JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
+					    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
+					    ORDER BY section_name ASC, section_id DESC
+					"; // LEFT JOIN ALLOWS NULL WIDGET ID
+					paged_data_service($requestInfo, table_info_section(), $response, true);
+
+*/
+
+function giauTableNameFromDefinition(&$tableDefinition){
+	$tableName = $tableDefinition["table"];
+	return $tableName;
+}
+function giauPresentationFromDefinition(&$tableDefinition){
+	$presentation = $tableDefinition["presentation"];
+	return $presentation;
+}
+function giauJoiningFromDefinition(&$tableDefinition){
+	$joining = $tableDefinition["joining"];
+	return $joining;
+}
+
+function giauAliasesFromDefinition(&$tableDefinition){
+	$presentation = giauPresentationFromDefinition($tableDefinition);
+	$aliases = $presentation["column_aliases"];
+	return $aliases;
+}
+function giauColumnAliasFromColumnName(&$tableDefinition, $columnName){
+	$aliases = giauAliasesFromDefinition($tableDefinition);
+	//foreach ($aliases as $alias => $column){
+	foreach ($aliases as $column => $alias){
+		if($column==$columnName){
+			return $alias;
+		}
+	}
+	return null;
+}
+function giauColumnNameFromColumnAlias(&$tableDefinition, $aliasName){
+	$aliases = giauAliasesFromDefinition($tableDefinition);
+	error_log(objectToString($aliases)." .. ");
+	foreach ($aliases as $alias => $column) {
+		error_log("ENTRY: ".$column." ? ".$alias." = ".$aliasName);
+		if($alias==$aliasName){
+			return $column;
+		}
+	}
+	return null;
+}
+function giauTableDefinitionFromOperationName($operationTable){
+	$tableDefinition = null;
+	if($operationTable=="languagization"){
+		$tableDefinition = GIAU_TABLE_DEFINITION_LANGUAGIZATION();
+	}else if($operationTable=="widget"){
+		$tableDefinition = GIAU_TABLE_DEFINITION_WIDGET();
+	}else if($operationTable=="section"){
+		$tableDefinition = GIAU_TABLE_DEFINITION_SECTION();
+	}else if($operationTable=="page"){
+		$tableDefinition = GIAU_TABLE_DEFINITION_PAGE();
+	}else if($operationTable=="bio"){
+		$tableDefinition = GIAU_TABLE_DEFINITION_BIO();
+	}else if($operationTable=="calendar"){
+		$tableDefinition = GIAU_TABLE_DEFINITION_CALENDAR();
+	}else if($operationTable=="webside"){
+		$tableDefinition = GIAU_TABLE_DEFINITION_WEBSITE();
+	}
+	return $tableDefinition;
+}
+
+/*
+			if($tableSourceName=="section"){
+				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_SECTION());
+			}else if($tableSourceName=="widget"){
+				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_WIDGET());
+			}else if($tableSourceName=="page"){
+				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_PAGE());
+			}else if($tableSourceName=="website"){
+				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, ());
+			}else if($tableSourceName=="languagization"){
+				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_LANGUAGIZATION());
+			}else if($tableSourceName=="calendar"){
+				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_CALENDAR());
+			}else if($tableSourceName=="bio"){
+				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_BIO());
+			}else{
+				*/
 // $fileName = tempnam(sys_get_temp_dir(), 'prefix');
+
+
+
+			// "extend" => [
+			// 	"type" => "string-number",
+			// 	"attributes" =>  [
+			// 		"display_name" => "Extends",
+			// 		"order" => "99",
+			// 		"sort" =>  "true",
+			// 		"editable" => "false",
+			// 		"default" => "",
+			// 	],
+			// ],
 
 ?>

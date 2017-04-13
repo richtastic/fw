@@ -29,8 +29,11 @@ function giau_wordpress_data_service(){
 			$operationOffset = $_POST['offset'];
 			$operationCount = $_POST['count'];
 			$operationOrder = $_POST['order'];
-			$operationSearch = $_POST['search'];
+			//$operationSearch = $_POST['search'];
+			$operationSearchCriteria = $_POST['criteria'];
 				$lifecycleCRUD = $_POST['lifecycle'];
+
+
 			
 			//wp_send_json( $response );
 			$operationOffset = max(intval($operationOffset),0);
@@ -42,36 +45,53 @@ function giau_wordpress_data_service(){
 			error_log("REQUEST .... ".$operationType);
 
 			if($operationType=="get_autocomplete"){
-				$tableDefinition = null;
 				$returnValue = null;
-				$searchValue = $_POST['search'];
-				if($operationTable=="languagization"){
-					$tableDefinition = GIAU_TABLE_DEFINITION_LANGUAGIZATION();
-				}
-				$dataCRUD = [];
-				$returnValue = null;
+				$tableDefinition = giauTableDefinitionFromOperationName($operationTable);
 				if($tableDefinition){
-					//$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_SECTION());
-					//GIAU_TABLE_DEFINITION_SECTION()
-					//$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD,);
-					//$searchValue = "children";
-					$searchValue = "for families";
-					$query = "SELECT * FROM ".GIAU_FULL_TABLE_NAME_LANGUAGIZATION()." WHERE phrase_value LIKE '%".$searchValue."%' LIMIT 10;";
-					error_log("AUTO VALUE: ".$query);
-					/*
-					"hash_index" => $hash,
-			"language" => $language,
-			"phrase_value" => $phrase,
-					*/
+					$tableName = giauTableNameFromDefinition($tableDefinition);
+					$tableColumns = $tableDefinition["columns"];
 
-		//			$query = "SELECT * FROM ".$tableName." WHERE ".$primaryKeyColumnName."=\"".$primaryKeyValue."\" LIMIT 1";
-global $wpdb;
-					$rows = $wpdb->get_results($query, ARRAY_A);
-					error_log("AUTOCOMPLETE RESULT COUNT: ".count($rows));
-					$result = translateRowsToClient($tableDefinition,$rows);
-					if($result){
-						error_log("AUTOCOMPLETE RESULT yep: ".$result);
-						$returnValue = $result;
+					error_log("operationSearchCriteria: ".$operationSearchCriteria);
+					$operationSearchCriteria = stripslashes($operationSearchCriteria);
+					$operationSearchCriteria = json_decode($operationSearchCriteria, true);
+					$likeClause = "";
+					$validSearchCriteriaFound = 0;
+
+
+
+					foreach ($operationSearchCriteria as $field => $value) {
+						error_log("field: ".$field." value:".$value);
+						$columnName = giauColumnNameFromColumnAlias($tableDefinition, $field);
+						error_log("columnName: ".$columnName);
+						if($columnName && $columnName!=""){
+							if($validSearchCriteriaFound!=0){
+								$likeClause = $likeClause." OR "; // TODO: join with ands + ors from client
+							}
+							$value = esc_sql($value);
+							$likeClause = $likeClause." ".$columnName." LIKE '%".$value."%' ";
+							$validSearchCriteriaFound++;
+						}
+					}
+					error_log("validSearchCriteriaFound: ".$validSearchCriteriaFound);
+					if($validSearchCriteriaFound>0 && $operationCount>0){
+						error_log("validSearchCriteriaFound: ".$validSearchCriteriaFound);
+						$operationCount = min($operationCount, 10); // max more restrictive
+
+						// transform to search by ID ?
+
+						$query = "SELECT * FROM ".$tableName." WHERE ".$likeClause." LIMIT ".$operationCount.";";
+						
+						global $wpdb;
+						$rows = $wpdb->get_results($query, ARRAY_A);
+						//error_log("AUTOCOMPLETE RESULT COUNT: ".$query );
+
+						error_log("TEST QUERY: ".pagedQueryGETFromDefinition(GIAU_TABLE_DEFINITION_CALENDAR()));
+
+
+						$result = translateRowsToClient($tableDefinition,$rows);
+						if($result){
+							$returnValue = $result;
+						}
 					}
 
 				}
@@ -99,12 +119,14 @@ global $wpdb;
 				}
 				*/
 			}else if($operationType=="get_autocomplete"){
+
 				$operationOffset = 0;
 				if(!$operationCount){
 					$operationCount = 5;
 				}
 				// ignore spaces
 				$operationSearch = str_replace(" ", "%", $operationSearch);
+
 				$operationCount = min(intval($operationCount),10); // max 10 results
 				if($operationTable=="localization"){
 					$results = giau_languagization_autocomplete($operationSearch, $operationCount);
@@ -292,20 +314,10 @@ global $wpdb;
 			error_log(" dataCRUD4: '".$lifecycleCRUD."'");
 			$dataCRUD = json_decode($dataCRUD, true);
 			// json_decode($jsonSource, true);
-			if($tableSourceName=="section"){
-				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_SECTION());
-			}else if($tableSourceName=="widget"){
-				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_WIDGET());
-			}else if($tableSourceName=="page"){
-				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_PAGE());
-			}else if($tableSourceName=="website"){
-				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_WEBSITE());
-			}else if($tableSourceName=="languagization"){
-				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_LANGUAGIZATION());
-			}else if($tableSourceName=="calendar"){
-				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_CALENDAR());
-			}else if($tableSourceName=="bio"){
-				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_BIO());
+
+			$tableDefinition = giauTableDefinitionFromOperationName($tableSourceName);
+			if($tableDefinition!=null){
+				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, $tableDefinition);
 			}else{
 				error_log("UNKNOWN CRUD TABLE");
 			}
@@ -1083,9 +1095,7 @@ function paged_data_service($requestInfo, $tableInfo, &$response, $override=fals
 	// SELECT TABLE_ROWS as total FROM information_schema.tables WHERE TABLE_NAME = 'wp_giau_bio';
 	// wp_giau_languagization
 	$resultTotal = $wpdb->get_results($queryTotal, ARRAY_A);
-	error_log("TOTAL - RICHIE ".count($resultTotal));
 	$total = intval($resultTotal[0]["total"]);
-	error_log("TOTAL - RICHIE == ".$total);
 	// QUERY
 
 	$querystr = $requestInfo["query"];

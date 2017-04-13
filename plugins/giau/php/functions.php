@@ -131,8 +131,11 @@ function getKeys($obj){
 	return array_keys($obj);
 }
 
+function commaSeparatedArray($array){
+	return implode(",",$array);
+}
+
 function colorHTMLFromColorString($color){
-	error_log("WAS: ".$color);
 	$color = preg_replace('/^(0x|#)/', '', $color);
 	$color = strtoupper($color);
 	$len = strlen($color);
