@@ -56,13 +56,9 @@ function giau_wordpress_data_service(){
 					$operationSearchCriteria = json_decode($operationSearchCriteria, true);
 					$likeClause = "";
 					$validSearchCriteriaFound = 0;
-
-
-
+					
 					foreach ($operationSearchCriteria as $field => $value) {
-						error_log("field: ".$field." value:".$value);
 						$columnName = giauColumnNameFromColumnAlias($tableDefinition, $field);
-						error_log("columnName: ".$columnName);
 						if($columnName && $columnName!=""){
 							if($validSearchCriteriaFound!=0){
 								$likeClause = $likeClause." OR "; // TODO: join with ands + ors from client
@@ -72,28 +68,30 @@ function giau_wordpress_data_service(){
 							$validSearchCriteriaFound++;
 						}
 					}
-					error_log("validSearchCriteriaFound: ".$validSearchCriteriaFound);
 					if($validSearchCriteriaFound>0 && $operationCount>0){
-						error_log("validSearchCriteriaFound: ".$validSearchCriteriaFound);
 						$operationCount = min($operationCount, 10); // max more restrictive
-
-						// transform to search by ID ?
-
-						$query = "SELECT * FROM ".$tableName." WHERE ".$likeClause." LIMIT ".$operationCount.";";
-						
+						// transform to search by ID?
+						$query = "SELECT id FROM ".$tableName." WHERE ".$likeClause." LIMIT ".$operationCount.";";
 						global $wpdb;
 						$rows = $wpdb->get_results($query, ARRAY_A);
-						//error_log("AUTOCOMPLETE RESULT COUNT: ".$query );
-
-						error_log("TEST QUERY: ".pagedQueryGETFromDefinition(GIAU_TABLE_DEFINITION_CALENDAR()));
-
-
-						$result = translateRowsToClient($tableDefinition,$rows);
-						if($result){
-							$returnValue = $result;
+						$rowCount = count($rows);
+						if($rowCount>0){
+							$idList = [];
+							for($i=0; $i<$rowCount; ++$i){
+								$idList[] = $rows[$i]["id"];
+							}
+							$criteria = "".$tableName."."."id"." IN "."(".commaSeparatedArray($idList).")";
+							$query = pagedQueryGETFromDefinition($tableDefinition, $criteria);
+							$rows = $wpdb->get_results($query, ARRAY_A);
+							//$result = translateRowsToClient($tableDefinition,$rows);
+							$result = $rows;
+							if($result){
+								$returnValue = $result;
+							}
+						}else{ // no results
+							$returnValue = [];
 						}
 					}
-
 				}
 
 				if($returnValue!==null){

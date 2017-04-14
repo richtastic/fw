@@ -164,7 +164,7 @@ function GIAU_TABLE_DEFINITION_WIDGET(){
 				"widget_id" => "id",
 				"widget_created" => "created",
 				"widget_modified" => "modified",
-				"widget_name" => "widget_name",
+				"widget_name" => "name",
 				"widget_configuration" => "configuration",
 			],
 			"columns" => [
@@ -317,9 +317,19 @@ function GIAU_TABLE_DEFINITION_SECTION(){
 				],
 				"widget_name" => [
 					"table" => GIAU_FULL_TABLE_NAME_WIDGET(),
-					"column" => "widget_name",
+					"column" => "name",
 					"column_external" => "id",
 					"column_internal" => "widget",
+				],
+			],
+			"ordering" => [
+				[
+					"column" => "name",
+					"order" => "ASC",
+				],
+				[
+					"column" => "id",
+					"order" => "DESC",
 				]
 			],
 			"columns" => [
@@ -1513,90 +1523,78 @@ function giau_insert_database_from_json($jsonSource, $deleteTables){
 
 
 // HELPERS ---------------------------------------------------------------------
-function pagedQueryGETFromDefinition(&$tableDefinition, $ordering=null, $criteria=null){
+function pagedQueryGETFromDefinition(&$tableDefinition, $criteria=null, $ordering=null){
 	$query = "SELECT ";
+	$ordering = $ordering != null ? $ordering : giauOrderingFromDefinition($tableDefinition);
 	$tableName = giauTableNameFromDefinition($tableDefinition);
 	$aliases = giauAliasesFromDefinition($tableDefinition);
 	$joining = giauJoiningFromDefinition($tableDefinition);
 	$hasJoins = $joining != null;
 	$aliasKeys = getKeys($aliases);
 	$aliasKeyCount = count($aliasKeys);
-	//foreach ($aliases as $aliasName => $columnName){
+	$queryPieceColumns = [];
 	for($i=0; $i<$aliasKeyCount; ++$i){
 		$aliasName = $aliasKeys[$i];
 		$columnName = $aliases[$aliasName];
-		$columnQuery = $tableName.".".$columnName." AS ".$aliasName;
-		$query = $query." ".$columnQuery;
-		if($i<$aliasKeyCount-1){
-			$query = $query.", ";
+		if($aliasName && $columnName){
+			$columnQuery = $tableName.".".$columnName." AS ".$aliasName;
+			$queryPieceColumns[] = $columnQuery;
 		}
 	}
+	$joinTables = [];
 	if($hasJoins){
-		error_log("DO JOINING");
+		$joiningKeys = getKeys($joining);
+		$joiningCount = count($joiningKeys);
+		$joinTableColumnList = [];
+		for($i=0; $i<$joiningCount; ++$i){
+			$joinColumnAlias = $joiningKeys[$i];
+			$joinEntry = $joining[$joinColumnAlias];
+			$joinTableName = $joinEntry["table"];
+			$joinColumnName = $joinEntry["column"];
+			$joinExternalColumnName = $joinEntry["column_external"];
+			$joinInternalColumnName = $joinEntry["column_internal"];
+			$joinPiece = $joinTableName.".".$joinColumnName." AS ".$joinColumnAlias;
+			$queryPieceColumns[] = $joinPiece;
+			// only one external join per table - last one wins
+			$joinTables[$joinTableName] = ["internal" => $joinInternalColumnName, "external" => $joinExternalColumnName];
+		}
 	}
+	$query = $query." ".commaSeparatedArray($queryPieceColumns)." ";
 
 	$query = $query." FROM ".$tableName;
+	if($hasJoins){
+		$joinTablesKeys = getKeys($joinTables);
+		$joinTablesCount = count($joinTablesKeys);
+		$joinPiece = "";
+		for($i=0; $i<$joinTablesCount; ++$i){
+			$joinTableName = $joinTablesKeys[$i];
+			$joinEntry = $joinTables[$joinTableName];
+			$joinColumnExternal = $joinEntry["external"];
+			$joinColumnInternal = $joinEntry["internal"];
+			$joinPiece = " LEFT JOIN ".$joinTableName." ON ".$joinTableName.".".$joinColumnExternal." = ".$tableName.".".$joinColumnInternal." ";
+		}
+		$query = $query." ".$joinPiece." ";
+	}
 	if($criteria!=null){
-		//
-		$query." WHERE "." ... ";
-		// ... 
+		$query = $query." WHERE ".$criteria." ";
 	}
 	if($ordering!=null){
 		$orderLen = count($ordering);
-		$query." ORDER BY ";
+		$orderPiece = [];
 		for($i=0; $i<$orderLen; ++$i){
 			$order = $ordering[$i];
-			$column = $order["column"];
-			$direction = $order["direction"];
+			$columnName = $order["column"];
+			$columnAlias = giauColumnAliasFromColumnName($tableDefinition, $columnName);
+			$direction = $order["order"];
 			$direction = $direction=="ASC" ? "ASC" : "DESC";
-			$query." ".$column." ".$direction;
-			if($i<$orderLen-1){
-				$query = $query.", ";
-			}
+			$orderPiece[] = " ".$columnAlias." ".$direction;
 		}
-		
+		$query = $query." ORDER BY ".commaSeparatedArray($orderPiece);
 	}
-	error_log("pagedQueryGETFromDefinition: ".$query);
+	$query = $query.";";
+	//error_log("pagedQueryGETFromDefinition: ".$query);
 	return $query;
-
 }
-/*
-				$requestInfo = [];
-				$requestInfo["offset"] = $offset;
-				$requestInfo["count"] = $count;
-				$requestInfo["query"] = "
-				    SELECT ".GIAU_FULL_TABLE_NAME_CALENDAR().".id as calendar_id,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".created as calendar_created,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".modified as calendar_modified,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".short_name as calendar_short_name,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".title as calendar_title,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".description as calendar_description,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".start_date as calendar_start_date,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".duration as calendar_duration,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".tags as calendar_tags
-				    FROM ".GIAU_FULL_TABLE_NAME_CALENDAR()."
-				    ORDER BY title ASC, short_name ASC, modified DESC
-*/
-/*
-
-					$requestInfo["query"] = "
-					    SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
-					    ".GIAU_FULL_TABLE_NAME_SECTION().".created as section_created,
-					    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as section_modified,
-					    ".GIAU_FULL_TABLE_NAME_SECTION().".name as section_name,
-					    ".GIAU_FULL_TABLE_NAME_SECTION().".configuration as section_configuration,
-					    ".GIAU_FULL_TABLE_NAME_SECTION().".section_list as section_subsections,
-					    ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id,
-					    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name,
-					    ".GIAU_FULL_TABLE_NAME_WIDGET().".configuration as widget_configuration
-					    FROM ".GIAU_FULL_TABLE_NAME_SECTION()."
-					    LEFT JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
-					    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
-					    ORDER BY section_name ASC, section_id DESC
-					"; // LEFT JOIN ALLOWS NULL WIDGET ID
-					paged_data_service($requestInfo, table_info_section(), $response, true);
-
-*/
 
 function giauTableNameFromDefinition(&$tableDefinition){
 	$tableName = $tableDefinition["table"];
@@ -1607,9 +1605,16 @@ function giauPresentationFromDefinition(&$tableDefinition){
 	return $presentation;
 }
 function giauJoiningFromDefinition(&$tableDefinition){
-	$joining = $tableDefinition["joining"];
+	$presentation = giauPresentationFromDefinition($tableDefinition);
+	$joining = $presentation["joining"];
 	return $joining;
 }
+function giauOrderingFromDefinition(&$tableDefinition){
+	$presentation = giauPresentationFromDefinition($tableDefinition);
+	$ordering = $presentation["ordering"];
+	return $ordering;
+}
+
 
 function giauAliasesFromDefinition(&$tableDefinition){
 	$presentation = giauPresentationFromDefinition($tableDefinition);
@@ -1618,8 +1623,7 @@ function giauAliasesFromDefinition(&$tableDefinition){
 }
 function giauColumnAliasFromColumnName(&$tableDefinition, $columnName){
 	$aliases = giauAliasesFromDefinition($tableDefinition);
-	//foreach ($aliases as $alias => $column){
-	foreach ($aliases as $column => $alias){
+	foreach ($aliases as $alias => $column){
 		if($column==$columnName){
 			return $alias;
 		}
@@ -1628,9 +1632,7 @@ function giauColumnAliasFromColumnName(&$tableDefinition, $columnName){
 }
 function giauColumnNameFromColumnAlias(&$tableDefinition, $aliasName){
 	$aliases = giauAliasesFromDefinition($tableDefinition);
-	error_log(objectToString($aliases)." .. ");
-	foreach ($aliases as $alias => $column) {
-		error_log("ENTRY: ".$column." ? ".$alias." = ".$aliasName);
+	foreach ($aliases as $alias => $column){
 		if($alias==$aliasName){
 			return $column;
 		}

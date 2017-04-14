@@ -2234,9 +2234,11 @@ giau.AutoComplete.prototype.sendRequestForInput = function(){
 	ajax.context(this);
 	ajax.callback(function(d){
 		console.log("sendRequestForInput B");
-		console.log(d);
+		//console.log(d);
 		var obj = Code.parseJSON(d);
-		console.log("sendRequestForInput C");
+		if(!Code.isObject(obj)){ // why?
+			obj = Code.parseJSON(obj);
+		}
 		console.log(obj);
 		//this.updateFromData(obj);
 	});
