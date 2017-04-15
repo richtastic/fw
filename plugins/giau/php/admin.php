@@ -77,6 +77,17 @@ function giau_admin_menu_page_main(){
 		</li>
 	</ul>
 
+	<pre>
+
+
+
+PAGES:
+	- "__live" tag is the default page shown for the homepage
+
+
+
+	</pre>
+
 	<!--
 	<div class="giauTestA" style="width:200px; height:120px; background-color:#CCC;"></div>
 	<div class="giauTestB" style="width:200px; height:100px; background-color:#CCC;"></div>
@@ -517,6 +528,10 @@ function giau_admin_menu_page_submenu_data_entry(){
 					"data-param-criteria-field" => "field",
 					"data-value" => "calendar_description",
 				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "calendar_tags",
+				],
 			],
 			"bio" => [
 				[
@@ -555,6 +570,10 @@ function giau_admin_menu_page_submenu_data_entry(){
 					"data-param-criteria-field" => "field",
 					"data-value" => "bio_uri",
 				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "bio_tags",
+				],
 			],
 			"page" => [
 				[
@@ -565,6 +584,11 @@ function giau_admin_menu_page_submenu_data_entry(){
 					"data-param-criteria-field" => "field",
 					"data-value" => "page_name",
 				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "page_tags",
+				],
+				
 			],
 			"section" => [
 				[
