@@ -391,6 +391,27 @@ function getCurrentRequestURL(){
 	return $THIS_URL;
 }
 
+
+function echoEmptyDiv($properties){
+	$propertyKeys = getKeys($properties);
+	$properyCount = count($propertyKeys);
+	?><div style="display:none;" <?php
+	for($j=0; $j<$properyCount; ++$j){
+		$key = $propertyKeys[$j];
+		$value = $properties[$key];
+		echo ''.$key.' = "'.$value.'"';
+	}
+	?>></div>
+	<?php
+}
+function echoEmptyDivs($autoCompleteFields){
+	$elementCount = count($autoCompleteFields);
+	for($i=0; $i<$elementCount; ++$i){
+		$properties = $autoCompleteFields[$i];
+		echoEmptyDiv($properties);
+	}
+}
+
 function giau_admin_menu_page_submenu_data_entry(){
 	if( !giau_is_current_user_admin() ){
 		return;
@@ -463,6 +484,119 @@ function giau_admin_menu_page_submenu_data_entry(){
 	</ul>
 	<h2><?php echo $selectedTableDisplayName; ?></h2>
 
+	<?php
+		$autoCompleteData = [
+			"languagization" => [
+				[
+					"data-param" => "table",
+					"data-value" => "languagization",
+				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "languagization_hash",
+				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "languagization_phrase",
+				],
+			],
+			"calendar" => [
+				[
+					"data-param" => "table",
+					"data-value" => "calendar",
+				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "calendar_short_name",
+				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "calendar_title",
+				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "calendar_description",
+				],
+			],
+			"bio" => [
+				[
+					"data-param" => "table",
+					"data-value" => "bio",
+				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "bio_first_name",
+				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "bio_last_name",
+				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "bio_display_name",
+				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "bio_position",
+				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "bio_email",
+				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "bio_phone",
+				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "bio_description",
+				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "bio_uri",
+				],
+			],
+			"page" => [
+				[
+					"data-param" => "table",
+					"data-value" => "page",
+				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "page_name",
+				],
+			],
+			"section" => [
+				[
+					"data-param" => "table",
+					"data-value" => "section",
+				],
+				[
+					"data-param-criteria-field" => "field",
+					"data-value" => "section_name",
+				],
+			],
+			"all" => [
+			 	[
+			 		"data-param-url" => "url",
+			 		"data-value" => "./",
+			 	],
+				[
+					"data-param" => "operation",
+					"data-value" => "get_autocomplete",
+				],
+				[
+					"data-param" => "count",
+					"data-value" => "5",
+				],
+				[
+					"data-param-message-bus-name" => "bus_name",
+					"data-value" => "autocomplete",
+				],
+			]
+		];
+	?>
+
 	<!-- table? -->
 		<div class="limitedWidth" style="display:block; position:relative; margin-right:18px;">
 
@@ -474,14 +608,20 @@ function giau_admin_menu_page_submenu_data_entry(){
 			<div style="display:none;" data-param-criteria-field="field" data-value="languagization_hash"></div>
 			<div style="display:none;" data-param-criteria-field="field" data-value="languagization_phrase"></div>
 		</div> -->
-		<div class="giauAutoComplete" style="background-color: #F00">
-			<div style="display:none;" data-param-message-bus-name="bus_name" data-value="autocomplete"></div>
-			<div style="display:none;" data-param-url="url" data-value="./"></div>
-			<div style="display:none;" data-param="operation" data-value="get_autocomplete"></div>
-			<div style="display:none;" data-param="count" data-value="5"></div>
-			<div style="display:none;" data-param="table" data-value="section"></div>
-			<div style="display:none;" data-param-criteria-field="field" data-value="section_name"></div>
-		</div>
+		<?php
+			$autoCompleteFields = $autoCompleteData[$selectedTableDataName];
+			if($autoCompleteFields){
+				$defaultAutoCompleteFields = $autoCompleteData["all"];
+			?>
+			<div class="giauAutoComplete" style="background-color: #F00">
+			<?php
+				echoEmptyDivs($defaultAutoCompleteFields);
+				echoEmptyDivs($autoCompleteFields);
+			?>
+			</div>
+			<?php
+			}
+		?>
 
 		<div style="width:70%; min-height:600px; display:inline-block; float:left;"><div class="giauCRUD" style="" data-table-name="<?php echo $selectedTableDataName; ?>"></div></div><div style="width:30%; display:inline-block; text-align: right;"><div class="giauLibraryView" style="" data-name="section_id" data-display-value="section_id" data-display-title="widget_name" data-display-subtitle="section_modified">
 		<div data-key="table" data-value="section"></div>

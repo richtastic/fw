@@ -2199,7 +2199,9 @@ giau.AutoComplete.prototype.sendRequestForInput = function(){
 	var i;
 	//var input = "for families";
 	var input = this.textValue();
-	if(!input || input==""){
+	if(!input || input==""){ // let everyone know this field is empty now
+		var busData = {"data":null};
+		this._messageBus.alertAll(giau.AutoComplete.EVENT_NAME_DATA, busData);
 		return;
 	}
 
@@ -2211,12 +2213,9 @@ giau.AutoComplete.prototype.sendRequestForInput = function(){
 	for(i=0; i<fieldNames.length; ++i){
 		searchCriteria[fieldNames[i]] = input;
 	}
-	console.log(searchCriteria);
 	searchCriteria = Code.StringFromJSON(searchCriteria);
 	console.log(searchCriteria);
 
-	//this._dataParameters["search"] = searchValue; // replace search param
-	//this._dataParameters["autocomplete"] = input;
 	var ajax = new Ajax();
 	ajax.url(url);
 	ajax.method(Ajax.METHOD_TYPE_POST);
@@ -2225,11 +2224,8 @@ giau.AutoComplete.prototype.sendRequestForInput = function(){
 		var key = keys[i];
 		var val = queryParams[key];
 		ajax.append(key,val);
-		
-	//	ajax.append('operation','get_autocomplete');
-	//	ajax.append('table','languagization');
 	}
-		ajax.append('criteria',searchCriteria);
+	ajax.append('criteria',searchCriteria);
 	//ajax.params(this._dataParameters);
 	ajax.context(this);
 	ajax.callback(function(d){
@@ -2240,7 +2236,13 @@ giau.AutoComplete.prototype.sendRequestForInput = function(){
 			obj = Code.parseJSON(obj);
 		}
 		console.log(obj);
-		//this.updateFromData(obj);
+		if(obj){
+			var dataList = obj["data"];
+			if(dataList){
+				var busData = {"data":dataList};
+				this._messageBus.alertAll(giau.AutoComplete.EVENT_NAME_DATA, busData);
+			}
+		}
 	});
 	ajax.send();
 }
@@ -4286,122 +4288,15 @@ giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData, 
 
 
 
-
-
 giau.CRUD = function(element){
 	var propertyDataTableName = "data-table-name";
 	var valueTableName = Code.getProperty(element,propertyDataTableName);
 	console.log("CRUD TABLE NAME: "+valueTableName);
 	this._itemsPerPage = 20;
-	// simulate got data:
-/*
-	section
-	languagization
-	bio
-	calendar
-	page
-	widget
-*/
-	//var dataTableName = "section";
 	var dataTableName = valueTableName;
 
-	/*
-	var model = {
-		"fields": {
-			"text": {
-				"type": "string"
-			},
-			"number": {
-				"type": "string-number"
-			},
-			"boolean": {
-				"type": "string-boolean"
-			},
-			"array-strings": {
-				"type": "array-string"
-			},
-			"array-strings": {
-				"type": "array-string"
-			},
-			"object": {
-				"type": "object",
-				"fields": {
-					"fieldA": {
-						"type":"string"
-					},
-					"fieldB": {
-						"type":"string"
-					}
-				}
-			},
-			
-			
-			"array-arrayX": {
-				"type": "array-array",
-				"fields": {
-					"type" : "array-object",
-					"fields": {
-						"parameterA": {
-							"type": "string"
-						}
-					}
-				}
-			},
-			
-			"objectA": {
-				"type": "object",
-				"fields": {
-					"objectB": {
-						"type" : "object",
-						"fields": {
-							"parameterA": {
-								"type": "string"
-							}
-						}
-					}
-				}
-			},
-			
-		}
-	};
-	var object = {
-		
-		"text": "_TEXT_VALUE_",
-		"number": "3.141",
-		"boolean": "true",
-		"array-strings": ["A","B","C"],
-		"object": {
-			"fieldA": "_FIELD_A_VALUE_",
-			"fieldB": "_FIELD_B_VALUE_",
-		},
-		"array-arrayX": [
-			[
-				{
-					"parameterA":"_VALUE_A_",
-				},
-				{
-					"parameterA":"_VALUE_B_",
-				},
-			],
-			[
-				{
-					"parameterA":"_VALUE_C_",
-				},
-			]
-		],
-		"objectA": {
-			"objectB": {
-				"parameterA": "valueA",
-			},
-		},
-		
-	};
-	var composer = new giau.ObjectComposer(element, model, object);
-	Code.setStyleBackgroundColor(element,"#FFFFFF");
-
-return;
-*/
-
+	this._messageBus = giau.MessageBus();
+	this._messageBus.addFunction(giau.AutoComplete.EVENT_NAME_DATA,this.handleBusData,this);
 
 	this._container = element;
 	this._jsDispatch = new JSDispatch();
@@ -4477,6 +4372,45 @@ return;
 	this._dataCRUD.addFunction(giau.DataCRUD.EVENT_DELETE, this._handleDeleteCompleteFxn, this);
 }
 
+
+giau.CRUD.prototype.handleBusData = function(d){
+	console.log("handleBusData");
+	console.log(d);
+	var data = d["data"];
+	if(data){
+		var rows = data;
+		this._saveDefaultRows();
+		this._updateDataFromRows(rows);
+		this._updateLayout();
+	}else{
+		this._unsaveDefaultRows();
+	}
+}
+giau.CRUD.prototype._saveDefaultRows = function(){
+	console.log("_saveDefaultRows");
+	//this._defaultRows = []
+	if(!this._defaultDataRows){
+		console.log("NOT FIND DEFAULT");
+		var view = this._dataView;
+		var data = view["rows"];
+		console.log(data)
+		this._defaultDataRows = data;
+		//view["rows"] = [];
+	}
+}
+giau.CRUD.prototype._unsaveDefaultRows = function(){
+	console.log("_unsaveDefaultRows");
+	var rows = this._defaultDataRows;
+	if(rows){
+		console.log("FOUND ROWS");
+		this._defaultDataRows = null;
+		var view = this._dataView;
+		view["rows"] = rows;
+		console.log(rows);
+		//this._updateDataFromRows(rows);
+		this._updateLayout();
+	}
+}
 giau.CRUD.prototype._buttonInput = function(display,element){
 	var div;
 		div = Code.newDiv();
@@ -4519,6 +4453,11 @@ giau.CRUD.prototype._buttonInput = function(display,element){
 
 giau.CRUD.prototype._handleCreateFxn = function(e,data){
 	console.log("CREATE");
+
+	if(this._defaultDataRows){
+		console.log("CANT CREATE WHILE SEARCH");
+		return;
+	}
 	console.log(data);
 
 	var view = this._dataView;
@@ -4641,28 +4580,33 @@ giau.CRUD.prototype._handleCreateCompleteFxn = function(e,d){
 	if(data && Code.isArray(data) && data.length>0){
 		data = data[0];
 	}
+	console.log("CREATE - A");
 	// get back new row
 	var row = data;
-	//
+///// giau.CRUD.prototype._updateDataFromRows
 	var view = this._dataView;
 	var fields = view["data"]["fields"];
 	var editFields = view["data"]["edit_fields"];
 	var rows = view["rows"];
 	var viewRow = [];
 	var j;
+	console.log("CREATE - B");
 	for(j=0; j<editFields.length; ++j){
 		var field = editFields[j];
 		var column = field["column"];
 		var alias = field["alias"];
-		//console.log(field,column,alias);
 		var mapping = this._mappingFromData(field,row,alias);
-		if(mapping.value){
-			console.log(mapping.value().value());
-		}
+		// if(mapping.value){
+		// 	obj = mapping.value();
+		// 	if(obj && obj.value){
+		// 		obj.value();
+		// 	}
+		// }
 		if(mapping){
 			viewRow.push(mapping);
 		}
 	}
+	console.log("CREATE - C");
 	// add row to top of table 
 	rows.unshift(viewRow);
 	// update display
@@ -4727,6 +4671,7 @@ giau.CRUD.prototype._handleUpdateCompleteFxn = function(e){
 
 giau.CRUD.prototype._handleDeleteCompleteFxn = function(e){
 	console.log("DELETE COMPLETE");
+	// TODO: CHECK IF DELETED ITEM IS IN NON-SEARCH DATA
 	var original = e["source"];
 	var criteriaIndex = original["index"];
 	var criteriaValue = original["value"];
@@ -4785,7 +4730,7 @@ console.log("giau.CRUD.prototype._updateWithData");
 
 	view = {};
 	view["data"] = data;
-	view["rows"] = [];
+	//view["rows"] = [];
 	this._dataView = view;
 
 	var i, column, pres, alias, row, keys;
@@ -4841,6 +4786,31 @@ console.log("giau.CRUD.prototype._updateWithData");
 	view["data"]["edit_fields"] = editFields;
 	this._searchFields = searchFields;
 	this._rowElements = [];
+	/*
+	for(i=0; i<rows.length; ++i){
+		var row = rows[i];
+		var viewRow = [];
+		view["rows"].push(viewRow);
+		for(j=0; j<editFields.length; ++j){
+			var field = editFields[j];
+			var column = field["column"];
+			var alias = field["alias"];
+			var mapping = this._mappingFromData(field,row,alias);
+			if(mapping){
+				viewRow.push(mapping);
+			}
+		}
+	}*/
+	this._updateDataFromRows(rows);
+	this._updateLayout();
+}
+giau.CRUD.prototype._updateDataFromRows = function(rows){
+	//view["data"] = data;
+	var view = this._dataView;
+	var editFields = view["data"]["edit_fields"];
+	var metadata = view["data"]["metadata"];
+	var lookupFields = view["data"]["fields"];
+	view["rows"] = [];
 	// 
 	for(i=0; i<rows.length; ++i){
 		var row = rows[i];
@@ -4856,7 +4826,7 @@ console.log("giau.CRUD.prototype._updateWithData");
 			}
 		}
 	}
-	this._updateLayout();
+	console.log(view["rows"]);
 }
 giau.CRUD.prototype._updateLayout = function(){
 	console.log(this._dataView);

@@ -1319,25 +1319,54 @@ function giau_read_section($sectionID){
 		$sectionID = [$sectionID];
 	}
 	$sectionIDList = "(".commaSeparatedArray($sectionID).")";
+	error_log("giau_read_section d: ".$sectionIDList);
+	/*
 	global $wpdb;
 	// temporary
-	$querystr = "SELECT "."temporary".".id as section_id,
-					    "."temporary".".created as section_created,
-					    "."temporary".".modified as section_modified,
-					    "."temporary".".name as section_name,
-					    "."temporary".".configuration as section_configuration,
-					    "."temporary".".section_list as section_subsections,
-					    ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id,
-					    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name,
-					    ".GIAU_FULL_TABLE_NAME_WIDGET().".configuration as widget_configuration
+	$querystr = "SELECT "."temporary".".id as section_id, 
+					    "."temporary".".created as section_created, 
+					    "."temporary".".modified as section_modified, 
+					    "."temporary".".name as section_name, 
+					    "."temporary".".configuration as section_configuration, 
+					    "."temporary".".section_list as section_subsections, 
+					    ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id, 
+					    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name, 
+					    ".GIAU_FULL_TABLE_NAME_WIDGET().".configuration as widget_configuration 
 					    FROM 
-						(SELECT * FROM ".GIAU_FULL_TABLE_NAME_SECTION()."
-						WHERE ".GIAU_FULL_TABLE_NAME_SECTION().".id IN ".$sectionIDList." LIMIT 1) AS temporary
-					    JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
+						(SELECT * FROM ".GIAU_FULL_TABLE_NAME_SECTION()." 
+						WHERE ".GIAU_FULL_TABLE_NAME_SECTION().".id IN ".$sectionIDList." LIMIT 1) AS temporary 
+					    LEFT JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()." 
 					    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = "."temporary".".widget";
+
+
+					    SELECT  wp_giau_section.id AS section_id,
+					    wp_giau_section.created AS section_created,
+					    wp_giau_section.modified AS section_modified,
+					    wp_giau_section.configuration AS section_configuration,
+					    wp_giau_section.name AS section_name,
+					    wp_giau_section.section_list AS section_subsections,
+					    wp_giau_section.widget AS widget_id,
+					    wp_giau_widget.configuration AS widget_configuration,
+					    wp_giau_widget.name AS widget_name
+					    FROM wp_giau_section  LEFT JOIN wp_giau_widget ON wp_giau_widget.id = wp_giau_section.widget   WHERE wp_giau_section.id IN (109)  ORDER BY  section_name ASC, section_id DESC LIMIT 1;
+
+error_log("QUERY: ".$querystr);
+
 // WHERE ".GIAU_FULL_TABLE_NAME_SECTION().".id =\"".$sectionID."\" LIMIT 1) AS temporary
 	$rows = $wpdb->get_results($querystr, ARRAY_A);
 	//error_log(" read row: ".($rows[0]["section_id"]));
+	if( count($rows)==1 ){
+		return $rows[0];
+	}
+	return null;
+	*/
+	$tableDefinition = GIAU_TABLE_DEFINITION_SECTION();
+	$tableName = giauTableNameFromDefinition($tableDefinition);
+	$criteria = $tableName.".id IN ".$sectionIDList;
+	$query = pagedQueryGETFromDefinition($tableDefinition, $criteria, null, "LIMIT 1");
+	error_log("QUERY: ".$query);
+	global $wpdb;
+	$rows = $wpdb->get_results($query, ARRAY_A);
 	if( count($rows)==1 ){
 		return $rows[0];
 	}
@@ -1523,7 +1552,7 @@ function giau_insert_database_from_json($jsonSource, $deleteTables){
 
 
 // HELPERS ---------------------------------------------------------------------
-function pagedQueryGETFromDefinition(&$tableDefinition, $criteria=null, $ordering=null){
+function pagedQueryGETFromDefinition(&$tableDefinition, $criteria=null, $ordering=null, $limiting=null){
 	$query = "SELECT ";
 	$ordering = $ordering != null ? $ordering : giauOrderingFromDefinition($tableDefinition);
 	$tableName = giauTableNameFromDefinition($tableDefinition);
@@ -1560,8 +1589,12 @@ function pagedQueryGETFromDefinition(&$tableDefinition, $criteria=null, $orderin
 		}
 	}
 	$query = $query." ".commaSeparatedArray($queryPieceColumns)." ";
-
 	$query = $query." FROM ".$tableName;
+
+	// if($criteria!=null){
+	// 	$query = $query." WHERE ".$criteria." ";
+	// }
+
 	if($hasJoins){
 		$joinTablesKeys = getKeys($joinTables);
 		$joinTablesCount = count($joinTablesKeys);
@@ -1575,6 +1608,7 @@ function pagedQueryGETFromDefinition(&$tableDefinition, $criteria=null, $orderin
 		}
 		$query = $query." ".$joinPiece." ";
 	}
+	// THIS DOES CRITERIA AFTER -- bad
 	if($criteria!=null){
 		$query = $query." WHERE ".$criteria." ";
 	}
@@ -1590,6 +1624,9 @@ function pagedQueryGETFromDefinition(&$tableDefinition, $criteria=null, $orderin
 			$orderPiece[] = " ".$columnAlias." ".$direction;
 		}
 		$query = $query." ORDER BY ".commaSeparatedArray($orderPiece);
+	}
+	if($limiting){
+		$query = $query." ".$limiting;
 	}
 	$query = $query.";";
 	//error_log("pagedQueryGETFromDefinition: ".$query);
@@ -1659,36 +1696,6 @@ function giauTableDefinitionFromOperationName($operationTable){
 	return $tableDefinition;
 }
 
-/*
-			if($tableSourceName=="section"){
-				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_SECTION());
-			}else if($tableSourceName=="widget"){
-				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_WIDGET());
-			}else if($tableSourceName=="page"){
-				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_PAGE());
-			}else if($tableSourceName=="website"){
-				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, ());
-			}else if($tableSourceName=="languagization"){
-				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_LANGUAGIZATION());
-			}else if($tableSourceName=="calendar"){
-				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_CALENDAR());
-			}else if($tableSourceName=="bio"){
-				$returnValue = crudDataFromOperation($dataCRUD, $lifecycleCRUD, GIAU_TABLE_DEFINITION_BIO());
-			}else{
-				*/
-// $fileName = tempnam(sys_get_temp_dir(), 'prefix');
 
-
-
-			// "extend" => [
-			// 	"type" => "string-number",
-			// 	"attributes" =>  [
-			// 		"display_name" => "Extends",
-			// 		"order" => "99",
-			// 		"sort" =>  "true",
-			// 		"editable" => "false",
-			// 		"default" => "",
-			// 	],
-			// ],
 
 ?>

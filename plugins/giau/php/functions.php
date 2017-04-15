@@ -29,6 +29,12 @@ function require_once_directory($directory){
 	error_log("OUT...");
 }
 
+function giauToSQLSearchString($value){
+	$value = preg_replace('/%/', '\\%', $value);
+	$value = preg_replace('/ /', '%', $value);
+	return $value;
+}
+
 function padLeft($input, $padding, $count){
 	$string = "".$input; // force string
 	if( strlen($string)>$count ){

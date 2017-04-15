@@ -59,11 +59,14 @@ function giau_wordpress_data_service(){
 					
 					foreach ($operationSearchCriteria as $field => $value) {
 						$columnName = giauColumnNameFromColumnAlias($tableDefinition, $field);
+						error_log(" columnName '".$columnName."'");
 						if($columnName && $columnName!=""){
 							if($validSearchCriteriaFound!=0){
 								$likeClause = $likeClause." OR "; // TODO: join with ands + ors from client
 							}
 							$value = esc_sql($value);
+								$value = giauToSQLSearchString($value);
+error_log("SEARCH FOR '".$value."'");
 							$likeClause = $likeClause." ".$columnName." LIKE '%".$value."%' ";
 							$validSearchCriteriaFound++;
 						}
@@ -916,8 +919,10 @@ function crudDataOperationGeneric($columnInfo, $inputData, $tableDefinition, $cr
 		// check if exists
 		error_log("DELETING EXISTING: ".$primaryKeyValue." == ".objectToString($row));
 		$data = crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle);
+		error_log("data: ".$data);
 		error_log("data: ".objectToString($data));
 		if($data && $data[$primaryKeyColumnNameAlias] == $primaryKeyValue){
+			error_log("DELETE INSIDE");
 			$where = [$primaryKeyColumnName => $primaryKeyValue];
 			$result = $wpdb -> delete($tableName, $where );
 			error_log("RESULT: ".objectToString($result));
