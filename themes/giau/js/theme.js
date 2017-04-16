@@ -1869,9 +1869,20 @@ giau.CalendarListView = function(element){
 		var cont = div;
 		// LEFT
 		div = Code.newDiv();
-			Code.setContent(div, displayTitle);
 			Code.setStyleDisplay(div,"inline-block");
 			Code.setStyleWidth(div,"60%");
+			Code.setStyleTextAlign(div,"left");
+			Code.addClass(div,"calendarEventListItemTitle");
+			Code.setStyleColor(div,titleColor);
+			Code.setStyleVerticalAlign(div,"top");
+//Code.setStyleBackgroundColor(div,"#F00");
+			Code.addChild(cont,div);
+		var leftDiv = div;
+		//
+		div = Code.newDiv();
+			Code.setContent(div, displayTitle);
+			Code.setStyleDisplay(div,"inline-block");
+			Code.setStyleWidth(div,"100%");
 			//Code.setStyleFontSize(div,"18px");
 			Code.setStyleTextAlign(div,"left");
 			//Code.setStyleFontWeight(div,"bold");
@@ -1879,30 +1890,30 @@ giau.CalendarListView = function(element){
 			Code.setStyleColor(div,titleColor);
 			Code.setStyleVerticalAlign(div,"top");
 			//Code.setStyleWidth(div,"30%");
-			Code.addChild(cont,div);
-		/*
+			Code.addChild(leftDiv,div);
+		
 		// DIV
-			div = Code.newDiv();
-			Code.setStyleDisplay(div,"inline-block");
-			Code.setStyleWidth(div,"5%");
-			Code.addChild(cont,div);
+			// div = Code.newDiv();
+			// Code.setStyleDisplay(div,"inline-block");
+			// Code.setStyleWidth(div,"5%");
+			// Code.addChild(cont,div);
 		// CENTER
 		div = Code.newDiv();
 			Code.setContent(div, displayDescription);
 			Code.setStyleDisplay(div,"inline-block");
-			Code.setStyleWidth(div,"30%");
+			Code.setStyleWidth(div,"100%");
 			Code.setStyleFontSize(div,"12px");
 			Code.setStyleTextAlign(div,"left");
 			Code.addClass(div,"calendarEventListItemDescription");
 			Code.setStyleColor(div,descriptionColor);
 			Code.setStyleVerticalAlign(div,"top");
-			Code.addChild(cont,div);
+			Code.addChild(leftDiv,div);
 		// DIV
-			div = Code.newDiv();
-			Code.setStyleDisplay(div,"inline-block");
-			Code.setStyleWidth(div,"5%");
-			Code.addChild(cont,div);
-			*/
+			// div = Code.newDiv();
+			// Code.setStyleDisplay(div,"inline-block");
+			// Code.setStyleWidth(div,"5%");
+			// Code.addChild(cont,div);
+			
 		// RIGHT
 		div = Code.newDiv();
 			Code.setContent(div, displayDate);
@@ -1911,6 +1922,7 @@ giau.CalendarListView = function(element){
 			//Code.setStyleFontSize(div,"14px");
 			Code.setStyleTextAlign(div,"right");
 			Code.addClass(div,"calendarEventListItemDate");
+//Code.setStyleBackgroundColor(div,"#0F0");
 //			Code.setStyleColor(div,descriptionColor);
 			Code.setStyleVerticalAlign(div,"top");
 			Code.addChild(cont,div);
@@ -4723,6 +4735,8 @@ console.log("giau.CRUD.prototype._updateWithData");
 	var presentation = definition["presentation"];
 	var columnPresentations = presentation["columns"];
 	var metadata = data["metadata"];
+// console.log(metadata)
+// return;
 	var pagesTotal = total>0 ? Math.ceil(total/this._itemsPerPage) : 0;
 	var pageCurrent = Math.floor( offset/this._itemsPerPage);
 	this._pagingTop.set(pageCurrent, pagesTotal);
@@ -5257,15 +5271,20 @@ giau.CRUD._fieldEditDuration = function(definition, container, fieldName, elemen
 
 
 giau.CRUD._fieldEditStringArray = function(definition, container, fieldName, elementContainer, mapping){
+	console.log("_fieldEditStringArray: ");
 	var presentation = definition["presentation"];
 	var metadata = definition["metadata"];
 	var value = container[fieldName];
 	if(presentation && presentation["drag_and_drop"]){ // DRAG AND DROP
 			var dd = presentation["drag_and_drop"];
 			var table = null;
+console.log("METADATA: ");
+console.log(dd["metadata"]);
 			if(dd["metadata"]){
 				var index_name = dd["metadata"]["source"];
 				table = metadata[index_name];
+console.log(" => table: ");
+console.log(table);
 			}
 		// update mapping
 		//mapping.updateElementFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateElementFxn);

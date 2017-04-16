@@ -50,8 +50,6 @@ function giau_wordpress_data_service(){
 				if($tableDefinition){
 					$tableName = giauTableNameFromDefinition($tableDefinition);
 					$tableColumns = $tableDefinition["columns"];
-
-					error_log("operationSearchCriteria: ".$operationSearchCriteria);
 					$operationSearchCriteria = stripslashes($operationSearchCriteria);
 					$operationSearchCriteria = json_decode($operationSearchCriteria, true);
 					$likeClause = "";
@@ -59,14 +57,12 @@ function giau_wordpress_data_service(){
 					
 					foreach ($operationSearchCriteria as $field => $value) {
 						$columnName = giauColumnNameFromColumnAlias($tableDefinition, $field);
-						error_log(" columnName '".$columnName."'");
 						if($columnName && $columnName!=""){
 							if($validSearchCriteriaFound!=0){
 								$likeClause = $likeClause." OR "; // TODO: join with ands + ors from client
 							}
 							$value = esc_sql($value);
 								$value = giauToSQLSearchString($value);
-error_log("SEARCH FOR '".$value."'");
 							$likeClause = $likeClause." ".$columnName." LIKE '%".$value."%' ";
 							$validSearchCriteriaFound++;
 						}
@@ -588,8 +584,9 @@ error_log("SEARCH FOR '".$value."'");
 							SELECT ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id,
 						    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name
 						    FROM ".GIAU_FULL_TABLE_NAME_WIDGET()."
-						    WHERE ".GIAU_FULL_TABLE_NAME_WIDGET().".id IN (".$subwidgetsList.") 
 						";
+						// TODO: DON'T GET EVERYTHING
+						// WHERE ".GIAU_FULL_TABLE_NAME_WIDGET().".id IN (".$subwidgetsList.") 
 						$subwidgets = $wpdb->get_results($query, ARRAY_A);
 					error_log("subwidgets count: ".count($subwidgets));
 					$metadata["widget_list"] = $subwidgets;
@@ -642,7 +639,9 @@ function subsection_list(&$rows, $columnName){ // LIST SUBSECTIONS IN METADATA F
 			(
 				SELECT *
 				FROM ".GIAU_FULL_TABLE_NAME_SECTION()." 
-				WHERE ".GIAU_FULL_TABLE_NAME_SECTION().".id IN (".$subsectionsList.") 
+				".
+				// TODO FILTER FUTURE: WHERE ".GIAU_FULL_TABLE_NAME_SECTION().".id IN (".$subsectionsList.") 
+				"
 			) as sections
 			JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()." 
 	    	ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = sections.widget 

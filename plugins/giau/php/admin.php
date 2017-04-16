@@ -84,6 +84,12 @@ function giau_admin_menu_page_main(){
 PAGES:
 	- "__live" tag is the default page shown for the homepage
 
+CALENDAR /DATE:
+	- setting duration = 0 makes it display as a single day
+
+IMAGES:
+	- optimize, eg: tinypng.com
+	- appropriately sized, eg: having larger than 1920x1080 isn't useful for galleries
 
 
 	</pre>
