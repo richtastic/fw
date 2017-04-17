@@ -1996,7 +1996,7 @@ giau.DataTable = function(element){
 	// ... 
 	this._getPage();
 }
-giau.DataTable.prototype._getPage = function(){
+giau.DataTable.prototype._getPage = function(data){
 	console.log(data);
 	var start = this._currentPage * this._pageCount;
 	var end = start + this._pageCount;
@@ -2009,12 +2009,25 @@ giau.DataTable.prototype._getPage = function(){
 	var ajax = new Ajax();
 	ajax.url(url);
 	ajax.method(Ajax.METHOD_TYPE_POST);
-	ajax.params({
-		"operation":"get_table_page",
-		"table":table,
-		"offset":start,
-		"count":count
-	});
+
+// if(data){
+// 	var fields = data["fields"];
+// 	if(fields){
+// 		var keys = Code.keys(fields);
+// 		var i;
+// 		for(i=0;  i<keys.length; ++i){
+// 			var key = keys[i];
+// 			var val = fields[key];
+// 			ajax.append(key,val);
+// 		}
+// 	}
+// }
+	
+	ajax.append('operation','get_table_page');
+	ajax.append('table',table);
+	ajax.append('offset',start);
+	ajax.append('count',count);
+	
 	ajax.context(this);
 	ajax.callback(function(d){
 		var obj = Code.parseJSON(d);
@@ -4223,7 +4236,7 @@ giau.DataSource = function(url, itemsPerPage, params){
 Code.inheritClass(giau.DataSource, Dispatchable);
 
 giau.DataSource.EVENT_PAGE_DATA = "EVENT_PAGE_DATA";
-giau.DataSource.prototype.getPage = function(pageToGet){
+giau.DataSource.prototype.getPage = function(pageToGet, data){
 	this._currentPage = pageToGet;
 	var start = this._currentPage * this._itemsPerPage;
 	var end = start + this._itemsPerPage;
@@ -4236,6 +4249,19 @@ giau.DataSource.prototype.getPage = function(pageToGet){
 	ajax.url(url);
 	ajax.method(Ajax.METHOD_TYPE_POST);
 	ajax.append(this._urlParams);
+if(data){		
+	console.log(data);
+	var fields = data["fields"];
+	if(fields){
+		var keys = Code.keys(fields);
+		var i;
+		for(i=0;  i<keys.length; ++i){
+			var key = keys[i];
+			var val = fields[key];
+			ajax.append(key,val);
+		}
+	}
+}
 	ajax.append("operation","page_data");
 	ajax.append("offset",""+start);
 	ajax.append("count",""+count);
@@ -4321,7 +4347,7 @@ giau.CRUD = function(element){
 	Code.addChild(this._container,this._elementContainer);
 		
 		Code.addChild(this._elementContainer,this._elementPagingTop);
-//		Code.addChild(this._elementContainer,this._elementOrdering);
+		Code.addChild(this._elementContainer,this._elementOrdering);
 		Code.addChild(this._elementContainer,this._elementTools);
 		Code.addChild(this._elementContainer,this._elementTable);
 		Code.addChild(this._elementContainer,this._elementPagingBottom);
@@ -4374,7 +4400,6 @@ giau.CRUD = function(element){
 	
 	this._dataSource = new giau.DataSource("./",this._itemsPerPage, {"table":dataTableName} );
 	this._dataSource.addFunction(giau.DataSource.EVENT_PAGE_DATA, this._updateWithData, this);
-	this._dataSource.getPage(this._pagingTop.currentPage());
 	// table listing
 	this._dataCRUD = new giau.DataCRUD("./", {"operation":"crud_data", "table":dataTableName} );
 	// row CRUD
@@ -4382,8 +4407,23 @@ giau.CRUD = function(element){
 	this._dataCRUD.addFunction(giau.DataCRUD.EVENT_READ, this._handleReloadCompleteFxn, this);
 	this._dataCRUD.addFunction(giau.DataCRUD.EVENT_UPDATE, this._handleUpdateCompleteFxn, this);
 	this._dataCRUD.addFunction(giau.DataCRUD.EVENT_DELETE, this._handleDeleteCompleteFxn, this);
+
+// TODO: GET SORTING ORDER FROM SAVED BASED ON COOKIES:
+// INDEX: giau.CRUD.TABLENAME
+
+	this.updateGetPage();
 }
 
+giau.CRUD.prototype.updateGetPage = function(){
+	var sorting = [];
+		sorting.push({"column":"COLUMN", "direction":"1"}); // order == order ?
+		sorting.push({"column":"COLUMN", "direction":"-1"});
+	var data = {};
+	var fields = {};
+	data["fields"] = fields;
+		fields["sorting"] = Code.StringFromJSON(sorting);
+	this._dataSource.getPage(this._pagingTop.currentPage(), data);
+}
 
 giau.CRUD.prototype.handleBusData = function(d){
 	console.log("handleBusData");
