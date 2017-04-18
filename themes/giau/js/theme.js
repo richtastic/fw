@@ -4332,6 +4332,7 @@ giau.CRUD = function(element){
 	console.log("CRUD TABLE NAME: "+valueTableName);
 	this._itemsPerPage = 20;
 	var dataTableName = valueTableName;
+	this._dataTableName = dataTableName;
 
 	this._messageBus = giau.MessageBus();
 	this._messageBus.addFunction(giau.AutoComplete.EVENT_NAME_DATA,this.handleBusData,this);
@@ -4408,20 +4409,27 @@ giau.CRUD = function(element){
 	this._dataCRUD.addFunction(giau.DataCRUD.EVENT_UPDATE, this._handleUpdateCompleteFxn, this);
 	this._dataCRUD.addFunction(giau.DataCRUD.EVENT_DELETE, this._handleDeleteCompleteFxn, this);
 
-// TODO: GET SORTING ORDER FROM SAVED BASED ON COOKIES:
-// INDEX: giau.CRUD.TABLENAME
-
 	this.updateGetPage();
 }
 
 giau.CRUD.prototype.updateGetPage = function(){
-	var sorting = [];
-		sorting.push({"column":"COLUMN", "direction":"1"}); // order == order ?
-		sorting.push({"column":"COLUMN", "direction":"-1"});
+	var columns = "...";
+
+	var sorting = null;
+	if(this._searchFields){
+		sorting = this._searchFieldsToSortingArray(this._searchFields);
+	}else{
+		sorting = this._loadSortingFromCookies(true);
+	}
+	sorting = {"ordered": sorting}; // wrap inside object
+	console.log(sorting);
+	sorting = Code.StringFromJSON(sorting);
+	console.log(sorting);
 	var data = {};
 	var fields = {};
 	data["fields"] = fields;
-		fields["sorting"] = Code.StringFromJSON(sorting);
+		//fields["sorting"] = Code.StringFromJSON(sorting);
+		fields["sorting"] = sorting;
 	this._dataSource.getPage(this._pagingTop.currentPage(), data);
 }
 
@@ -4775,6 +4783,7 @@ console.log("giau.CRUD.prototype._updateWithData");
 	var presentation = definition["presentation"];
 	var columnPresentations = presentation["columns"];
 	var metadata = data["metadata"];
+
 // console.log(metadata)
 // return;
 	var pagesTotal = total>0 ? Math.ceil(total/this._itemsPerPage) : 0;
@@ -4819,6 +4828,7 @@ console.log("giau.CRUD.prototype._updateWithData");
 					var sortable = attributes["sort"];
 					if(sortable && sortable=="true"){
 						searchFields.push(info);
+						info["sorting"] = {"direction":null};
 					}
 				}
 			}
@@ -4855,9 +4865,101 @@ console.log("giau.CRUD.prototype._updateWithData");
 			}
 		}
 	}*/
+
+
 	this._updateDataFromRows(rows);
+
+	this._loadSortingFromCookies();
+
 	this._updateLayout();
 }
+giau.CRUD.SORT_COOKIE_PREFIX = "giau.CRUD.sort.";
+giau.CRUD.prototype._loadSortingFromCookies = function(notSet){
+	notSet = notSet!==undefined ? notSet : false;
+	console.log("_loadSortingFromCookies");
+	var tableName = this._dataTableName;
+	var cookieName = giau.CRUD.SORT_COOKIE_PREFIX+tableName;
+	var searchFields = this._searchFields;
+	// 
+	console.log(cookieName);
+	var cookie = Code.getCookie(cookieName);
+	console.log(cookie);
+	var array = Code.parseJSON(cookie);
+	if(array && !notSet){
+		this._setSortingSearchFieldsFromSortArray(searchFields, array);
+	}
+	if(!array){
+		return [];
+	}
+	return array;
+}
+giau.CRUD.prototype._setSortingSearchFieldsFromSortArray = function(searchFields, sortArray){
+console.log("_setSortingSearchFieldsFromSortArray")
+	var i, j, len = searchFields.length;
+	for(i=0; i<len; ++i){
+		var field = searchFields[i];
+		var sorting = {};
+		var alias = field["alias"];
+		var found = false;
+		for(j=0; j<sortArray.length; ++j){
+			var col = sortArray[j]["column"];
+			if(alias == col){
+				var dir = sortArray[j]["direction"];
+				dir = dir!==null ? dir : -1;
+				sorting["order"] = ""+j;
+				sorting["direction"] = dir;
+				sorting["order"] = ""+j;
+				field["sorting"] = sorting;
+console.log(field["column"]+" : "+sorting["order"]+" = "+sorting["direction"]);
+				found = true;
+				break;
+			}
+		}
+		if(!found){
+			field["sorting"] = {"direction":-1,"order":null};
+		}
+	}
+}
+giau.CRUD.prototype._searchFieldsToSortingArray = function(searchFields){
+	var i, len = searchFields.length;
+	var sortArray = [];
+	for(i=0; i<len; ++i){
+		var field = searchFields[i];
+		var sorting = field["sorting"];
+		if(sorting){
+			var col = field["alias"];
+			var dir = sorting["direction"];
+			var ord = sorting["order"];
+			dir = dir!==null ? dir : -1;
+			dir = ""+dir;
+			sortArray.push({"column":col, "order":ord, "direction":dir});
+		}
+	}
+	sortArray = sortArray.sort(function(a,b){
+		var orderA = parseInt(a["order"]);
+		var orderB = parseInt(b["order"]);
+		return orderA < orderB ? -1 : 1;
+	});
+	for(i=0; i<sortArray.length; ++i){ // remove order
+		var was = sortArray[i];
+		var now = {"column":was["column"], "direction":was["direction"]};
+		sortArray[i] = now;
+	}
+	return sortArray;
+}
+giau.CRUD.prototype._saveSortingToCookies = function(){
+	var tableName = this._dataTableName;
+	var cookieName = giau.CRUD.SORT_COOKIE_PREFIX+tableName;
+	var searchFields = this._searchFields;
+	var sortArray = this._searchFieldsToSortingArray(searchFields);
+	console.log("SAVED SORT ARRAY:");
+	console.log(sortArray);
+	var sortJSON = Code.StringFromJSON(sortArray);
+	Code.deleteCookie(cookieName);
+	Code.setCookie(cookieName,sortJSON);
+}
+
+
 giau.CRUD.prototype._updateDataFromRows = function(rows){
 	//view["data"] = data;
 	var view = this._dataView;
@@ -4880,23 +4982,63 @@ giau.CRUD.prototype._updateDataFromRows = function(rows){
 			}
 		}
 	}
-	console.log(view["rows"]);
+	//console.log(view["rows"]);
 }
+
+giau.CRUD.prototype._handleSortingItemSelected = function(e, d){
+	console.log("_handleSortingItemSelected");
+	var column = d["column"];
+	var direction = d["direction"];
+	var i;
+	var searchFields = this._searchFields;
+	var sortingArray = this._searchFieldsToSortingArray(searchFields);
+	// remove field
+	for(i=0; i<sortingArray.length; ++i){
+		var sort = sortingArray[i];
+		if(sort["column"]==column){
+			Code.removeElementAt(sortingArray,i);
+			--i;
+		}
+	}
+	// add field at 0
+	sortingArray.unshift({"direction":direction, "column":column});
+	
+	console.log("NEW ARRAY: ");
+	console.log(sortingArray);
+
+	this._setSortingSearchFieldsFromSortArray(searchFields, sortingArray);
+	this._saveSortingToCookies();
+	this._updateLayout(); // only sorting needs updating
+	// RELOAD PAGE
+	location.reload();
+}
+
 giau.CRUD.prototype._updateLayout = function(){
-	console.log(this._dataView);
+//	console.log(this._dataView);
 	var searchFields = this._searchFields;
 	var i, j;
-	
 	Code.removeAllChildren(this._elementOrdering);
 	for(i=0; i<searchFields.length; ++i){
 		var field = searchFields[i];
 			var attributes = field["attributes"];
+		var columnAlias = field["alias"];
 		var name = attributes["display_name"];
 		var div = Code.newDiv();
-		Code.setContent(div,""+name+"&DownArrowBar;"); // &darr; &dArr; &#8681; &#10507; &DownArrowBar;
+			var directionSort = -1;
+			var sorting = field["sorting"]
+			if(sorting){
+				directionSort = sorting["direction"];
+				directionSort = directionSort !== null ? directionSort : -1;
+				directionSort = parseInt(directionSort);
+			}
+			var displaySort = directionSort == -1 ? "&DownArrowBar;" : "&UpArrowBar;"
+		Code.setContent(div,""+name+displaySort); // &darr; &dArr; &#8681; &#10507; &DownArrowBar;
 		Code.setStyleDisplay(div,"table-cell");
 		Code.setStyleColor(div,"#000");
 		Code.addChild(this._elementOrdering,div);
+			var nextDirectionSort = directionSort == -1 ? 1 : -1;
+			dataContext = {"element": div, "column":columnAlias, "direction":(""+nextDirectionSort)};
+			this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_CLICK, this._handleSortingItemSelected, this, dataContext);
 	}
 
 	Code.removeAllChildren(this._elementTable);
@@ -5311,20 +5453,20 @@ giau.CRUD._fieldEditDuration = function(definition, container, fieldName, elemen
 
 
 giau.CRUD._fieldEditStringArray = function(definition, container, fieldName, elementContainer, mapping){
-	console.log("_fieldEditStringArray: ");
+	//console.log("_fieldEditStringArray: ");
 	var presentation = definition["presentation"];
 	var metadata = definition["metadata"];
 	var value = container[fieldName];
 	if(presentation && presentation["drag_and_drop"]){ // DRAG AND DROP
 			var dd = presentation["drag_and_drop"];
 			var table = null;
-console.log("METADATA: ");
-console.log(dd["metadata"]);
+// console.log("METADATA: ");
+// console.log(dd["metadata"]);
 			if(dd["metadata"]){
 				var index_name = dd["metadata"]["source"];
 				table = metadata[index_name];
-console.log(" => table: ");
-console.log(table);
+// console.log(" => table: ");
+// console.log(table);
 			}
 		// update mapping
 		//mapping.updateElementFxn(giau.CRUD._fieldEditCommaSeparatedStringUpdateElementFxn);
@@ -6121,7 +6263,6 @@ giau.InputFieldDurationMini.prototype.value = function(v){
 	if(v!==undefined){
 		this._value = v;
 		this._updateLayout();
-		console.log("mini duration value ypdate: "+v);
 	}
 	return this._value;
 };

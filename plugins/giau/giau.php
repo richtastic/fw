@@ -987,7 +987,6 @@ function commaSeparatedStringFromArray($arr){
 }
 
 function arrayFromCommaSeparatedString($str){ // only things that should be escaped are , and \
-	error_log("arrayFromCommaSeparatedString: '".$str."'");
 	if(!$str){
 		return [];
 	}

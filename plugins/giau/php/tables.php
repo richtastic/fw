@@ -14,7 +14,6 @@ function GIAU_UNIQUE_IDENTIFIER(){
 function GIAU_TABLE_PREFIX(){
 	return "giau_";
 }
-
 function GIAU_TABLE_NAME_LANGUAGIZATION(){
 	return "languagization";
 }
@@ -169,7 +168,17 @@ function GIAU_TABLE_DEFINITION_WIDGET(){
 			],
 			"columns" => [
 				// 
-			]
+			],
+			"ordering" => [
+				[
+					"column" => "name",
+					"order" => "ASC",
+				],
+				[
+					"column" => "id",
+					"order" => "DESC",
+				]
+			],
 		]
 	];
 }
@@ -455,6 +464,7 @@ function GIAU_TABLE_DEFINITION_LANGUAGIZATION(){
 				"attributes" => [
 					"display_name" => "Language",
 					"order" => "1",
+					"sort" =>  "false",
 					"monospace" => "true",
 					"editable" => "true",
 				],
@@ -643,7 +653,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				"attributes" => [
 					"display_name" => "Tags",
 					"order" => "9",
-					"sort" =>  "true",
+					"sort" =>  "false",
 					"editable" => "true",
 				],
 			],
@@ -722,7 +732,7 @@ function GIAU_TABLE_DEFINITION_CALENDAR(){
 				"attributes" =>  [
 					"display_name" => "Short Name",
 					"order" => "0",
-					"sort" =>  "false",
+					"sort" =>  "true",
 					"editable" => "true",
 				],
 			],
@@ -731,7 +741,7 @@ function GIAU_TABLE_DEFINITION_CALENDAR(){
 				"attributes" =>  [
 					"display_name" => "Title",
 					"order" => "1",
-					"sort" =>  "false",
+					"sort" =>  "true",
 					"editable" => "true",
 				],
 			],
@@ -740,7 +750,7 @@ function GIAU_TABLE_DEFINITION_CALENDAR(){
 				"attributes" =>  [
 					"display_name" => "Description",
 					"order" => "2",
-					"sort" =>  "false",
+					"sort" =>  "true",
 					"editable" => "true",
 				],
 			],
@@ -749,7 +759,7 @@ function GIAU_TABLE_DEFINITION_CALENDAR(){
 				"attributes" =>  [
 					"display_name" => "Start Date",
 					"order" => "3",
-					"sort" =>  "false",
+					"sort" =>  "true",
 					"editable" => "true",
 				],
 				"validation" => [
@@ -763,7 +773,7 @@ function GIAU_TABLE_DEFINITION_CALENDAR(){
 				"attributes" =>  [
 					"display_name" => "Duration",
 					"order" => "4",
-					"sort" =>  "false",
+					"sort" =>  "true",
 					"editable" => "true",
 				],
 			],
@@ -772,7 +782,7 @@ function GIAU_TABLE_DEFINITION_CALENDAR(){
 				"attributes" => [
 					"display_name" => "Tags",
 					"order" => "5",
-					"sort" =>  "true",
+					"sort" =>  "false",
 					"editable" => "true",
 				],
 			],
@@ -846,7 +856,7 @@ function GIAU_TABLE_DEFINITION_PAGE(){
 				"attributes" =>  [
 					"display_name" => "Name",
 					"order" => "0",
-					"sort" =>  "false",
+					"sort" =>  "true",
 					"editable" => "true",
 				],
 			],
@@ -864,7 +874,7 @@ function GIAU_TABLE_DEFINITION_PAGE(){
 				"attributes" => [
 					"display_name" => "Tags",
 					"order" => "2",
-					"sort" =>  "true",
+					"sort" =>  "false",
 					"editable" => "true",
 				],
 			],
@@ -1320,46 +1330,6 @@ function giau_read_section($sectionID){
 	}
 	$sectionIDList = "(".commaSeparatedArray($sectionID).")";
 	error_log("giau_read_section d: ".$sectionIDList);
-	/*
-	global $wpdb;
-	// temporary
-	$querystr = "SELECT "."temporary".".id as section_id, 
-					    "."temporary".".created as section_created, 
-					    "."temporary".".modified as section_modified, 
-					    "."temporary".".name as section_name, 
-					    "."temporary".".configuration as section_configuration, 
-					    "."temporary".".section_list as section_subsections, 
-					    ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id, 
-					    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name, 
-					    ".GIAU_FULL_TABLE_NAME_WIDGET().".configuration as widget_configuration 
-					    FROM 
-						(SELECT * FROM ".GIAU_FULL_TABLE_NAME_SECTION()." 
-						WHERE ".GIAU_FULL_TABLE_NAME_SECTION().".id IN ".$sectionIDList." LIMIT 1) AS temporary 
-					    LEFT JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()." 
-					    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = "."temporary".".widget";
-
-
-					    SELECT  wp_giau_section.id AS section_id,
-					    wp_giau_section.created AS section_created,
-					    wp_giau_section.modified AS section_modified,
-					    wp_giau_section.configuration AS section_configuration,
-					    wp_giau_section.name AS section_name,
-					    wp_giau_section.section_list AS section_subsections,
-					    wp_giau_section.widget AS widget_id,
-					    wp_giau_widget.configuration AS widget_configuration,
-					    wp_giau_widget.name AS widget_name
-					    FROM wp_giau_section  LEFT JOIN wp_giau_widget ON wp_giau_widget.id = wp_giau_section.widget   WHERE wp_giau_section.id IN (109)  ORDER BY  section_name ASC, section_id DESC LIMIT 1;
-
-error_log("QUERY: ".$querystr);
-
-// WHERE ".GIAU_FULL_TABLE_NAME_SECTION().".id =\"".$sectionID."\" LIMIT 1) AS temporary
-	$rows = $wpdb->get_results($querystr, ARRAY_A);
-	//error_log(" read row: ".($rows[0]["section_id"]));
-	if( count($rows)==1 ){
-		return $rows[0];
-	}
-	return null;
-	*/
 	$tableDefinition = GIAU_TABLE_DEFINITION_SECTION();
 	$tableName = giauTableNameFromDefinition($tableDefinition);
 	$criteria = $tableName.".id IN ".$sectionIDList;
@@ -1620,6 +1590,7 @@ function pagedQueryGETFromDefinition(&$tableDefinition, $criteria=null, $orderin
 			$columnName = $order["column"];
 			$columnAlias = giauColumnAliasFromColumnName($tableDefinition, $columnName);
 			$direction = $order["order"];
+			error_log("QUERY FOUND: ".$columnName." / ".$columnAlias." == ".$direction);
 			$direction = $direction=="ASC" ? "ASC" : "DESC";
 			$orderPiece[] = " ".$columnAlias." ".$direction;
 		}
@@ -1628,7 +1599,7 @@ function pagedQueryGETFromDefinition(&$tableDefinition, $criteria=null, $orderin
 	if($limiting){
 		$query = $query." ".$limiting;
 	}
-	$query = $query.";";
+//	$query = $query.";";
 	//error_log("pagedQueryGETFromDefinition: ".$query);
 	return $query;
 }
@@ -1646,9 +1617,51 @@ function giauJoiningFromDefinition(&$tableDefinition){
 	$joining = $presentation["joining"];
 	return $joining;
 }
-function giauOrderingFromDefinition(&$tableDefinition){
+function giauOrderingFromDefinition(&$tableDefinition, &$directions=null){ // directions are based on aliases
 	$presentation = giauPresentationFromDefinition($tableDefinition);
 	$ordering = $presentation["ordering"];
+	if(!$ordering){
+		$ordering = [];
+	}
+	// convert columns to aliases
+	// for($i=0; $i<count($ordering); ++$i){
+	// 	$columnName = $ordering[$i]["column"];
+	// 	$aliasName = giauColumnAliasFromColumnName($columnName);
+	// 	$ordering[$i]["column"] = $aliasName;
+	// }
+	if($directions){ // copy input data into ordering
+		$directionCount = count($directions);
+		//for($i=0; $i<$directionCount; ++$i){
+		for($i=$directionCount-1; $i>=0; --$i){
+			$item = $directions[$i];
+			$alias = $item["column"];
+			$column = giauColumnNameFromColumnAlias($tableDefinition, $alias);
+			$direction = $item["direction"];
+			if($alias && $column && $direction){
+				$direction = "$direction";
+				if($direction=="1"){
+					$direction = "ASC";
+				}else if($direction=="-1"){
+					$direction = "DESC";
+				}else{
+					$direction = "DESC";
+				}
+				$sort = [
+					"column" => $column,
+					"order" => $direction,
+				];
+				// remove existing
+				for($j=0; $j<count($ordering); ++$j){
+					$item = $ordering[$j];
+					if($item["column"]==$column){
+						array_splice($ordering, $j,1);
+					}
+				}
+				// push on front
+				array_unshift($ordering, $sort);
+			}
+		}
+	}
 	return $ordering;
 }
 
@@ -1676,6 +1689,14 @@ function giauColumnNameFromColumnAlias(&$tableDefinition, $aliasName){
 	}
 	return null;
 }
+function giauColumnAliasesFromDefinition(&$tableDefinition){
+	$aliases = giauAliasesFromDefinition($tableDefinition);
+	$array = [];
+	foreach ($aliases as $alias => $column){
+		$array[] = $alias;
+	}
+	return $array;
+}
 function giauTableDefinitionFromOperationName($operationTable){
 	$tableDefinition = null;
 	if($operationTable=="languagization"){
@@ -1690,7 +1711,7 @@ function giauTableDefinitionFromOperationName($operationTable){
 		$tableDefinition = GIAU_TABLE_DEFINITION_BIO();
 	}else if($operationTable=="calendar"){
 		$tableDefinition = GIAU_TABLE_DEFINITION_CALENDAR();
-	}else if($operationTable=="webside"){
+	}else if($operationTable=="website"){
 		$tableDefinition = GIAU_TABLE_DEFINITION_WEBSITE();
 	}
 	return $tableDefinition;

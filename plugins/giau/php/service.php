@@ -335,11 +335,25 @@ function giau_wordpress_data_service(){
 			}
 // LANGUAGIZATION SERVICE --------------------------------------------------------------------------------------------------------------
 		}else if($operationType=="page_data"){
+			//error_log("page_data: ".get_magic_quotes_gpc());
 			$tableSourceName = $_POST['table'];
 			$isRequestLibrary = $_POST['library'];
 				$isRequestLibrary = $isRequestLibrary==="true";
 			$offset = $_POST['offset'];
 			$count =  $_POST['count'];
+			$sorting = $_POST['sorting'];
+			if($sorting){
+				$sorting = stripslashes($sorting);
+				$sorting = json_decode($sorting, true);
+				if($sorting){
+					$sorting = $sorting["ordered"];
+				}
+			}
+			$tableDefinition = giauTableDefinitionFromOperationName($tableSourceName);
+if($tableDefinition){
+			$ordering = giauOrderingFromDefinition($tableDefinition, $sorting);
+			// function pagedQueryGETFromDefinition(&$tableDefinition, $criteria=null, $ordering=null, $limiting=null){
+
 			if($tableSourceName=="website"){
 				// $offset = 0;
 				// $count = 2;
@@ -355,7 +369,7 @@ function giau_wordpress_data_service(){
 				    ORDER BY modified DESC 
 				";
 				error_log($requestInfo["query"]);
-				paged_data_service($requestInfo, table_info_website(), $response );
+				paged_data_service($requestInfo, table_info($tableDefinition), $response );
 				//
 				$metadata[] = [];
 				$response["metadata"] = $metadata;
@@ -385,7 +399,7 @@ function giau_wordpress_data_service(){
 					    FROM ".GIAU_FULL_TABLE_NAME_WIDGET()."
 					    ORDER BY name ASC, modified DESC 
 					";
-					paged_data_service($requestInfo, table_info_widget(), $response , true);
+					paged_data_service($requestInfo, table_info($tableDefinition), $response , true);
 					$response["metadata"] = $metadata;
 				}else{
 					// $offset = 0;
@@ -403,7 +417,7 @@ function giau_wordpress_data_service(){
 					    ORDER BY name ASC, modified DESC 
 					";
 					error_log($requestInfo["query"]);
-					paged_data_service($requestInfo, table_info_widget(), $response );
+					paged_data_service($requestInfo, table_info($tableDefinition), $response );
 					//
 					$metadata[] = [];
 					$response["metadata"] = $metadata;
@@ -427,7 +441,7 @@ function giau_wordpress_data_service(){
 				    ORDER BY name ASC, modified DESC 
 				";
 				error_log($requestInfo["query"]);
-				paged_data_service($requestInfo, table_info_page(), $response );
+				paged_data_service($requestInfo, table_info($tableDefinition), $response );
 				//
 				error_log("PAGE ROWS: ".count($response["data"]));
 				$metadata[] = [];
@@ -442,52 +456,55 @@ function giau_wordpress_data_service(){
 				$requestInfo = [];
 				$requestInfo["offset"] = $offset;
 				$requestInfo["count"] = $count;
-				$requestInfo["query"] = "
-				    SELECT ".GIAU_FULL_TABLE_NAME_CALENDAR().".id as calendar_id,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".created as calendar_created,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".modified as calendar_modified,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".short_name as calendar_short_name,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".title as calendar_title,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".description as calendar_description,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".start_date as calendar_start_date,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".duration as calendar_duration,
-				    ".GIAU_FULL_TABLE_NAME_CALENDAR().".tags as calendar_tags
-				    FROM ".GIAU_FULL_TABLE_NAME_CALENDAR()."
-				    ORDER BY title ASC, short_name ASC, modified DESC 
-				";
+				// $requestInfo["query"] = "
+				//     SELECT ".GIAU_FULL_TABLE_NAME_CALENDAR().".id as calendar_id,
+				//     ".GIAU_FULL_TABLE_NAME_CALENDAR().".created as calendar_created,
+				//     ".GIAU_FULL_TABLE_NAME_CALENDAR().".modified as calendar_modified,
+				//     ".GIAU_FULL_TABLE_NAME_CALENDAR().".short_name as calendar_short_name,
+				//     ".GIAU_FULL_TABLE_NAME_CALENDAR().".title as calendar_title,
+				//     ".GIAU_FULL_TABLE_NAME_CALENDAR().".description as calendar_description,
+				//     ".GIAU_FULL_TABLE_NAME_CALENDAR().".start_date as calendar_start_date,
+				//     ".GIAU_FULL_TABLE_NAME_CALENDAR().".duration as calendar_duration,
+				//     ".GIAU_FULL_TABLE_NAME_CALENDAR().".tags as calendar_tags
+				//     FROM ".GIAU_FULL_TABLE_NAME_CALENDAR()."
+				//     ORDER BY title ASC, short_name ASC, modified DESC 
+				// ";
+				// function pagedQueryGETFromDefinition(&$tableDefinition, $criteria=null, $ordering=null, $limiting=null){
+				$requestInfo["query"] = pagedQueryGETFromDefinition($tableDefinition, null, $ordering, null);
 				error_log($requestInfo["query"]);
-				paged_data_service($requestInfo, table_info_calendar(), $response );
+				paged_data_service($requestInfo, table_info($tableDefinition), $response );
 				//
 				$metadata[] = [];
 				$response["metadata"] = $metadata;
-				$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( GIAU_TABLE_DEFINITION_CALENDAR() );
+				$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( $tableDefinition );
 			}else if($tableSourceName=="bio"){
 				$requestInfo = [];
 				$requestInfo["offset"] = $offset;
 				$requestInfo["count"] = $count;
-				$requestInfo["query"] = "
-				    SELECT ".GIAU_FULL_TABLE_NAME_BIO().".id as bio_id,
-				    ".GIAU_FULL_TABLE_NAME_BIO().".created as bio_created,
-				    ".GIAU_FULL_TABLE_NAME_BIO().".modified as bio_modified,
-				    ".GIAU_FULL_TABLE_NAME_BIO().".first_name as bio_first_name,
-				    ".GIAU_FULL_TABLE_NAME_BIO().".last_name as bio_last_name,
-				    ".GIAU_FULL_TABLE_NAME_BIO().".display_name as bio_display_name,
-				    ".GIAU_FULL_TABLE_NAME_BIO().".position as bio_position,
-				    ".GIAU_FULL_TABLE_NAME_BIO().".email as bio_email,
-				    ".GIAU_FULL_TABLE_NAME_BIO().".phone as bio_phone,
-				    ".GIAU_FULL_TABLE_NAME_BIO().".description as bio_description,
-				    ".GIAU_FULL_TABLE_NAME_BIO().".uri as bio_uri,
-				    ".GIAU_FULL_TABLE_NAME_BIO().".image_url as bio_image_url,
-				    ".GIAU_FULL_TABLE_NAME_BIO().".tags as bio_tags
-				    FROM ".GIAU_FULL_TABLE_NAME_BIO()."
-				    ORDER BY last_name ASC, first_name ASC, modified DESC 
-				";
+				// $requestInfo["query"] = "
+				//     SELECT ".GIAU_FULL_TABLE_NAME_BIO().".id as bio_id,
+				//     ".GIAU_FULL_TABLE_NAME_BIO().".created as bio_created,
+				//     ".GIAU_FULL_TABLE_NAME_BIO().".modified as bio_modified,
+				//     ".GIAU_FULL_TABLE_NAME_BIO().".first_name as bio_first_name,
+				//     ".GIAU_FULL_TABLE_NAME_BIO().".last_name as bio_last_name,
+				//     ".GIAU_FULL_TABLE_NAME_BIO().".display_name as bio_display_name,
+				//     ".GIAU_FULL_TABLE_NAME_BIO().".position as bio_position,
+				//     ".GIAU_FULL_TABLE_NAME_BIO().".email as bio_email,
+				//     ".GIAU_FULL_TABLE_NAME_BIO().".phone as bio_phone,
+				//     ".GIAU_FULL_TABLE_NAME_BIO().".description as bio_description,
+				//     ".GIAU_FULL_TABLE_NAME_BIO().".uri as bio_uri,
+				//     ".GIAU_FULL_TABLE_NAME_BIO().".image_url as bio_image_url,
+				//     ".GIAU_FULL_TABLE_NAME_BIO().".tags as bio_tags
+				//     FROM ".GIAU_FULL_TABLE_NAME_BIO()."
+				//     ORDER BY last_name ASC, first_name ASC, modified DESC 
+				// ";
+				$requestInfo["query"] = pagedQueryGETFromDefinition($tableDefinition, null, $ordering, null);
 				error_log($requestInfo["query"]);
-				paged_data_service($requestInfo, table_info_bio(), $response );
+				paged_data_service($requestInfo, table_info($tableDefinition), $response );
 				//
 				$metadata[] = [];
 				$response["metadata"] = $metadata;
-				$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( GIAU_TABLE_DEFINITION_BIO() );
+				$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( $tableDefinition );
 			}else if($tableSourceName=="languagization"){
 				// $offset = 0;
 				// $count = 2;
@@ -505,7 +522,7 @@ function giau_wordpress_data_service(){
 				    ORDER BY hash_index ASC, modified DESC 
 				";
 				error_log($requestInfo["query"]);
-				paged_data_service($requestInfo, table_info_languagization(), $response );
+				paged_data_service($requestInfo, table_info($tableDefinition), $response );
 				//
 				$metadata[] = [];
 				$response["metadata"] = $metadata;
@@ -539,7 +556,7 @@ function giau_wordpress_data_service(){
 					    LEFT JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
 					    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
 					";
-					paged_data_service($requestInfo, table_info_section(), $response , true);
+					paged_data_service($requestInfo, table_info($tableDefinition), $response , true);
 
 					$response["metadata"] = $metadata;
 				}else{
@@ -563,7 +580,7 @@ function giau_wordpress_data_service(){
 					    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
 					    ORDER BY section_name ASC, section_id DESC
 					"; // LEFT JOIN ALLOWS NULL WIDGET ID
-					paged_data_service($requestInfo, table_info_section(), $response, true);
+					paged_data_service($requestInfo, table_info($tableDefinition), $response, true);
 
 					// LIST SUBSECTIONS IN METADATA FOR DISPLAY
 					$subsections = subsection_list($response["data"], "section_subsections");
@@ -596,6 +613,7 @@ function giau_wordpress_data_service(){
 					$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( GIAU_TABLE_DEFINITION_SECTION() );
 				}
 			}
+} // end table definition
 		}else{// if($operationType=="file_upload"){
 			$result = exec('whoami');
 			error_log("who am i: ".$result);
@@ -1017,7 +1035,12 @@ function crudDataOperationDelete($tableDefinition, $dataCRUD){
 		}
 		*/
 }
-
+function table_info(&$tableDefinition){
+	return [
+		"table" => $tableDefinition,
+	];
+}
+/*
 function table_info_website(){
 	return [
 		"table" => GIAU_FULL_TABLE_NAME_WEBSITE(),
@@ -1053,6 +1076,7 @@ function table_info_calendar(){
 		"table" => GIAU_FULL_TABLE_NAME_CALENDAR(),
 	];
 }
+*/
 
 function paged_data_service($requestInfo, $tableInfo, &$response, $override=false){
 	global $wpdb;
