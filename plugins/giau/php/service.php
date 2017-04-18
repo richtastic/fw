@@ -349,11 +349,8 @@ function giau_wordpress_data_service(){
 					$sorting = $sorting["ordered"];
 				}
 			}
-			$tableDefinition = giauTableDefinitionFromOperationName($tableSourceName);
-if($tableDefinition){
-			$ordering = giauOrderingFromDefinition($tableDefinition, $sorting);
 			// function pagedQueryGETFromDefinition(&$tableDefinition, $criteria=null, $ordering=null, $limiting=null){
-
+/*
 			if($tableSourceName=="website"){
 				// $offset = 0;
 				// $count = 2;
@@ -613,7 +610,113 @@ if($tableDefinition){
 					$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( GIAU_TABLE_DEFINITION_SECTION() );
 				}
 			}
-} // end table definition
+			*/
+			global $wpdb;
+			$tableDefinition = giauTableDefinitionFromOperationName($tableSourceName);
+			if($tableDefinition){
+				$ordering = giauOrderingFromDefinition($tableDefinition, $sorting);
+				if($isRequestLibrary){
+					if($tableSourceName=="section"){
+						$data = [];
+						$metadata = [
+							"index_field" => "section_id",
+							"display_fields" => [
+								["name" => "section_name"],
+								["name" => "widget_name"],
+								["name" => "section_modified"],
+							],
+							"data_fields" => [
+								"section_id" => "section_id",
+								"section_name" => "section_name",
+								"widget_id" => "widget_id",
+								"widget_name" => "widget_name",
+							],
+						];
+						$requestInfo["offset"] = 0;
+						$requestInfo["count"] = 99999;
+						$requestInfo["query"] = "
+						    SELECT ".GIAU_FULL_TABLE_NAME_SECTION().".id as section_id,
+						    ".GIAU_FULL_TABLE_NAME_SECTION().".modified as section_modified,
+						    ".GIAU_FULL_TABLE_NAME_SECTION().".name as section_name,
+						    ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id,
+						    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name
+						    FROM ".GIAU_FULL_TABLE_NAME_SECTION()."
+						    LEFT JOIN ".GIAU_FULL_TABLE_NAME_WIDGET()."
+						    ON ".GIAU_FULL_TABLE_NAME_WIDGET().".id = ".GIAU_FULL_TABLE_NAME_SECTION().".widget
+						";
+						paged_data_service($requestInfo, table_info($tableDefinition), $response , true);
+
+						$response["metadata"] = $metadata;
+					}else if($tableSourceName=="widget"){
+						$data = [];
+						$metadata = [
+							"index_field" => "widget_id",
+							"display_fields" => [
+								["name" => "widget_name"],
+								["name" => "widget_modified"],
+								["name" => "widget_id"],
+							],
+							"data_fields" => [
+								"widget_id" => "widget_id",
+								"widget_name" => "widget_name",
+							],
+						];
+						$requestInfo["offset"] = 0;
+						$requestInfo["count"] = 99999;
+						$requestInfo["query"] = "
+						    SELECT ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id,
+						    ".GIAU_FULL_TABLE_NAME_WIDGET().".modified as widget_modified,
+						    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name
+						    FROM ".GIAU_FULL_TABLE_NAME_WIDGET()."
+						    ORDER BY name ASC, modified DESC 
+						";
+						paged_data_service($requestInfo, table_info($tableDefinition), $response , true);
+						$response["metadata"] = $metadata;
+					}
+				}else{ // library request
+					$requestInfo = [];
+					$requestInfo["offset"] = $offset;
+					$requestInfo["count"] = $count;
+					$requestInfo["query"] = pagedQueryGETFromDefinition($tableDefinition, null, $ordering, null);
+					error_log($requestInfo["query"]);
+					paged_data_service($requestInfo, table_info($tableDefinition), $response );
+					$metadata[] = [];
+					if($tableSourceName=="page"){
+						$subsections = subsection_list($response["data"], "page_section_list");
+						$metadata["section_list"] = $subsections;
+					}
+					if($tableSourceName=="section"){
+						// LIST SUBSECTIONS IN METADATA FOR DISPLAY
+						$subsections = subsection_list($response["data"], "section_subsections");
+						$metadata["section_list"] = $subsections;
+
+						// LIST WIDGETS IN METADATA FOR DISPLAY
+						$rows = $response["data"];
+						$len=count($rows);
+						$foundWidgets = [];
+						for($i=0; $i<$len; ++$i){
+							$row = &$rows[$i];
+							$widget_id = $row["widget_id"];
+							$foundWidgets[]= $widget_id;
+						}
+						// widgets
+							$subwidgetsList = implode(",",$foundWidgets);
+							$query = "
+								SELECT ".GIAU_FULL_TABLE_NAME_WIDGET().".id as widget_id,
+							    ".GIAU_FULL_TABLE_NAME_WIDGET().".name as widget_name
+							    FROM ".GIAU_FULL_TABLE_NAME_WIDGET()."
+							";
+							// TODO: DON'T GET EVERYTHING
+							// WHERE ".GIAU_FULL_TABLE_NAME_WIDGET().".id IN (".$subwidgetsList.") 
+							$subwidgets = $wpdb->get_results($query, ARRAY_A);
+						error_log("subwidgets count: ".count($subwidgets));
+						$metadata["widget_list"] = $subwidgets;
+					}
+					$response["metadata"] = $metadata;
+					$response["definition"] = GIAU_TABLE_DEFINITION_TO_PRESENTATION( $tableDefinition );
+				} // end library request
+			} // end table definition
+
 		}else{// if($operationType=="file_upload"){
 			$result = exec('whoami');
 			error_log("who am i: ".$result);
@@ -900,11 +1003,8 @@ function crudDataOperationGeneric($columnInfo, $inputData, $tableDefinition, $cr
 
 	//"all" => [ // c/r/u/d
 	if($crudType=="create"){
-		error_log("INSERTING NEW : ".objectToString($row));
-
 		$wpdb->insert($tableName, $row);
 		$result = $wpdb->insert_id;
-		error_log("RESULT: ".$result."");
 		if($result!==null){
 			if($functionReadSingle!==null){
 				return $functionReadSingle($result);
@@ -916,33 +1016,21 @@ function crudDataOperationGeneric($columnInfo, $inputData, $tableDefinition, $cr
 		}
 		return null;
 	}else if($crudType=="read"){
-		error_log("READ EXISTING: ".$primaryKeyValue." == ".objectToString($row));
 		return crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle);
 	}else if($crudType=="update"){
-		error_log("UPDATING EXISTING: ".$primaryKeyValue." == ".objectToString($row));
 		$data = crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle);
-		error_log("row: ".objectToString($row));
-		error_log("data: ".objectToString($data));
-		error_log("prim: '".$data[$primaryKeyColumnNameAlias]."'' == '".$primaryKeyValue."'");
 		if($data && $data[$primaryKeyColumnNameAlias] == $primaryKeyValue){
 			$where = [$primaryKeyColumnName => $primaryKeyValue];
-			error_log("WHERE: ".objectToString($where));
 			$result = $wpdb -> update($tableName, $row, $where );
-			error_log("RESULT: ".objectToString($result));
 			return crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle);
 		}
 		return null;
 	}else if($crudType=="delete"){
 		// check if exists
-		error_log("DELETING EXISTING: ".$primaryKeyValue." == ".objectToString($row));
 		$data = crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle);
-		error_log("data: ".$data);
-		error_log("data: ".objectToString($data));
 		if($data && $data[$primaryKeyColumnNameAlias] == $primaryKeyValue){
-			error_log("DELETE INSIDE");
 			$where = [$primaryKeyColumnName => $primaryKeyValue];
 			$result = $wpdb -> delete($tableName, $where );
-			error_log("RESULT: ".objectToString($result));
 			return data;
 		}
 		return null;
@@ -976,7 +1064,6 @@ function giau_create_section($sectionName, $widgetID, $sectionConfig, $sectionLi
 	
 }
 function crudReadSingle($tableDefinition, $primaryKeyColumnName, $primaryKeyValue, $functionReadSingle){
-	error_log("READING EXISTING: ".$primaryKeyValue);//." == ".objectToString($row));
 	global $wpdb;
 	$tableName = $tableDefinition["table"];
 	if($functionReadSingle!==null){
@@ -1081,6 +1168,7 @@ function table_info_calendar(){
 function paged_data_service($requestInfo, $tableInfo, &$response, $override=false){
 	global $wpdb;
 	$table = $tableInfo["table"];
+	$tableName = giauTableNameFromDefinition($table);
 	//$columns = $tableInfo["columns"];
 	$offset = $requestInfo["offset"];
 	$count = $requestInfo["count"];
@@ -1088,8 +1176,6 @@ function paged_data_service($requestInfo, $tableInfo, &$response, $override=fals
 	$offset = esc_sql($offset);
 	$count = esc_sql($count);
 	$table = esc_sql($table);
-
-	error_log("FOUND OFFSET: ".$offset);
 
 	// offset must be positive
 	if(!$offset || $offset < 0){
@@ -1113,17 +1199,12 @@ function paged_data_service($requestInfo, $tableInfo, &$response, $override=fals
 	$total = 0;
 	$queryTotal = "
 	    SELECT COUNT(*) AS total
-	    FROM ".$table."
-	    ".$criteria." 
+	    FROM ".$tableName."
+	    WHERE ".$criteria."
 	";
-	error_log("TOTAL - RICHIE ".$queryTotal);
-	// SELECT TABLE_NAME, TABLE_ROWS as total FROM information_schema.tables;
-	// SELECT TABLE_ROWS as total FROM information_schema.tables WHERE TABLE_NAME = 'wp_giau_bio';
-	// wp_giau_languagization
 	$resultTotal = $wpdb->get_results($queryTotal, ARRAY_A);
 	$total = intval($resultTotal[0]["total"]);
 	// QUERY
-
 	$querystr = $requestInfo["query"];
 	if(!$querystr){
 		$querystr = "
@@ -1133,8 +1214,6 @@ function paged_data_service($requestInfo, $tableInfo, &$response, $override=fals
 		";
 	}
 	$querystr = $querystr . " LIMIT ".$offset.",".$count." ";
-	//$querystr = $querystr . " OFFSET ".$offset." " . " LIMIT ".$count;
-	error_log("FINAL .................................................. ".$querystr);
 	$results = $wpdb->get_results($querystr, ARRAY_A);
 	// return $results;
 	$response["result"] = "success";
@@ -1142,7 +1221,6 @@ function paged_data_service($requestInfo, $tableInfo, &$response, $override=fals
 	$response["count"] = count($results);
 	$response["data"] = $results;
 	$response["total"] = $total;
-	error_log("FINAL >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ".count($results));
 }
 
 

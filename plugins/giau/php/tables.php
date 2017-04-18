@@ -635,7 +635,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				"attributes" => [
 					"display_name" => "Web URL",
 					"order" => "7",
-					"sort" =>  "true",
+					"sort" =>  "false",
 					"editable" => "true",
 				],
 			],
@@ -644,7 +644,7 @@ function GIAU_TABLE_DEFINITION_BIO(){
 				"attributes" => [
 					"display_name" => "Image URL",
 					"order" => "8",
-					"sort" =>  "true",
+					"sort" =>  "false",
 					"editable" => "true",
 				],
 			],

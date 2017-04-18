@@ -2097,6 +2097,17 @@ giau.AutoComplete = function(element){
 	this._container = element;
 	this._jsDispatch = new JSDispatch();
 
+	var div = this._container;
+	Code.setStylePaddingTop(div,"3px");
+	Code.setStylePaddingBottom(div,"3px");
+	Code.setStylePaddingRight(div,"3px");
+	Code.setStylePaddingLeft(div,"3px");
+	Code.setStyleBackgroundColor(div,giau.Theme.Color.DarkRed);
+	Code.setStyleBorder(div,"solid");
+	Code.setStyleBorderWidth(div,1+"px");
+	Code.setStyleBackgroundColor(div,giau.Theme.Color.MediumRed);
+	Code.setStyleBorderRadius(div,"4px");
+
 	this._messageBus = giau.MessageBus();
 
 	var i;
@@ -2116,7 +2127,7 @@ giau.AutoComplete = function(element){
 
 	for(i=0; i<Code.numChildren(this._container); ++i){
 		var found = false;
-		div = Code.getChild(this._container,i);
+		var div = Code.getChild(this._container,i);
 		if(Code.hasProperty(div,propertyDataParam)){
 			var key = Code.getProperty(div,propertyDataParam);
 			var value = Code.getProperty(div,propertyDataValue);
@@ -2149,6 +2160,11 @@ giau.AutoComplete = function(element){
 
 	this._textElement = Code.newInputText();
 	Code.addChild(this._container, this._textElement);
+	var div = this._textElement
+	Code.setStyleWidth(div,"50%");
+	Code.setTextPlaceholder(div, "Filter");
+	Code.setStyleBorderRadius(div,"2px");
+	Code.setStyleDisplay(div,"inline-block");
 
 	this._jsDispatch.addJSEventListener(this._textElement, Code.JS_EVENT_CHANGE, this._handleTextChangeFxn, this);
 	this._jsDispatch.addJSEventListener(this._textElement, Code.JS_EVENT_INPUT_CHANGE, this._handleTextInputChangeFxn, this);
@@ -2211,16 +2227,13 @@ giau.AutoComplete.prototype._handleTextChangeFxn = function(e){
 }
 
 giau.AutoComplete.prototype._handleTextInputChangeFxn = function(e){
-	console.log("changed: "+this.textValue());
 	this.sendRequestForInput();
-
 }
 giau.AutoComplete.prototype.textValue = function(){
 	return Code.getTextAreaValue(this._textElement);
 }
 
 giau.AutoComplete.prototype.sendRequestForInput = function(){
-	console.log("sendRequestForInput A");
 	var i;
 	//var input = "for families";
 	var input = this.textValue();
@@ -2254,13 +2267,11 @@ giau.AutoComplete.prototype.sendRequestForInput = function(){
 	//ajax.params(this._dataParameters);
 	ajax.context(this);
 	ajax.callback(function(d){
-		console.log("sendRequestForInput B");
 		//console.log(d);
 		var obj = Code.parseJSON(d);
 		if(!Code.isObject(obj)){ // why?
 			obj = Code.parseJSON(obj);
 		}
-		console.log(obj);
 		if(obj){
 			var dataList = obj["data"];
 			if(dataList){
@@ -3737,7 +3748,6 @@ giau.ObjectComposer.prototype._interactActionButton = function(display, element)
 
 
 giau.LibraryScroller = function(element, name, url, params){
-	console.log("LibraryScroller");
 	url = url !== undefined ? url : "./";
 	params = params !== undefined ? params : {};
 	this._scrollBarSize = Code.getScrollBarSize();
@@ -3950,7 +3960,6 @@ giau.LibraryScroller._generateDiv = function(info, data){//, displayData){
 	return div;
 }
 giau.LibraryScroller.prototype._updateLayout = function(){
-	console.log("LibraryScroller - _updateLayout");
 	var widthContainer = $(this._elementScroller).width();
 	var heightContainer = $(this._elementScroller).height();
 	widthContainer -= this._scrollBarSize;
@@ -4052,6 +4061,7 @@ giau.LibraryScroller.prototype._scrollTo = function(){
 
 
 giau.PagingDisplay = function(element, currentPage, totalPages, pagingFxn){ // pages in [0...total-1]
+	console.log("giau.PagingDisplay")
 	Code.constructorClass(giau.PagingDisplay, this);
 	this._pagingGetParam = "p";
 	this._container = element;
@@ -4249,8 +4259,7 @@ giau.DataSource.prototype.getPage = function(pageToGet, data){
 	ajax.url(url);
 	ajax.method(Ajax.METHOD_TYPE_POST);
 	ajax.append(this._urlParams);
-if(data){		
-	console.log(data);
+if(data){
 	var fields = data["fields"];
 	if(fields){
 		var keys = Code.keys(fields);
@@ -4297,7 +4306,6 @@ giau.DataCRUD.prototype.read = function(data, returnData){
 }
 giau.DataCRUD.prototype.update = function(data, returnData){
 	console.log("SEND AN UPDATE");
-	console.log(data);
 	this._asyncOperation("update", data, returnData, giau.DataCRUD.EVENT_UPDATE);
 }
 giau.DataCRUD.prototype.remove = function(data, returnData){
@@ -4329,7 +4337,6 @@ giau.DataCRUD.prototype._asyncOperation = function(lifecycle, data, returnData, 
 giau.CRUD = function(element){
 	var propertyDataTableName = "data-table-name";
 	var valueTableName = Code.getProperty(element,propertyDataTableName);
-	console.log("CRUD TABLE NAME: "+valueTableName);
 	this._itemsPerPage = 20;
 	var dataTableName = valueTableName;
 	this._dataTableName = dataTableName;
@@ -4343,12 +4350,16 @@ giau.CRUD = function(element){
 	this._elementPagingTop = Code.newDiv();
 	this._elementPagingBottom = Code.newDiv();
 	this._elementTools = Code.newDiv();
-	this._elementOrdering = Code.newDiv();
+		this._elementOrderingContainer = Code.newDiv();
+		this._elementOrdering = Code.newDiv();
+
 	this._elementTable = Code.newDiv();
 	Code.addChild(this._container,this._elementContainer);
 		
 		Code.addChild(this._elementContainer,this._elementPagingTop);
-		Code.addChild(this._elementContainer,this._elementOrdering);
+		//Code.addChild(this._elementContainer,this._elementOrdering);
+			Code.addChild(this._elementContainer,this._elementOrderingContainer);
+			Code.addChild(this._elementOrderingContainer,this._elementOrdering);
 		Code.addChild(this._elementContainer,this._elementTools);
 		Code.addChild(this._elementContainer,this._elementTable);
 		Code.addChild(this._elementContainer,this._elementPagingBottom);
@@ -4385,10 +4396,21 @@ giau.CRUD = function(element){
 		this._jsDispatch.addJSEventListener(div, Code.JS_EVENT_CLICK, this._handleCreateFxn, this, ctx);	
 
 	// ORDERING
+	
+	Code.setStyleDisplay(this._elementOrderingContainer,"inline-block");
+	Code.setStyleWidth(this._elementOrderingContainer,"100%");
+
 	Code.setStyleWidth(this._elementOrdering,"100%");
-	Code.setStyleMinHeight(this._elementOrdering,50+"px");
-	Code.setStyleDisplay(this._elementOrdering,"inline-block");
-	Code.setStyleBackgroundColor(this._elementOrdering,"#F00");
+		Code.setStyleDisplay(this._elementOrdering,"table");
+	Code.setStyleMinHeight(this._elementOrdering,20+"px");
+	Code.setStylePaddingTop(this._elementOrdering,4+"px");
+	Code.setStylePaddingBottom(this._elementOrdering,4+"px");
+	Code.setStyleBorderRadius(this._elementOrdering,"4px 4px 2px 2px");
+	//Code.setStyleDisplay(this._elementOrdering,"inline-block");
+	Code.setStyleBackgroundColor(this._elementOrdering, giau.Theme.Color.MediumRed);
+	
+
+	// giau.Theme.Color.TextOnDark
 	
 	// TABLE
 		Code.setStyleBorderRadius(this._elementTable,5+"px");
@@ -4413,8 +4435,6 @@ giau.CRUD = function(element){
 }
 
 giau.CRUD.prototype.updateGetPage = function(){
-	var columns = "...";
-
 	var sorting = null;
 	if(this._searchFields){
 		sorting = this._searchFieldsToSortingArray(this._searchFields);
@@ -4422,20 +4442,17 @@ giau.CRUD.prototype.updateGetPage = function(){
 		sorting = this._loadSortingFromCookies(true);
 	}
 	sorting = {"ordered": sorting}; // wrap inside object
-	console.log(sorting);
 	sorting = Code.StringFromJSON(sorting);
-	console.log(sorting);
 	var data = {};
 	var fields = {};
 	data["fields"] = fields;
-		//fields["sorting"] = Code.StringFromJSON(sorting);
 		fields["sorting"] = sorting;
+	console.log(data);
 	this._dataSource.getPage(this._pagingTop.currentPage(), data);
 }
 
 giau.CRUD.prototype.handleBusData = function(d){
 	console.log("handleBusData");
-	console.log(d);
 	var data = d["data"];
 	if(data){
 		var rows = data;
@@ -4447,27 +4464,18 @@ giau.CRUD.prototype.handleBusData = function(d){
 	}
 }
 giau.CRUD.prototype._saveDefaultRows = function(){
-	console.log("_saveDefaultRows");
-	//this._defaultRows = []
 	if(!this._defaultDataRows){
-		console.log("NOT FIND DEFAULT");
 		var view = this._dataView;
 		var data = view["rows"];
-		console.log(data)
 		this._defaultDataRows = data;
-		//view["rows"] = [];
 	}
 }
 giau.CRUD.prototype._unsaveDefaultRows = function(){
-	console.log("_unsaveDefaultRows");
 	var rows = this._defaultDataRows;
 	if(rows){
-		console.log("FOUND ROWS");
 		this._defaultDataRows = null;
 		var view = this._dataView;
 		view["rows"] = rows;
-		console.log(rows);
-		//this._updateDataFromRows(rows);
 		this._updateLayout();
 	}
 }
@@ -4513,13 +4521,10 @@ giau.CRUD.prototype._buttonInput = function(display,element){
 
 giau.CRUD.prototype._handleCreateFxn = function(e,data){
 	console.log("CREATE");
-
 	if(this._defaultDataRows){
 		console.log("CANT CREATE WHILE SEARCH");
 		return;
 	}
-	console.log(data);
-
 	var view = this._dataView;
 	var dataInfo = view["data"];
 	var dataFields = dataInfo["fields"];
@@ -4601,13 +4606,9 @@ giau.CRUD.prototype._handleUpdateFxn = function(e,data){
 				}
 			}
 		}
-console.log("+++++++++");
-console.log(updateData);
-console.log("---------");
 		// pass editable values to server
 		var jsonData = updateData;
 		var jsonString = Code.StringFromJSON(jsonData);
-console.log(jsonString);
 		// get row data back
 		var passBack = {};
 			passBack["index"] = data["index"];
@@ -4725,7 +4726,6 @@ var dataFields = dataInfo["fields"];
 
 }
 giau.CRUD.prototype._handleUpdateCompleteFxn = function(e){
-	console.log("UPDATE COMPLETE");
 	this._handleReloadCompleteFxn(e);
 }
 
@@ -4735,11 +4735,7 @@ giau.CRUD.prototype._handleDeleteCompleteFxn = function(e){
 	var original = e["source"];
 	var criteriaIndex = original["index"];
 	var criteriaValue = original["value"];
-	console.log(original);
-	console.log(criteriaIndex);
-	console.log(criteriaValue);
 	var rowData = this._dataRowFromKeyValue(criteriaIndex, criteriaValue);
-	console.log(rowData);
 	if(rowData){
 		this._dataRowRemoveAt(rowData["index"]);
 	}
@@ -4773,7 +4769,7 @@ giau.CRUD.prototype._dataRowFromKeyValue = function(criteriaIndex, criteriaValue
 }
 
 giau.CRUD.prototype._updateWithData = function(data){
-console.log("giau.CRUD.prototype._updateWithData");
+	console.log(data)
 	var offset = data["offset"];
 	var count = data["count"];
 	var rows = data["data"];
@@ -4784,12 +4780,12 @@ console.log("giau.CRUD.prototype._updateWithData");
 	var columnPresentations = presentation["columns"];
 	var metadata = data["metadata"];
 
-// console.log(metadata)
-// return;
+
 	var pagesTotal = total>0 ? Math.ceil(total/this._itemsPerPage) : 0;
 	var pageCurrent = Math.floor( offset/this._itemsPerPage);
 	this._pagingTop.set(pageCurrent, pagesTotal);
 	this._pagingBottom.set(pageCurrent, pagesTotal);
+	console.log(pageCurrent, pagesTotal);
 
 	view = {};
 	view["data"] = data;
@@ -4876,14 +4872,10 @@ console.log("giau.CRUD.prototype._updateWithData");
 giau.CRUD.SORT_COOKIE_PREFIX = "giau.CRUD.sort.";
 giau.CRUD.prototype._loadSortingFromCookies = function(notSet){
 	notSet = notSet!==undefined ? notSet : false;
-	console.log("_loadSortingFromCookies");
 	var tableName = this._dataTableName;
 	var cookieName = giau.CRUD.SORT_COOKIE_PREFIX+tableName;
 	var searchFields = this._searchFields;
-	// 
-	console.log(cookieName);
 	var cookie = Code.getCookie(cookieName);
-	console.log(cookie);
 	var array = Code.parseJSON(cookie);
 	if(array && !notSet){
 		this._setSortingSearchFieldsFromSortArray(searchFields, array);
@@ -4894,7 +4886,6 @@ giau.CRUD.prototype._loadSortingFromCookies = function(notSet){
 	return array;
 }
 giau.CRUD.prototype._setSortingSearchFieldsFromSortArray = function(searchFields, sortArray){
-console.log("_setSortingSearchFieldsFromSortArray")
 	var i, j, len = searchFields.length;
 	for(i=0; i<len; ++i){
 		var field = searchFields[i];
@@ -4910,7 +4901,6 @@ console.log("_setSortingSearchFieldsFromSortArray")
 				sorting["direction"] = dir;
 				sorting["order"] = ""+j;
 				field["sorting"] = sorting;
-console.log(field["column"]+" : "+sorting["order"]+" = "+sorting["direction"]);
 				found = true;
 				break;
 			}
@@ -4952,8 +4942,6 @@ giau.CRUD.prototype._saveSortingToCookies = function(){
 	var cookieName = giau.CRUD.SORT_COOKIE_PREFIX+tableName;
 	var searchFields = this._searchFields;
 	var sortArray = this._searchFieldsToSortingArray(searchFields);
-	console.log("SAVED SORT ARRAY:");
-	console.log(sortArray);
 	var sortJSON = Code.StringFromJSON(sortArray);
 	Code.deleteCookie(cookieName);
 	Code.setCookie(cookieName,sortJSON);
@@ -4982,11 +4970,9 @@ giau.CRUD.prototype._updateDataFromRows = function(rows){
 			}
 		}
 	}
-	//console.log(view["rows"]);
 }
 
 giau.CRUD.prototype._handleSortingItemSelected = function(e, d){
-	console.log("_handleSortingItemSelected");
 	var column = d["column"];
 	var direction = d["direction"];
 	var i;
@@ -5002,10 +4988,6 @@ giau.CRUD.prototype._handleSortingItemSelected = function(e, d){
 	}
 	// add field at 0
 	sortingArray.unshift({"direction":direction, "column":column});
-	
-	console.log("NEW ARRAY: ");
-	console.log(sortingArray);
-
 	this._setSortingSearchFieldsFromSortArray(searchFields, sortingArray);
 	this._saveSortingToCookies();
 	this._updateLayout(); // only sorting needs updating
@@ -5014,7 +4996,6 @@ giau.CRUD.prototype._handleSortingItemSelected = function(e, d){
 }
 
 giau.CRUD.prototype._updateLayout = function(){
-//	console.log(this._dataView);
 	var searchFields = this._searchFields;
 	var i, j;
 	Code.removeAllChildren(this._elementOrdering);
@@ -5031,10 +5012,26 @@ giau.CRUD.prototype._updateLayout = function(){
 				directionSort = directionSort !== null ? directionSort : -1;
 				directionSort = parseInt(directionSort);
 			}
-			var displaySort = directionSort == -1 ? "&DownArrowBar;" : "&UpArrowBar;"
-		Code.setContent(div,""+name+displaySort); // &darr; &dArr; &#8681; &#10507; &DownArrowBar;
+			//var displaySort = directionSort == -1 ? "&DownArrowBar;" : "&UpArrowBar;"
+			var displaySort = directionSort == -1 ? "&uArr;" : "&dArr;"
+			//var displaySort = directionSort == -1 ? "&uarr;" : "&darr;"
+			var nam = Code.newDiv();
+			var arr = Code.newDiv();
+				Code.addChild(div,nam);
+				Code.addChild(div,arr);
+				Code.setStyleFontSize(nam,10+"px");
+				Code.setStyleFontSize(arr,14+"px");
+				Code.setContent(nam,name+"");
+				Code.setContent(arr,displaySort+"");
+				Code.setStyleDisplay(nam,"inline");
+				Code.setStyleDisplay(arr,"inline");
+		//Code.setContent(div,""+name+displaySort); // &darr; &dArr; &#8681; &#10507; &DownArrowBar;
 		Code.setStyleDisplay(div,"table-cell");
-		Code.setStyleColor(div,"#000");
+		Code.setStyleColor(div, giau.Theme.Color.TextOnDark);
+		Code.setStyleCursor(div, Code.JS_CURSOR_STYLE_FINGER);
+		//Code.setStyleFontSize(div,10+"px");
+		Code.setStyleTextUnderline(div);
+		Code.setStyleTextAlign(div,"center");
 		Code.addChild(this._elementOrdering,div);
 			var nextDirectionSort = directionSort == -1 ? 1 : -1;
 			dataContext = {"element": div, "column":columnAlias, "direction":(""+nextDirectionSort)};

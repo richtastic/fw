@@ -643,7 +643,7 @@ function giau_admin_menu_page_submenu_data_entry(){
 			if($autoCompleteFields){
 				$defaultAutoCompleteFields = $autoCompleteData["all"];
 			?>
-			<div class="giauAutoComplete" style="background-color: #F00">
+			<div class="giauAutoComplete" style="">
 			<?php
 				echoEmptyDivs($defaultAutoCompleteFields);
 				echoEmptyDivs($autoCompleteFields);
