@@ -1193,14 +1193,14 @@ function paged_data_service($requestInfo, $tableInfo, &$response, $override=fals
 	// 	$count = min($count, 100);
 	// }
 
-	$criteria = "";
+	$criteriaX = "1";
 
 	// TOTAL
 	$total = 0;
 	$queryTotal = "
 	    SELECT COUNT(*) AS total
 	    FROM ".$tableName."
-	    WHERE ".$criteria."
+	    WHERE ".$criteriaX."
 	";
 	$resultTotal = $wpdb->get_results($queryTotal, ARRAY_A);
 	$total = intval($resultTotal[0]["total"]);
@@ -1210,7 +1210,7 @@ function paged_data_service($requestInfo, $tableInfo, &$response, $override=fals
 		$querystr = "
 		    SELECT ".$table.".* 
 		    FROM ".$table."
-		    ".$criteria." 
+		    ".$criteriaX." 
 		";
 	}
 	$querystr = $querystr . " LIMIT ".$offset.",".$count." ";
