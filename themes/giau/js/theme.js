@@ -2234,14 +2234,20 @@ giau.AutoComplete.prototype.textValue = function(){
 }
 
 giau.AutoComplete.prototype.sendRequestForInput = function(){
+	if(this._isCurrentlyRequesting===true){ // wait for current request to finish
+		console.log("is currently requesting");
+		return;
+	}
 	var i;
-	//var input = "for families";
 	var input = this.textValue();
 	if(!input || input==""){ // let everyone know this field is empty now
 		var busData = {"data":null};
 		this._messageBus.alertAll(giau.AutoComplete.EVENT_NAME_DATA, busData);
 		return;
 	}
+	var i;
+	this._isCurrentlyRequesting = true;
+	this._previousTextValue = input;
 
 	var url = this._url;
 	var queryParams = this._queryParams;
@@ -2252,7 +2258,6 @@ giau.AutoComplete.prototype.sendRequestForInput = function(){
 		searchCriteria[fieldNames[i]] = input;
 	}
 	searchCriteria = Code.StringFromJSON(searchCriteria);
-	console.log(searchCriteria);
 
 	var ajax = new Ajax();
 	ajax.url(url);
@@ -2267,7 +2272,6 @@ giau.AutoComplete.prototype.sendRequestForInput = function(){
 	//ajax.params(this._dataParameters);
 	ajax.context(this);
 	ajax.callback(function(d){
-		//console.log(d);
 		var obj = Code.parseJSON(d);
 		if(!Code.isObject(obj)){ // why?
 			obj = Code.parseJSON(obj);
@@ -2279,13 +2283,16 @@ giau.AutoComplete.prototype.sendRequestForInput = function(){
 				this._messageBus.alertAll(giau.AutoComplete.EVENT_NAME_DATA, busData);
 			}
 		}
+		// check to see if changes were made during request:
+		this._isCurrentlyRequesting = false;
+		var input = this.textValue();
+		if(input != this._previousTextValue){
+			this.sendRequestForInput();
+		}
 	});
 	ajax.send();
 }
 
-giau.AutoComplete.prototype._handleA = function(){
-	console.log("A");
-}
 giau.AutoComplete.prototype._handleElementKeyUpFxn = function(e){
 
 	var key = Code.getKeyCodeFromKeyboardEvent(e);
@@ -4061,7 +4068,6 @@ giau.LibraryScroller.prototype._scrollTo = function(){
 
 
 giau.PagingDisplay = function(element, currentPage, totalPages, pagingFxn){ // pages in [0...total-1]
-	console.log("giau.PagingDisplay")
 	Code.constructorClass(giau.PagingDisplay, this);
 	this._pagingGetParam = "p";
 	this._container = element;
@@ -4447,12 +4453,10 @@ giau.CRUD.prototype.updateGetPage = function(){
 	var fields = {};
 	data["fields"] = fields;
 		fields["sorting"] = sorting;
-	console.log(data);
 	this._dataSource.getPage(this._pagingTop.currentPage(), data);
 }
 
 giau.CRUD.prototype.handleBusData = function(d){
-	console.log("handleBusData");
 	var data = d["data"];
 	if(data){
 		var rows = data;
@@ -4769,7 +4773,6 @@ giau.CRUD.prototype._dataRowFromKeyValue = function(criteriaIndex, criteriaValue
 }
 
 giau.CRUD.prototype._updateWithData = function(data){
-	console.log(data)
 	var offset = data["offset"];
 	var count = data["count"];
 	var rows = data["data"];
