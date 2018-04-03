@@ -44,6 +44,16 @@ function moveFileToRelativeLocation($root, $relativeSource, $relativeDestination
 
 }
 
+function appendToPath($path,$next){
+	$concat = null;
+	if(substr($concat)=="/"){
+		$concat = "/";
+	}else{
+		$concat = "";
+	}
+	return $path.$concat.$next;
+}
+
 function createDirectoryAtLocation($absolutePath){
 	$parentPath = dirname($absolutePath,1);
 	if(file_exists($parentPath)){
